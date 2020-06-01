@@ -3,6 +3,14 @@ browserql-fetch-react-hooks
 
 React hooks for the `browserql-fetch` plugin
 
+## Define your schema
+
+```graphql
+type User @fetch {
+
+}
+```
+
 ```js
 import { connect } from 'browserql'
 import fetchQL from 'browserql-fetch'
@@ -42,7 +50,7 @@ function App() {
 }
 
 function Users() {
-  const users = useFetchQL(client).models.User.get()
+  const users = useFetchQL(client).User.get()
   if (users.error) {
     return <span>{ users.error }</span>
   }
@@ -67,8 +75,7 @@ function Users() {
 
 function CreateUserForm() {
   const [email, setEmail] = React.useState('')
-  const [createUser, { data, loading, error }] = useFetchQL(client)
-    .models.User.post({ email })
+  const [createUser, { loading, error }] = useFetchQL(client).User.post
   return (
     <form>
       <input
@@ -77,7 +84,7 @@ function CreateUserForm() {
       />
       <input
         type="submit"
-        onClick={ createUser }
+        onClick={ () => createUser({ email }) }
         disabled={ loading }
       />
       { error }
