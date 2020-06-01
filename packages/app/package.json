@@ -1,0 +1,29 @@
+{
+  "name": "@browserql/app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "rm -rf dist .cache && parcel --hmr-port $HMR_PORT --https index.html"
+  },
+  "externals": [
+    "fs-extra => ./fs-extra.js"
+  ],
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "typescript": "^3.9.3"
+  },
+  "dependencies": {
+    "@apollo/react-hooks": "^3.1.5",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-redux": "^7.1.8",
+    "connected-react-router": "^6.8.0",
+    "fs-extra": "^9.0.0",
+    "graphql-tag": "^2.10.3",
+    "parcel-plugin-externals": "^0.4.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5"
+  }
+}

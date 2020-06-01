@@ -1,0 +1,36 @@
+type State @state {
+  drawerOpen:   Boolean! @default(false)
+}
+
+enum Collection {
+  persons
+  skills
+  personskills
+}
+
+type Person @firestore(collection: Collection.persons) {
+  id:           ID!
+  firstname:    String!
+  lastname:     String!
+  role:         String!
+}
+
+type Skill @firestore(collection: Collection.skills) {
+  id:           ID!
+  title:        ID!
+}
+
+enum Level {
+  noob
+  follower
+  hobbyist
+  ninja
+  guru
+}
+
+type PersonSkill @firestore(collection: Collection.personskills) {
+  skill:        ID!
+  person:       ID!
+  level:        Level! @default(Level.noob)
+  position:     Int
+}

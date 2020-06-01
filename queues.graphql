@@ -1,0 +1,46 @@
+type State @state {
+  meunOpen:     Boolean! @default(false)
+}
+
+enum Collection {
+  queues
+  jobs
+  logs
+}
+
+enum QueueState {
+  paused
+  resumed
+}
+
+enum JobStatus {
+  inprogress
+  done
+  failed
+  waiting
+  invalid
+  discarded
+  paused
+}
+
+type Queue @firestore(collection: Collection.queues) {
+  id:             ID !
+  title:          String !
+  state:          QueueState !
+  webhook:        String !
+  concurrency:    Int !
+  maxRetries:     Int !
+  timeout:        Int !
+}
+
+type Job @firestore(collection: Collection.jobs) {
+  id:             ID !
+  title:          ID !
+  data:           Any !
+  status:         JobStatus !
+  queue:          ID !
+}
+
+type Log @firestore(collection: Collection.logs) {
+
+}
