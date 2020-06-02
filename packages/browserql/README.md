@@ -1,7 +1,7 @@
 browserql
 ===
 
-Use graphql in the browser
+Use graphql in the browser 🚀
 
 **browserql usually works better with [plugins](/plugins.md)**
 
@@ -150,6 +150,6 @@ connect({ schema, resolvers })
 
 ```ts
 interface Client {
-  
+
 }
 ```
