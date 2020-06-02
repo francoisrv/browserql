@@ -34,3 +34,9 @@ type PersonSkill @firestore(collection: Collection.personskills) {
   level:        Level! @default(Level.noob)
   position:     Int
 }
+
+type Query {
+  getPersonById(id: ID !): Person !
+  getPerson(where: personGetter paging: Paging): Person !
+  getPersonManyByIds(ids: [ID!]): [Person!]
+}

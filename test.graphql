@@ -1,0 +1,13 @@
+type User @rest {
+  email:        String !
+  password:     String !  @mask
+  isVerified:   Boolean !
+
+  findOne
+}
+
+type Project {
+  getProject
+}
+
+// GET /users

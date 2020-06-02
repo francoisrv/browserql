@@ -27,6 +27,10 @@ const client = connect({
       email: String!
       verified: Boolean!
     }
+
+    type Query {
+      login(email: String! password: String!): User @graphql
+    }
   `,
   plugins: [
     fetchQL({ base: 'https://api.com/v1' })

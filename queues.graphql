@@ -23,7 +23,13 @@ enum JobStatus {
   paused
 }
 
-type Queue @firestore(collection: Collection.queues) {
+type Queue @firestore(
+  collection: Collection.queues
+  onAdded: [
+    "" @tweet(message: "Added queue {{ document.title }}")
+    "" @slack(message: "Added queue {{ document.title }}")
+  ]
+) {
   id:             ID !
   title:          String !
   state:          QueueState !
@@ -42,5 +48,26 @@ type Job @firestore(collection: Collection.jobs) {
 }
 
 type Log @firestore(collection: Collection.logs) {
+
+}
+
+type Event @events {
+  tweet(message: String): String!
+  @tweet(message: "hello Twitter")
+  @fb()
+}
+
+
+type Author @fetch {
+  id: ID!
+  name: String!
+}
+
+type Blog @fetch {
+  id: ID!
+  name: String!
+}
+
+type Post @fetch {
 
 }
