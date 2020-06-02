@@ -11,6 +11,10 @@ interface State {
   }
 }
 
+function setInitialValue(field: GraphQLField<any, any>) {
+  
+}
+
 export default function browserqlPluginState(
   schema: GraphQLSchema,
   resolvers: any
@@ -46,7 +50,7 @@ export default function browserqlPluginState(
       }
     }
   }
-  console.log(state)
+  console.log({state})
   return {
     schema: gql`
     directive @state on OBJECT
