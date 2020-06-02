@@ -5,12 +5,6 @@ React hooks for the `browserql-fetch` plugin
 
 ## Define your schema
 
-```graphql
-type User @fetch {
-
-}
-```
-
 ```js
 import { connect } from 'browserql'
 import fetchQL from 'browserql-fetch'
