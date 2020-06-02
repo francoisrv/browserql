@@ -5,6 +5,25 @@ React hooks for the `browserql-fetch` plugin
 
 ## Define your schema
 
+```graphql
+type User {
+  id:       ID !
+  email:    String !
+}
+
+# Your queries
+type Query {
+  login(
+    email:      String !
+    password:   String !
+  ): User
+  @fetch(
+    post:       "https://api.com/v1/login"
+    json:       true
+  )
+}
+```
+
 ```js
 import { connect } from 'browserql'
 import fetchQL from 'browserql-fetch'
@@ -15,23 +34,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 const client = connect({
-  schema: gql`
-    type User {
-      id:       ID !
-      email:    String !
-    }
-
-    type Query {
-      login(
-        email:      String !
-        password:   String !
-      ): User
-        @fetch(
-          post:       "https://api.com/v1/login"
-          json:       true
-        )
-    }
-  `,
+  schema,
   plugins: [fetchQL()]
 })
 

@@ -3,13 +3,17 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import { SchemaLink } from 'apollo-link-schema'
 import { buildASTSchema, printSchema, extendSchema, buildSchema, DocumentNode, parse, GraphQLSchema, printIntrospectionSchema } from 'graphql'
 import gql from 'graphql-tag'
-import makeQueryTransaction from './makeQueryTransaction'
+import find from 'lodash.find'
+import makeTransaction from './makeTransaction'
+import { Transaction, TransactionType } from './types'
 
 type Plugin = (
   schema: GraphQLSchema
 ) => {
-  schema: DocumentNode,
+  schema: DocumentNode
   resolvers: any
+  rehydrateWithClient?: (client: any, resolvers: any) => void
+  context?: any
 }
 
 interface ConnectOptions {
@@ -21,19 +25,10 @@ interface ConnectOptions {
 }
 
 interface ConnectResults {
-  client: ApolloClient<any>
+  apollo: ApolloClient<any>
   transactions: Transaction[]
-}
-
-enum TransactionType {
-  query,
-  mutation
-}
-
-interface Transaction {
-  name: string
-  type: TransactionType
-  node: DocumentNode
+  transaction(name: string): Transaction | undefined
+  context: any
 }
 
 const base = gql`
@@ -50,6 +45,8 @@ export default function connect(options: ConnectOptions): ConnectResults {
   
   const { resolvers = {} } = options
 
+  const context: any = {}
+
   const schema = typeof options.schema === 'string' ? gql(options.schema) : options.schema
 
   let ast = extendSchema(
@@ -58,25 +55,45 @@ export default function connect(options: ConnectOptions): ConnectResults {
     { assumeValid: true }
   )
 
+  const rehydrates: any[] = []
+
   if (options.plugins) {
     for (const plugin of options.plugins) {
-      const { schema: pluginSchema, resolvers: pluginResolvers } = plugin(ast)
+      const { schema: pluginSchema, resolvers: pluginResolvers, rehydrateWithClient, context: pluginContext = {} } = plugin(ast)
+      if (rehydrateWithClient) {
+        rehydrates.push(rehydrateWithClient)
+      }
       ast = extendSchema(ast, pluginSchema)
       Object.assign(resolvers, pluginResolvers)
+      Object.assign(context, pluginContext)
     }
   }
 
   const transactions: Transaction[] = []
 
   const query = ast.getQueryType()
+  const mutation = ast.getMutationType()
 
   const queries = query?.getFields()
+  const mutations = mutation?.getFields()
 
   for (const queryName in queries) {
+    const q = makeTransaction(TransactionType.query, queryName, queries[queryName])
     transactions.push({
       name: queryName,
       type: TransactionType.query,
-      node: makeQueryTransaction(queryName, queries[queryName])
+      source: q,
+      node: gql(q)
+    })
+  }
+
+  for (const mutationName in mutations) {
+    const q = makeTransaction(TransactionType.mutation, mutationName, mutations[mutationName])
+    transactions.push({
+      name: mutationName,
+      type: TransactionType.mutation,
+      source: q,
+      node: gql(q)
     })
   }
 
@@ -92,8 +109,16 @@ export default function connect(options: ConnectOptions): ConnectResults {
     cache,
   })
 
+  const transaction = name => find(transactions, { name })
+
+  for (const rehydrate of rehydrates) {
+    rehydrate({client, resolvers, transaction})
+  }
+
   return {
-    client,
+    apollo: client,
     transactions,
+    transaction,
+    context
   }
 }

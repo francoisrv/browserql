@@ -1,6 +1,7 @@
-import { DocumentNode, GraphQLSchema, isObjectType, GraphQLField } from 'graphql'
+import { DocumentNode, GraphQLSchema, isObjectType, GraphQLField, isScalarType, isNonNullType, GraphQLOutputType, GraphQLArgument } from 'graphql'
 import gql from 'graphql-tag'
-import { set, find } from 'lodash'
+import { set, find, camelCase, upperFirst } from 'lodash'
+import printType from 'browserql-utils/src/printType'
 
 interface State {
   [type: string]: {
@@ -11,8 +12,49 @@ interface State {
   }
 }
 
-function setInitialValue(field: GraphQLField<any, any>) {
-  
+function setNonNullInitialValue(type: GraphQLOutputType) {
+  if (isNonNullType(type)) {
+    return setNonNullInitialValue(type.ofType)
+  }
+  if (isScalarType(type)) {
+    switch (type.name) {
+      case 'String': return ''
+      case 'Int': return 0
+      case 'Float': return 0
+      case 'Boolean': return true
+    }
+  }
+}
+
+function setInitialValue(type: GraphQLOutputType) {
+  if (isNonNullType(type)) {
+    return setNonNullInitialValue(type.ofType)
+  }
+  return null
+}
+
+function setDefaultValue(field: GraphQLField<any, any>, fallback: any) {
+  const { astNode } = field
+  if (astNode) {
+    if (astNode.directives) {
+      const defaultDirective = find(astNode.directives, directive => directive.name.value === 'default')
+      if (defaultDirective) {
+        return defaultDirective.arguments[0].value.value
+      }
+    }
+  }
+  return fallback
+}
+
+function printArguments(args: GraphQLArgument[]) {
+  if (!args.length) {
+    return ''
+  }
+  return [
+    '(',
+    '  name: String !',
+    ')',
+  ].join('\n    ')
 }
 
 export default function browserqlPluginState(
@@ -42,7 +84,7 @@ export default function browserqlPluginState(
               const field = fields[fieldName]
               state[name][fieldName] = {
                 field,
-                value: 'a string'
+                value: setDefaultValue(field, setInitialValue(field.type))
               }
             }
           }
@@ -51,19 +93,73 @@ export default function browserqlPluginState(
     }
   }
   console.log({state})
-  return {
-    schema: gql`
-    directive @state on OBJECT
-    scalar Any
-
-    extend type Query {
-      getState(state: String): Any
-      getStateName: String
+  const stateResolvers: any = {}
+  const queries: string[] = []
+  const mutations: string[] = []
+  for (const type in state) {
+    for (const field in state[type]) {
+      const name = upperFirst(camelCase(`${ type } ${ field }`))
+      const queryName = `get${ name }`
+      const mutationName = `set${ name }`
+      const kind = printType(state[type][field].field.type)
+      queries.push(`${ queryName }: ${ kind }`)
+      stateResolvers[queryName] = () => state[type][field].value
+      stateResolvers[mutationName] = () => state[type][field].value
+      mutations.push(`${ mutationName }(value: ${ kind }): ${ kind }`)
     }
-    `,
-    resolvers: {
-      getState: (state: string) => {
-        return 'hello'
+  }
+  const source = `
+  directive @state on OBJECT
+  scalar Any
+
+  extend type Query {
+    ${ queries.join('\n  ') }
+  }
+
+  extend type Mutation {
+    ${ mutations.join('\n  ') }
+  }
+  `
+  return {
+    schema: gql(source),
+    resolvers: stateResolvers,
+    context: { state },
+    rehydrateWithClient: ({client, resolvers, transaction}) => {
+      for (const type in state) {
+        for (const field in state[type]) {
+          const name = upperFirst(camelCase(`${ type } ${ field }`))
+          const queryName = `get${ name }`
+          const mutationName = `set${ name }`
+          resolvers[queryName] = () => {
+            const q = transaction(queryName)
+            console.log(q.source)
+            try {
+              const result = client.readQuery({
+                query: q.node
+              })
+              console.log({result})
+            } catch (error) {
+              client.writeQuery({
+                query: q.node,
+                data: {
+                  [queryName]: state[type][field].value
+                }
+              })
+            }
+            return state[type][field].value
+          }
+          resolvers[mutationName] = ({ value }) => {
+            const q = transaction(queryName)
+            console.log(q.source)
+            client.writeQuery({
+              query: q.node,
+              data: {
+                [queryName]: value
+              }
+            })
+            return value
+          }
+        }
       }
     }
   }

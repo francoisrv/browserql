@@ -19,6 +19,7 @@
     "@types/react-redux": "^7.1.8",
     "connected-react-router": "^6.8.0",
     "fs-extra": "^9.0.0",
+    "graphiql": "^0.17.5",
     "graphql-tag": "^2.10.3",
     "parcel-plugin-externals": "^0.4.0",
     "react": "^16.13.1",

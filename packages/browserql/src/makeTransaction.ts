@@ -1,30 +1,24 @@
-import { GraphQLField, DocumentNode, TypeNode, isNamedType } from "graphql";
-import gql from 'graphql-tag'
-
-function getKind(kind: TypeNode) {
-  if (isNamedType(kind)) {
-
-  }
-  return ''
-}
+import { GraphQLField, TypeNode, isNamedType } from "graphql";
+import { TransactionType } from "./types";
+import printType from 'browserql-utils/src/printType'
 
 function resolveKind(query: GraphQLField<any, any>) {
   const { astNode } = query
   if (astNode) {
-    const kind = getKind(astNode.type)
   }
   return ''
 }
 
-export default function makeQueryTransaction(
+export default function makeTransaction(
+  type: TransactionType,
   queryName: string,
   query: GraphQLField<any, any>
-): DocumentNode {
+): string {
   if (query.args.length) {
     const node = `
-    query ${ queryName }Query(
+    ${ type } ${ queryName }(
       ${
-        query.args.map(arg => `$${ arg.name }: String`).join('\n  ')
+        query.args.map(arg => `$${ arg.name }: ${ printType(query.type) }`).join('\n  ')
       }
     ) {
       ${ queryName }(
@@ -34,15 +28,13 @@ export default function makeQueryTransaction(
       ) ${ resolveKind(query) }
     }
     `
-    console.log(node)
-    return gql(node)
+    return node
   } else {
     const node = `
     query {
       ${ queryName } ${ resolveKind(query) }
     }
     `
-    console.log(node)
-    return gql(node)
+    return node
   }
 }

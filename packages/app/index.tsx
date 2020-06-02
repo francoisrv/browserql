@@ -1,64 +1,18 @@
 import * as React from 'react'
 import ReactDOM from 'react-dom'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import GraphiQL from 'graphiql'
 
-
-import { Provider } from 'browserql-plugin-react/src'
+// import { Provider } from 'browserql-plugin-react/src'
+import Provider from 'browserql-react-provider/src/Provider'
 import { connect } from 'browserql/src'
 import state from 'browserql-plugin-state/src'
+import useState from 'browserql-state-react-hooks/src/useState'
 
 import schema from './schema.graphql'
-import * as resolvers from './resolvers'
-import * as queries from './queries'
 
-interface QueryProps { query: keyof typeof queries, variables?: any }
 
-function Query(props: QueryProps) {
-  const { loading, error, data } = useQuery(queries[props.query], {
-    variables: props.variables
-  })
-  let elem
-  if (error) {
-    elem = <span>{error.message}</span>
-  } else if (loading) {
-    elem = <span>loading</span>
-  } else {
-    elem = JSON.stringify(data)
-  }
-  return (
-    <div>
-      <h4>{ props.query }</h4>
-      <div>
-        { elem }
-      </div>
-    </div>
-  )
-}
-
-const all: QueryProps[] = [
-  {
-    query: 'getState',
-    variables: { state: 'name' }
-  }
-]
-
-function App() {
-  return (
-    <div>
-    {
-      all.map(({ query, variables }) => (
-        <Query
-          key={ query }
-          query={ query }
-          variables={ variables }
-        />
-      ))
-    }
-    </div>
-  )
-}
-
-const { client, transactions } = connect({
+const client = connect({
   schema,
   // resolvers: {},
   plugins: [
@@ -67,11 +21,67 @@ const { client, transactions } = connect({
 })
 
 window.client = client
-window.transactions = transactions
+
+function App() {
+  return (
+    <div>
+      <StringTest />
+    </div>
+  )
+}
+
+function StringTest() {
+  const withName = useState('State.name')
+  const [name, { loading, error }] = withName.get()
+  const [setName] = withName.set()
+
+  let content
+
+  if (error) {
+    content = <div>{ error.message }</div>
+  } else if (loading) {
+    content = <div>Loading</div>
+  } else {
+    content = (
+      <input
+        value={ name }
+        onChange={ e => setName(e.target.value) }
+      />
+    )
+  }
+
+  return (
+    <div>
+      <h1>String</h1>
+      { content }
+    </div>
+  )
+}
+
+function Counter() {
+  const withCounter = useState('State.counter')
+  const [counter] = withCounter.get()
+  const [increment] = withCounter.increment()
+
+  return (
+    <div>
+      <input
+        type="number"
+        defaultValue={ counter }
+      />
+      <input
+        type="button"
+        value="+"
+        onClick={ () => increment() }
+      />
+    </div>
+  )
+}
 
 ReactDOM.render(
   <Provider client={ client }>
     <App />
+    <Counter />
   </Provider>,
   document.getElementById('root'),
 )

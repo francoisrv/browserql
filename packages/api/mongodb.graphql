@@ -1,0 +1,30 @@
+type Queue @collection {
+  title: String!
+  createdAt: Date! @default(value: "now" @now)
+}
+
+type Job @collection {
+  title: String!
+  queue: ID! @rel(model: "Queue")
+}
+
+type User @collection {
+  email:      String!
+  password:   String!     @mask
+  isVerified: Boolean!    @default(value: false)
+}
+
+type Mutation {
+  register(
+    email: String!
+    password: String! @encrypt
+  ): User
+  @insertOne(collection: "User")
+
+  login(
+    email: String!
+    password: String! @decrypt
+  ): User
+  @findOne(collection: "User")
+}
+

@@ -1,3 +1,6 @@
 type State @state {
-  name: String
+  counter:      Int !
+  name:         String        @default(string: "anonymous") @persist
+  story:        String        @default(string: "yeah")
+  title:        String !
 }
