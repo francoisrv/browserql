@@ -26,10 +26,10 @@ const client = connect({
         email:      String !
         password:   String !
       ): User
-      @fetch(
-        post: "https://api.com/v1/login"
-        json: true
-      )
+        @fetch(
+          post:       "https://api.com/v1/login"
+          json:       true
+        )
     }
   `,
   plugins: [fetchQL()]
@@ -58,11 +58,13 @@ function Login() {
         type="email"
         value={ email }
         onChange={ e => setEmail(e.target.value) }
+        disabled={ loading }
       />
       <input
         type="password"
         value={ password }
         onChange={ e => setPassword(e.target.value) }
+        disabled={ loading }
       />
       <input
         type="submit"
