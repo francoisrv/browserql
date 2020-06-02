@@ -1,63 +1,90 @@
-browserql-core
+browserql-default
 ===
 
-Core plugin for browserql
+Sets initial cache value for queries
 
-## Usage
+## Query usage
+
+You can set an initial default value to a query that will be returned if the query has not been cached yet
 
 ```js
 import { connect } from 'browserql'
 import defaultValue from 'browserql-default'
 
-const client = connect({
-  plugins: [core()]
-})
-```
-
-## Directives
-
-### default
-
-#### default value for query
-
-You can specify a default return value for a query in case this query has not yet been cached
-
-```graphql
+const schema = gql`
 type Query {
-  isLoggedIn
-}
-```
-
-```js
-import { connect } from 'browserql'
-import { withClient } from 'browserql-with-client'
-
-const schema = `
-type Query {
-  getVersion: String! @default(value: "1.0.0")
-  getCounter: Int! @defaul(value: 0)
-  getFlag: Boolean! @default(value: true)
-}
-
-type Mutation {
-  setVersion(nextVersion: String): String @update(query: "getVersion")
-  incrementCounter: Int! @increment(query: "getVersion")
-  toggleFlag: Boolean! @toggle(query: "getFlag")
+  getVersion: String ! @default(value: "1.0.0")
 }
 `
+const client = connect({
+  schema,
+  plugins: [defaultValue()]
+})
 
-const resolvers = {
-  getVersion: withClient(client => () => client.readQuery('getVersion')),
+const data = await client.query('getVersion')
+console.log(data) // "1.0.0"
+```
 
-  setVersion: withClient(client => ({version}) => {
-    client.updateQuery('getVersion', {}, version)
-    return version
-  })
+You can call a resolver to resolve the default value
+
+```js
+const schema = gql`
+enum OS {
+  apple
+  windows
 }
 
-const withState = WithState(client)
+type Query {
+  getMessenger(os: OS = OS.apple) @default(resolver: "getDefaultMessenger")
+}
+`
+const resolvers = {
+  getDefaultMessenger: ({ os }, { client }) => {
+    if (os === client.schema.OS.apple) {
+      return 'Facetime'
+    }
+    return 'Skype'
+  }
+}
+const client = connect({
+  schema,
+  resolvers,
+  plugins: [defaultValue()]
+})
 
-client.query(withState.get('counter'))
+const data = await client.query('getMessenger', {
+  os: client.schema.OS.apple
+})
+console.log(data) // "Facetime"
+```
 
-client.mutate(withState.increment('counter'))
+You can also have fixtures
+
+```js
+const schema = gql`
+type Employee {
+  firstname: String!
+  position: String!
+}
+
+type Query {
+  getEmployees: [Employee] @default(fixture: "employees")
+}
+`
+const client = connect({
+  schema,
+  plugins: [defaultValue({
+    fixtures: {
+      employees: [
+        {
+          firstname: 'joy',
+          position: 'developer'
+        }
+      ]
+    }
+  })]
+})
+
+const data = await client.query('getEmployees')
+console.log(data) // [{firtsName: 'joy', position: 'developer'}]
 ```
