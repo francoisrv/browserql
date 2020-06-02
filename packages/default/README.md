@@ -1,7 +1,7 @@
 browserql-default
 ===
 
-Sets initial cache value for queries
+Sets initial cache value for queries by using the directive `@default` or its alias `@initial`
 
 ## Query usage
 
@@ -34,16 +34,24 @@ enum OS {
   windows
 }
 
+enum Messenger {
+  Facetime
+  Skype
+}
+
 type Query {
-  getMessenger(os: OS = OS.apple) @default(resolver: "getDefaultMessenger")
+  getMessenger(
+    os: OS = OS.apple
+  ): Messenger
+  @default(resolver: "getDefaultMessenger")
 }
 `
 const resolvers = {
   getDefaultMessenger: ({ os }, { client }) => {
     if (os === client.schema.OS.apple) {
-      return 'Facetime'
+      return client.schema.Messenger.Facetime
     }
-    return 'Skype'
+    return client.schema.Messenger.Skype
   }
 }
 const client = connect({
