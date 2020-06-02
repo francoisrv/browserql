@@ -1,6 +1,8 @@
-import { GraphQLField, TypeNode, isNamedType } from "graphql";
-import { TransactionType } from "./types";
-import printType from 'browserql-utils/src/printType'
+import { GraphQLField } from 'graphql'
+
+import { printType } from 'browserql-utils'
+
+import { TransactionType } from './types'
 
 function resolveKind(query: GraphQLField<any, any>) {
   const { astNode } = query
@@ -31,7 +33,7 @@ export default function makeTransaction(
     return node
   } else {
     const node = `
-    query {
+    ${ type } {
       ${ queryName } ${ resolveKind(query) }
     }
     `

@@ -4,3 +4,7 @@ type State @state {
   story:        String        @default(string: "yeah")
   title:        String !
 }
+
+extend type Query {
+  
+}

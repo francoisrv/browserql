@@ -14,12 +14,37 @@ export default class Client {
   ) {
   }
 
-  readQuery(options: any) {
-    return this.apollo.readQuery(options)
+  // QUERY
+
+  readQuery(name: string, variables?: any) {
+    const query = this.getQuery(name)
+    return this.apollo.readQuery({ query, variables })
   }
 
   getQuery(name: string): DocumentNode {
     return get(find(this.transactions, { name }), 'node')
+  }
+
+  query(name: string, variables?: any) {
+    const query = this.getQuery(name)
+    return this.apollo.query({
+      query,
+      variables
+    })
+  }
+
+  // MUTATION
+
+  getMutation(name: string): DocumentNode {
+    return this.getQuery(name)
+  }
+
+  mutate(name: string, variables?: any) {
+    const mutation = this.getMutation(name)
+    return this.apollo.mutate({
+      mutation,
+      variables
+    })
   }
 
   getContext(path?: string) {
@@ -27,14 +52,5 @@ export default class Client {
       return get(this.context, path)
     }
     return this.context
-  }
-
-  getMutation(name: string): DocumentNode {
-    return this.getQuery(name)
-  }
-
-  getCacheQueryData(name: string, variables?: any) {
-    const query = this.getQuery(name)
-    return this.apollo.readQuery({ query, variables })
   }
 }

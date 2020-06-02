@@ -1,13 +1,21 @@
 {
   "name": "browserql",
-  "version": "1.0.0",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "test": "jest dist/test.test"
+  },
   "dependencies": {
+    "@types/jest": "^25.2.3",
     "@types/lodash": "^4.14.154",
     "@types/lodash.find": "^4.6.6",
+    "@types/lodash.get": "^4.4.6",
     "apollo-cache-inmemory": "^1.6.6",
     "apollo-client": "^2.6.10",
     "apollo-link-schema": "^1.2.5",
     "graphql": "^14.0.0",
+    "jest": "^26.0.1",
     "lodash.find": "^4.6.0",
     "lodash.get": "^4.4.2"
   }

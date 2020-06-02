@@ -1,7 +1,32 @@
 browserql-core
 ===
 
-Add default values to 
+Core plugin for browserql
+
+## Usage
+
+```js
+import { connect } from 'browserql'
+import defaultValue from 'browserql-default'
+
+const client = connect({
+  plugins: [core()]
+})
+```
+
+## Directives
+
+### default
+
+#### default value for query
+
+You can specify a default return value for a query in case this query has not yet been cached
+
+```graphql
+type Query {
+  isLoggedIn
+}
+```
 
 ```js
 import { connect } from 'browserql'

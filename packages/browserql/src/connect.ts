@@ -1,45 +1,16 @@
 import ApolloClient from 'apollo-client'
+import find from 'lodash.find'
+import gql from 'graphql-tag'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { SchemaLink } from 'apollo-link-schema'
-import { buildASTSchema, printSchema, extendSchema, buildSchema, DocumentNode, parse, GraphQLSchema, printIntrospectionSchema } from 'graphql'
-import gql from 'graphql-tag'
-import find from 'lodash.find'
-import get from 'lodash.get'
-import makeTransaction from './makeTransaction'
-import { Transaction, TransactionType } from './types'
+import { buildASTSchema, printSchema, extendSchema } from 'graphql'
+
 import Client from './Client'
-
-type Plugin = (
-  schema: GraphQLSchema
-) => {
-  schema: DocumentNode
-  resolvers: any
-  rehydrateWithClient?: (client: any, resolvers: any) => void
-  context?: any
-}
-
-interface ConnectOptions {
-  schema: DocumentNode | string
-  resolvers?: {
-    [field: string]: Function
-  }
-  plugins?: Plugin[]
-}
-
-interface ConnectResults {
-  apollo: ApolloClient<any>
-  transactions: Transaction[]
-  transaction(name: string): Transaction | undefined
-  context: any
-}
+import makeTransaction from './makeTransaction'
+import { Transaction, TransactionType, ConnectOptions } from './types'
 
 const base = gql`
-type Query {
-  ping: Int!
-}
-type Mutation {
-  pong: Int!
-}
+directive @browserql on OBJECT
 `
 
 export default function connect(options: ConnectOptions): Client {
@@ -51,11 +22,13 @@ export default function connect(options: ConnectOptions): Client {
 
   const schema = typeof options.schema === 'string' ? gql(options.schema) : options.schema
 
-  let ast = extendSchema(
-    buildASTSchema(base),
-    schema,
-    { assumeValid: true }
-  )
+  // let ast = extendSchema(
+  //   buildASTSchema(base),
+  //   schema,
+  //   { assumeValid: true }
+  // )
+
+  let ast = buildASTSchema(schema, { assumeValid: true })
 
   const rehydrates: any[] = []
 
@@ -99,7 +72,7 @@ export default function connect(options: ConnectOptions): Client {
     })
   }
 
-  console.log(printSchema(ast), resolvers)
+  const source = printSchema(ast)
   
   const link = new SchemaLink({
     schema: ast,
@@ -111,7 +84,7 @@ export default function connect(options: ConnectOptions): Client {
     cache,
   })
 
-  const transaction = name => find(transactions, { name })
+  const transaction = (name: string) => find(transactions, { name })
 
   for (const rehydrate of rehydrates) {
     rehydrate({client, resolvers, transaction})

@@ -151,7 +151,7 @@ connect({ schema, resolvers })
 
 ```ts
 interface Client {
-  apollo:       ApolloProvider
+  apollo:                         ApolloProvider
   
   getTransaction(name: string):   Transaction
   printQuery():                   string
@@ -163,5 +163,3 @@ interface Client {
 ```
 
 ### members
-
-

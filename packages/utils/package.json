@@ -1,6 +1,11 @@
 {
   "name": "browserql-utils",
   "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rm -rf dist && tsc"
+  },
   "dependencies": {
     "graphql": "^14.0.0"
   }
