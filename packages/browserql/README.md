@@ -8,8 +8,7 @@ Use graphql in the browser 🚀
 ## Why?
 
 - 💪 powerful state management of your front-end app including offline via apollo cache
-- 💡 easy-to-reason code layout
-- 📳 query first set mind
+- 💡 easy-to-reason code layout thanks to graphql syntax
 - 🤩 all-in-the-browser
 
 ## Usage
