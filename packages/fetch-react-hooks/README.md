@@ -26,7 +26,10 @@ const client = connect({
         email:      String !
         password:   String !
       ): User
-      @fetch(post: "https://api.com/v1/login")
+      @fetch(
+        post: "https://api.com/v1/login"
+        json: true
+      )
     }
   `,
   plugins: [fetchQL()]
