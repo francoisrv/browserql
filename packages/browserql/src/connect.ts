@@ -4,8 +4,10 @@ import { SchemaLink } from 'apollo-link-schema'
 import { buildASTSchema, printSchema, extendSchema, buildSchema, DocumentNode, parse, GraphQLSchema, printIntrospectionSchema } from 'graphql'
 import gql from 'graphql-tag'
 import find from 'lodash.find'
+import get from 'lodash.get'
 import makeTransaction from './makeTransaction'
 import { Transaction, TransactionType } from './types'
+import Client from './Client'
 
 type Plugin = (
   schema: GraphQLSchema
@@ -40,7 +42,7 @@ type Mutation {
 }
 `
 
-export default function connect(options: ConnectOptions): ConnectResults {
+export default function connect(options: ConnectOptions): Client {
   const cache = new InMemoryCache()
   
   const { resolvers = {} } = options
@@ -115,10 +117,11 @@ export default function connect(options: ConnectOptions): ConnectResults {
     rehydrate({client, resolvers, transaction})
   }
 
-  return {
-    apollo: client,
+  return new Client(
+    client,
+    resolvers,
+    schema,
     transactions,
-    transaction,
     context
-  }
+  )
 }

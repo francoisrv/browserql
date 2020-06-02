@@ -6,66 +6,63 @@ import camelCase from 'lodash.camelcase'
 import get from 'lodash.get'
 
 export default function useState(path: string) {
-  const client = React.useContext(Context)
+  const contextClient = React.useContext(Context)
+  if (!contextClient) {
+    return [
+      undefined,
+      {
+        error: new Error('No client found')
+      }
+    ]
+  }
+  const client = contextClient
   const name = upperFirst(camelCase(path))
   const queryName = `get${ name }`
-  const transaction =  client.transaction(queryName)
+
+  function getInitialStateValue(path: string) {
+    return client.getContext(`state.${ path }.value`)
+  }
   
   const getCache = () => {
-    const { data } = client.apollo.readQuery({
-      query: transaction.node
-    })
+    const data = client.readQuery(queryName)
     if (typeof data === 'undefined') {
-      return client.context.state.State.counter.value
+      return getInitialStateValue('State.counter')
     }
     return data
   }
+
+  function getter() {
+    const results = useQuery(client.getQuery(queryName))
+    return [
+      get(results, `data.${ queryName }`, undefined),
+      results
+    ]
+  }
+
+  function setter() {
+    const mutationName = `set${ name }`
+    const [trigger, results] = useMutation(
+      client.getMutation(mutationName)
+    )
+    return [
+      (variables: any) => {
+        console.log({variables})
+        trigger({variables})
+      },
+      results
+    ]
+  }
+
+  function upsetter() {
+
+  }
+
+  setter.increment = () => {
+
+  }
   
   return {
-    get: () => {
-      const results = useQuery(transaction.node)
-      return [
-        get(results, `data.${ queryName }`, undefined),
-        results
-      ]
-    },
-    set: () => {
-      const mutationName = `set${ name }`
-      const [trigger, results] = useMutation(
-        client.transaction(mutationName).node
-      )
-      return [
-        (variables: any) => {
-          console.log({variables})
-          trigger({variables})
-        },
-        results
-      ]
-    },
-    increment: () => {
-      const mutationName = `set${ name }`
-      const [trigger, results] = useMutation(
-        client.transaction(mutationName).node
-      )
-      return [
-        (variables: any) => {
-          const data = getCache()
-          console.log({data})
-          const nextData = (data || 0) + 1
-          trigger({
-            variables: { value: nextData },
-            update: (store) => {
-              client.apollo.writeQuery({
-                query: transaction.node,
-                data: {
-                  [queryName]: nextData
-                }
-              })
-            }
-          })
-        },
-        results
-      ]
-    }
+    get: getter,
+    set: setter
   }
 }

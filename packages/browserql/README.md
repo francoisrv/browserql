@@ -151,6 +151,17 @@ connect({ schema, resolvers })
 
 ```ts
 interface Client {
-
+  apollo:       ApolloProvider
+  
+  getTransaction(name: string):   Transaction
+  printQuery():                   string
+  getContext(path?: string):      object
+  getQuery(name: string):         DocumentNode
+  getSchema():                    GraphQLSchema
+  getResolvers():                 object
 }
 ```
+
+### members
+
+
