@@ -44,11 +44,6 @@ declare function connect(options: ConnectOptions): BrowserQLClient
 ### options
 
 ```ts
-type Schema =
-| DocumentNode
-| GraphQLSchema
-| string
-
 interface ConnectOptions {
   schema:         Schema | Schema[]
 
@@ -59,6 +54,13 @@ interface ConnectOptions {
 ```
 
 #### schema
+
+```ts
+type Schema =
+| DocumentNode
+| GraphQLSchema
+| string
+```
 
 You can pass either a string, a document node or a graphQL schema object -- or an array with any of these three.
 
