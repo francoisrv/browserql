@@ -29,16 +29,14 @@ ReactDOM.render(
 )
 
 function App() {
-  const nameState = useState('App.name')
-  const [name] = nameState.get()
-  const [setName] = nameState.set()
+  const name = useState('App.name')
+  const [state] = name.get()
+  const [setState] = name.set()
   return (
-    <form>
-      <input
-        value={ name }
-        onChange={ e => setName(e.target.value) }
-      />
-    </form>
+    <input
+      value={ state }
+      onChange={ e => setState(e.target.value) }
+    />
   )
 }
 ```
