@@ -15,11 +15,7 @@ import Provider from 'browserql-react-provider'
 import { useState } from 'browserql-state-react-hooks'
 
 const schema = gql`
-type App @state {
-  name:       String!
-  private:    Boolean!  @default(value: false)
-  stars:      Int!      @default(value: 0)
-}
+type App @state { name: String! }
 `
 const plugins = [
   state()
