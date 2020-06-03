@@ -1,6 +1,12 @@
 {
-  "name": "browserql-plugin-state",
+  "name": "browserql-state",
   "version": "1.0.0",
+  "scripts": {
+    "build": "rm -rf dist && tsc"
+  },
+  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "types": "dist/index.d.ts",
   "dependencies": {
     "@types/lodash": "^4.14.154",
     "graphql": "^14.0.0",

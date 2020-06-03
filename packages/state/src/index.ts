@@ -1,6 +1,6 @@
-import { DocumentNode, GraphQLSchema, isObjectType, GraphQLField, isScalarType, isNonNullType, GraphQLOutputType, GraphQLArgument } from 'graphql'
+import { GraphQLSchema, isObjectType, GraphQLField, isScalarType, isNonNullType, GraphQLOutputType, GraphQLArgument } from 'graphql'
 import gql from 'graphql-tag'
-import { set, find, camelCase, upperFirst } from 'lodash'
+import { find, camelCase, upperFirst } from 'lodash'
 import printType from 'browserql-utils/src/printType'
 
 interface State {
@@ -46,21 +46,9 @@ function setDefaultValue(field: GraphQLField<any, any>, fallback: any) {
   return fallback
 }
 
-function printArguments(args: GraphQLArgument[]) {
-  if (!args.length) {
-    return ''
-  }
-  return [
-    '(',
-    '  name: String !',
-    ')',
-  ].join('\n    ')
-}
 
 export default function browserqlPluginState(
-  schema: GraphQLSchema,
-  resolvers: any
-) {
+  schema: GraphQLSchema) {
   const state: State = {}
   const types = schema.getTypeMap()
   for (const name in types) {

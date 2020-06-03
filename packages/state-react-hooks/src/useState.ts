@@ -22,14 +22,6 @@ export default function useState(path: string) {
   function getInitialStateValue(path: string) {
     return client.getContext(`state.${ path }.value`)
   }
-  
-  const getCache = () => {
-    const data = client.readQuery(queryName)
-    if (typeof data === 'undefined') {
-      return getInitialStateValue('State.counter')
-    }
-    return data
-  }
 
   function getter() {
     const results = useQuery(client.getQuery(queryName))

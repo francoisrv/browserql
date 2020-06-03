@@ -15,7 +15,7 @@ import Provider from 'browserql-react-provider'
 import { useState } from 'browserql-state-react-hooks'
 
 const schema = gql`
-type App @state { name: String! }
+type App @state { version: String! @default(value: "1.0.0") }
 `
 const plugins = [
   state()
@@ -29,9 +29,10 @@ ReactDOM.render(
 )
 
 function App() {
-  const name = useState('App.name')
-  const [state] = name.get()
-  const [setState] = name.set()
+  const name        =   useState().App.name
+  const [state]     =   name.get()
+  const [setState]  =   name.set()
+  
   return (
     <input
       value={ state }

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "main": "dist/index.js",
-  "types": "distt/index.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && tsc",
     "test": "jest dist/tests"
