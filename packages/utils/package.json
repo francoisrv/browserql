@@ -7,6 +7,8 @@
     "build": "rm -rf dist && tsc"
   },
   "dependencies": {
-    "graphql": "^14.0.0"
+    "graphql": "^14.0.0",
+    "graphql-tag": "^2.10.3",
+    "jest": "^26.0.1"
   }
 }

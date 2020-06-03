@@ -72,8 +72,6 @@ export default function connect(options: ConnectOptions): Client {
     })
   }
 
-  const source = printSchema(ast)
-  
   const link = new SchemaLink({
     schema: ast,
     rootValue: resolvers
@@ -90,11 +88,14 @@ export default function connect(options: ConnectOptions): Client {
     rehydrate({client, resolvers, transaction})
   }
 
+  const source = printSchema(ast)
+
   return new Client(
     client,
     resolvers,
     schema,
     transactions,
-    context
+    context,
+    source
   )
 }

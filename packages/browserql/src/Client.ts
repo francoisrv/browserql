@@ -10,8 +10,15 @@ export default class Client {
     private readonly resolvers: any,
     private readonly schema: any,
     private readonly transactions: any[],
-    private readonly context: any
+    private readonly context: any,
+    private readonly source: string,
   ) {
+  }
+
+  // SOURCE
+
+  printSchema() {
+    return this.source
   }
 
   // QUERY

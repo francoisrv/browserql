@@ -6,7 +6,7 @@
   "types": "distt/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "test": "jest dist/test.test"
+    "test": "jest dist/tests"
   },
   "dependencies": {
     "@types/jest": "^25.2.3",

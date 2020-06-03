@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
-import connect from './connect'
-import Client from './Client'
+import connect from '../connect'
+import Client from '../Client'
 
 describe('Resolvers', () => {
   const schema = gql`
