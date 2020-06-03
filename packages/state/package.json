@@ -1,5 +1,5 @@
 {
-  "name": "browserql-state",
+  "name": "@browserql/state",
   "version": "1.0.0",
   "scripts": {
     "build": "rm -rf dist && tsc"
@@ -9,7 +9,11 @@
   "types": "dist/index.d.ts",
   "dependencies": {
     "@types/lodash": "^4.14.154",
+    "@types/lodash.camelcase": "^4.3.6",
+    "@types/lodash.upperfirst": "^4.3.6",
     "graphql": "^14.0.0",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "lodash.camelcase": "^4.3.0",
+    "lodash.upperfirst": "^4.3.1"
   }
 }

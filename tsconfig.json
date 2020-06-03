@@ -8,6 +8,7 @@
     "declaration": true,
     "declarationMap": true,
     "types": ["node"],
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "lib": ["esnext.asynciterable", "ES2015", "DOM"]
   }
 }

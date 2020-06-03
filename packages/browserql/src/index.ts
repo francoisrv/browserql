@@ -1,2 +1,2 @@
-export { default as connect } from './connect'
+export { default as default } from './connect'
 export * from './types'

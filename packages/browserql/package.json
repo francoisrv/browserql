@@ -1,12 +1,12 @@
 {
-  "name": "browserql",
+  "name": "@browserql/client",
   "version": "0.0.0",
-  "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "test": "jest dist/tests"
+    "test": "jest dist/tests",
+    "prepublishOnly": "npm run build && npm test"
   },
   "dependencies": {
     "@types/jest": "^25.2.3",
@@ -19,6 +19,7 @@
     "graphql": "^14.0.0",
     "jest": "^26.0.1",
     "lodash.find": "^4.6.0",
-    "lodash.get": "^4.4.2"
+    "lodash.get": "^4.4.2",
+    "@browserql/utils": "^1.0.0"
   }
 }

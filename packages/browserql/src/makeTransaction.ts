@@ -1,6 +1,6 @@
 import { GraphQLField } from 'graphql'
 
-import { printType } from 'browserql-utils'
+import { printType } from '@browserql/utils'
 
 import { TransactionType } from './types'
 

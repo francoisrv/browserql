@@ -40,6 +40,14 @@ export default class Client {
     })
   }
 
+  writeQuery(name: string, data: any) {
+    const query = this.getQuery(name)
+    return this.apollo.writeQuery({
+      query,
+      data: { [name]: data }
+    })
+  }
+
   // MUTATION
 
   getMutation(name: string): DocumentNode {
