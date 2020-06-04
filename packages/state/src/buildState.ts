@@ -1,12 +1,13 @@
 import { State } from './types'
-import getTypesWithDirectives from '@browserql/utils/dist/getTypesWithDirectives'
+import { getTypesWithDirective, getName } from '@browserql/utils'
 import { GraphQLSchema } from 'graphql'
-import getName from '@browserql/utils/dist/getName'
+import setDefaultState from './setDefaultState'
+import { setInitialState } from './setInitialState'
 
 export default function buildState(schema: GraphQLSchema, directiveName: string) {
   const state: State = {}
 
-  const types = getTypesWithDirectives(schema, directiveName)
+  const types = getTypesWithDirective(schema, directiveName)
 
   for (const type of types) {
     const typeName = getName(type)
@@ -16,7 +17,7 @@ export default function buildState(schema: GraphQLSchema, directiveName: string)
       const field = fields[fieldName]
       state[name][fieldName] = {
         field,
-        value: setDefaultValue(field, setInitialValue(field.type))
+        value: setDefaultState(field, setInitialState(field.type))
       }
     }
   }

@@ -1,0 +1,15 @@
+{
+  "name": "@browserql/firestore",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@types/graphql": "^14.5.0",
+    "graphql": "^14.0.0"
+  }
+}

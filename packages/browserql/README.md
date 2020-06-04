@@ -1,4 +1,4 @@
-browserql
+@browserql/client
 ===
 
 Use graphql in the browser 🚀
@@ -14,7 +14,7 @@ Use graphql in the browser 🚀
 ## Usage
 
 ```js
-import { connect } from 'browserql'
+import connect from '@browserql/client'
 
 const schema = `
 type Query {
@@ -27,12 +27,9 @@ const resolvers = {
 
 const client = connect({ schema, resolvers })
 
-const { data } = client.query({
-  query: client.queries.hello,
-  variables: { name: 'foo' }
-})
+const { data } = await client.query('hello', { name: 'foo' })
 
-data.hello // "hello foo"
+console.log(data.hello) // "hello foo"
 ```
 
 ## connect

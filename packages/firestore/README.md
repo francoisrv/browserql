@@ -1,24 +1,29 @@
-browserql-firestore
+@browserql/firestore
 ===
 
-firestore plugin for brwoserql
+firestore plugin for browserql
 
 ## Usage
 
 ```js
-import { connect } from 'browserql'
-import firestore from 'browserql-firestore'
+import connect from '@browserql/client'
+import firestore from '@browserql/firestore'
 import gql from 'graphql-tools'
+import * as firebase from 'firebase/app'
+
+firebase.initializeApp(firebaseConfig)
 
 const schema = gql`
-type Book @firestore {
-  chat:         ID!       @firestore(rel: "Chat" index: true)
-  sender:       ID!       @firestore(rel: "User" index: true)
-  message:      String!
+type Author     @firestore {
+  name:         String!
+}
+
+type Book       @firestore {
+  name:         String!
+  author:       ID!         @rel(type: "Author")
 }
 `
-
-export const { client } = connect({
+const client = connect({
   schema,
   plugins: [
     firestore()
@@ -27,5 +32,11 @@ export const { client } = connect({
 
 const db = firestore(client)
 
-const chat = db.create.Chat({ name: })
+const [books, { loading, error }] = await db.Book.find(
+  { author: 'Victor Hugo' },
+  {
+    paging: { page: 1, rowsPerPage: 5 },
+    populate: 'author'
+  }
+)
 ```

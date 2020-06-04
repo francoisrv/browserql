@@ -1,7 +1,7 @@
 import { State } from './types'
 import upperFirst from 'lodash.upperfirst'
 import camelCase from 'lodash.camelcase'
-import { Client } from '@browserql/client'
+import { Client, ClientContext } from '@browserql/client'
 
 export default function buildResolvers(state: State) {
   const resolvers: any = {}
@@ -11,7 +11,8 @@ export default function buildResolvers(state: State) {
       const queryName = `get${ name }`
       const mutationName = `set${ name }`
       
-      resolvers[queryName] = (client: Client) => () => {
+      resolvers[queryName] = (_a: any, context: ClientContext) => {
+        const client = context.getBrowserQLClient()
         try {
           const result = client.readQuery(queryName)
           console.log({result})
@@ -21,7 +22,8 @@ export default function buildResolvers(state: State) {
         return state[type][field].value
       }
       
-      resolvers[mutationName] = (client: Client) => ({ value }: { value: any }) => {
+      resolvers[mutationName] = (client: Client) => ({ value }: { value: any }, context: ClientContext) => {
+        const client = context.getBrowserQLClient()
         client.writeQuery(queryName, value)
         return value
       }

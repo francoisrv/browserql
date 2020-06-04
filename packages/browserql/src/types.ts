@@ -31,3 +31,7 @@ export interface ConnectOptions {
   }
   plugins?: Plugin[]
 }
+
+export interface ClientContext {
+  getBrowserQLClient(): Client
+}

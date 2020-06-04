@@ -7,6 +7,7 @@ describe('Resolvers', () => {
   type Query {
     foo: String
     hello(name: String): String
+    queryWithClient: String
   }
 
   type Mutation {
@@ -18,7 +19,8 @@ describe('Resolvers', () => {
     foo: () => 'bar',
     hello: ({ name }: any) => `hello ${ name }`,
     a1: () => 42,
-    a2: (o: any) => o.foo
+    a2: (o: any) => o.foo,
+    queryWithClient: (_a: any, { getBrowserQLClient }: any) => getBrowserQLClient().getQuery('foo').kind
   }
   let client: Client
 
@@ -44,5 +46,15 @@ describe('Resolvers', () => {
   it('should apply mutation resolver with variables', async () => {
     const results = await client.mutate('a2', { foo: 22 })
     expect(results.data).toHaveProperty('a2', 22)
+  })
+
+  it('should apply mutation resolver with variables', async () => {
+    const results = await client.mutate('a2', { foo: 22 })
+    expect(results.data).toHaveProperty('a2', 22)
+  })
+
+  it('should have client', async () => {
+    const results = await client.query('queryWithClient')
+    expect(results.data).toHaveProperty('queryWithClient', 'Document')
   })
 })

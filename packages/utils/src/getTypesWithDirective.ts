@@ -2,7 +2,7 @@ import getTypes from './getTypes'
 import { GraphQLSchema } from 'graphql'
 import hasDirective from './hasDirective'
 
-export default function getTypesWithDirectives(
+export default function getTypesWithDirective(
   schema: GraphQLSchema,
   directiveName: string
 ) {

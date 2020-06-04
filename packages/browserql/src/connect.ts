@@ -72,9 +72,16 @@ export default function connect(options: ConnectOptions): Client {
     })
   }
 
+  let browserQLClient: Client
+
+  function getBrowserQLClient() {
+    return browserQLClient
+  }
+
   const link = new SchemaLink({
     schema: ast,
-    rootValue: resolvers
+    rootValue: resolvers,
+    context: { getBrowserQLClient }
   })
   
   const client = new ApolloClient({
@@ -90,7 +97,7 @@ export default function connect(options: ConnectOptions): Client {
 
   const source = printSchema(ast)
 
-  return new Client(
+  browserQLClient = new Client(
     client,
     resolvers,
     schema,
@@ -98,4 +105,6 @@ export default function connect(options: ConnectOptions): Client {
     context,
     source
   )
+
+  return browserQLClient
 }

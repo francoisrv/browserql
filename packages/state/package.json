@@ -2,7 +2,8 @@
   "name": "@browserql/state",
   "version": "1.0.0",
   "scripts": {
-    "build": "rm -rf dist && tsc"
+    "build": "rm -rf dist && tsc",
+    "prepublishOnly": "npm run build"
   },
   "main": "dist/index.js",
   "source": "src/index.ts",
