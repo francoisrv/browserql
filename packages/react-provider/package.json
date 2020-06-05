@@ -1,15 +1,15 @@
 {
   "name": "@browserql/react-provider",
-  "version": "1.0.2",
-  "main": "dist/Provider.js",
-  "types": "dist/Provider.d.ts",
-  "source": "src/Provider.tsx",
+  "version": "1.0.4",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.tsx",
   "scripts": {
     "build": "rm -rf dist && tsc",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@browserql/client": "^0.0.2",
+    "@browserql/client": "^0.0.6",
     "@types/react": "^16.9.35",
     "react": "^16.13.1",
     "react-apollo": "^3.1.5"
