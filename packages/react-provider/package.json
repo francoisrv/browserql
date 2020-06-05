@@ -1,6 +1,6 @@
 {
   "name": "@browserql/react-provider",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "dist/Provider.js",
   "types": "dist/Provider.d.ts",
   "source": "src/Provider.tsx",
