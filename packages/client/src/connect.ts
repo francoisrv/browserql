@@ -30,14 +30,13 @@ export default function connect(options: ConnectOptions): Client {
 
   let ast = buildASTSchema(schema, { assumeValid: true })
 
-  const rehydrates: any[] = []
-
   if (options.plugins) {
     for (const plugin of options.plugins) {
-      const { schema: pluginSchema, resolvers: pluginResolvers, rehydrateWithClient, context: pluginContext = {} } = plugin(ast)
-      if (rehydrateWithClient) {
-        rehydrates.push(rehydrateWithClient)
-      }
+      const {
+        schema: pluginSchema,
+        resolvers: pluginResolvers,
+        context: pluginContext = {}
+      } = plugin(ast, resolvers)
       ast = extendSchema(ast, pluginSchema)
       Object.assign(resolvers, pluginResolvers)
       Object.assign(context, pluginContext)
@@ -88,12 +87,6 @@ export default function connect(options: ConnectOptions): Client {
     link,
     cache,
   })
-
-  const transaction = (name: string) => find(transactions, { name })
-
-  for (const rehydrate of rehydrates) {
-    rehydrate({client, resolvers, transaction})
-  }
 
   const source = printSchema(ast)
 

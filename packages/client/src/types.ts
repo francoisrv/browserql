@@ -16,11 +16,11 @@ export interface Transaction {
 }
 
 export type Plugin = (
-  schema: GraphQLSchema
+  schema: GraphQLSchema,
+  resolvers: any
 ) => {
   schema: DocumentNode
-  resolvers: any
-  rehydrateWithClient?: (client: any, resolvers: any) => void
+  resolvers?: any
   context?: any
 }
 

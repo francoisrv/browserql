@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Context from 'browserql-react-provider/src/Context'
+import { Context } from '@browserql/react-provider'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import upperFirst from 'lodash.upperfirst'
 import camelCase from 'lodash.camelcase'
@@ -19,10 +19,6 @@ export default function useState(path: string) {
   const name = upperFirst(camelCase(path))
   const queryName = `get${ name }`
 
-  function getInitialStateValue(path: string) {
-    return client.getContext(`state.${ path }.value`)
-  }
-
   function getter() {
     const results = useQuery(client.getQuery(queryName))
     return [
@@ -31,30 +27,29 @@ export default function useState(path: string) {
     ]
   }
 
-  function setter() {
-    const mutationName = `set${ name }`
+  function mutate(mutationName: string) {
     const [trigger, results] = useMutation(
       client.getMutation(mutationName)
     )
     return [
       (variables: any) => {
-        console.log({variables})
         trigger({variables})
       },
       results
     ]
   }
 
-  function upsetter() {
-
+  function setter() {
+    return mutate(`set${ name }`)
   }
 
-  setter.increment = () => {
-
+  function toggle() {
+    return mutate(`toggle${ name }`)
   }
   
   return {
     get: getter,
-    set: setter
+    set: setter,
+    toggle,
   }
 }

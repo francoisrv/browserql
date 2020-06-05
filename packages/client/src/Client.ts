@@ -62,6 +62,8 @@ export default class Client {
     })
   }
 
+  // CONTEXT
+
   getContext(path?: string) {
     if (path) {
       return get(this.context, path)

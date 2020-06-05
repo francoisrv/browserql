@@ -9,21 +9,36 @@ export default function buildResolvers(state: State) {
     for (const field in state[type]) {
       const name = upperFirst(camelCase(`${ type } ${ field }`))
       const queryName = `get${ name }`
-      const mutationName = `set${ name }`
+
+      const getValue = (client: Client) => {
+        try {
+          const result = client.readQuery(queryName)
+          return result.data[queryName]
+        } catch (error) {
+          return state[type][field].value
+        }
+      }
       
       resolvers[queryName] = (_a: any, context: ClientContext) => {
         const client = context.getBrowserQLClient()
         try {
           const result = client.readQuery(queryName)
-          console.log({result})
+          return result.data[queryName]
         } catch (error) {
           client.writeQuery(queryName, state[type][field].value)
         }
         return state[type][field].value
       }
       
-      resolvers[mutationName] = (client: Client) => ({ value }: { value: any }, context: ClientContext) => {
+      resolvers[`set${ name }`] = (client: Client) => ({ value }: { value: any }, context: ClientContext) => {
         const client = context.getBrowserQLClient()
+        client.writeQuery(queryName, value)
+        return value
+      }
+
+      resolvers[`toggle${ name }`] = (client: Client) => (_a: any, context: ClientContext) => {
+        const client = context.getBrowserQLClient()
+        const value = !getValue(client)
         client.writeQuery(queryName, value)
         return value
       }

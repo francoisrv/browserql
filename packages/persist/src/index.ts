@@ -6,7 +6,7 @@ interface PluginProps {}
 
 export default function plugin(props?: PluginProps) {
   return function(...args: Parameters<Plugin>): ReturnType<Plugin> {
-    const directive = `directive @firestore(collection: String) on OBJECT`
+    const directive = `directive @persist on FIELD_DEFINITION`
     const pluginSchema = gql`${ directive }`
     return {
       schema: pluginSchema
