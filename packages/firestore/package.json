@@ -3,7 +3,8 @@
   "version": "1.0.7",
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "test": "jest dist/tests"
   },
   "main": "dist/index.js",
   "source": "src/index.ts",
@@ -13,5 +14,9 @@
     "@types/graphql": "^14.5.0",
     "graphql": "^14.0.0",
     "graphql-tag": "^2.10.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.2.3",
+    "jest": "^26.0.1"
   }
 }

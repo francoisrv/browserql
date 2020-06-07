@@ -1,15 +1,15 @@
-import gql from 'graphql-tag'
-
 import { Plugin } from '@browserql/client'
+import buildResolvers from './buildResolvers'
+import buildSchema from './buildSchema'
 
 interface PluginProps {}
 
 export default function plugin(props?: PluginProps) {
   return function(...args: Parameters<Plugin>): ReturnType<Plugin> {
-    const directive = `directive @firestore(collection: String) on OBJECT`
-    const pluginSchema = gql`${ directive }`
+    const [schema] = args
     return {
-      schema: pluginSchema
+      schema: buildSchema(schema),
+      resolvers: buildResolvers(schema)
     }
   }
 }

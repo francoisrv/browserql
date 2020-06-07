@@ -14,12 +14,14 @@
     "@types/lodash": "^4.14.154",
     "@types/lodash.find": "^4.6.6",
     "@types/lodash.get": "^4.4.6",
+    "@types/shortid": "^0.0.29",
     "apollo-cache-inmemory": "^1.6.6",
     "apollo-client": "^2.6.10",
     "apollo-link-schema": "^1.2.5",
     "graphql": "^14.0.0",
     "jest": "^26.0.1",
     "lodash.find": "^4.6.0",
-    "lodash.get": "^4.4.2"
+    "lodash.get": "^4.4.2",
+    "shortid": "^2.2.15"
   }
 }

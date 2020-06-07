@@ -3,7 +3,8 @@ import find from 'lodash.find'
 import gql from 'graphql-tag'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { SchemaLink } from 'apollo-link-schema'
-import { buildASTSchema, printSchema, extendSchema } from 'graphql'
+import { buildASTSchema, printSchema, extendSchema, GraphQLObjectType, GraphQLID } from 'graphql'
+import shortid from 'shortid'
 
 import Client from './Client'
 import makeTransaction from './makeTransaction'
@@ -22,13 +23,23 @@ export default function connect(options: ConnectOptions): Client {
 
   const schema = typeof options.schema === 'string' ? gql(options.schema) : options.schema
 
-  // let ast = extendSchema(
-  //   buildASTSchema(base),
-  //   schema,
-  //   { assumeValid: true }
-  // )
-
   let ast = buildASTSchema(schema, { assumeValid: true })
+
+  const hasQueryType = ast.getQueryType()
+
+  if (!hasQueryType) {
+    let s = printSchema(ast)
+    s += `type Query { hgdsGHEEGD: ID }`
+    ast = buildASTSchema(gql(s))
+  }
+
+  const hasMutation = ast.getMutationType()
+
+  if (!hasMutation) {
+    let s = printSchema(ast)
+    s += `type Mutation { dskjhuuehjHDE: ID }`
+    ast = buildASTSchema(gql(s))
+  }
 
   if (options.plugins) {
     for (const plugin of options.plugins) {

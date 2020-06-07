@@ -12,6 +12,20 @@ describe('Schema', () => {
       `
     },
     ['should be ok', client => {
+      
+    }]
+  )
+
+  describeClient(
+    'should add vanilla query if no query type',
+    {
+      schema: gql`
+      type Foo {
+        id: ID!
+      }
+      `
+    },
+    ['should be ok', client => {
       console.log(client.printSchema())
     }]
   )
