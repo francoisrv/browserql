@@ -24,9 +24,6 @@ export default function connect(options: ConnectOptions): Client {
         resolvers: pluginResolvers,
         context: pluginContext = {}
       } = plugin(schema, resolvers)
-      console.log(123, pluginSchema)
-      ast = extendSchema(ast, pluginSchema)
-      Object.assign(resolvers, pluginResolvers)
       Object.assign(context, pluginContext)
     }
   }
