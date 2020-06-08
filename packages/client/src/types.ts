@@ -1,7 +1,6 @@
-import { DocumentNode, GraphQLSchema } from 'graphql'
-import BrowserQLClient from './Client'
-
-export type Client = BrowserQLClient
+import { DocumentNode } from 'graphql'
+import Schema from './Schema'
+import Client from './Client'
 
 export enum TransactionType {
   query = 'query',
@@ -16,7 +15,7 @@ export interface Transaction {
 }
 
 export type Plugin = (
-  schema: GraphQLSchema,
+  schema: Schema,
   resolvers: any
 ) => {
   schema: DocumentNode
@@ -30,6 +29,7 @@ export interface ConnectOptions {
     [field: string]: Function
   }
   plugins?: Plugin[]
+  debug?: boolean
 }
 
 export interface ClientContext {

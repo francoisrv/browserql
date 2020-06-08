@@ -28,8 +28,14 @@ describe('Schema', () => {
   })
   it('should have a query type', () => {
     const [,query] = next.definitions
-    console.log(query)
     expect(query.kind).toEqual('ObjectTypeExtension')
     expect(query.name.value).toEqual('Query')
+  })
+  it('should have a find method', () => {
+    const [,query] = next.definitions
+    const [find] = query.fields
+    console.log(find)
+    expect(find).toHaveProperty('kind', 'FieldDefinition')
+    expect(find.name).toHaveProperty('value', 'firestoreFindFoo')
   })
 })

@@ -3,43 +3,19 @@ import find from 'lodash.find'
 import gql from 'graphql-tag'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { SchemaLink } from 'apollo-link-schema'
-import { buildASTSchema, printSchema, extendSchema, GraphQLObjectType, GraphQLID } from 'graphql'
+import { buildASTSchema, printSchema, extendSchema, GraphQLObjectType, GraphQLID, print, isSpecifiedScalarType, isSpecifiedDirective  } from 'graphql'
 import shortid from 'shortid'
 
 import Client from './Client'
 import makeTransaction from './makeTransaction'
 import { Transaction, TransactionType, ConnectOptions } from './types'
-
-const base = gql`
-directive @browserql on OBJECT
-`
+import Schema from './Schema'
 
 export default function connect(options: ConnectOptions): Client {
   const cache = new InMemoryCache()
-  
   const { resolvers = {} } = options
-
   const context: any = {}
-
-  const schema = typeof options.schema === 'string' ? gql(options.schema) : options.schema
-
-  let ast = buildASTSchema(schema, { assumeValid: true })
-
-  const hasQueryType = ast.getQueryType()
-
-  if (!hasQueryType) {
-    let s = printSchema(ast)
-    s += `type Query { hgdsGHEEGD: ID }`
-    ast = buildASTSchema(gql(s))
-  }
-
-  const hasMutation = ast.getMutationType()
-
-  if (!hasMutation) {
-    let s = printSchema(ast)
-    s += `type Mutation { dskjhuuehjHDE: ID }`
-    ast = buildASTSchema(gql(s))
-  }
+  const schema = new Schema(options.schema)
 
   if (options.plugins) {
     for (const plugin of options.plugins) {
@@ -47,7 +23,8 @@ export default function connect(options: ConnectOptions): Client {
         schema: pluginSchema,
         resolvers: pluginResolvers,
         context: pluginContext = {}
-      } = plugin(ast, resolvers)
+      } = plugin(schema, resolvers)
+      console.log(123, pluginSchema)
       ast = extendSchema(ast, pluginSchema)
       Object.assign(resolvers, pluginResolvers)
       Object.assign(context, pluginContext)

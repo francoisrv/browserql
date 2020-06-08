@@ -13,7 +13,7 @@ export default function useFirestore(path: string) {
     ]
   }
   const client = contextClient
-  console.log({client})
+  console.log(client.printSchema())
   function find() {
     const queryName = `firestoreFind${ path }`
     return useQuery(queryName)
