@@ -6,10 +6,9 @@ interface PluginProps {}
 
 export default function plugin(props?: PluginProps) {
   return function(...args: Parameters<Plugin>): ReturnType<Plugin> {
-    const [schema] = args
-    return {
-      schema: buildSchema(schema),
-      resolvers: buildResolvers(schema)
-    }
+    const [schema, resolvers] = args
+    buildSchema(schema)
+    buildResolvers(schema)
+    return {}
   }
 }

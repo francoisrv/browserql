@@ -2,14 +2,9 @@ import { DocumentNode } from 'graphql'
 import Schema from './Schema'
 import Client from './Client'
 
-export enum TransactionType {
-  query = 'query',
-  mutation = 'mutation'
-}
-
 export interface Transaction {
   name: string
-  type: TransactionType
+  type: 'query' | 'mutation'
   node: DocumentNode
   source: string
 }
@@ -17,11 +12,7 @@ export interface Transaction {
 export type Plugin = (
   schema: Schema,
   resolvers: any
-) => {
-  schema: DocumentNode
-  resolvers?: any
-  context?: any
-}
+) => any
 
 export interface ConnectOptions {
   schema: DocumentNode | string
@@ -35,3 +26,5 @@ export interface ConnectOptions {
 export interface ClientContext {
   getBrowserQLClient(): Client
 }
+
+export type ResolverMiddleware = (input: any) => Promise<any>

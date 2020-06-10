@@ -1,7 +1,6 @@
-import { GraphQLSchema } from 'graphql'
-import { getTypesWithDirective, getName } from '@browserql/utils'
+import { Schema } from '@browserql/client'
 
-export default function buildResolvers(schema: GraphQLSchema) {
+export default function buildResolvers(schema: Schema) {
   const resolvers: any = {}
 
   // const types = getTypesWithDirective(schema, 'firestore')

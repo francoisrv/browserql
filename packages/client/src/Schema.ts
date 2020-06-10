@@ -1,4 +1,4 @@
-import { DocumentNode, print, DefinitionNode, parseType } from 'graphql'
+import { DocumentNode, print, DefinitionNode, parseType, ObjectFieldNode, ArgumentNode, FieldDefinitionNode, buildASTSchema, InputValueDefinitionNode, ObjectTypeDefinitionNode, parse, TypeDefinitionNode, isObjectType } from 'graphql'
 import gql from 'graphql-tag'
 import find from 'lodash.find'
 
@@ -40,7 +40,7 @@ export default class Schema {
     return false
   }
 
-  static getName(type: DefinitionNode) {
+  static getName(type: DefinitionNode | ObjectFieldNode | ArgumentNode | FieldDefinitionNode | InputValueDefinitionNode) {
     if ('name' in type) {
       return type.name?.value
     }
@@ -58,7 +58,10 @@ export default class Schema {
     }
   }
 
-  static buildDirective(directive: Directive) {
+  static buildDirective(directive: Directive | string) {
+    if (typeof directive === 'string') {
+      return parse(directive)
+    }
     const locations = []
     if (directive.locations.type) {
       locations.push({ kind: 'Name', value: 'OBJECT' })
@@ -84,6 +87,27 @@ export default class Schema {
     }
   }
 
+  static printType(type: any): string {
+    if (type.kind === 'NamedType') {
+      return Schema.getName(type) as string
+    }
+    if (type.kind === 'NonNullType') {
+      return `${ Schema.printType(type.type) } !`
+    }
+    if (type.kind === 'ListType') {
+      return `[ ${ Schema.printType(type.type) } ]`
+    }
+    return 'Unknown'
+  }
+
+  static printEndType(type: any): string {
+    return Schema.printType(type)
+      .replace(/!/g, '')
+      .replace(/\[/g, '')
+      .replace(/\]/g, '')
+      .trim()
+  }
+
   document: DocumentNode
 
   constructor(schema: string | DocumentNode) {
@@ -94,6 +118,10 @@ export default class Schema {
     return print(this.document)
   }
 
+  toAST() {
+    return buildASTSchema(this.document)
+  }
+
   getTypes() {
     const { definitions } = this.document
     return definitions.filter(def => {
@@ -101,6 +129,10 @@ export default class Schema {
         Schema.getName(def) !== 'Query' &&
         Schema.getName(def) !== 'Mutation'
     })
+  }
+
+  getType(name: string) {
+    return find(this.getTypes(), t => Schema.getName(t) === name)
   }
 
   getTypesWithDirective(directive: string) {
@@ -116,15 +148,38 @@ export default class Schema {
     )
   }
 
-  getQueries() {
+  getExtendedQueryTypes() {
+    const { definitions } = this.document
+    return definitions.filter(
+      def => def.kind === 'ObjectTypeExtension' && Schema.getName(def) === 'Query'
+    )
+  }
+
+  getMutationType() {
+    const { definitions } = this.document
+    return find(
+      definitions,
+      def => def.kind === 'ObjectTypeDefinition' && Schema.getName(def) === 'Mutation'
+    )
+  }
+
+  getQueries(): FieldDefinitionNode[] {
+    const queries: FieldDefinitionNode[] = []
     const queryType = this.getQueryType()
     if (queryType) {
-      return queryType.fields
+      // @ts-ignore
+      queries.push(...queryType.fields)
     }
-    return []
+    const extendedQueries = this.getExtendedQueryTypes()
+    extendedQueries.forEach(q => {
+      // @ts-ignore
+      queries.push(...q.fields)
+    })
+    return queries
   }
 
   addQueryType(queryType: Query = {}) {
+    // @ts-ignore
     this.document.definitions.push({
       kind: 'ObjectTypeDefinition',
       description: queryType.description,
@@ -137,15 +192,65 @@ export default class Schema {
     })
   }
 
-  addQuery(query: Field) {
+  addQuery(query: string | DocumentNode) {
     if (!this.getQueryType()) {
       this.addQueryType()
     }
-    const queryType = this.getQueryType()
-    queryType.fields.push(Schema.buildField(query))
+    const extendedQuery = typeof query === 'string' ? gql(query) : query
+    // @ts-ignore
+    this.document.definitions.push(extendedQuery.definitions[0])
   }
 
-  addDirective(directive: Directive) {
-    this.document.definitions.push(Schema.buildDirective(directive))
+  addDirective(directive: string | DocumentNode) {
+    const document = typeof directive === 'string' ? gql(directive) : directive
+    // @ts-ignore
+    this.document.definitions.push(...document.definitions)
+  }
+
+  getScalars() {
+    const { definitions } = this.document
+    return definitions.filter(d => d.kind === 'ScalarTypeDefinition')
+  }
+
+  getDirectives() {
+    const { definitions } = this.document
+    return definitions.filter(d => d.kind === 'DirectiveDefinition')
+  }
+
+  getDirective(name: string) {
+    return find(this.getDirectives(), d => Schema.getName(d) === name)
+  }
+
+  getInputs() {
+    const { definitions } = this.document
+    return definitions.filter(d => d.kind === 'InputObjectTypeDefinition')
+  }
+
+  getInput(name: string) {
+    return find(this.getInputs(), d => Schema.getName(d) === name)
+  }
+
+  addType(type: string | DocumentNode) {
+    const document = typeof type === 'string' ? gql(type) : type
+    // @ts-ignore
+    this.document.definitions.push(...document.definitions)
+  }
+
+  addEnum(enumeration: string | DocumentNode) {
+    const document = typeof enumeration === 'string' ? gql(enumeration) : enumeration
+    // @ts-ignore
+    this.document.definitions.push(...document.definitions)
+  }
+
+  addInput(input: string | DocumentNode) {
+    const document = typeof input === 'string' ? gql(input) : input
+    // @ts-ignore
+    this.document.definitions.push(...document.definitions)
+  }
+
+  extend(schema: string | DocumentNode) {
+    const document = typeof schema === 'string' ? gql(schema) : schema
+    // @ts-ignore
+    this.document.definitions.push(...document.definitions)
   }
 }

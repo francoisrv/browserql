@@ -1,11 +1,11 @@
 {
   "name": "@browserql/client",
-  "version": "0.0.6",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "test": "jest dist/tests",
+    "test": "jest dist",
     "prepublishOnly": "npm run build && npm test"
   },
   "dependencies": {
@@ -14,6 +14,8 @@
     "@types/lodash": "^4.14.154",
     "@types/lodash.find": "^4.6.6",
     "@types/lodash.get": "^4.4.6",
+    "@types/lodash.includes": "^4.3.6",
+    "@types/lodash.map": "^4.6.13",
     "@types/shortid": "^0.0.29",
     "apollo-cache-inmemory": "^1.6.6",
     "apollo-client": "^2.6.10",
@@ -22,6 +24,8 @@
     "jest": "^26.0.1",
     "lodash.find": "^4.6.0",
     "lodash.get": "^4.4.2",
+    "lodash.includes": "^4.3.0",
+    "lodash.map": "^4.6.0",
     "shortid": "^2.2.15"
   }
 }

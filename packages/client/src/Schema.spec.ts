@@ -1,123 +1,125 @@
-import { DocumentNode } from 'graphql'
-import gql from 'graphql-tag'
 import Schema from './Schema'
 
-type It = (schema: Schema) => (
-  () => void | Promise<void>
-)
+function indentSource(source: string, tab = '      ') {
+  const lines = source.split(/\n/)
+  return lines
+    .map(line => line.replace(new RegExp(`^${ tab }`), ''))
+    .join('\n')
+}
 
-function describeSchema(
-  label: string,
-  source: DocumentNode,
-  ...specs: [string, It][]
-) {
-  describe(label, () => {
-    let schema: Schema
-    beforeAll(() => {
-      schema = new Schema(source)
-    })
-    for (const [itLabel, itFn] of specs) {
-      it(itLabel, async () => itFn(schema)())
-    }
-  })
+interface ExpectTypeOptions {
+  description?: string | undefined
+  name?: string
+}
+
+function expectType(type: any, options: ExpectTypeOptions = {}) {
+  expect(type).toHaveProperty('kind', 'ObjectTypeDefinition')
+  if ('description' in options) {
+    expect(type).toHaveProperty('description', options.description)
+  } else {
+    expect(type).toHaveProperty('description', undefined)
+  }
+  expect(type).toHaveProperty('name')
+  expect(type.name).toHaveProperty('kind', 'Name')
+  if (options.name) {
+    expect(type.name).toHaveProperty('value', options.name)
+  } else {
+    expect(type.name).toHaveProperty('value')
+  }
+  expect(type).toHaveProperty('directives')
+  expect(Array.isArray(type.directives)).toBe(true)
+  expect(type).toHaveProperty('fields')
+  expect(Array.isArray(type.fields)).toBe(true)
+}
+
+function expectTypeToHaveDirective(type: any, directive: string) {
+  expect(Schema.hasDirective(type, directive)).toBe(true)
+}
+
+function expectField(field: any) {
+  console.log(field)
 }
 
 describe('Schema', () => {
-  describeSchema(
-    'it should print schema',
-    gql`type Foo { id: ID }`,
-    ['should print schema', schema => () => {
+  describe('Print', () => {
+    it('should print schema', () => {
+      const source = indentSource(`type Foo {
+        id: ID
+      }`)
+      const schema = new Schema(source)
       const str = schema.toString()
-      expect(str.trim()).toEqual(`type Foo {
-  id: ID
-}`)
-    }]
-  )
-
-  describeSchema(
-    'it should print schema with directives',
-    gql`type Foo @foo { id: ID }`,
-    ['should print schema', schema => () => {
+      expect(str.trim()).toEqual(source)
+    })
+    it('should print schema with directives', () => {
+      const source = indentSource(`type Foo @foo {
+        id: ID
+      }`)
+      const schema = new Schema(source)
       const str = schema.toString()
-      expect(str.trim()).toEqual(`type Foo @foo {
-  id: ID
-}`)
-    }]
-  )
+      expect(str.trim()).toEqual(source)
+    })
+  })
 
-  describeSchema(
-    'it should get types',
-    gql`type Foo @foo { id: ID } type Bar { id: ID! }`,
-    ['should print schema', schema => () => {
+  describe('Types', () => {
+    it('should get types', () => {
+      const schema = new Schema('type Foo @foo { id: ID } type Bar { id: ID! }')
       const types = schema.getTypes()
       expect(types).toHaveLength(2)
-    }]
-  )
-
-  describeSchema(
-    'it should get types with directive',
-    gql`type Foo @foo { id: ID } type Bar { id: ID! }`,
-    ['should print schema', schema => () => {
+      expectType(types[0], { name: 'Foo' })
+      expectType(types[1], { name: 'Bar' })
+      expectTypeToHaveDirective(types[0], 'foo')
+    })
+    it('should get type', () => {
+      const schema = new Schema('type Foo @foo { id: ID } type Bar { id: ID! }')
+      const type = schema.getType('Foo')
+      expectType(type, { name: 'Foo' })
+      expectTypeToHaveDirective(type, 'foo')
+    })
+    it('should get types with directive', () => {
+      const schema = new Schema('type Foo @foo { id: ID } type Bar { id: ID! }')
       const types = schema.getTypesWithDirective('foo')
       expect(types).toHaveLength(1)
-    }]
-  )
+      expectType(types[0], { name: 'Foo' })
+    })
+  })
 
-  describeSchema(
-    'it should get query if any',
-    gql`type Query { foo: ID }`,
-    ['should print schema', schema => () => {
+  describe('Queries', () => {
+    it('should get query if any', () => {
+      const schema = new Schema('type Query { foo: ID }')
       const queries = schema.getQueries()
       expect(queries).toHaveLength(1)
-    }]
-  )
-
-  describeSchema(
-    'it should return empty if no queries',
-    gql`type Foo { foo: ID }`,
-    ['should print schema', schema => () => {
+    })
+    it('should return empty if no queries', () => {
+      const schema = new Schema('type Foo { foo: ID }')
       const queries = schema.getQueries()
       expect(queries).toHaveLength(0)
-    }]
-  )
+    })
+    it('should get extended queries', () => {
+      const schema = new Schema(`
+      type Query { foo: ID }
+      extend type Query { bar: ID }
+      `)
+      const queries = schema.getQueries()
+      expect(queries).toHaveLength(2)
+    })
+    it('should add query', () => {
+      const schema = new Schema('type Foo { foo: ID }')
+      schema.addQuery('extend type Query { bar: String }')
+      const queries = schema.getQueries()
+      expect(queries).toHaveLength(1)
+    })
+    it('should extend query', () => {
+      const schema = new Schema('type Query { foo: ID }')
+      schema.addQuery('extend type Query { bar: String }')
+      const queries = schema.getQueries()
+      expect(queries).toHaveLength(2)
+    })
+  })
 
-  describeSchema(
-    'it should add query',
-    gql`type Foo { foo: ID }`,
-    ['should print schema', schema => () => {
-      schema.addQuery({
-        name: 'bar',
-        kind: 'String'
-      })
-    }]
-  )
-
-  describeSchema(
-    'it should extend query',
-    gql`type Query { foo: ID }`,
-    ['should print schema', schema => () => {
-      schema.addQuery({
-        name: 'bar',
-        kind: '[String]!'
-      })
-    }]
-  )
-
-  describeSchema(
-    'it should add directive',
-    gql`type Foo @foo { id: ID }`,
-    ['should print schema', schema => () => {
-      schema.addDirective({
-        name: 'foo',
-        locations: { type: true },
-        arguments: [
-          {
-            name: 'bar',
-            kind: 'ID'
-          }
-        ]
-      })
-      console.log(schema.toString())
-    }]
-  )
+  describe('Directives', () => {
+    it('should add directive as a string', () => {
+      const schema = new Schema('type Foo @foo { id: ID }')
+      schema.addDirective('directive @foo on OBJECT')
+    })
+  })
 })
