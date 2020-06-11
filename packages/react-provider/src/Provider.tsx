@@ -1,23 +1,13 @@
 import * as React from 'react'
 import { ApolloProvider } from 'react-apollo'
 import Context from './Context'
-import connect, { ConnectOptions } from '@browserql/client'
 
-interface PluginProps {
+interface ProviderProps {
   client: any
 }
 
-type ProviderProps =
-| PluginProps
-| ConnectOptions
-
 const Provider: React.FC<ProviderProps> = props => {
-  let client
-  if ('client' in props) {
-    client = props.client
-  } else {
-    client = connect(props)
-  }
+  const { client } = props
   return (
     <ApolloProvider client={ client.apollo }>
       <Context.Provider value={ client }>
@@ -27,4 +17,4 @@ const Provider: React.FC<ProviderProps> = props => {
   )
 }
 
-export default Provider
+export default React.memo(Provider)

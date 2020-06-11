@@ -9,7 +9,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@browserql/client": "^0.0.6",
+    "@browserql/client": "^1.0.0",
     "@types/react": "^16.9.35",
     "react": "^16.13.1",
     "react-apollo": "^3.1.5"

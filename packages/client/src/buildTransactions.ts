@@ -119,14 +119,10 @@ export function buildTransaction(
 export default function buildTransactions(schema: Schema): Transaction[] {
   const transactions: Transaction[] = []
 
-  const queryType = schema.getQueryType()
+  const queries = schema.getQueries()
 
-  if (queryType) {
-    if (('fields' in queryType) && Array.isArray(queryType.fields)) {
-      for (const field of queryType.fields) {
-        transactions.push(buildTransaction(field, 'query', schema))
-      }
-    }
+  for (const query of queries) {
+    transactions.push(buildTransaction(query, 'query', schema))
   }
 
   return transactions

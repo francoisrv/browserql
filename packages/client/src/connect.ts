@@ -41,6 +41,15 @@ export default function connect(options: ConnectOptions): Client {
     return browserQLClient
   }
 
+  let ast: any
+
+  try {
+    ast = schema.toAST()
+  } catch (error) {
+    console.log(schema.toString())
+    throw error
+  }
+
   const link = new SchemaLink({
     schema: schema.toAST(),
     rootValue,

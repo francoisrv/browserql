@@ -1,7 +1,7 @@
 import { Schema } from '@browserql/client'
 import gql from 'graphql-tag'
 
-function buildWhereArg(field: any, schema: Schema) {
+function buildWhereArg(field: any, schema: Schema): string {
   if (field.type.kind === 'NamedType') {
     if (field.type.name.value === 'String') {
       return `${ Schema.getName(field) }: FirestoreInputWhereString`
@@ -27,7 +27,7 @@ function buildWhereArg(field: any, schema: Schema) {
       schema.extend(`
       input ${ field.type.name.value }Input {
         ${
-          type.fields.map(field => `${ Schema.getName(field) }: ${ Schema.printType(field.type) }`).join('\n')
+          type.fields.map((field: any) => `${ Schema.getName(field) }: ${ Schema.printType(field.type) }`).join('\n')
         }
       }
       input FirestoreInputWhere${ field.type.name.value } {
@@ -46,6 +46,7 @@ function buildWhereArg(field: any, schema: Schema) {
     const type = Schema.printEndType(field.type)
     return `${ Schema.getName(field) }: FirestoreInputWhereArray${ type }`
   }
+  return ''
 }
 
 function buildWhere(type: any, schema: Schema): string[] {
@@ -64,7 +65,7 @@ export default function buildSchema(schema: Schema): void {
 
   input FirestorePaging {
     page: Int!
-    rowsPerPage: Int @default(value: 30)
+    rowsPerPage: Int
   }
 
   input FirestoreInputWhereID {
@@ -99,6 +100,15 @@ export default function buildSchema(schema: Schema): void {
   input FirestoreInputWhereBoolean {
     equals: Boolean
     equalsNot: Boolean
+  }
+
+  input FirestoreInputWhereGeo {
+    latitudeEquals: Float
+    latitudeEqualsNot: Float
+    longitudeEquals: Float
+    longitudeEqualsNot: Float
+    shapeEquals: [Float]
+    shapeEqualsNot: [Float]
   }
 
   input FirestoreInputWhereArrayString {
@@ -154,6 +164,7 @@ export default function buildSchema(schema: Schema): void {
   for (const type of types) {
     const typeName = Schema.getName(type)
     const findName = `firestoreFind${ typeName }`
+    const findOneName = `firestoreFindOne${ typeName }`
     schema.addInput(`
     input FirestoreWhere${ typeName } {
       ${ buildWhere(type, schema).join('\n  ') }
@@ -165,6 +176,10 @@ export default function buildSchema(schema: Schema): void {
         paging: FirestorePaging
         where: FirestoreWhere${ typeName }
       ): [${ typeName }!]! @firestoreQuery
+
+      ${ findOneName }(
+        where: FirestoreWhere${ typeName }
+      ): ${ typeName } @firestoreQuery
     }
     `)
   }

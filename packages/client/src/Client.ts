@@ -2,23 +2,29 @@ import find from 'lodash.find'
 import get from 'lodash.get'
 import ApolloClient from 'apollo-client'
 import { DocumentNode } from 'graphql'
+import { Transaction } from './types'
+import Schema from './Schema'
 
 export default class Client {
 
   constructor(
     public readonly apollo: ApolloClient<any>,
     private readonly resolvers: any,
-    private readonly schema: any,
-    private readonly transactions: any[],
+    private readonly schema: Schema,
+    private readonly transactions: Transaction[],
     private readonly context: any,
     private readonly source: string,
   ) {
   }
 
-  // SOURCE
+  // SCHEMA
 
   printSchema() {
     return this.source
+  }
+
+  getSchema() {
+    return this.schema
   }
 
   // QUERY
@@ -69,5 +75,11 @@ export default class Client {
       return get(this.context, path)
     }
     return this.context
+  }
+
+  // TRANSACTIONS
+
+  getTransactions() {
+    return this.transactions
   }
 }

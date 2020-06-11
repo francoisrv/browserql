@@ -1,17 +1,16 @@
-import { Schema } from '@browserql/client'
+import { Resolver, Schema } from '@browserql/client'
 
-export default function buildResolvers(schema: Schema) {
-  const resolvers: any = {}
+export default function buildResolvers(schema: Schema, resolvers: any) {
+  const types = schema.getTypesWithDirective('firestore')
 
-  // const types = getTypesWithDirective(schema, 'firestore')
-
-  // for (const type of types) {
-  //   const typeName = getName(type)
-  //   const findName = `firestoreFind${ typeName }`
-  //   resolvers[findName] = async () => {
-
-  //   }
-  // }
-
-  return resolvers
+  for (const type of types) {
+    const typeName = Schema.getName(type)
+    const findName = `firestoreFind${ typeName }`
+    resolvers[findName] = new Resolver(findName)
+    resolvers[findName].push(async (input: any) => {
+      console.log({input})
+      return []
+    })
+    const findOneName = `firestoreFindOne${ typeName }`
+  }
 }

@@ -32,11 +32,14 @@ const client = connect({
 
 const db = firestore(client)
 
-const [books, { loading, error }] = await db.Book.find(
-  { author: 'Victor Hugo' },
-  {
-    paging: { page: 1, rowsPerPage: 5 },
-    populate: 'author'
-  }
-)
+const books = await db.Book.find({
+  where: { author: 'Victor Hugo' },
+  paging: { page: 1, rowsPerPage: 5 },
+  sort: [{ key: 'name', asc: true }],
+  populate: true
+})
 ```
+
+## Plugins
+
+- [firestore-react-hooks](https://npmjs.com/browserql/firestore-react-hooks) React hooks
