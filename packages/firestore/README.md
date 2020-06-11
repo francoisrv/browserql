@@ -10,6 +10,7 @@ import connect from '@browserql/client'
 import firestore from '@browserql/firestore'
 import gql from 'graphql-tools'
 import * as firebase from 'firebase/app'
+import 'firebase/firestore'
 
 firebase.initializeApp(firebaseConfig)
 
@@ -26,7 +27,7 @@ type Book       @firestore {
 const client = connect({
   schema,
   plugins: [
-    firestore()
+    firestore(firebase.firestore())
   ]
 })
 

@@ -193,12 +193,14 @@ export default class Schema {
   }
 
   addQuery(query: string | DocumentNode) {
-    if (!this.getQueryType()) {
-      this.addQueryType()
+    const document = typeof query === 'string' ? gql(query) : query
+    if (this.getQueryType()) {
+      document.definitions[0].kind = 'ObjectTypeExtension'
+    } else {
+      document.definitions[0].kind = 'ObjectTypeDefinition'
     }
-    const extendedQuery = typeof query === 'string' ? gql(query) : query
     // @ts-ignore
-    this.document.definitions.push(extendedQuery.definitions[0])
+    this.document.definitions.push(document.definitions[0])
   }
 
   addDirective(directive: string | DocumentNode) {
@@ -252,5 +254,10 @@ export default class Schema {
     const document = typeof schema === 'string' ? gql(schema) : schema
     // @ts-ignore
     this.document.definitions.push(...document.definitions)
+  }
+
+  getQueriesWithDirective(directive: string) {
+    const queries = this.getQueries()
+    return queries.filter(query => Schema.hasDirective(query, directive))
   }
 }

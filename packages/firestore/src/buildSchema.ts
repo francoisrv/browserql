@@ -61,10 +61,8 @@ export default function buildSchema(schema: Schema): void {
   schema.extend(gql`
   directive @firestore(collection: String) on OBJECT
 
-  directive @firestoreQuery on FIELD_DEFINITION
-
   input FirestorePaging {
-    page: Int!
+    page: Int
     rowsPerPage: Int
   }
 
@@ -165,6 +163,11 @@ export default function buildSchema(schema: Schema): void {
     const typeName = Schema.getName(type)
     const findName = `firestoreFind${ typeName }`
     const findOneName = `firestoreFindOne${ typeName }`
+    schema.extend(`
+    extend type ${ typeName } @firestore {
+      id: ID!
+    }
+    `)
     schema.addInput(`
     input FirestoreWhere${ typeName } {
       ${ buildWhere(type, schema).join('\n  ') }
@@ -175,11 +178,11 @@ export default function buildSchema(schema: Schema): void {
       ${ findName }(
         paging: FirestorePaging
         where: FirestoreWhere${ typeName }
-      ): [${ typeName }!]! @firestoreQuery
+      ): [${ typeName }!]!
 
       ${ findOneName }(
         where: FirestoreWhere${ typeName }
-      ): ${ typeName } @firestoreQuery
+      ): ${ typeName }
     }
     `)
   }

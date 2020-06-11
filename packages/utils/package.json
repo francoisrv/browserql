@@ -9,7 +9,6 @@
     "test": "jest dist"
   },
   "dependencies": {
-    "@types/graphql": "^14.5.0",
     "@types/lodash.find": "^4.6.6",
     "graphql": "^14.0.0",
     "graphql-tag": "^2.10.3",

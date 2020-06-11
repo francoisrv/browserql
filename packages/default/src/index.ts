@@ -1,10 +1,4 @@
-import { Client } from 'browserql'
-import { GraphQLSchema } from 'graphql'
-import {
-  getQueriesWithDirective,
-  getDirective,
-  getDirectiveValue,
-} from 'browserql-utils'
+import { Schema } from '@browserql/client'
 
 interface PluginOptions {
   fixtures?: {
@@ -13,22 +7,16 @@ interface PluginOptions {
 }
 
 export default function browserQLDefaultPlugin(options: PluginOptions = {}) {
-  return function(schema: GraphQLSchema, resolvers: any) {
+  return function(schema: Schema, resolvers: any) {
     const extendSchema = `
     directive @default(
       value:        Any
       resolver:     String
       fixture:      String
     ) on FIELD_DEFINITION
-
-    directive @initial(
-      value:        Any
-      resolver:     String
-      fixture:      String
-    ) on FIELD_DEFINITION
     `
     const extendResolvers: any = {}
-    const queries = getQueriesWithDirective(schema, 'default')
+    const queries = schema.getQueriesWithDirective('default')
     for (const queryName in queries) {
       const query = queries[queryName]
       extendResolvers[queryName] = (variables: any, { client }: any) => {

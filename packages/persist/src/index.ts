@@ -6,10 +6,7 @@ interface PluginProps {}
 
 export default function plugin(props?: PluginProps) {
   return function(...args: Parameters<Plugin>): ReturnType<Plugin> {
-    const directive = `directive @persist on FIELD_DEFINITION`
-    const pluginSchema = gql`${ directive }`
-    return {
-      schema: pluginSchema
-    }
+    const [schema] = args
+    schema.extend(gql`directive @persist on FIELD_DEFINITION`)
   }
 }

@@ -10,5 +10,8 @@
   },
   "dependencies": {
     "lodash": "^4.17.15"
+  },
+  "resolutions": {
+    "graphql": "14.6.0"
   }
 }

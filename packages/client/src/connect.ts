@@ -33,6 +33,12 @@ export default function connect(options: ConnectOptions): Client {
     }
   }
 
+  for (const name in middlewares) {
+    if (!rootValue[name]) {
+      rootValue[name] = middlewares[name].execute.bind(middlewares[name])
+    }
+  }
+
   const transactions: Transaction[] = buildTransactions(schema)
 
   let browserQLClient: Client
@@ -51,7 +57,7 @@ export default function connect(options: ConnectOptions): Client {
   }
 
   const link = new SchemaLink({
-    schema: schema.toAST(),
+    schema: ast,
     rootValue,
     context: { getBrowserQLClient }
   })
