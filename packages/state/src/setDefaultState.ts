@@ -1,15 +1,10 @@
-import { GraphQLField } from 'graphql'
-import find from 'lodash.find'
+import { FieldDefinitionNode } from 'graphql'
+import { Schema } from '@browserql/client'
 
-export default function setDefaultState(field: GraphQLField<any, any>, fallback: any) {
-  const { astNode } = field
-  if (astNode) {
-    if (astNode.directives) {
-      const defaultDirective = find(astNode.directives, directive => directive.name.value === 'default')
-      if (defaultDirective && Array.isArray(defaultDirective.arguments) && defaultDirective.arguments.length) {
-        return defaultDirective.arguments[0].value.value
-      }
-    }
+export default function setDefaultState(field: FieldDefinitionNode, fallback: any) {
+  const params = Schema.getDirectiveParams(field, 'initialState')
+  if ('value' in params) {
+    return params.value
   }
   return fallback
 }

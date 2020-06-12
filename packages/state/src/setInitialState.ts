@@ -1,11 +1,16 @@
-import { isNonNullType, GraphQLOutputType, isScalarType } from 'graphql'
+import { TypeNode } from 'graphql'
+import { Schema } from '@browserql/client'
 
-function setNonNullInitialState(type: GraphQLOutputType): any {
-  if (isNonNullType(type)) {
-    return setNonNullInitialState(type.ofType)
+export function setNonNullInitialState(type: TypeNode): any {
+  if (type.kind === 'NonNullType') {
+    return setNonNullInitialState(type.type)
   }
-  if (isScalarType(type)) {
-    switch (type.name) {
+  if (type.kind === 'ListType') {
+    return []
+  }
+  
+  if (type.kind === 'NamedType') {
+    switch (Schema.printEndType(type)) {
       case 'String': return ''
       case 'Int': return 0
       case 'Float': return 0
@@ -15,9 +20,9 @@ function setNonNullInitialState(type: GraphQLOutputType): any {
   return null
 }
 
-export function setInitialState(type: GraphQLOutputType) {
-  if (isNonNullType(type)) {
-    return setNonNullInitialState(type.ofType)
+export function setInitialState(type: TypeNode) {
+  if (type.kind === 'NonNullType') {
+    return setNonNullInitialState(type.type)
   }
   return null
 }

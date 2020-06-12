@@ -1,9 +1,9 @@
 import { State } from './types'
 import upperFirst from 'lodash.upperfirst'
 import camelCase from 'lodash.camelcase'
-import { Client, ClientContext } from '@browserql/client'
+import { Client, ClientContext, Schema } from '@browserql/client'
 
-export default function buildResolvers(state: State) {
+export default function buildResolvers(state: State, schema: Schema, rootValue: any) {
   const resolvers: any = {}
   for (const type in state) {
     for (const field in state[type]) {
@@ -44,5 +44,4 @@ export default function buildResolvers(state: State) {
       }
     }
   }
-  return resolvers
 }

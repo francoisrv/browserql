@@ -1,9 +1,9 @@
-import { GraphQLField } from 'graphql'
+import { FieldDefinitionNode } from 'graphql'
 
 export interface State {
   [type: string]: {
     [field: string]: {
-      field: GraphQLField<any, any>,
+      field: FieldDefinitionNode,
       value: any
     }
   }

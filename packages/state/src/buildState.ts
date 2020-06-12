@@ -1,21 +1,21 @@
+import { Schema } from '@browserql/client'
+
 import { State } from './types'
-import { getTypesWithDirective, getName } from '@browserql/utils'
-import { GraphQLSchema } from 'graphql'
 import setDefaultState from './setDefaultState'
 import { setInitialState } from './setInitialState'
 
-export default function buildState(schema: GraphQLSchema, directiveName: string) {
+export default function buildState(schema: Schema, directiveName: string) {
   const state: State = {}
 
-  const types = getTypesWithDirective(schema, directiveName)
+  const types = schema.getTypesWithDirective(directiveName)
 
   for (const type of types) {
-    const typeName = getName(type)
+    const typeName = Schema.getName(type)
     state[typeName] = {}
-    const fields = type.getFields()
-    for (const fieldName in fields) {
-      const field = fields[fieldName]
-      state[name][fieldName] = {
+    const fields = schema.getTypeFields(typeName)
+    for (const field of fields) {
+      const fieldName = Schema.getName(field)
+      state[typeName][fieldName] = {
         field,
         value: setDefaultState(field, setInitialState(field.type))
       }
