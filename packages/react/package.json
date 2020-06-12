@@ -1,9 +1,0 @@
-{
-  "name": "browserql-plugin-react",
-  "version": "1.0.0",
-  "dependencies": {
-    "@types/react": "^16.9.35",
-    "react": "^16.13.1",
-    "react-apollo": "^3.1.5"
-  }
-}

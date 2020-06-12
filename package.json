@@ -6,7 +6,8 @@
     "packages/*"
   ],
   "scripts": {
-    "w": "yarn workspace"
+    "w": "yarn workspace",
+    "all": "yarn workspaces"
   },
   "dependencies": {
     "lodash": "^4.17.15"

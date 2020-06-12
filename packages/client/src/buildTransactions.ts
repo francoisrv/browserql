@@ -14,19 +14,16 @@ const primitives = [
 ]
 
 export function makeReturnTypeNonScalar(
-  type: ObjectTypeDefinitionNode,
+  fields: any[],
   schema: Schema,
   tab = '  '
 ): string[] {
   const lines: string[] = [
     '{'
   ]
-  console.log({type})
-  if (type.fields) {
-    type.fields.forEach(field => {
-      lines.push(`${ tab }  ${ Schema.getName(field) } ${ makeReturnType(Schema.printType(field.type), schema, `${ tab }  `) }`)
-    })
-  }
+  fields.forEach(field => {
+    lines.push(`${ tab }  ${ Schema.getName(field) } ${ makeReturnType(Schema.printType(field.type), schema, `${ tab }  `) }`)
+  })
   lines.push(`${ tab }}`)
   return lines
 }
@@ -44,8 +41,8 @@ export function makeReturnType(type: string, schema: Schema, tab = ''): string {
   if (includes(scalars, realType)) {
     return ''
   }
-  const objectType = schema.getType(realType) as ObjectTypeDefinitionNode
-  return makeReturnTypeNonScalar(objectType, schema, tab).join('\n')
+  const fields = schema.getTypeFields(realType)
+  return makeReturnTypeNonScalar(fields, schema, tab).join('\n')
 }
 
 export function printTransaction(

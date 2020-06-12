@@ -15,6 +15,15 @@ export default function useQuery(queryName: string, variables?: any) {
   }
   const client = contextClient
   const query = client.getQuery(queryName)
+  if (!query) {
+    return [
+      undefined,
+      {
+        loading: false,
+        error: new Error(`No such query: ${ queryName }`)
+      }
+    ]
+  }
   const { data, error, loading } = useApolloQuery(query, { variables })
   return [
     get(data, queryName),

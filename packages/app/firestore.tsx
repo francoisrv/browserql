@@ -8,7 +8,13 @@ import firestore from '@browserql/firestore'
 import { useFirestore } from '@browserql/firestore-react-hooks'
 import connect from '@browserql/client'
 
-import schema from './firestore.graphql'
+// import schema from './firestore.graphql'
+
+const schema = `
+type Company @firestore {
+  name: String!
+}
+`
 
 firebase.initializeApp({
   apiKey: 'AIzaSyDxx1IiOnwgZZzE0_YlGmCGGITQGL-VnQA',
@@ -62,8 +68,6 @@ function App() {
 }
 
 const client = connect({ schema, plugins })
-
-console.log(client.getTransactions().map(t => t.source))
 
 ReactDOM.render(
   <Provider client={ client }>

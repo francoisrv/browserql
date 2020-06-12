@@ -1,36 +1,35 @@
-import { DocumentNode, print, DefinitionNode, parseType, ObjectFieldNode, ArgumentNode, FieldDefinitionNode, buildASTSchema, InputValueDefinitionNode, ObjectTypeDefinitionNode, parse, TypeDefinitionNode, isObjectType } from 'graphql'
+import {
+  ArgumentNode,
+  DefinitionNode,
+  DocumentNode,
+  FieldDefinitionNode,
+  GraphQLSchema,
+  InputValueDefinitionNode,
+  ObjectFieldNode,
+  ObjectTypeDefinitionNode,
+  ObjectTypeExtensionNode,
+  buildASTSchema,
+  parse,
+  parseType,
+  print,
+  TypeDefinitionNode,
+  TypeNode,
+} from 'graphql'
 import gql from 'graphql-tag'
 import find from 'lodash.find'
 
-interface Query {
-  description?: string
-}
-
-interface Field {
-  name: string
-  description?: string
-  kind: string
-}
-
-interface Argument {
-  name: string
-  description?: string
-  kind: string
-  defaultValue?: any
-}
-
-interface Directive {
-  name: string
-  locations: {
-    type?: boolean
-  }
-  arguments?: Argument[]
-  description?: string
-  repeatable?: boolean
-}
-
 export default class Schema {
-  static hasDirective(type: DefinitionNode, directive: string) {
+  /**
+   * Either a type has a directive or not
+   * @param type {DefinitionNode} The node to examine
+   * @param directive The name of the directive to look for
+   */
+  static hasDirective(
+    type:
+    | DefinitionNode
+    | FieldDefinitionNode,
+    directive: string
+  ) {
     if (('directives' in type)) {
       const { directives } = type
       if (Array.isArray(directives) && directives.length) {
@@ -40,54 +39,30 @@ export default class Schema {
     return false
   }
 
-  static getName(type: DefinitionNode | ObjectFieldNode | ArgumentNode | FieldDefinitionNode | InputValueDefinitionNode) {
+  /**
+   * Get a node's name
+   * @param type {Node}
+   */
+  static getName(
+    type:
+    | ArgumentNode
+    | DefinitionNode
+    | FieldDefinitionNode
+    | InputValueDefinitionNode
+    | ObjectFieldNode
+    | TypeNode
+  ) {
     if ('name' in type) {
       return type.name?.value
     }
     return undefined
   }
 
-  static buildField(field: Field) {
-    return {
-      kind: 'FieldDefinition',
-      description: field.description,
-      name: { kind: 'Name', value: field.name },
-      arguments: [],
-      type: parseType(field.kind),
-      directives: []
-    }
-  }
-
-  static buildDirective(directive: Directive | string) {
-    if (typeof directive === 'string') {
-      return parse(directive)
-    }
-    const locations = []
-    if (directive.locations.type) {
-      locations.push({ kind: 'Name', value: 'OBJECT' })
-    }
-    return {
-      kind: 'DirectiveDefinition',
-      description: directive.description,
-      name: { kind: 'Name', value: directive.name },
-      arguments: (directive.arguments || []).map(Schema.buildArgument),
-      repeatable: !!directive.repeatable,
-      locations
-    }
-  }
-
-  static buildArgument(argument: Argument) {
-    return {
-      kind: 'InputValueDefinition',
-      description: argument.description,
-      name: { kind: 'Name', value: argument.name },
-      directives: [],
-      defaultValue: argument.defaultValue,
-      type: parseType(argument.kind)
-    }
-  }
-
-  static printType(type: any): string {
+  /**
+   * Print a type node
+   * @param type {TypeNode} 
+   */
+  static printType(type: TypeNode): string {
     if (type.kind === 'NamedType') {
       return Schema.getName(type) as string
     }
@@ -100,6 +75,10 @@ export default class Schema {
     return 'Unknown'
   }
 
+  /**
+   * Print the type name only (without [] and !)
+   * @param type {TypeNode}
+   */
   static printEndType(type: any): string {
     return Schema.printType(type)
       .replace(/!/g, '')
@@ -108,7 +87,7 @@ export default class Schema {
       .trim()
   }
 
-  document: DocumentNode
+  private readonly document: DocumentNode
 
   constructor(schema: string | DocumentNode) {
     this.document = typeof schema === 'string' ? gql(schema) : schema
@@ -118,36 +97,59 @@ export default class Schema {
     return print(this.document)
   }
 
-  toAST() {
+  toAST(): GraphQLSchema {
     return buildASTSchema(this.document)
   }
 
-  getTypes() {
+  getTypes(): ObjectTypeDefinitionNode[] {
     const { definitions } = this.document
     return definitions.filter(def => {
-      return (
-        def.kind === 'ObjectTypeDefinition' ||
-        def.kind === 'ObjectTypeExtension'
-      ) &&
+      return (def.kind === 'ObjectTypeDefinition') &&
         Schema.getName(def) !== 'Query' &&
         Schema.getName(def) !== 'Mutation'
-    })
+    }) as ObjectTypeDefinitionNode[]
   }
 
-  getType(name: string) {
-    const types = this.getTypes().filter(t => Schema.getName(t) === name)
-    const type = types.shift()
-    const nextT = { ...type }
-    for (const t of types) {
-      nextT.fields.push(...t.fields)
-    }
-    return nextT
-    // return find(this.getTypes(), t => Schema.getName(t) === name)
+  getExtendedTypes(): ObjectTypeExtensionNode[] {
+    const { definitions } = this.document
+    return definitions.filter(def => {
+      return (def.kind === 'ObjectTypeExtension') &&
+        Schema.getName(def) !== 'Query' &&
+        Schema.getName(def) !== 'Mutation'
+    }) as ObjectTypeExtensionNode[]
   }
 
-  getTypesWithDirective(directive: string) {
+  getType(name: string): ObjectTypeDefinitionNode | undefined {
+    return find(this.getTypes(), t => Schema.getName(t) === name)
+  }
+
+  getExtendedType(name: string): ObjectTypeExtensionNode | undefined {
+    return find(this.getExtendedTypes(), t => Schema.getName(t) === name)
+  }
+
+  getTypesWithDirective(directive: string): ObjectTypeDefinitionNode[] {
     const types = this.getTypes()
     return types.filter(type => Schema.hasDirective(type, directive))
+  }
+
+  getTypeFields(name: string) {
+    const fields: any[] = []
+    const type = this.getType(name)
+    const extendedType = this.getExtendedType(name)
+    if (!type) {
+      throw new Error(`Could not find type ${ name }`)
+    }
+    if (type.fields) {
+      for (const f of type.fields) {
+        fields.push(f)
+      }
+    }
+    if (extendedType && extendedType.fields) {
+      for (const f of extendedType.fields) {
+        fields.push(f)
+      }
+    }
+    return fields
   }
 
   getQueryType() {
@@ -188,25 +190,13 @@ export default class Schema {
     return queries
   }
 
-  addQueryType(queryType: Query = {}) {
-    // @ts-ignore
-    this.document.definitions.push({
-      kind: 'ObjectTypeDefinition',
-      description: queryType.description,
-      name: {
-        kind: 'Name',
-        value: 'Query'
-      },
-      directives: [],
-      fields: []
-    })
-  }
-
   addQuery(query: string | DocumentNode) {
     const document = typeof query === 'string' ? gql(query) : query
     if (this.getQueryType()) {
+      // @ts-ignore definitions are read-only
       document.definitions[0].kind = 'ObjectTypeExtension'
     } else {
+      // @ts-ignore definitions are read-only
       document.definitions[0].kind = 'ObjectTypeDefinition'
     }
     // @ts-ignore

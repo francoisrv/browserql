@@ -41,6 +41,8 @@ export default function connect(options: ConnectOptions): Client {
 
   const transactions: Transaction[] = buildTransactions(schema)
 
+  console.log(123, transactions.map(t => t.source)[0])
+
   let browserQLClient: Client
 
   function getBrowserQLClient() {

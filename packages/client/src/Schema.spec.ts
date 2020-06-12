@@ -1,4 +1,6 @@
+import gql from 'graphql-tag'
 import Schema from './Schema'
+import { printType } from 'graphql'
 
 function indentSource(source: string, tab = '      ') {
   const lines = source.split(/\n/)
@@ -81,6 +83,18 @@ describe('Schema', () => {
       expect(types).toHaveLength(1)
       expectType(types[0], { name: 'Foo' })
     })
+    it('should get type fields', () => {
+      const schema = new Schema(gql`
+      type Foo {
+        id: ID
+      }
+      extend type Foo {
+        name: String
+      }
+      `)
+      const fields = schema.getTypeFields('Foo')
+      expect(fields).toHaveLength(2)
+    })
   })
 
   describe('Queries', () => {
@@ -120,6 +134,18 @@ describe('Schema', () => {
     it('should add directive as a string', () => {
       const schema = new Schema('type Foo @foo { id: ID }')
       schema.addDirective('directive @foo on OBJECT')
+    })
+  })
+
+  describe('Kinds', () => {
+    it('should print kind', () => {
+      const schema = new Schema(gql`
+      type Foo {
+        bar: [ID]!
+      }
+      `)
+      const fields = schema.getTypeFields('Foo')
+      expect(Schema.printType(fields[0].type)).toEqual('[ ID ] !')
     })
   })
 })

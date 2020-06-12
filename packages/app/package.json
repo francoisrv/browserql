@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "rm -rf dist .cache && parcel --hmr-port $HMR_PORT --https index.html"
+    "start": "rm -rf dist .cache && parcel --hmr-port $HMR_PORT --https index.html",
+    "build": "echo build app"
   },
   "externals": [
     "fs-extra => ./fs-extra.js"

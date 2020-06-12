@@ -31,15 +31,21 @@ export default class Client {
 
   readQuery(name: string, variables?: any) {
     const query = this.getQuery(name)
+    if (!query) {
+      throw new Error(`Could not find query: ${ name }`)
+    }
     return this.apollo.readQuery({ query, variables })
   }
 
-  getQuery(name: string): DocumentNode {
+  getQuery(name: string): DocumentNode | undefined {
     return get(find(this.transactions, { name }), 'node')
   }
 
   query(name: string, variables?: any) {
     const query = this.getQuery(name)
+    if (!query) {
+      throw new Error(`Could not find query: ${ name }`)
+    }
     return this.apollo.query({
       query,
       variables
@@ -48,6 +54,9 @@ export default class Client {
 
   writeQuery(name: string, data: any) {
     const query = this.getQuery(name)
+    if (!query) {
+      throw new Error(`Could not find query: ${ name }`)
+    }
     return this.apollo.writeQuery({
       query,
       data: { [name]: data }
@@ -56,12 +65,15 @@ export default class Client {
 
   // MUTATION
 
-  getMutation(name: string): DocumentNode {
+  getMutation(name: string): DocumentNode | undefined {
     return this.getQuery(name)
   }
 
   mutate(name: string, variables?: any) {
     const mutation = this.getMutation(name)
+    if (!mutation) {
+      throw new Error(`Could not find mutation: ${ name }`)
+    }
     return this.apollo.mutate({
       mutation,
       variables
