@@ -3,12 +3,19 @@ import { Context } from '@browserql/react-provider'
 import React from 'react'
 import get from 'lodash.get'
 
-export default function useQuery(queryName: string, variables?: any) {
+export default function useQuery<T extends any>(queryName: string, variables?: any): [
+  T | undefined,
+  {
+    loading: boolean
+    error?: Error
+  }
+] {
   const contextClient = React.useContext(Context)
   if (!contextClient) {
     return [
       undefined,
       {
+        loading: false,
         error: new Error('No client found')
       }
     ]
@@ -24,9 +31,9 @@ export default function useQuery(queryName: string, variables?: any) {
       }
     ]
   }
-  const { data, error, loading } = useApolloQuery(query, { variables })
+  const { data, error, loading } = useApolloQuery<T>(query, { variables })
   return [
     get(data, queryName),
-    { data, error, loading }
+    { error, loading }
   ]
 }

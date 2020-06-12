@@ -5,6 +5,9 @@ export default function buildResolvers(schema: Schema, resolvers: any, db: any) 
 
   for (const type of types) {
     const typeName = Schema.getName(type)
+    if (!typeName) {
+      throw new Error('Could not get name')
+    }
     let collectionName = typeName?.toLowerCase()
     if (/y$/.test(typeName)) {
       collectionName = collectionName?.replace(/y$/, 'ies')
@@ -15,13 +18,14 @@ export default function buildResolvers(schema: Schema, resolvers: any, db: any) 
     resolvers[findName] = new Resolver(findName)
     resolvers[findName].push(async (input: any) => {
       const querySnapshot = await db.collection(collectionName).get()
-      const results = []
-      querySnapshot.forEach(doc => {
+      const results: any[] = []
+      querySnapshot.forEach((doc: any) => {
         results.push({
           id: doc.id,
           ...doc.data()
         })
       })
+      console.log(results)
       return results
     })
     const findOneName = `firestoreFindOne${ typeName }`

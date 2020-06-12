@@ -260,4 +260,18 @@ export default class Schema {
     const queries = this.getQueries()
     return queries.filter(query => Schema.hasDirective(query, directive))
   }
+
+  addTypeFields(source: string | DocumentNode) {
+    const document = typeof source === 'string' ? gql(source) : source
+    const extendedType = Schema.getName(document.definitions[0])
+    if (!extendedType) {
+      throw new Error(`Can not extend undeclared type ${ extendedType }`)
+    }
+    const type = this.getType(extendedType)
+    if (!type) {
+      throw new Error(`Can not extend undeclared type ${ extendedType }`)
+    }
+    // @ts-ignore
+    type.fields.push(...document.definitions[0].fields)
+  }
 }

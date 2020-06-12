@@ -54,6 +54,13 @@ function Companies() {
         </tr>
       </thead>
       <tbody>
+        {
+          companies.map(company => (
+            <tr key={ company.id }>
+              <td>{ company.name }</td>
+            </tr>
+          ))
+        }
       </tbody>
     </table>
   )
@@ -68,6 +75,8 @@ function App() {
 }
 
 const client = connect({ schema, plugins })
+
+console.log(client.printSchema())
 
 ReactDOM.render(
   <Provider client={ client }>

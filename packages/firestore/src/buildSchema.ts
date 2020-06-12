@@ -27,6 +27,7 @@ function buildWhereArg(field: any, schema: Schema): string {
       schema.extend(`
       input ${ field.type.name.value }Input {
         ${
+          // @ts-ignore
           type.fields.map((field: any) => `${ Schema.getName(field) }: ${ Schema.printType(field.type) }`).join('\n')
         }
       }
@@ -163,7 +164,7 @@ export default function buildSchema(schema: Schema): void {
     const typeName = Schema.getName(type)
     const findName = `firestoreFind${ typeName }`
     const findOneName = `firestoreFindOne${ typeName }`
-    schema.extend(`
+    schema.addTypeFields(`
     extend type ${ typeName } @firestore {
       id: ID!
     }
