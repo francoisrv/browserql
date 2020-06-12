@@ -63,7 +63,7 @@ function App() {
 
 const client = connect({ schema, plugins })
 
-console.log(client.printSchema())
+console.log(client.getTransactions().map(t => t.source))
 
 ReactDOM.render(
   <Provider client={ client }>

@@ -125,14 +125,24 @@ export default class Schema {
   getTypes() {
     const { definitions } = this.document
     return definitions.filter(def => {
-      return def.kind === 'ObjectTypeDefinition' &&
+      return (
+        def.kind === 'ObjectTypeDefinition' ||
+        def.kind === 'ObjectTypeExtension'
+      ) &&
         Schema.getName(def) !== 'Query' &&
         Schema.getName(def) !== 'Mutation'
     })
   }
 
   getType(name: string) {
-    return find(this.getTypes(), t => Schema.getName(t) === name)
+    const types = this.getTypes().filter(t => Schema.getName(t) === name)
+    const type = types.shift()
+    const nextT = { ...type }
+    for (const t of types) {
+      nextT.fields.push(...t.fields)
+    }
+    return nextT
+    // return find(this.getTypes(), t => Schema.getName(t) === name)
   }
 
   getTypesWithDirective(directive: string) {

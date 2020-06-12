@@ -21,6 +21,7 @@ export function makeReturnTypeNonScalar(
   const lines: string[] = [
     '{'
   ]
+  console.log({type})
   if (type.fields) {
     type.fields.forEach(field => {
       lines.push(`${ tab }  ${ Schema.getName(field) } ${ makeReturnType(Schema.printType(field.type), schema, `${ tab }  `) }`)
