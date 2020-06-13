@@ -39,7 +39,7 @@ export default function buildResolvers(state: State, schema: Schema, rootValue: 
         const client = getClient()
         const value = getValue(client)
         client.writeQuery(queryName, !value)
-        return value
+        return !value
       })
     }
   }
