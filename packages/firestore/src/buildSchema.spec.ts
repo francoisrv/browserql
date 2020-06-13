@@ -41,6 +41,7 @@ describe('Build schema', () => {
   describe('Directives', () => {
     it('should be have a firestore directive', () => {
       const directive = schema.getDirective('firestore')
+      // @ts-ignore
       expect(Schema.getName(directive)).toEqual('firestore')
     })
   })

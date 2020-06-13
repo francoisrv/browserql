@@ -117,6 +117,10 @@ export default class Schema {
       .trim()
   }
 
+  static isType(type: any) {
+    return type.kind === 'ObjectTypeDefinition'
+  }
+
   private readonly document: DocumentNode
 
   constructor(schema: string | DocumentNode) {
@@ -312,5 +316,18 @@ export default class Schema {
 
   getEnumeration(name: string) {
     return find(this.getEnumerations(), e => Schema.getName(e) === name)
+  }
+
+  addMutation(mutation: string | DocumentNode) {
+    const document = typeof mutation === 'string' ? gql(mutation) : mutation
+    if (this.getMutationType()) {
+      // @ts-ignore definitions are read-only
+      document.definitions[0].kind = 'ObjectTypeExtension'
+    } else {
+      // @ts-ignore definitions are read-only
+      document.definitions[0].kind = 'ObjectTypeDefinition'
+    }
+    // @ts-ignore
+    this.document.definitions.push(document.definitions[0])
   }
 }

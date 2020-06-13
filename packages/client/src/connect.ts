@@ -1,6 +1,8 @@
 import ApolloClient from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { SchemaLink } from 'apollo-link-schema'
+import gql from 'graphql-tag'
+import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json'
 
 import Client from './Client'
 import { Transaction, ConnectOptions } from './types'
@@ -13,8 +15,16 @@ export default function connect(options: ConnectOptions): Client {
   const { resolvers = {} } = options
   const context: any = {}
   const schema = new Schema(options.schema)
-  const rootValue: any = {}
+  const rootValue: any = {
+    JSON: GraphQLJSON,
+    JSONObject: GraphQLJSONObject,
+  }
   const middlewares: any = {}
+
+  schema.extend(gql`
+  scalar JSON
+  scalar JSONObject
+  `)
 
   for (const name in resolvers) {
     const resolver = new Resolver(name)
@@ -40,8 +50,6 @@ export default function connect(options: ConnectOptions): Client {
   }
 
   const transactions: Transaction[] = buildTransactions(schema)
-
-  console.log(123, transactions.map(t => t.source)[0])
 
   let browserQLClient: Client
 

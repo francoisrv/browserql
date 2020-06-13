@@ -1,6 +1,6 @@
 {
   "name": "@browserql/client",
-  "version": "1.1.4",
+  "version": "1.1.8",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -21,6 +21,7 @@
     "apollo-client": "^2.6.10",
     "apollo-link-schema": "^1.2.5",
     "graphql": "^14.0.0",
+    "graphql-type-json": "^0.3.2",
     "jest": "^26.0.1",
     "lodash.find": "^4.6.0",
     "lodash.get": "^4.4.2",

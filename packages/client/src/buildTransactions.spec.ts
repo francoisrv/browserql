@@ -6,6 +6,11 @@ import { find } from 'lodash'
 describe('Build transactions', () => {
   const Query = gql`
   scalar Foo
+  enum Size {
+    SMALL
+    MEDIUM
+    LARGE
+  }
   type TodoInfo {
     boomer: Boolean
   }
@@ -54,6 +59,10 @@ describe('Build transactions', () => {
     boomer 
   }
 }`)
+      })
+      it('should return type for enum', () => {
+        const rt = makeReturnType('Size', schema)
+        expect(rt).toEqual('')
       })
     })
     

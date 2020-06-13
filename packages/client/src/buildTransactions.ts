@@ -41,8 +41,14 @@ export function makeReturnType(type: string, schema: Schema, tab = ''): string {
   if (includes(scalars, realType)) {
     return ''
   }
-  const fields = schema.getTypeFields(realType)
-  return makeReturnTypeNonScalar(fields, schema, tab).join('\n')
+  if (schema.getType(realType)) {
+    const fields = schema.getTypeFields(realType)
+    return makeReturnTypeNonScalar(fields, schema, tab).join('\n')
+  }
+  if (schema.getEnumeration(realType)) {
+    return ''
+  }
+  throw new Error(`Could not make return type for: ${ type }`)
 }
 
 export function printTransaction(
