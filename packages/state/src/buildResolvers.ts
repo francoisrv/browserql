@@ -12,7 +12,6 @@ export default function buildResolvers(state: State, schema: Schema, rootValue: 
       const getValue = (client: Client) => {
         try {
           const result = client.readQuery(queryName)
-          console.log({result})
           return result[queryName]
         } catch (error) {
           return state[type][field].value
@@ -39,7 +38,6 @@ export default function buildResolvers(state: State, schema: Schema, rootValue: 
       rootValue[`toggle${ name }`] = new Resolver(`toggle${ name }`, getClient).push(async (_opt: AnalyserNode, getClient: () => Client) => {
         const client = getClient()
         const value = getValue(client)
-        console.log(2, value, queryName)
         client.writeQuery(queryName, !value)
         return value
       })
