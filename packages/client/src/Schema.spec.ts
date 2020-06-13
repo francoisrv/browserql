@@ -148,4 +148,39 @@ describe('Schema', () => {
       expect(Schema.printType(fields[0].type)).toEqual('[ ID ] !')
     })
   })
+
+  describe('Enumerations', () => {
+    it('should get enumerations', () => {
+      const schema = new Schema(gql`
+      type Foo {
+        id: ID
+      }
+      enum Size {
+        SMALL
+        MEDIUM
+        LARGE
+      }
+      `)
+      const enums = schema.getEnumerations()
+      expect(enums).toHaveLength(1)
+      expect(enums[0]).toHaveProperty('kind', 'EnumTypeDefinition')
+      expect(Schema.getName(enums[0])).toEqual('Size')
+    })
+    it('should get enumeration', () => {
+      const schema = new Schema(gql`
+      enum Role {
+        Reader
+        Writer
+      }
+      enum Size {
+        SMALL
+        MEDIUM
+        LARGE
+      }
+      `)
+      const e = schema.getEnumeration('Size')
+      // @ts-ignore
+      expect(Schema.getName(e)).toEqual('Size')
+    })
+  })
 })

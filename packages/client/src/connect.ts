@@ -26,10 +26,10 @@ export default function connect(options: ConnectOptions): Client {
 
   if (options.plugins) {
     for (const plugin of options.plugins) {
-      const {
-        context: pluginContext = {}
-      } = plugin(schema, middlewares)
-      Object.assign(context, pluginContext)
+      const res = plugin(schema, middlewares)
+      if (res && res.context) {
+        Object.assign(context, res.context)
+      }
     }
   }
 

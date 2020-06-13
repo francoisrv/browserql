@@ -304,4 +304,13 @@ export default class Schema {
     // @ts-ignore
     type.fields.push(...document.definitions[0].fields)
   }
+
+  getEnumerations() {
+    const { definitions } = this.document
+    return definitions.filter(f => f.kind === 'EnumTypeDefinition')
+  }
+
+  getEnumeration(name: string) {
+    return find(this.getEnumerations(), e => Schema.getName(e) === name)
+  }
 }

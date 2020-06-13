@@ -1,43 +1,47 @@
 import { Schema } from '@browserql/client'
 import gql from 'graphql-tag'
 
-function buildWhereArg(field: any, schema: Schema): string {
+export function buildWhereArg(field: any, schema: Schema): string {
   if (field.type.kind === 'NamedType') {
-    if (field.type.name.value === 'String') {
+    const Type = Schema.getName(field.type)
+    if (Type === 'String') {
       return `${ Schema.getName(field) }: FirestoreInputWhereString`
     }
-    if (field.type.name.value === 'ID') {
+    if (Type === 'ID') {
       return `${ Schema.getName(field) }: FirestoreInputWhereID`
     }
-    if (field.type.name.value === 'Int') {
+    if (Type === 'Int') {
       return `${ Schema.getName(field) }: FirestoreInputWhereInt`
     }
-    if (field.type.name.value === 'Float') {
+    if (Type === 'Float') {
       return `${ Schema.getName(field) }: FirestoreInputWhereFloat`
     }
-    if (field.type.name.value === 'Boolean') {
+    if (Type === 'Boolean') {
       return `${ Schema.getName(field) }: FirestoreInputWhereBoolean`
     }
-    const type = schema.getType(field.type.name.value)
-    if (!type) {
-      throw new Error(`No such type: ${ field.type.name.value }`)
-    }
-    const input = schema.getType(`${ field.type.name.value }Input`)
-    if (!input) {
-      schema.extend(`
-      input ${ field.type.name.value }Input {
-        ${
-          // @ts-ignore
-          type.fields.map((field: any) => `${ Schema.getName(field) }: ${ Schema.printType(field.type) }`).join('\n')
+    const type = schema.getType(Type)
+    if (type) {
+      const input = schema.getType(`${ Type }Input`)
+      if (!input) {
+        schema.extend(`
+        input ${ Type }Input {
+          ${
+            // @ts-ignore
+            type.fields.map((field: any) => `${ Schema.getName(field) }: ${ Schema.printType(field.type) }`).join('\n')
+          }
         }
+        input FirestoreInputWhere${ Type } {
+          equals: ${ Type }Input
+          equalsNot: ${ Type }Input
+        }
+        `)
       }
-      input FirestoreInputWhere${ field.type.name.value } {
-        equals: ${ field.type.name.value }Input
-        equalsNot: ${ field.type.name.value }Input
-      }
-      `)
+      return `${ Schema.getName(field) }: FirestoreInputWhere${ Type }`
     }
-    return `${ Schema.getName(field) }: FirestoreInputWhere${ field.type.name.value }`
+    const enumeration = schema.getEnumeration(Type)
+    if (enumeration) {
+      return `${ Schema.getName(field) }: FirestoreInputWhereEnum`
+    }
   } else if (field.type.kind === 'NonNullType') {
     return buildWhereArg({
       ...field,
@@ -108,6 +112,11 @@ export default function buildSchema(schema: Schema): void {
     longitudeEqualsNot: Float
     shapeEquals: [Float]
     shapeEqualsNot: [Float]
+  }
+
+  input FirestoreInputWhereEnum {
+    equals: String
+    equalsNot: String
   }
 
   input FirestoreInputWhereArrayString {
