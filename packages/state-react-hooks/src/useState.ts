@@ -20,7 +20,17 @@ export default function useState(path: string) {
   const queryName = `get${ name }`
 
   function getter() {
-    const results = useQuery(client.getQuery(queryName))
+    const query = client.getQuery(queryName)
+    if (!query) {
+      return [
+        undefined,
+        {
+          loading: false,
+          error: new Error(`Could not find query ${ queryName }`)
+        }
+      ]
+    }
+    const results = useQuery(query)
     return [
       get(results, `data.${ queryName }`, undefined),
       results
@@ -28,9 +38,17 @@ export default function useState(path: string) {
   }
 
   function mutate(mutationName: string) {
-    const [trigger, results] = useMutation(
-      client.getMutation(mutationName)
-    )
+    const mutation = client.getMutation(mutationName)
+    if (!mutation) {
+      console.log(`Could not find mutation: ${ mutationName }`)
+      return [
+        () => {},
+        {
+          error: new Error(`Could not find mutation: ${ mutation }`)
+        }
+      ]
+    }
+    const [trigger, results] = useMutation(mutation)
     return [
       (variables: any) => {
         trigger({variables})

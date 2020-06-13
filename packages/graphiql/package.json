@@ -1,0 +1,19 @@
+{
+  "name": "@browserql/graphiql",
+  "version": "1.0.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "test": "jest dist",
+    "prepublishOnly": "npm run build; echo"
+  },
+  "dependencies": {
+    "@types/react": "^16.9.36",
+    "graphiql": "^1.0.0",
+    "react": "^16.13.1"
+  },
+  "peerDependencies": {
+    "graphql-tag": "^2.10.3"
+  }
+}

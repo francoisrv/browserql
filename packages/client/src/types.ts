@@ -10,8 +10,9 @@ export interface Transaction {
 }
 
 export type Plugin = (
-  schema: Schema,
-  resolvers: any
+  schema?: Schema,
+  resolvers?: any,
+  getClient?: () => Client
 ) => any
 
 export interface ConnectOptions {
@@ -27,4 +28,4 @@ export interface ClientContext {
   getBrowserQLClient(): Client
 }
 
-export type ResolverMiddleware = (input: any) => Promise<any>
+export type ResolverMiddleware = (input: any, getClient: () => Client) => Promise<any>

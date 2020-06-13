@@ -20,6 +20,11 @@ export default function connect(options: ConnectOptions): Client {
     JSONObject: GraphQLJSONObject,
   }
   const middlewares: any = {}
+  let browserQLClient: Client
+
+  function getBrowserQLClient() {
+    return browserQLClient
+  }
 
   schema.extend(gql`
   scalar JSON
@@ -27,7 +32,7 @@ export default function connect(options: ConnectOptions): Client {
   `)
 
   for (const name in resolvers) {
-    const resolver = new Resolver(name)
+    const resolver = new Resolver(name, getBrowserQLClient)
     middlewares[name] = resolver
     // @ts-ignore
     resolver.push(resolvers[name])
@@ -36,7 +41,7 @@ export default function connect(options: ConnectOptions): Client {
 
   if (options.plugins) {
     for (const plugin of options.plugins) {
-      const res = plugin(schema, middlewares)
+      const res = plugin(schema, middlewares, getBrowserQLClient)
       if (res && res.context) {
         Object.assign(context, res.context)
       }
@@ -50,12 +55,6 @@ export default function connect(options: ConnectOptions): Client {
   }
 
   const transactions: Transaction[] = buildTransactions(schema)
-
-  let browserQLClient: Client
-
-  function getBrowserQLClient() {
-    return browserQLClient
-  }
 
   let ast: any
 

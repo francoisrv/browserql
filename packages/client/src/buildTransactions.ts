@@ -129,5 +129,11 @@ export default function buildTransactions(schema: Schema): Transaction[] {
     transactions.push(buildTransaction(query, 'query', schema))
   }
 
+  const mutations = schema.getMutations()
+
+  for (const mutation of mutations) {
+    transactions.push(buildTransaction(mutation, 'mutation', schema))
+  }
+
   return transactions
 }

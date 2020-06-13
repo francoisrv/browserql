@@ -224,6 +224,21 @@ export default class Schema {
     return queries
   }
 
+  getMutations(): FieldDefinitionNode[] {
+    const mutations: FieldDefinitionNode[] = []
+    const mutationType = this.getMutationType()
+    if (mutationType) {
+      // @ts-ignore
+      mutations.push(...mutationType.fields)
+    }
+    const extendedMutations = this.getExtendedQueryTypes()
+    extendedMutations.forEach(q => {
+      // @ts-ignore
+      mutations.push(...q.fields)
+    })
+    return mutations
+  }
+
   addQuery(query: string | DocumentNode) {
     const document = typeof query === 'string' ? gql(query) : query
     if (this.getQueryType()) {

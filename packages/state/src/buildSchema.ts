@@ -15,6 +15,7 @@ export default function buildSchema(state: State, schema: Schema) {
       const kind = Schema.printType(state[type][field].field.type)
       queries.push(`${ queryName }: ${ kind }`)
       mutations.push(`${ mutationName }(value: ${ kind }): ${ kind }`)
+      mutations.push(`toggle${ name }: Boolean`)
     }
   }
   schema.extend(gql`

@@ -1,6 +1,6 @@
 {
   "name": "@browserql/state-react-hooks",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "main": "dist/index.js",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
