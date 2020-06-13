@@ -13,6 +13,7 @@ export default class Resolver {
 
   push(middleware: ResolverMiddleware) {
     this.middlewares.push(middleware)
+    return this
   }
 
   async execute(input: any) {

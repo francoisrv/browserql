@@ -1,3 +1,7 @@
 type Company @firestore {
   name: String!
 }
+
+type Mutation {
+  foo: ID
+}

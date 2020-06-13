@@ -7,12 +7,17 @@ import Provider from '@browserql/react-provider'
 import firestore from '@browserql/firestore'
 import { useFirestore } from '@browserql/firestore-react-hooks'
 import connect from '@browserql/client'
+import GraphiQL from '@browserql/graphiql'
 
 // import schema from './firestore.graphql'
 
 const schema = `
 type Company @firestore {
   name: String!
+}
+
+type Mutation {
+  foo: ID
 }
 `
 
@@ -47,22 +52,9 @@ function Companies() {
   }
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        {
-          companies.map(company => (
-            <tr key={ company.id }>
-              <td>{ company.name }</td>
-            </tr>
-          ))
-        }
-      </tbody>
-    </table>
+    <>
+      <GraphiQL />
+    </>
   )
 }
 
@@ -77,10 +69,11 @@ function App() {
 const client = connect({ schema, plugins })
 
 console.log(client.printSchema())
+console.log(client)
 
 ReactDOM.render(
   <Provider client={ client }>
-    <App />
+    <GraphiQL />
   </Provider>,
   document.getElementById('root')
 )
