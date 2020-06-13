@@ -1,6 +1,6 @@
 {
   "name": "@browserql/state",
-  "version": "1.1.15",
+  "version": "1.1.16",
   "scripts": {
     "build": "rm -rf dist && tsc",
     "prepublishOnly": "npm run build"
