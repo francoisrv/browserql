@@ -1,0 +1,40 @@
+type Todo {
+  title:  String
+  done:   Boolean
+  id:     UID
+}
+
+enum TodoSorter {
+  title
+  done
+  id
+}
+
+type Query {
+  getTodos(
+    limit: Int = 30
+    page: Int = 1
+    sortBy: TodoSorter
+    order: SORT_ORDER = ASCENDING
+  ): [Todo] @get(
+    type:     "Todo"
+    page:     "page"        @param
+    limit:    "limit"       @param
+    sortBy:   "sortBy"      @param
+    order:    "order"       @param
+  )
+
+  getDone: [Todo] @get(type: "Todo" where: [{ field: "done" equals: true }])
+}
+
+type Mutation {
+  addTodo(title: String! done: Boolean = false id: ID @uid): Todo
+  @push(type: "Todo")
+
+  markAsDone(id: ID!): Todo
+  @update(
+    type:   "Todo"
+    where:  [{ field: "id" equals: "id" @param }]
+    set:    [{ field: "done" value: true }]
+  )
+}
