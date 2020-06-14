@@ -1,0 +1,8 @@
+type File {
+  name: String
+  content: String
+}
+
+type Mutation {
+  writeFile
+}

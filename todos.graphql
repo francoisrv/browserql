@@ -10,31 +10,33 @@ enum TodoSorter {
   id
 }
 
-type Query {
-  getTodos(
-    limit: Int = 30
-    page: Int = 1
-    sortBy: TodoSorter
-    order: SORT_ORDER = ASCENDING
-  ): [Todo] @get(
-    type:     "Todo"
-    page:     "page"        @param
-    limit:    "limit"       @param
-    sortBy:   "sortBy"      @param
-    order:    "order"       @param
-  )
+input TodoFilters {
+  limit: Int = 30
+  page: Int = 1
+  sortBy: TodoSorter
+  order: SORT_ORDER = ASCENDING
+}
 
-  getDone: [Todo] @get(type: "Todo" where: [{ field: "done" equals: true }])
+input TodoWhere {
+  title: String
+  done: Boolean
+  id: UID
+}
+
+type Query {
+  getTodos(where: TodoWhere filters: TodoFilters): [Todo]
+  @get(type: "Todo")
+  @persist
 }
 
 type Mutation {
-  addTodo(title: String! done: Boolean = false id: ID @uid): Todo
+  addTodo(title: String! done: Boolean = false id: UID): Todo
   @push(type: "Todo")
 
   markAsDone(id: ID!): Todo
   @update(
     type:   "Todo"
     where:  [{ field: "id" equals: "id" @param }]
-    set:    [{ field: "done" value: true }]
+    set:    [{ field: "done" to: true }]
   )
 }
