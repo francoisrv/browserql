@@ -13,12 +13,26 @@ export default function useFirestore(path: string) {
     ]
   }
   const client = contextClient
-  function find() {
+  function find(where: any) {
     const queryName = `firestoreFind${ path }`
+    const queryWhere: any = {}
+    for (const key in where) {
+      queryWhere[key] = { equals: where[key] }
+    }
+    return useQuery(queryName, { where: queryWhere })
+  }
+  function findOne() {
+    const queryName = `firestoreFindOne${ path }`
     return useQuery(queryName)
+  }
+  function findById(id: string) {
+    const queryName = `firestoreFindById${ path }`
+    return useQuery(queryName, { id })
   }
   
   return {
-    find
+    find,
+    findOne,
+    findById
   }
 }

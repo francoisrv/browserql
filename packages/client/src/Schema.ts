@@ -128,12 +128,52 @@ export default class Schema {
   }
 
   toString() {
+    this.merge()
     return print(this.document)
   }
 
   toAST(): GraphQLSchema {
+    this.merge()
     return buildASTSchema(this.document)
   }
+
+  extend(schema: string | DocumentNode) {
+    const document = typeof schema === 'string' ? gql(schema) : schema
+    // @ts-ignore
+    this.document.definitions.push(...document.definitions)
+    this.merge()
+  }
+
+  merge() {
+    const extendedTypes = this.getExtendedTypes()
+    for (const extendedType of extendedTypes) {
+      const typeName = Schema.getName(extendedType)
+      const type = this.getType(typeName)
+      if (!type) {
+        throw new Error(`Can not extend unknown type: ${ typeName }`)
+      }
+      this.addTypeFields(print(extendedType))
+      this.removeExtendedType(typeName)
+    }
+
+    const query = this.getQueryType()
+
+    if (query) {
+      const extendedQueries = this.getExtendedQueryTypes()
+
+      for (const q of extendedQueries) {
+        this.addQueryFields(print(q))
+      }
+
+      this.removeExtendedType('Query')
+    }
+  }
+
+  /* 
+      *****************************************************************************************
+      TYPES
+      *****************************************************************************************
+  */
 
   getTypes(): ObjectTypeDefinitionNode[] {
     const { definitions } = this.document
@@ -186,6 +226,41 @@ export default class Schema {
     return fields
   }
 
+  addType(type: string | DocumentNode) {
+    const document = typeof type === 'string' ? gql(type) : type
+    // @ts-ignore
+    this.document.definitions.push(...document.definitions)
+  }
+
+  addTypeFields(source: string | DocumentNode) {
+    const document = typeof source === 'string' ? gql(source) : source
+    const extendedType = Schema.getName(document.definitions[0])
+    if (!extendedType) {
+      throw new Error(`Can not extend undeclared type ${ extendedType }`)
+    }
+    const type = this.getType(extendedType)
+    if (!type) {
+      throw new Error(`Can not extend undeclared type ${ extendedType }`)
+    }
+    // @ts-ignore
+    type.fields.push(...document.definitions[0].fields)
+  }
+
+  removeExtendedType(name: string) {
+    const { definitions } = this.document
+    const nextDefinitions = definitions.filter(
+      def => !(def.kind === 'ObjectTypeExtension' && Schema.getName(def) === name)
+    )
+    // @ts-ignore
+    this.document.definitions = nextDefinitions
+  }
+
+  /* 
+      *****************************************************************************************
+      QUERIES
+      *****************************************************************************************
+  */
+
   getQueryType() {
     const { definitions } = this.document
     return find(
@@ -198,14 +273,6 @@ export default class Schema {
     const { definitions } = this.document
     return definitions.filter(
       def => def.kind === 'ObjectTypeExtension' && Schema.getName(def) === 'Query'
-    )
-  }
-
-  getMutationType() {
-    const { definitions } = this.document
-    return find(
-      definitions,
-      def => def.kind === 'ObjectTypeDefinition' && Schema.getName(def) === 'Mutation'
     )
   }
 
@@ -224,19 +291,9 @@ export default class Schema {
     return queries
   }
 
-  getMutations(): FieldDefinitionNode[] {
-    const mutations: FieldDefinitionNode[] = []
-    const mutationType = this.getMutationType()
-    if (mutationType) {
-      // @ts-ignore
-      mutations.push(...mutationType.fields)
-    }
-    const extendedMutations = this.getExtendedQueryTypes()
-    extendedMutations.forEach(q => {
-      // @ts-ignore
-      mutations.push(...q.fields)
-    })
-    return mutations
+  getQueriesWithDirective(directive: string) {
+    const queries = this.getQueries()
+    return queries.filter(query => Schema.hasDirective(query, directive))
   }
 
   addQuery(query: string | DocumentNode) {
@@ -252,71 +309,13 @@ export default class Schema {
     this.document.definitions.push(document.definitions[0])
   }
 
-  addDirective(directive: string | DocumentNode) {
-    const document = typeof directive === 'string' ? gql(directive) : directive
-    // @ts-ignore
-    this.document.definitions.push(...document.definitions)
-  }
-
-  getScalars() {
-    const { definitions } = this.document
-    return definitions.filter(d => d.kind === 'ScalarTypeDefinition')
-  }
-
-  getDirectives() {
-    const { definitions } = this.document
-    return definitions.filter(d => d.kind === 'DirectiveDefinition')
-  }
-
-  getDirective(name: string) {
-    return find(this.getDirectives(), d => Schema.getName(d) === name)
-  }
-
-  getInputs() {
-    const { definitions } = this.document
-    return definitions.filter(d => d.kind === 'InputObjectTypeDefinition')
-  }
-
-  getInput(name: string) {
-    return find(this.getInputs(), d => Schema.getName(d) === name)
-  }
-
-  addType(type: string | DocumentNode) {
-    const document = typeof type === 'string' ? gql(type) : type
-    // @ts-ignore
-    this.document.definitions.push(...document.definitions)
-  }
-
-  addEnum(enumeration: string | DocumentNode) {
-    const document = typeof enumeration === 'string' ? gql(enumeration) : enumeration
-    // @ts-ignore
-    this.document.definitions.push(...document.definitions)
-  }
-
-  addInput(input: string | DocumentNode) {
-    const document = typeof input === 'string' ? gql(input) : input
-    // @ts-ignore
-    this.document.definitions.push(...document.definitions)
-  }
-
-  extend(schema: string | DocumentNode) {
-    const document = typeof schema === 'string' ? gql(schema) : schema
-    // @ts-ignore
-    this.document.definitions.push(...document.definitions)
-  }
-
-  getQueriesWithDirective(directive: string) {
-    const queries = this.getQueries()
-    return queries.filter(query => Schema.hasDirective(query, directive))
-  }
-
-  addTypeFields(source: string | DocumentNode) {
+  addQueryFields(source: string | DocumentNode) {
     const document = typeof source === 'string' ? gql(source) : source
     const extendedType = Schema.getName(document.definitions[0])
     if (!extendedType) {
       throw new Error(`Can not extend undeclared type ${ extendedType }`)
     }
-    const type = this.getType(extendedType)
+    const type = this.getQueryType()
     if (!type) {
       throw new Error(`Can not extend undeclared type ${ extendedType }`)
     }
@@ -324,13 +323,33 @@ export default class Schema {
     type.fields.push(...document.definitions[0].fields)
   }
 
-  getEnumerations() {
+  /* 
+      *****************************************************************************************
+      MUTATIONS
+      *****************************************************************************************
+  */
+
+  getMutationType() {
     const { definitions } = this.document
-    return definitions.filter(f => f.kind === 'EnumTypeDefinition')
+    return find(
+      definitions,
+      def => def.kind === 'ObjectTypeDefinition' && Schema.getName(def) === 'Mutation'
+    )
   }
 
-  getEnumeration(name: string) {
-    return find(this.getEnumerations(), e => Schema.getName(e) === name)
+  getMutations(): FieldDefinitionNode[] {
+    const mutations: FieldDefinitionNode[] = []
+    const mutationType = this.getMutationType()
+    if (mutationType) {
+      // @ts-ignore
+      mutations.push(...mutationType.fields)
+    }
+    const extendedMutations = this.getExtendedQueryTypes()
+    extendedMutations.forEach(q => {
+      // @ts-ignore
+      mutations.push(...q.fields)
+    })
+    return mutations
   }
 
   addMutation(mutation: string | DocumentNode) {
@@ -344,5 +363,79 @@ export default class Schema {
     }
     // @ts-ignore
     this.document.definitions.push(document.definitions[0])
+  }
+
+  /* 
+      *****************************************************************************************
+      DIRECTIVES
+      *****************************************************************************************
+  */
+
+  addDirective(directive: string | DocumentNode) {
+    const document = typeof directive === 'string' ? gql(directive) : directive
+    // @ts-ignore
+    this.document.definitions.push(...document.definitions)
+  }
+
+  getDirectives() {
+    const { definitions } = this.document
+    return definitions.filter(d => d.kind === 'DirectiveDefinition')
+  }
+
+  getDirective(name: string) {
+    return find(this.getDirectives(), d => Schema.getName(d) === name)
+  }
+
+  /* 
+      *****************************************************************************************
+      SCALARS
+      *****************************************************************************************
+  */
+
+  getScalars() {
+    const { definitions } = this.document
+    return definitions.filter(d => d.kind === 'ScalarTypeDefinition')
+  }
+
+  /* 
+      *****************************************************************************************
+      INPUTS
+      *****************************************************************************************
+  */
+
+  getInputs() {
+    const { definitions } = this.document
+    return definitions.filter(d => d.kind === 'InputObjectTypeDefinition')
+  }
+
+  getInput(name: string) {
+    return find(this.getInputs(), d => Schema.getName(d) === name)
+  }
+
+  addInput(input: string | DocumentNode) {
+    const document = typeof input === 'string' ? gql(input) : input
+    // @ts-ignore
+    this.document.definitions.push(...document.definitions)
+  }
+
+  /* 
+      *****************************************************************************************
+      ENUMERATIONS
+      *****************************************************************************************
+  */
+
+  addEnum(enumeration: string | DocumentNode) {
+    const document = typeof enumeration === 'string' ? gql(enumeration) : enumeration
+    // @ts-ignore
+    this.document.definitions.push(...document.definitions)
+  }
+
+  getEnumerations() {
+    const { definitions } = this.document
+    return definitions.filter(f => f.kind === 'EnumTypeDefinition')
+  }
+
+  getEnumeration(name: string) {
+    return find(this.getEnumerations(), e => Schema.getName(e) === name)
   }
 }

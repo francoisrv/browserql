@@ -65,6 +65,8 @@ function buildWhere(type: any, schema: Schema): string[] {
 export default function buildSchema(schema: Schema): void {
   schema.extend(gql`
   directive @firestore(collection: String) on OBJECT
+  
+  directive @rel(type: String!) on FIELD_DEFINITION
 
   input FirestorePaging {
     page: Int
@@ -193,6 +195,11 @@ export default function buildSchema(schema: Schema): void {
       ${ findOneName }(
         where: FirestoreWhere${ typeName }
       ): ${ typeName }
+
+      firestoreFindById${ typeName }(
+        id: ID!
+      ): ${ typeName }
+    
     }
     `)
   }

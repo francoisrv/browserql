@@ -10,9 +10,9 @@ export interface Transaction {
 }
 
 export type Plugin = (
-  schema?: Schema,
-  resolvers?: any,
-  getClient?: () => Client
+  schema: Schema,
+  resolvers: any,
+  getClient: () => Client
 ) => any
 
 export interface ConnectOptions {

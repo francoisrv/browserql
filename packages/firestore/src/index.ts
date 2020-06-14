@@ -4,9 +4,9 @@ import buildSchema from './buildSchema'
 
 export default function plugin(db: any) {
   return function(...args: Parameters<Plugin>): ReturnType<Plugin> {
-    const [schema, resolvers] = args
+    const [schema, resolvers, getClient] = args
     buildSchema(schema)
-    buildResolvers(schema, resolvers, db)
+    buildResolvers(schema, resolvers, getClient, db)
     return {}
   }
 }

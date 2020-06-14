@@ -62,6 +62,35 @@ describe('Schema', () => {
     })
   })
 
+  describe('Merge', () => {
+    const schema = new Schema(gql`
+    type Foo {
+      id: String
+    }
+    extend type Foo {
+      title: String
+    }
+    type Query {
+      get: ID
+    }
+    extend type Query {
+      getAll: [ID]
+    }
+    `)
+    it('should merge extended types', () => {
+      schema.merge()
+      expect(schema.toString().trim()).toEqual(`type Foo {
+  id: String
+  title: String
+}
+
+type Query {
+  get: ID
+  getAll: [ID]
+}`)
+    })
+  })
+
   describe('Types', () => {
     it('should get types', () => {
       const schema = new Schema('type Foo @foo { id: ID } type Bar { id: ID! }')
