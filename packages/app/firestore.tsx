@@ -9,17 +9,7 @@ import { useFirestore } from '@browserql/firestore-react-hooks'
 import connect from '@browserql/client'
 import GraphiQL from '@browserql/graphiql'
 
-// import schema from './firestore.graphql'
-
-const schema = `
-type Company @firestore {
-  name: String!
-}
-
-type Mutation {
-  foo: ID
-}
-`
+import schema from './firestore.graphql'
 
 firebase.initializeApp({
   apiKey: 'AIzaSyDxx1IiOnwgZZzE0_YlGmCGGITQGL-VnQA',
@@ -31,9 +21,8 @@ firebase.initializeApp({
 const plugins = [firestore(firebase.firestore())]
 
 function Companies() {
-  const [companies, { loading, error }] = useFirestore('Company').find()
-
-  console.log({ companies, loading, error })
+  const [foos, { loading, error }] = useFirestore('Foo').find()
+  const [on, toggle] = React.useState(false)
 
   if (error) {
     return (
@@ -53,6 +42,18 @@ function Companies() {
 
   return (
     <>
+      <button onClick={ () => toggle(!on) }>
+      ON
+      </button>
+      <ul>
+      {
+        foos.map(foo => (
+          <li key={ foo.id }>
+            { foo.name }
+          </li>
+        ))
+      }
+      </ul>
       <GraphiQL />
     </>
   )
@@ -68,12 +69,11 @@ function App() {
 
 const client = connect({ schema, plugins })
 
-console.log(client.printSchema())
-console.log(client)
+window.client = client
 
 ReactDOM.render(
   <Provider client={ client }>
-    <GraphiQL />
+    <App />
   </Provider>,
   document.getElementById('root')
 )

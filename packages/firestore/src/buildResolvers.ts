@@ -1,9 +1,13 @@
 import { Resolver, Schema, Client } from '@browserql/client'
 
+function buildWhereQuery(where: { [field: string]: any }, query: any) {
+  for (const k in where) {
+    query = query.where(k, '==', where[k])
+  }
+}
+
 export default function buildResolvers(schema: Schema, resolvers: any, getClient: () => Client, db: any) {
   const types = schema.getTypesWithDirective('firestore')
-
-  const client = getClient()
 
   for (const type of types) {
     const typeName = Schema.getName(type)
@@ -20,28 +24,39 @@ export default function buildResolvers(schema: Schema, resolvers: any, getClient
     const findName = `firestoreFind${ typeName }`
     resolvers[findName] = new Resolver(findName, getClient)
     resolvers[findName].push(async (input: any) => {
-      try {
-        return client.read(findName)
-      } catch (error) {
-        const querySnapshot = await db.collection(collectionName).get()
-        const results: any[] = []
+      let query = await db.collection(collectionName)
+      if (input.where) {
+        buildWhereQuery(input.where, query)
+      }
+      query.onSnapshot((querySnapshot: any) => {
+        const client = getClient()
+        const results2: any[] = []
         querySnapshot.forEach((doc: any) => {
-          results.push({
+          results2.push({
+            __typename: typeName,
             id: doc.id,
             ...doc.data()
           })
         })
-        return results
-      }
+        client.writeQuery(findName, results2, input)
+      })
+      const querySnapshot = await query.get()
+      const results: any[] = []
+      querySnapshot.forEach((doc: any) => {
+        results.push({
+          id: doc.id,
+          __typename: typeName,
+          ...doc.data()
+        })
+      })
+      return results
     })
     
     const findOneName = `firestoreFindOne${ typeName }`
     resolvers[findOneName] = new Resolver(findOneName, getClient)
     resolvers[findOneName].push(async (input: any) => {
       let query = await db.collection(collectionName)
-      for (const k in input) {
-        query = query.where(k, '==', input[k])
-      }
+      buildWhereQuery(input, query)
       const querySnapshot = await query.get()
       const results: any[] = []
       querySnapshot.forEach((doc: any) => {

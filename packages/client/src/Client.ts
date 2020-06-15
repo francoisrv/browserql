@@ -61,13 +61,14 @@ export default class Client {
     })
   }
 
-  writeQuery(name: string, data: any) {
+  writeQuery(name: string, data: any, variables?: any) {
     const query = this.getQuery(name)
     if (!query) {
       throw new Error(`Could not find query: ${ name }`)
     }
     return this.apollo.writeQuery({
       query,
+      variables,
       data: { [name]: data }
     })
   }
