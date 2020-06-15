@@ -29,6 +29,15 @@ export default class Client {
 
   // QUERY
 
+  read(name: string, variables?: any) {
+    const query = this.getQuery(name)
+    if (!query) {
+      throw new Error(`Could not find query: ${ name }`)
+    }
+    const data = this.apollo.readQuery({ query, variables })
+    return data[name]
+  }
+
   readQuery(name: string, variables?: any) {
     const query = this.getQuery(name)
     if (!query) {
