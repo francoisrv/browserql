@@ -10,3 +10,5 @@ export default function plugin(db: any) {
     return {}
   }
 }
+
+export * from './utils'

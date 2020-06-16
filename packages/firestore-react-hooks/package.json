@@ -1,6 +1,6 @@
 {
   "name": "@browserql/firestore-react-hooks",
-  "version": "1.0.8",
+  "version": "1.0.10",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "source": "src/index.ts",

@@ -1,6 +1,6 @@
 {
   "name": "@browserql/firestore",
-  "version": "1.0.26",
+  "version": "1.0.31",
   "scripts": {
     "build": "rm -rf dist && tsc",
     "prepublishOnly": "npm run build && npm t",

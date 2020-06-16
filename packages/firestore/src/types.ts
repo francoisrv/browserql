@@ -6,10 +6,19 @@ export interface Paging {
   page: number
 }
 
-export interface FindOptions {
+export interface Filters {
   paging?: Paging
 }
 
+export interface Where {
+  [field: string]: any
+}
+
+export interface Input {
+  where?: Where
+  id?: string
+}
+
 export interface Model<T> {
-  find(where: any, options: FindOptions): T[]
+  find(where: Where, filters: Filters): T[]
 }

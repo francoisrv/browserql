@@ -1,5 +1,6 @@
 import { Schema } from '@browserql/client'
 import gql from 'graphql-tag'
+import { FIND_QUERY, FIND_ONE_QUERY, FIND_BY_ID_QUERY } from './utils'
 
 export function buildWhereArg(field: any, schema: Schema): string {
   if (field.type.kind === 'NamedType') {
@@ -173,8 +174,6 @@ export default function buildSchema(schema: Schema): void {
 
   for (const type of types) {
     const typeName = Schema.getName(type)
-    const findName = `firestoreFind${ typeName }`
-    const findOneName = `firestoreFindOne${ typeName }`
     schema.addTypeFields(`
     extend type ${ typeName } @firestore {
       id: ID!
@@ -187,16 +186,16 @@ export default function buildSchema(schema: Schema): void {
     `)
     schema.addQuery(`
     extend type Query {
-      ${ findName }(
+      ${ FIND_QUERY(typeName) }(
         paging: FirestorePaging
         where: FirestoreWhere${ typeName }
       ): [${ typeName }!]!
 
-      ${ findOneName }(
+      ${ FIND_ONE_QUERY(typeName) }(
         where: FirestoreWhere${ typeName }
       ): ${ typeName }
 
-      firestoreFindById${ typeName }(
+      ${ FIND_BY_ID_QUERY(typeName) }(
         id: ID!
       ): ${ typeName }
     

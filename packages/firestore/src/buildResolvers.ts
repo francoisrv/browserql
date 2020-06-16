@@ -1,13 +1,72 @@
 import { Resolver, Schema, Client } from '@browserql/client'
+import { Input } from './types'
+import { FIND_QUERY, FIND_ONE_QUERY, FIND_BY_ID_QUERY } from './utils'
+
+interface FindOptions {
+  collectionName: string
+  input: Input
+  typeName: string
+  queryName: string
+  single?: boolean
+}
 
 function buildWhereQuery(where: { [field: string]: any }, query: any) {
+  console.log({where})
   for (const k in where) {
-    query = query.where(k, '==', where[k])
+    if (where[k].equals) {
+      query = query.where(k, '==', where[k].equals)
+    }
   }
 }
 
 export default function buildResolvers(schema: Schema, resolvers: any, getClient: () => Client, db: any) {
   const types = schema.getTypesWithDirective('firestore')
+
+  function addResolver(
+    queryName: string,
+    cb: (input: Input) => Promise<any>
+  ) {
+    resolvers[queryName] = new Resolver(queryName, getClient)
+    resolvers[queryName].push(cb)
+  }
+
+  async function find(options: FindOptions) {
+    let query = await db.collection(options.collectionName)
+    
+    if (options.input.where) {
+      buildWhereQuery(options.input.where, query)
+    } else if (options.input.id) {
+      query = query.doc(options.input.id)
+    }
+
+    query.onSnapshot((querySnapshot: any) => {
+      const client = getClient()
+      const results2: any[] = []
+      querySnapshot.forEach((doc: any) => {
+        results2.push({
+          __typename: options.typeName,
+          id: doc.id,
+          ...doc.data()
+        })
+      })
+      client.writeQuery(options.queryName, results2, options.input)
+    })
+
+    const querySnapshot = await query.get()
+    const results: any[] = []
+    querySnapshot.forEach((doc: any) => {
+      results.push({
+        id: doc.id,
+        __typename: options.typeName,
+        ...doc.data()
+      })
+    })
+
+    if (options.single) {
+      return results[0]
+    }
+    return results
+  }
 
   for (const type of types) {
     const typeName = Schema.getName(type)
@@ -20,64 +79,38 @@ export default function buildResolvers(schema: Schema, resolvers: any, getClient
     } else {
       collectionName += 's'
     }
+
+    const FIND = FIND_QUERY(typeName)
+    const FIND_ONE = FIND_ONE_QUERY(typeName)
+    const FIND_BY_ID = FIND_BY_ID_QUERY(typeName)
     
-    const findName = `firestoreFind${ typeName }`
-    resolvers[findName] = new Resolver(findName, getClient)
-    resolvers[findName].push(async (input: any) => {
-      let query = await db.collection(collectionName)
-      if (input.where) {
-        buildWhereQuery(input.where, query)
-      }
-      query.onSnapshot((querySnapshot: any) => {
-        const client = getClient()
-        const results2: any[] = []
-        querySnapshot.forEach((doc: any) => {
-          results2.push({
-            __typename: typeName,
-            id: doc.id,
-            ...doc.data()
-          })
-        })
-        client.writeQuery(findName, results2, input)
+    addResolver(FIND, async input => {
+      return await find({
+        collectionName,
+        input,
+        typeName,
+        queryName: FIND
       })
-      const querySnapshot = await query.get()
-      const results: any[] = []
-      querySnapshot.forEach((doc: any) => {
-        results.push({
-          id: doc.id,
-          __typename: typeName,
-          ...doc.data()
-        })
-      })
-      return results
-    })
-    
-    const findOneName = `firestoreFindOne${ typeName }`
-    resolvers[findOneName] = new Resolver(findOneName, getClient)
-    resolvers[findOneName].push(async (input: any) => {
-      let query = await db.collection(collectionName)
-      buildWhereQuery(input, query)
-      const querySnapshot = await query.get()
-      const results: any[] = []
-      querySnapshot.forEach((doc: any) => {
-        results.push({
-          id: doc.id,
-          ...doc.data()
-        })
-      })
-      return results[0]
     })
 
-    const findById = `firestoreFindById${ typeName }`
-    resolvers[findById] = new Resolver(findById, getClient)
-    resolvers[findById].push(async (p: { id: string }) => {
-      const doc = await db.collection(collectionName).doc(p.id).get()
-      if (doc.exists) {
-        return {
-          id: p.id,
-          ...doc.data()
-        }
-      }
+    addResolver(FIND_ONE, async input => {
+      return await find({
+        collectionName,
+        input,
+        typeName,
+        queryName: FIND_ONE,
+        single: true
+      })
+    })
+
+    addResolver(FIND_BY_ID, async input => {
+      return await find({
+        collectionName,
+        input,
+        typeName,
+        queryName: FIND_BY_ID,
+        single: true
+      })
     })
   }
 }
