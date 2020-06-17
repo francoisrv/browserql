@@ -18,62 +18,79 @@ firebase.initializeApp({
   authDomain: 'lestudio-75c34.firebaseapp.com'
 })
 
-const plugins = [firestore(firebase.firestore())]
+const db = firebase.firestore()
 
-function Companies() {
-  const [foos, { loading, error }] = useFirestore('Foo').find()
-  const [on, toggle] = React.useState(false)
+let query = db.collection("personalinfos")
 
-  if (error) {
-    return (
-      <div>
-        { error.message }
-      </div>
-    )
-  }
+query = query.doc('FiI4ElehVBWICakyuKU7')
 
-  if (loading) {
-    return (
-      <div>
-        Loading
-      </div>
-    )
-  }
+query.get()
+    .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+        });
+    })
+    .catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
 
-  return (
-    <>
-      <button onClick={ () => toggle(!on) }>
-      ON
-      </button>
-      <ul>
-      {
-        foos.map(foo => (
-          <li key={ foo.id }>
-            { foo.name }
-          </li>
-        ))
-      }
-      </ul>
-      <GraphiQL />
-    </>
-  )
-}
+// const plugins = [firestore(firebase.firestore())]
 
-function App() {
-  return (
-    <div>
-      <Companies />
-    </div>
-  )
-}
+// function Companies() {
+//   const [foos, { loading, error }] = useFirestore('Foo').find()
+//   const [on, toggle] = React.useState(false)
 
-const client = connect({ schema, plugins })
+//   if (error) {
+//     return (
+//       <div>
+//         { error.message }
+//       </div>
+//     )
+//   }
 
-window.client = client
+//   if (loading) {
+//     return (
+//       <div>
+//         Loading
+//       </div>
+//     )
+//   }
 
-ReactDOM.render(
-  <Provider client={ client }>
-    <App />
-  </Provider>,
-  document.getElementById('root')
-)
+//   return (
+//     <>
+//       <button onClick={ () => toggle(!on) }>
+//       ON
+//       </button>
+//       <ul>
+//       {
+//         foos.map(foo => (
+//           <li key={ foo.id }>
+//             { foo.name }
+//           </li>
+//         ))
+//       }
+//       </ul>
+//       <GraphiQL />
+//     </>
+//   )
+// }
+
+// function App() {
+//   return (
+//     <div>
+//       <Companies />
+//     </div>
+//   )
+// }
+
+// const client = connect({ schema, plugins })
+
+// window.client = client
+
+// ReactDOM.render(
+//   <Provider client={ client }>
+//     <App />
+//   </Provider>,
+//   document.getElementById('root')
+// )

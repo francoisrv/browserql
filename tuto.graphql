@@ -1,0 +1,29 @@
+# Queries are synchronous and return the cache state
+
+scalar Counter @Int
+
+type State {
+  counter: Counter!
+}
+
+type Todo {
+
+}
+
+enum Size {
+  SMALL @default
+  MEDIUM
+  LARGE
+}
+
+type Query {
+  getCounter: Int! @default(value: 100)
+
+  getTodos: [Todo]
+}
+
+type Mutation {
+  incrementCounter: Int @write(query: "")
+  
+  fetchTodos: [Todo] @push(type: "Todo")
+}

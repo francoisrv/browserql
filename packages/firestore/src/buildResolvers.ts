@@ -11,12 +11,28 @@ interface FindOptions {
 }
 
 function buildWhereQuery(where: { [field: string]: any }, query: any) {
-  console.log({where})
   for (const k in where) {
-    if (where[k].equals) {
+    if ('equals' in where[k]) {
       query = query.where(k, '==', where[k].equals)
     }
   }
+  return query
+}
+
+function buildDocument(doc: any, typeName: string) {
+  return {
+    id: doc.id,
+    __typename: typeName,
+    ...doc.data()
+  }
+}
+
+function buildDocuments(snapshot: any, typeName: string) {
+  const docs: any[] = []
+  snapshot.forEach((doc: any) => {
+    docs.push(buildDocument(doc, typeName))
+  })
+  return docs
 }
 
 export default function buildResolvers(schema: Schema, resolvers: any, getClient: () => Client, db: any) {
@@ -31,36 +47,31 @@ export default function buildResolvers(schema: Schema, resolvers: any, getClient
   }
 
   async function find(options: FindOptions) {
-    let query = await db.collection(options.collectionName)
+    if (options.input.id) {
+      const docRef = db.collection(options.collectionName).doc(options.input.id)
+      docRef.onSnapshot((doc: any) => {
+        const client = getClient()
+        const nextData = buildDocument(doc, options.typeName)
+        client.writeQuery(options.queryName, nextData, options.input)
+      })
+      const doc = await docRef.get()
+      return buildDocument(doc, options.typeName)
+    }
+    
+    let docRef = db.collection(options.collectionName)
     
     if (options.input.where) {
-      buildWhereQuery(options.input.where, query)
-    } else if (options.input.id) {
-      query = query.doc(options.input.id)
+      docRef = buildWhereQuery(options.input.where, docRef)
     }
 
-    query.onSnapshot((querySnapshot: any) => {
+    docRef.onSnapshot((querySnapshot: any) => {
       const client = getClient()
-      const results2: any[] = []
-      querySnapshot.forEach((doc: any) => {
-        results2.push({
-          __typename: options.typeName,
-          id: doc.id,
-          ...doc.data()
-        })
-      })
-      client.writeQuery(options.queryName, results2, options.input)
+      const nextData = buildDocuments(querySnapshot, options.typeName)
+      client.writeQuery(options.queryName, nextData, options.input)
     })
 
-    const querySnapshot = await query.get()
-    const results: any[] = []
-    querySnapshot.forEach((doc: any) => {
-      results.push({
-        id: doc.id,
-        __typename: options.typeName,
-        ...doc.data()
-      })
-    })
+    const querySnapshot = await docRef.get()
+    const results = buildDocuments(querySnapshot, options.typeName)
 
     if (options.single) {
       return results[0]
