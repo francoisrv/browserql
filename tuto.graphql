@@ -27,3 +27,13 @@ type Mutation {
   
   fetchTodos: [Todo] @push(type: "Todo")
 }
+
+
+type Query {
+  getVersion: String! @default(value: "1.0.0")
+}
+
+type Mutation {
+  setVersion(version: String): Unrelated
+  @write(query: "getVersion" data: param("version"))
+}

@@ -291,6 +291,11 @@ export default class Schema {
     return queries
   }
 
+  getQuery(name: string): FieldDefinitionNode | undefined {
+    const queries = this.getQueries()
+    return find(queries, query => Schema.getName(query) === name)
+  }
+
   getQueriesWithDirective(directive: string) {
     const queries = this.getQueries()
     return queries.filter(query => Schema.hasDirective(query, directive))

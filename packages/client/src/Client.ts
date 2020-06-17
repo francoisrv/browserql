@@ -27,9 +27,15 @@ export default class Client {
     return this.schema
   }
 
+  // TRANSACTIONS
+
+  getTransaction(name: string): Transaction | undefined {
+    return find(this.transactions, { name })
+  }
+
   // QUERY
 
-  read(name: string, variables?: any) {
+  readQuery(name: string, variables?: any) {
     const query = this.getQuery(name)
     if (!query) {
       throw new Error(`Could not find query: ${ name }`)
@@ -38,19 +44,37 @@ export default class Client {
     return data[name]
   }
 
-  readQuery(name: string, variables?: any) {
-    const query = this.getQuery(name)
-    if (!query) {
-      throw new Error(`Could not find query: ${ name }`)
+  read(name: string, variables?: any) {
+    let data
+    try {
+      data = this.readQuery(name, variables)
+    } catch (error) {
+      data = null
     }
-    return this.apollo.readQuery({ query, variables })
+    if (data === null) {
+      const query = this.schema.getQuery(name)
+      if (!query) {
+        throw new Error(`Can not find query ${ name }`)
+      }
+      const type = Schema.printType(query.type)
+      if (type === 'String !' || type === 'ID !') {
+        return ''
+      }
+      if (type === 'Int !' || type === 'Float !') {
+        return 0
+      }
+      if (type === 'Boolean !') {
+        return false
+      }
+    }
+    return data
   }
 
   getQuery(name: string): DocumentNode | undefined {
     return get(find(this.transactions, { name }), 'node')
   }
 
-  query(name: string, variables?: any) {
+  apolloQuery(name: string, variables?: any) {
     const query = this.getQuery(name)
     if (!query) {
       throw new Error(`Could not find query: ${ name }`)
@@ -59,6 +83,10 @@ export default class Client {
       query,
       variables
     })
+  }
+
+  query(name: string, variables?: any) {
+    return this.read(name, variables)
   }
 
   writeQuery(name: string, data: any, variables?: any) {
