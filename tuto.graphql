@@ -1,39 +1,8 @@
-# Queries are synchronous and return the cache state
-
-scalar Counter @Int
-
-type State {
-  counter: Counter!
-}
-
-type Todo {
-
-}
-
-enum Size {
-  SMALL @default
-  MEDIUM
-  LARGE
-}
-
 type Query {
-  getCounter: Int! @default(value: 100)
-
-  getTodos: [Todo]
+  getName: String! @default(value: "1.0.0")
 }
 
 type Mutation {
-  incrementCounter: Int @write(query: "")
-  
-  fetchTodos: [Todo] @push(type: "Todo")
-}
-
-
-type Query {
-  getVersion: String! @default(value: "1.0.0")
-}
-
-type Mutation {
-  setVersion(version: String): Unrelated
-  @write(query: "getVersion" data: param("version"))
+  setName(name: String): Unrelated
+  @write(query: "getName" data: param("name"))
 }
