@@ -186,16 +186,16 @@ export default function buildSchema(schema: Schema): void {
     `)
     schema.addQuery(`
     extend type Query {
-      ${ FIND_QUERY(typeName) }(
+      ${ FIND_QUERY(typeName, 'Query') }(
         paging: FirestorePaging
         where: FirestoreWhere${ typeName }
-      ): [${ typeName }!]!
+      ): [${ typeName }!]! @default(value: [])
 
-      ${ FIND_ONE_QUERY(typeName) }(
+      ${ FIND_ONE_QUERY(typeName, 'Query') }(
         where: FirestoreWhere${ typeName }
       ): ${ typeName }
 
-      ${ FIND_BY_ID_QUERY(typeName) }(
+      ${ FIND_BY_ID_QUERY(typeName, 'Query') }(
         id: ID!
       ): ${ typeName }
     
