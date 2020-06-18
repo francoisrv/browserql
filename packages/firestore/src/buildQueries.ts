@@ -1,6 +1,7 @@
-import { Resolver, Schema, Client } from '@browserql/client'
+import { Resolver, Schema, Client, Query } from '@browserql/client'
 import { Input } from './types'
 import { FIND_QUERY, FIND_ONE_QUERY, FIND_BY_ID_QUERY } from './utils'
+import { Dictionary } from 'lodash'
 
 interface FindOptions {
   collectionName: string
@@ -35,15 +36,15 @@ function buildDocuments(snapshot: any, typeName: string) {
   return docs
 }
 
-export default function buildResolvers(schema: Schema, resolvers: any, getClient: () => Client, db: any) {
+export default function buildQueries(schema: Schema, queries: Dictionary<Query>, getClient: () => Client, db: any) {
   const types = schema.getTypesWithDirective('firestore')
 
-  function addResolver(
+  function addQuery(
     queryName: string,
-    cb: (input: Input) => Promise<any>
+    cb: (input: Input) => any
   ) {
-    resolvers[queryName] = new Resolver(queryName, getClient)
-    resolvers[queryName].push(cb)
+    queries[`firestore${ queryName }_Status`] = new Resolver(queryName, getClient).push()
+    queries[queryName] = new Resolver(queryName, getClient).push(cb)
   }
 
   async function find(options: FindOptions) {
@@ -52,7 +53,7 @@ export default function buildResolvers(schema: Schema, resolvers: any, getClient
       docRef.onSnapshot((doc: any) => {
         const client = getClient()
         const nextData = buildDocument(doc, options.typeName)
-        client.writeQuery(options.queryName, nextData, options.input)
+        client.write(options.queryName, nextData, options.input)
       })
       const doc = await docRef.get()
       return buildDocument(doc, options.typeName)
@@ -67,7 +68,7 @@ export default function buildResolvers(schema: Schema, resolvers: any, getClient
     docRef.onSnapshot((querySnapshot: any) => {
       const client = getClient()
       const nextData = buildDocuments(querySnapshot, options.typeName)
-      client.writeQuery(options.queryName, nextData, options.input)
+      client.write(options.queryName, nextData, options.input)
     })
 
     const querySnapshot = await docRef.get()
@@ -81,9 +82,6 @@ export default function buildResolvers(schema: Schema, resolvers: any, getClient
 
   for (const type of types) {
     const typeName = Schema.getName(type)
-    if (!typeName) {
-      throw new Error('Could not get name')
-    }
     let collectionName = typeName?.toLowerCase()
     if (/y$/.test(typeName)) {
       collectionName = collectionName?.replace(/y$/, 'ies')
@@ -95,7 +93,7 @@ export default function buildResolvers(schema: Schema, resolvers: any, getClient
     const FIND_ONE = FIND_ONE_QUERY(typeName)
     const FIND_BY_ID = FIND_BY_ID_QUERY(typeName)
     
-    addResolver(FIND, async input => {
+    addQuery(FIND, async input => {
       return await find({
         collectionName,
         input,
@@ -104,7 +102,7 @@ export default function buildResolvers(schema: Schema, resolvers: any, getClient
       })
     })
 
-    addResolver(FIND_ONE, async input => {
+    addQuery(FIND_ONE, async input => {
       return await find({
         collectionName,
         input,
@@ -114,7 +112,7 @@ export default function buildResolvers(schema: Schema, resolvers: any, getClient
       })
     })
 
-    addResolver(FIND_BY_ID, async input => {
+    addQuery(FIND_BY_ID, async input => {
       return await find({
         collectionName,
         input,

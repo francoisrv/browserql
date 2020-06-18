@@ -16,18 +16,46 @@ describe('Default', () => {
     })
   })
   describe('Queries', () => {
-    it('should return default value', () => {
+    it('should return default value on empty cache', () => {
       const client = connect({
         schema: gql`
         type Query {
-          getCounter(foo: String): Int
+          getCounter: Int
           @default(value: 100)
         }
         `,
         plugins: [browserQLDefaultPlugin()]
       })
       const data = client.read('getCounter')
-      console.log(data)
+      expect(data).toEqual(100)
+    })
+    it('should return default value on null', () => {
+      const client = connect({
+        schema: gql`
+        type Query {
+          getVersion: String
+          @default(value: "1.0.0")
+        }
+        `,
+        plugins: [browserQLDefaultPlugin()]
+      })
+      client.write('getVersion', null)
+      const data = client.read('getVersion')
+      expect(data).toEqual('1.0.0')
+    })
+    it('should *not* return default when value not null', () => {
+      const client = connect({
+        schema: gql`
+        type Query {
+          getAnotherVersion: String
+          @default(value: "1.0.0")
+        }
+        `,
+        plugins: [browserQLDefaultPlugin()]
+      })
+      client.write('getAnotherVersion', '2.1.0')
+      const data = client.read('getAnotherVersion')
+      expect(data).toEqual('2.1.0')
     })
   })
 })

@@ -3,6 +3,7 @@ import Schema from './Schema'
 import Client from './Client'
 import { Dictionary } from 'lodash'
 import Query from './Query'
+import Mutation from './Mutation'
 
 export type Context = Dictionary<any>
 
@@ -16,6 +17,7 @@ export interface      Transaction {
 export interface      PluginOptions {
   schema:             Schema
   queries:            Dictionary<Query>
+  mutations:          Dictionary<Mutation>
   getClient:          () => Client
 }
 
@@ -28,7 +30,8 @@ export type Plugin = (options: PluginOptions) => PluginOutput
 
 export interface ConnectOptions {
   schema: DocumentNode | string
-  queries?: Dictionary<ResolverMiddleware>
+  queries?: Dictionary<QueryMiddleware>
+  mutations?: Dictionary<MutationMiddleware>
   plugins?: Plugin[]
   debug?: boolean
 }
@@ -37,4 +40,6 @@ export interface ClientContext {
   getBrowserQLClient(): Client
 }
 
-export type ResolverMiddleware = (input: any, getClient: () => Client) => Promise<any>
+export type QueryMiddleware = (input: any, getClient: () => Client) => any
+
+export type MutationMiddleware = (input: any, getClient: () => Client) => Promise<any>

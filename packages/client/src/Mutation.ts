@@ -1,17 +1,17 @@
-import { ResolverMiddleware } from './types'
+import { MutationMiddleware } from './types'
 import Client from './Client'
 
-export default class Resolver {
+export default class Mutation {
   name: string
   getClient: () => Client
-  middlewares: ResolverMiddleware[] = []
+  middlewares: MutationMiddleware[] = []
 
   constructor(name: string, getClient: () => Client) {
     this.name = name
     this.getClient = getClient
   }
 
-  push(middleware: ResolverMiddleware) {
+  push(middleware: MutationMiddleware) {
     this.middlewares.push(middleware)
     return this
   }

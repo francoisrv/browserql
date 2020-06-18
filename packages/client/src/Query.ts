@@ -1,17 +1,17 @@
-import { ResolverMiddleware } from './types'
+import { QueryMiddleware } from './types'
 import Client from './Client'
 
 export default class Query {
   name: string
   getClient: () => Client
-  middlewares: ResolverMiddleware[] = []
+  middlewares: QueryMiddleware[] = []
 
   constructor(name: string, getClient: () => Client) {
     this.name = name
     this.getClient = getClient
   }
 
-  push(middleware: ResolverMiddleware) {
+  push(middleware: QueryMiddleware) {
     this.middlewares.push(middleware)
     return this
   }

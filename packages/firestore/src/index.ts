@@ -1,12 +1,11 @@
 import { Plugin } from '@browserql/client'
-import buildResolvers from './buildResolvers'
+import buildResolvers from './buildQueries'
 import buildSchema from './buildSchema'
 
-export default function plugin(db: any) {
-  return function(...args: Parameters<Plugin>): ReturnType<Plugin> {
-    const [schema, resolvers, getClient] = args
-    buildSchema(schema)
-    buildResolvers(schema, resolvers, getClient, db)
+export default function plugin(db: any): Plugin {
+  return function(ctx) {
+    buildSchema(ctx.schema)
+    // buildResolvers(schema, resolvers, getClient, db)
     return {}
   }
 }

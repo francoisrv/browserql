@@ -26,17 +26,19 @@ export default function browserQLDefaultPlugin(
       if (Schema.hasDirective(query, 'default')) {
         const name = Schema.getName(query)
         ctx.queries[name] = new Query(name, ctx.getClient)
-        .push(async variables => {
-          console.log(1)
+        .push(variables => {
           const client = ctx.getClient()
-          const cache = client.readQuery(name, variables)
-          console.log(2, cache)
-          // if (cache === null) {
-          //   const directiveParams = Schema.getDirectiveParams(query, 'default')
-          //   const data = directiveParams.value
-          //   return data
-          // }
-          // return cache
+          try {
+            const cache = client.readQuery(name, variables)
+            if (cache === null) {
+              throw new Error('Cache is null')
+            }
+            return cache
+          } catch (error) {
+            const directiveParams = Schema.getDirectiveParams(query, 'default')
+            const data = directiveParams.value
+            return data
+          }
         })
       }
     }

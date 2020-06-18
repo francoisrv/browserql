@@ -38,14 +38,11 @@ export default class Client {
   // QUERY
 
   readQuery(name: string, variables?: any) {
-    console.log('readQuery', 0)
     const query = this.getQuery(name)
-    console.log('readQuery', 1, query, variables)
     if (!query) {
       throw new Error(`Could not find query: ${ name }`)
     }
     const data = this.apollo.readQuery({ query, variables })
-    console.log('readQuery', 2, data, name)
     return data[name]
   }
 
@@ -80,9 +77,10 @@ export default class Client {
     if (name in this.queries) {
       data = this.queries[name].execute(variables)
     }
-    if (data === null) {
+    if (data === null || typeof data === 'undefined') {
       return this.readCache(name, variables)
     }
+    return data
   }
 
   getQuery(name: string): DocumentNode | undefined {

@@ -8,13 +8,14 @@ import Client from './Client'
 import { Transaction, ConnectOptions } from './types'
 import Schema from './Schema'
 import buildTransactions from './buildTransactions'
-import Resolver from './Resolver'
 import { Dictionary } from 'lodash'
 import Query from './Query'
+import Mutation from './Mutation'
 
 export default function connect(options: ConnectOptions): Client {
   const cache = new InMemoryCache()
   const { queries: inputQueries = {} } = options
+  const { mutations: inputMutations = {} } = options
   const context: any = {}
   const schema = new Schema(options.schema)
   const rootValue: any = {
@@ -22,6 +23,7 @@ export default function connect(options: ConnectOptions): Client {
     JSONObject: GraphQLJSONObject,
   }
   const queries: Dictionary<Query> = {}
+  const mutations: Dictionary<Mutation> = {}
   const onClients: ((client: Client) => void)[] = []
   let browserQLClient: Client
 
@@ -38,6 +40,12 @@ export default function connect(options: ConnectOptions): Client {
     const resolver = new Query(name, getBrowserQLClient)
     queries[name] = resolver
     resolver.push(inputQueries[name])
+  }
+
+  for (const name in inputMutations) {
+    const resolver = new Mutation(name, getBrowserQLClient)
+    mutations[name] = resolver
+    resolver.push(inputMutations[name])
   }
 
   if (options.plugins) {
@@ -59,6 +67,12 @@ export default function connect(options: ConnectOptions): Client {
   for (const name in queries) {
     if (!rootValue[name]) {
       rootValue[name] = queries[name].execute.bind(queries[name])
+    }
+  }
+
+  for (const name in mutations) {
+    if (!rootValue[name]) {
+      rootValue[name] = mutations[name].execute.bind(mutations[name])
     }
   }
 

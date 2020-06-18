@@ -20,9 +20,6 @@ export default function buildSchema(state: State, schema: Schema) {
   }
   schema.extend(gql`
   directive @state on OBJECT
-  directive @initialState(
-    value: JSON
-  ) on FIELD_DEFINITION
   `)
   schema.addQuery(gql`
   extend type Query {
