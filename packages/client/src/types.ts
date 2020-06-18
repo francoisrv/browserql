@@ -1,25 +1,34 @@
 import { DocumentNode } from 'graphql'
 import Schema from './Schema'
 import Client from './Client'
+import { Dictionary } from 'lodash'
+import Query from './Query'
 
-export interface Transaction {
-  name: string
-  type: 'query' | 'mutation'
-  node: DocumentNode
-  source: string
+export type Context = Dictionary<any>
+
+export interface      Transaction {
+  name:               string
+  type:               'query' | 'mutation'
+  node:               DocumentNode
+  source:             string
 }
 
-export type Plugin = (
-  schema: Schema,
-  resolvers: any,
-  getClient: () => Client
-) => any
+export interface      PluginOptions {
+  schema:             Schema
+  queries:            Dictionary<Query>
+  getClient:          () => Client
+}
+
+export interface      PluginOutput {
+  context?:           Context
+  onClient?:          (client: Client) => void
+}
+
+export type Plugin = (options: PluginOptions) => PluginOutput
 
 export interface ConnectOptions {
   schema: DocumentNode | string
-  resolvers?: {
-    [field: string]: Function
-  }
+  queries?: Dictionary<ResolverMiddleware>
   plugins?: Plugin[]
   debug?: boolean
 }

@@ -17,7 +17,7 @@ describe('Client', () => {
           expect(client.query('foo')).toBe(null)
         })
         it('should return the cache if cache not empty', () => {
-          client.writeQuery('foo', 'hello')
+          client.write('foo', 'hello')
           expect(client.query('foo')).toEqual('hello')
         })
       })

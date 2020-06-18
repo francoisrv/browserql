@@ -9,17 +9,20 @@ import { Transaction, ConnectOptions } from './types'
 import Schema from './Schema'
 import buildTransactions from './buildTransactions'
 import Resolver from './Resolver'
+import { Dictionary } from 'lodash'
+import Query from './Query'
 
 export default function connect(options: ConnectOptions): Client {
   const cache = new InMemoryCache()
-  const { resolvers = {} } = options
+  const { queries: inputQueries = {} } = options
   const context: any = {}
   const schema = new Schema(options.schema)
   const rootValue: any = {
     JSON: GraphQLJSON,
     JSONObject: GraphQLJSONObject,
   }
-  const middlewares: any = {}
+  const queries: Dictionary<Query> = {}
+  const onClients: ((client: Client) => void)[] = []
   let browserQLClient: Client
 
   function getBrowserQLClient() {
@@ -31,26 +34,31 @@ export default function connect(options: ConnectOptions): Client {
   scalar JSONObject
   `)
 
-  for (const name in resolvers) {
-    const resolver = new Resolver(name, getBrowserQLClient)
-    middlewares[name] = resolver
-    // @ts-ignore
-    resolver.push(resolvers[name])
-    rootValue[name] = resolver.execute.bind(resolver)
+  for (const name in inputQueries) {
+    const resolver = new Query(name, getBrowserQLClient)
+    queries[name] = resolver
+    resolver.push(inputQueries[name])
   }
 
   if (options.plugins) {
     for (const plugin of options.plugins) {
-      const res = plugin(schema, middlewares, getBrowserQLClient)
-      if (res && res.context) {
+      const res = plugin({
+        schema,
+        queries,
+        getClient: getBrowserQLClient
+      })
+      if (res.context) {
         Object.assign(context, res.context)
+      }
+      if (res.onClient) {
+        onClients.push(res.onClient)
       }
     }
   }
 
-  for (const name in middlewares) {
+  for (const name in queries) {
     if (!rootValue[name]) {
-      rootValue[name] = middlewares[name].execute.bind(middlewares[name])
+      rootValue[name] = queries[name].execute.bind(queries[name])
     }
   }
 
@@ -67,7 +75,7 @@ export default function connect(options: ConnectOptions): Client {
 
   const link = new SchemaLink({
     schema: ast,
-    rootValue,
+    // rootValue,
     context: { getBrowserQLClient }
   })
   
@@ -78,12 +86,16 @@ export default function connect(options: ConnectOptions): Client {
 
   browserQLClient = new Client(
     client,
-    resolvers,
+    queries,
     schema,
     transactions,
     context,
     schema.toString()
   )
+
+  for (const onClient of onClients) {
+    onClient(browserQLClient)
+  }
 
   return browserQLClient
 }

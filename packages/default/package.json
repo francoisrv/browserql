@@ -1,10 +1,14 @@
 {
-  "name": "browserql-default",
+  "name": "@browserql/default",
   "version": "1.0.0",
   "scripts": {
     "build": "rm -rf dist && tsc"
   },
   "peerDependencies": {
     "graphql": "^14.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.0",
+    "jest": "^26.0.1"
   }
 }

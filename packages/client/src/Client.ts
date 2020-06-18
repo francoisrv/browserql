@@ -4,12 +4,14 @@ import ApolloClient from 'apollo-client'
 import { DocumentNode } from 'graphql'
 import { Transaction } from './types'
 import Schema from './Schema'
+import { Dictionary } from 'lodash'
+import Query from './Query'
 
 export default class Client {
 
   constructor(
     public readonly apollo: ApolloClient<any>,
-    private readonly resolvers: any,
+    private readonly queries: Dictionary<Query>,
     private readonly schema: Schema,
     private readonly transactions: Transaction[],
     private readonly context: any,
@@ -36,15 +38,18 @@ export default class Client {
   // QUERY
 
   readQuery(name: string, variables?: any) {
+    console.log('readQuery', 0)
     const query = this.getQuery(name)
+    console.log('readQuery', 1, query, variables)
     if (!query) {
       throw new Error(`Could not find query: ${ name }`)
     }
     const data = this.apollo.readQuery({ query, variables })
+    console.log('readQuery', 2, data, name)
     return data[name]
   }
 
-  read(name: string, variables?: any) {
+  readCache(name: string, variables?: any) {
     let data
     try {
       data = this.readQuery(name, variables)
@@ -70,26 +75,25 @@ export default class Client {
     return data
   }
 
-  getQuery(name: string): DocumentNode | undefined {
-    return get(find(this.transactions, { name }), 'node')
+  read(name: string, variables?: any) {
+    let data = null
+    if (name in this.queries) {
+      data = this.queries[name].execute(variables)
+    }
+    if (data === null) {
+      return this.readCache(name, variables)
+    }
   }
 
-  apolloQuery(name: string, variables?: any) {
-    const query = this.getQuery(name)
-    if (!query) {
-      throw new Error(`Could not find query: ${ name }`)
-    }
-    return this.apollo.query({
-      query,
-      variables
-    })
+  getQuery(name: string): DocumentNode | undefined {
+    return get(find(this.transactions, { name }), 'node')
   }
 
   query(name: string, variables?: any) {
     return this.read(name, variables)
   }
 
-  writeQuery(name: string, data: any, variables?: any) {
+  write(name: string, data: any, variables?: any) {
     const query = this.getQuery(name)
     if (!query) {
       throw new Error(`Could not find query: ${ name }`)

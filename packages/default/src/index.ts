@@ -1,4 +1,5 @@
-import { Schema } from '@browserql/client'
+import { Plugin, Schema, Query } from '@browserql/client'
+import gql from 'graphql-tag'
 
 interface PluginOptions {
   fixtures?: {
@@ -6,42 +7,40 @@ interface PluginOptions {
   }
 }
 
-export default function browserQLDefaultPlugin(options: PluginOptions = {}) {
-  return function(schema: Schema, resolvers: any) {
-    const extendSchema = `
+export default function browserQLDefaultPlugin(
+  options: PluginOptions = {}
+): Plugin {
+  return function(ctx) {
+    ctx.schema.extend(gql`
     directive @default(
-      value:        Any
+      value:        JSON
       resolver:     String
       fixture:      String
+      variables:    JSONObject
     ) on FIELD_DEFINITION
-    `
-    schema.extend(extendSchema)
-    // const extendResolvers: any = {}
-    // const queries = schema.getQueriesWithDirective('default')
-    // for (const queryName in queries) {
-    //   const query = queries[queryName]
-    //   extendResolvers[queryName] = (variables: any, { client }: any) => {
-    //     const cached = client.readQuery(queryName, variables)
-    //     if (typeof cached !== 'undefined') {
-    //       return cached
-    //     }
-    //     const directive = getDirective(query, 'default')
-    //     const value = getDirectiveValue(directive, 'value')
-    //     if (typeof value !== 'undefined') {
-    //       return value
-    //     }
-    //     const resolver = getDirectiveValue(directive, 'resolver')
-    //     if (typeof resolver !== 'undefined') {
-    //       return resolvers[resolver](variables, { client })
-    //     }
-    //     const fixture = getDirectiveValue(directive, 'fixture')
-    //     if (typeof fixture !== 'undefined') {
-    //       if (options.fixtures) {
-    //         return options.fixtures[fixture]
-    //       }
-    //     }
-    //     return undefined
-    //   }
-    // }
+    `)
+
+    const queries = ctx.schema.getQueries()
+
+    for (const query of queries) {
+      if (Schema.hasDirective(query, 'default')) {
+        const name = Schema.getName(query)
+        ctx.queries[name] = new Query(name, ctx.getClient)
+        .push(async variables => {
+          console.log(1)
+          const client = ctx.getClient()
+          const cache = client.readQuery(name, variables)
+          console.log(2, cache)
+          // if (cache === null) {
+          //   const directiveParams = Schema.getDirectiveParams(query, 'default')
+          //   const data = directiveParams.value
+          //   return data
+          // }
+          // return cache
+        })
+      }
+    }
+
+    return {}
   }
 }

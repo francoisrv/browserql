@@ -36,6 +36,47 @@ export default class Schema {
     return false
   }
 
+  static parseDirectiveParams(args: ArgumentNode[]) {
+    const params: { [name: string]: any } = {}
+    for (const arg of args) {
+      const name = Schema.getName(arg)
+      if (arg.value.kind === 'StringValue') {
+        params[name] = arg.value.value
+      } else if (arg.value.kind === 'IntValue') {
+        params[name] = Number(arg.value.value)
+      } else if (arg.value.kind === 'FloatValue') {
+        params[name] = Number(arg.value.value)
+      } else if (arg.value.kind === 'BooleanValue') {
+        params[name] = Boolean(arg.value.value)
+      }
+    }
+    return params
+  }
+
+  static parseArguments(args: InputValueDefinitionNode[]) {
+    const params: { [name: string]: any } = {}
+    for (const arg of args) {
+      console.log(arg)
+      const name = Schema.getName(arg)
+      // if (arg.type.kind === 'StringValue') {
+      //   params[name] = arg.value.value
+      // } else if (arg.value.kind === 'IntValue') {
+      //   params[name] = Number(arg.value.value)
+      // } else if (arg.value.kind === 'FloatValue') {
+      //   params[name] = Number(arg.value.value)
+      // } else if (arg.value.kind === 'BooleanValue') {
+      //   params[name] = Boolean(arg.value.value)
+      // }
+    }
+    return params
+  }
+
+  static getParams(type: FieldDefinitionNode) {
+    // console.log(type.arguments)
+    // @ts-ignore
+    return Schema.parseArguments(type.arguments || [])
+  }
+
   static getDirectiveParams(
     type:
     | DefinitionNode
@@ -48,18 +89,7 @@ export default class Schema {
       if (Array.isArray(directives) && directives.length) {
         const directive = find(directives, d => d.name.value === directiveName)
         if (directive && directive.arguments) {
-          for (const arg of directive.arguments) {
-            const name = Schema.getName(arg)
-            if (arg.value.kind === 'StringValue') {
-              params[name] = arg.value.value
-            } else if (arg.value.kind === 'IntValue') {
-              params[name] = Number(arg.value.value)
-            } else if (arg.value.kind === 'FloatValue') {
-              params[name] = Number(arg.value.value)
-            } else if (arg.value.kind === 'BooleanValue') {
-              params[name] = Boolean(arg.value.value)
-            }
-          }
+          return Schema.parseDirectiveParams(directive.arguments)
         }
       }
     }
