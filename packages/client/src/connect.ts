@@ -53,6 +53,7 @@ export default function connect(options: ConnectOptions): Client {
       const res = plugin({
         schema,
         queries,
+        mutations,
         getClient: getBrowserQLClient
       })
       if (res.context) {

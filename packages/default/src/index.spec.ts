@@ -10,6 +10,7 @@ describe('Default', () => {
         counter: Int @default(value: 100)
       }
       `)
+      // @ts-ignore
       browserQLDefaultPlugin()({ schema, queries: {} })
       const directive = schema.getDirective('default')
       expect(directive).not.toBeUndefined()

@@ -1,8 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "preserve",
+    "jsx": "react",
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "types": ["jest"]
   }
 }

@@ -6,7 +6,7 @@ interface ProviderProps {
   client: any
 }
 
-const Provider: React.FC<ProviderProps> = props => {
+const Provider: React.FC<React.PropsWithChildren<ProviderProps>> = props => {
   const { client } = props
   return (
     <ApolloProvider client={ client.apollo }>

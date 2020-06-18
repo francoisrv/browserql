@@ -11,6 +11,7 @@ import {
   buildASTSchema,
   print,
   TypeNode,
+  InputObjectTypeDefinitionNode,
 } from 'graphql'
 import gql from 'graphql-tag'
 import find from 'lodash.find'

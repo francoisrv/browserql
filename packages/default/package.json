@@ -1,8 +1,9 @@
 {
   "name": "@browserql/default",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "scripts": {
-    "build": "rm -rf dist && tsc"
+    "build": "rm -rf dist && tsc",
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "graphql": "^14.0.0"
