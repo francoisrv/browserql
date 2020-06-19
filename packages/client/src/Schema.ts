@@ -155,7 +155,7 @@ export default class Schema {
   private readonly document: DocumentNode
 
   constructor(schema: string | DocumentNode) {
-    this.document = typeof schema === 'string' ? gql(schema) : schema
+    this.document = typeof schema === 'string' ? gql(schema) : { ...schema }
   }
 
   toString() {

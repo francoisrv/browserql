@@ -8,6 +8,7 @@ interface ProviderProps {
 
 const Provider: React.FC<React.PropsWithChildren<ProviderProps>> = props => {
   const { client } = props
+  console.log(1)
   return (
     <ApolloProvider client={ client.apollo }>
       <Context.Provider value={ client }>
