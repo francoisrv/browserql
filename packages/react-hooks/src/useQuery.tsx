@@ -7,5 +7,22 @@ export default function useQuery<T extends any>(queryName: string, variables?: a
     throw new Error('No client found')
   }
   const client = contextClient
-  return client.query(queryName, variables)
+  const [data, setData] = React.useState(client.query(queryName, variables))
+  const query = client.getQuery(queryName)
+  const observable = client.apollo.watchQuery({
+    query,
+    variables
+  })
+  React.useEffect(() => {
+    const sub = observable.subscribe(({ data: nextData }) => {
+      const nextValue = nextData[queryName]
+      if (data !== nextValue) {
+        setData(nextValue)
+      }
+    })
+    return () => {
+      sub.unsubscribe()
+    }
+  })
+  return data
 }

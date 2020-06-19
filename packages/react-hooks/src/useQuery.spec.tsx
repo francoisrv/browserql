@@ -12,7 +12,6 @@ import run, {
 
 function App() {
   const getFoo = useQuery<string>('getFoo')
-  console.log({getFoo})
   return (
     <div>
       { getFoo }
@@ -20,14 +19,19 @@ function App() {
   )
 }
 
-function Got() {
+run(function () {
   const client = connect({
     schema: gql`
     type Query {
-      getFoo: String!
+      getFoo: String
     }
     `
   })
+
+  async function updateCache() {
+    client.write('getFoo', 'yeah')
+  }
+
   return (
     <Describe label="Use Query">
       <Render>
@@ -35,11 +39,9 @@ function Got() {
           <App />
         </Provider>
       </Render>
-      <Expect element="div" toHaveText="" />
-      <Run function={ () => client.write('getFoo', 'yeah') } />
-      <Expect element="div" toHaveText="yeah" />
+      <Expect   element="div" toHaveText="" />
+      <Run      function={ updateCache } label="Update the cache" />
+      <Expect   element="div" toHaveText="yeah" />
     </Describe>
   )
-}
-
-run(Got)
+})
