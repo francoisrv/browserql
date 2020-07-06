@@ -3472,10 +3472,10 @@ des.js@^1.0.0:
     inherits "^2.0.1"
     minimalistic-assert "^1.0.0"
 
-describe-react@^1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/describe-react/-/describe-react-1.0.9.tgz#d69ffa85b9f76b3b28838be4b2df6bdcef2bfc5c"
-  integrity sha512-HNbIWGd6k4kcMaQAa7UbMfHsmpKxrAP1Q6fhWnCfU55QfpzU2daoZcSXTg/x8+v1FGTt41++3+ZQBt7dftzJpQ==
+describe-react@^1.0.11:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/describe-react/-/describe-react-1.0.11.tgz#3c23e3d62ba34643cd93c62a8e741ed054024120"
+  integrity sha512-SCG4MJQNZLusKsDR7QyBQgFPMxKtP5UCrtDfOehEnzMrsAKWNpqP1OTCgJeQ/UaQ14Q1Lhz+XYhcmnr5uGlXMQ==
   dependencies:
     "@testing-library/jest-dom" "^5.10.1"
     "@testing-library/react" "^10.3.0"

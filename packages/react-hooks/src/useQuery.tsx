@@ -12,22 +12,24 @@ export default function useQuery<T extends any>(queryName: string, variables?: a
   if (!query) {
     throw new Error(`Unknown query: ${ queryName }`)
   }
-  const observable = client.apollo.watchQuery({
-    query,
-    variables
+  
+  React.useEffect(() => {
+    const observable = client.apollo.watchQuery({
+      query,
+      variables
+    })
+    const sub = observable.subscribe(({ data: nextData }: any) => {
+      console.log({nextData})
+      // const nextValue = nextData[queryName]
+      // if (data !== nextValue) {
+      //   console.log('update')
+      //   // setData(nextValue)
+      // }
+    })
+    return () => {
+      sub.unsubscribe()
+    }
   })
-  // React.useEffect(() => {
-  //   const sub = observable.subscribe(({ data: nextData }: any) => {
-  //     console.log({nextData})
-  //     const nextValue = nextData[queryName]
-  //     if (data !== nextValue) {
-  //       // setData(nextValue)
-  //     }
-  //   })
-  //   return () => {
-  //     sub.unsubscribe()
-  //   }
-  // })
   console.log({data})
   return data
 }
