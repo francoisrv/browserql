@@ -30,31 +30,46 @@ describe('Client', () => {
         type Query {
           string: String
           nonNullString: String!
+          int: Int
           nonNullInt: Int!
+          float: Float
           nonNullFloat: Float!
+          boolean: Boolean
           nonNullBoolean: Boolean!
+          id: ID
           nonNullID: ID!
+          array: [ String ]
+          nonNullArray: [ String ]!
         }
         `
       })
-      it('should return null when String', () => {
-        expect(client.query('string')).toBe(null)
-      })
-      it('should return "" when String!', () => {
-        expect(client.query('nonNullString')).toBe('')
-      })
-      it('should return 0 when Int!', () => {
-        expect(client.query('nonNullInt')).toEqual(0)
-      })
-      it('should return 0 when Float!', () => {
-        expect(client.query('nonNullFloat')).toEqual(0)
-      })
-      it('should return false when Boolean!', () => {
-        expect(client.query('nonNullBoolean')).toBe(false)
-      })
-      it('should return null when ID', () => {
-        expect(client.query('nonNullID')).toBe('')
-      })
+
+      interface DefaultValueTest {
+        type: string
+        nonNull: any
+      }
+
+      function makeTest(t: DefaultValueTest) {
+        it(`should return null when ${ t.type }`, () => {
+          expect(client.query(t.type.toLowerCase())).toBe(null)
+        })
+        it(`should return ${ JSON.stringify(t.nonNull) } when ${ t.type }!`, () => {
+          expect(client.query(`nonNull${ t.type }`)).toEqual(t.nonNull)
+        })
+      }
+
+      const tests: DefaultValueTest[] = [
+        { type: 'String', nonNull: '' },
+        { type: 'ID', nonNull: '' },
+        { type: 'Int', nonNull: 0 },
+        { type: 'Float', nonNull: 0 },
+        { type: 'Boolean', nonNull: false },
+        { type: 'Array', nonNull: [] },
+      ]
+
+      for (const t of tests) {
+        makeTest(t)
+      }
     })
 
 })

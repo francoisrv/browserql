@@ -6,6 +6,7 @@ import { Transaction } from './types'
 import Schema from './Schema'
 import { Dictionary } from 'lodash'
 import Query from './Query'
+import defaultValue from './defaultValue'
 
 export default class Client {
 
@@ -58,16 +59,7 @@ export default class Client {
       if (!query) {
         throw new Error(`Can not find query ${ name }`)
       }
-      const type = Schema.printType(query.type)
-      if (type === 'String !' || type === 'ID !') {
-        return ''
-      }
-      if (type === 'Int !' || type === 'Float !') {
-        return 0
-      }
-      if (type === 'Boolean !') {
-        return false
-      }
+      return defaultValue(query.type)
     }
     return data
   }
