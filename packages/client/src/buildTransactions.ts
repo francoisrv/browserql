@@ -77,7 +77,12 @@ export function printTransaction(
   schema: Schema
 ): string {
   return `${ type } {
-  ${ Schema.getName(field) } ${ makeReturnType(Schema.printType(field.type), schema, '  ') }
+  ${
+    [
+      Schema.getName(field),
+      makeReturnType(Schema.printType(field.type), schema, '  ')
+    ].join(' ')
+  }
 }`
 }
 
@@ -112,11 +117,7 @@ export function buildTransaction(
   schema: Schema
 ): Transaction {
   const transaction: Partial<Transaction> = {}
-  const name = Schema.getName(field)
-  if (typeof name === 'undefined') {
-    throw new Error('Could not get name from field')
-  }
-  transaction.name = name
+  transaction.name = Schema.getName(field)
   transaction.type = transactionType
   if (
     ('arguments' in field) && 

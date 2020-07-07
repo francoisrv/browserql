@@ -11,6 +11,7 @@ import buildTransactions from './buildTransactions'
 import { Dictionary } from 'lodash'
 import Query from './Query'
 import Mutation from './Mutation'
+import createFragments from './createFragments'
 
 export default function connect(options: ConnectOptions): Client {
   const cache = new InMemoryCache()
@@ -76,6 +77,8 @@ export default function connect(options: ConnectOptions): Client {
       rootValue[name] = mutations[name].execute.bind(mutations[name])
     }
   }
+
+  createFragments(schema)
 
   const transactions: Transaction[] = buildTransactions(schema)
 

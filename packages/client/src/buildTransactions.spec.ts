@@ -33,6 +33,7 @@ describe('Build transactions', () => {
   }
   `
   const schema = new Schema(Query)
+  console.log(schema.toString())
   describe('Return type', () => {
     describe('Scalar', () => {
       it('make return type for built-in scalar', () => {
