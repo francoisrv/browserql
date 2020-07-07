@@ -96,14 +96,7 @@ describe('Build transactions', () => {
         const field = find(query.fields, f => Schema.getName(f) === 'c')
         const t = printTransaction('query', field, schema)
         expect(t.trim()).toEqual(`query {
-  c {
-    id 
-    title 
-    done 
-    info {
-      boomer 
-    }
-  }
+  c { ...browserqlFragment_Todo }
 }`)
       })
     })
@@ -141,14 +134,7 @@ describe('Build transactions', () => {
         const field = find(mutation.fields, f => Schema.getName(f) === 'g')
         const t = printTransaction('mutation', field, schema)
         expect(t.trim()).toEqual(`mutation {
-  g {
-    id 
-    title 
-    done 
-    info {
-      boomer 
-    }
-  }
+  g { ...browserqlFragment_Todo }
 }`)
       })
     })
