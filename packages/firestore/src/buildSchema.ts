@@ -1,6 +1,5 @@
 import { Schema } from '@browserql/client'
 import baseSchema from './schema'
-import buildWhere from './buildWhere'
 
 export default function buildSchema(schema: Schema): void {
   schema.extend(baseSchema)
@@ -22,12 +21,24 @@ export default function buildSchema(schema: Schema): void {
     }
     }
     `)
+    schema.extend(`
+    fragment firestoreFragment_Foo on Foo {
+      id
+      name
+
+    }
+    `)
     schema.addQuery(`
     extend type Query {
-      firestoreGetDocuments_${ typeName }
+      firestoreGetDocuments_${ typeName }(
+        input: FirestoreQueryFilters
+      )
       : [${ typeName }]!
 
-      firestoreGetDocument_${ typeName }
+      firestoreGetDocument_${ typeName }(
+        input: FirestoreQueryFilters
+        id: ID
+      )
       : ${ typeName }
     }
   `)

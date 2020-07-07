@@ -1,6 +1,6 @@
 import { Client } from "@browserql/client"
 import { Dictionary } from "lodash"
-import { buildDocuments } from "./utils"
+import { buildDocuments, buildDocument } from "./utils"
 
 export default class Collection {
   reference: any
@@ -8,11 +8,14 @@ export default class Collection {
   single = false
   name: string
   collectionName: string
+  config = {}
+  db: any
 
   constructor(name: string, db: any, client: Client) {
     this.name = name
     this.collectionName = this.getName(name)
     this.client = client
+    this.db = db
     this.reference = db.collection(this.collectionName)
   }
 
@@ -64,7 +67,6 @@ export default class Collection {
 
   async get() {
     const querySnapshot = await this.reference.get()
-    console.log(buildDocuments(querySnapshot, this.name))
   }
 
   async set(document: Dictionary<any>) {
@@ -73,6 +75,19 @@ export default class Collection {
 
   async add(document: Dictionary<any>) {
     const docRef = await this.reference.add(document)
-    console.log({docRef})
+    const doc = buildDocument(
+      await this.db.collection(this.collectionName)
+        .doc(docRef.id)
+        .get(),
+      this.name
+    )
+    const queryName = `firestoreGetDocuments_${ this.name }`
+    const input: any = {}
+    this.client.write(queryName, [doc])
+    this.client.mergeData(queryName, doc)
+  }
+
+  async delete() {
+    await this.reference.delete()
   }
 }

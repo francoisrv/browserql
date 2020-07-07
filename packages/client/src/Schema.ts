@@ -474,4 +474,19 @@ export default class Schema {
   getEnumeration(name: string) {
     return find(this.getEnumerations(), e => Schema.getName(e) === name)
   }
+
+  /* 
+      *****************************************************************************************
+      FRAGMENTS
+      *****************************************************************************************
+  */
+
+  getFragments() {
+    const { definitions } = this.document
+    return definitions.filter(f => f.kind === 'FragmentDefinition')
+  }
+
+  getFragment(name: string) {
+    return find(this.getFragments(), e => Schema.getName(e) === name)
+  }
 }

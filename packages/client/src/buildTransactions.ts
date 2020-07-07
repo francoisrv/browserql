@@ -1,4 +1,4 @@
-import { ObjectValueNode, FieldDefinitionNode, ObjectTypeDefinitionNode } from 'graphql'
+import { FieldDefinitionNode } from 'graphql'
 import {includes} from 'lodash'
 import gql from 'graphql-tag'
 
@@ -13,8 +13,14 @@ const primitives = [
   'ID'
 ]
 
+/**
+ * Fragment a type
+ * @param fields [FieldDefinitionNode]
+ * @param schema BrowserQL schema
+ * @param tab string Indentation
+ */
 export function makeReturnTypeNonScalar(
-  fields: any[],
+  fields: FieldDefinitionNode[],
   schema: Schema,
   tab = '  '
 ): string[] {
@@ -28,26 +34,40 @@ export function makeReturnTypeNonScalar(
   return lines
 }
 
+/**
+ * Create a return type for a query/mutation
+ * @param type string - The name of the type/fragment/enum/scalar
+ * @param schema Schema - browserql schema
+ * @param tab string - indentation
+ */
 export function makeReturnType(type: string, schema: Schema, tab = ''): string {
+  // strip flags from type name if any
   const realType = type
     .replace(/!/g, '')
     .replace(/\[/g, '')
     .replace(/\]/g, '')
     .trim()
+  // If scalar (ie, String, Int, etc.)
   if (includes(primitives, realType)) {
     return ''
   }
+  // If custom scalar
   const scalars = schema.getScalars().map(Schema.getName)
   if (includes(scalars, realType)) {
     return ''
   }
+  // If type
   if (schema.getType(realType)) {
     const fields = schema.getTypeFields(realType)
     return makeReturnTypeNonScalar(fields, schema, tab).join('\n')
   }
+  // If enumeration
   if (schema.getEnumeration(realType)) {
     return ''
   }
+  // If fragment
+  const f = schema.getFragment(realType)
+  console.log({f})
   throw new Error(`Could not make return type for: ${ type }`)
 }
 

@@ -4,9 +4,10 @@ import ApolloClient from 'apollo-client'
 import { DocumentNode } from 'graphql'
 import { Transaction } from './types'
 import Schema from './Schema'
-import { Dictionary } from 'lodash'
+import { Dictionary, isArray } from 'lodash'
 import Query from './Query'
 import defaultValue from './defaultValue'
+import gql from 'graphql-tag'
 
 export default class Client {
 
@@ -125,5 +126,27 @@ export default class Client {
 
   getTransactions() {
     return this.transactions
+  }
+
+  // DATA
+
+  mergeData(name: string, data: any, variables?: any) {
+    const x = this.apollo.readFragment({
+      id: data.id,
+      fragment: gql`
+      fragment firestoreFragment_Foo on Foo {
+        id
+        name
+        __typename
+      }
+      `
+    })
+    console.log({x})
+    // const current = this.query(name, variables)
+    // if (!isArray(current)) {
+    //   throw new Error('Not an array')
+    // }
+    // current.push(data)
+    // this.write(name, current, variables)
   }
 }

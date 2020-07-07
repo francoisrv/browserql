@@ -8,7 +8,7 @@ Instead, it is its own client/server all happening in the browser.
 
 - straight-forward syntax
 - relied on a strong open-source community
-- strong in-memory state management via the apollo cache
+- strong in-memory state management via the [apollo cache](https://www.apollographql.com/docs/react/caching/cache-interaction/)
 
 Here's an example of todo app with browserql:
 

@@ -16,6 +16,20 @@ describe('firestoreql', () => {
   let db: ReturnType<typeof FirestoreConnect>
   let client: Client
 
+  async function getFoos() {
+    return buildDocuments(
+      await firestore.collection('foos').get(),
+      'Foo'
+    )
+  }
+
+  async function emptyFoos() {
+    const docs = await getFoos()
+    for (const doc of docs) {
+      await firestore.collection('foos').doc(doc.id).delete()
+    }
+  }
+
   beforeAll(() => {
     firebase.initializeApp({
       apiKey: 'AIzaSyDxx1IiOnwgZZzE0_YlGmCGGITQGL-VnQA',
@@ -29,17 +43,27 @@ describe('firestoreql', () => {
       schema: sample,
     })
     db = FirestoreConnect(client, firestore)
-    // console.log(client.printSchema())
+    console.log(client.printSchema())
   })
 
   describe.only('Set', () => {
     describe('add document', () => {
-      it('should work', async () => {
-        const firedocs = buildDocuments(await firestore.collection('foos').get(), 'Foo')
-        expect(firedocs).toEqual([])
-        const graphdocs = client.query('firestoreGetDocuments_Foo')
-        console.log(graphdocs)
-        // await db.collection('Foo').add({ name: 'boom' })
+      beforeAll(async ()=> {
+        await db.collection('Foo').add({ name: 'boom' })
+      })
+
+      afterAll(emptyFoos)
+
+      it('should have inserted data in firestore', async () => {
+        expect(await getFoos()).toHaveLength(1)
+      })
+
+      it('should have updated cache', () => {
+        // const docs = client.query('firestoreGetDocuments_Foo')
+        // expect(docs).toHaveLength(1)
+        // expect(docs[0]).toHaveProperty('name', 'boom')
+        // expect(docs[0]).toHaveProperty('__typename', 'Foo')
+        // expect(docs[0]).toHaveProperty('id')
       })
     })
   })
