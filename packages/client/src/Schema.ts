@@ -12,6 +12,8 @@ import {
   print,
   TypeNode,
   InputObjectTypeDefinitionNode,
+  FragmentDefinitionNode,
+  SelectionNode,
 } from 'graphql'
 import gql from 'graphql-tag'
 import find from 'lodash.find'
@@ -109,6 +111,7 @@ export default class Schema {
     | InputValueDefinitionNode
     | ObjectFieldNode
     | TypeNode
+    | SelectionNode
   ): string {
     if ('name' in type) {
       const { name } = type
@@ -481,12 +484,12 @@ export default class Schema {
       *****************************************************************************************
   */
 
-  getFragments() {
+  getFragments(): FragmentDefinitionNode[] {
     const { definitions } = this.document
-    return definitions.filter(f => f.kind === 'FragmentDefinition')
+    return definitions.filter(f => f.kind === 'FragmentDefinition') as FragmentDefinitionNode[]
   }
 
-  getFragment(name: string) {
+  getFragment(name: string): FragmentDefinitionNode | undefined {
     return find(this.getFragments(), e => Schema.getName(e) === name)
   }
 }

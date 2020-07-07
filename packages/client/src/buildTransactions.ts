@@ -14,27 +14,6 @@ const primitives = [
 ]
 
 /**
- * Fragment a type
- * @param fields [FieldDefinitionNode]
- * @param schema BrowserQL schema
- * @param tab string Indentation
- */
-export function makeReturnTypeNonScalar(
-  fields: FieldDefinitionNode[],
-  schema: Schema,
-  tab = '  '
-): string[] {
-  const lines: string[] = [
-    '{'
-  ]
-  fields.forEach(field => {
-    lines.push(`${ tab }  ${ Schema.getName(field) } ${ makeReturnType(Schema.printType(field.type), schema, `${ tab }  `) }`)
-  })
-  lines.push(`${ tab }}`)
-  return lines
-}
-
-/**
  * Create a return type for a query/mutation
  * @param type string - The name of the type/fragment/enum/scalar
  * @param schema Schema - browserql schema
@@ -58,16 +37,12 @@ export function makeReturnType(type: string, schema: Schema, tab = ''): string {
   }
   // If type
   if (schema.getType(realType)) {
-    const fields = schema.getTypeFields(realType)
-    return makeReturnTypeNonScalar(fields, schema, tab).join('\n')
+    return `{ ...browserqlFragment_${ realType } }`
   }
   // If enumeration
   if (schema.getEnumeration(realType)) {
     return ''
   }
-  // If fragment
-  const f = schema.getFragment(realType)
-  console.log({f})
   throw new Error(`Could not make return type for: ${ type }`)
 }
 
