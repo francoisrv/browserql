@@ -1,7 +1,5 @@
 import { Schema } from '@browserql/client'
-import gql from 'graphql-tag'
 import baseSchema from './schema'
-import { FIND_QUERY, FIND_ONE_QUERY, FIND_BY_ID_QUERY, DELETE_QUERY, DELETE_ONE_QUERY } from './utils'
 import buildWhere from './buildWhere'
 
 export default function buildSchema(schema: Schema): void {
@@ -17,51 +15,25 @@ export default function buildSchema(schema: Schema): void {
     }
     `)
     schema.addInput(`
-    input FirestoreWhere${ typeName } {
-      ${ buildWhere(type, schema).join('\n  ') }
+    input FirestoreDocument_${ typeName } {
+      ${
+        type.fields?.map(field => `${ Schema.getName(field) }: ${ Schema.printType(field.type) }`)
+        .join('\n  ')
+    }
     }
     `)
     schema.addQuery(`
     extend type Query {
-      ${ FIND_QUERY(typeName, 'Query') }(
-        paging: FirestorePaging
-        where: FirestoreWhere${ typeName }
-      ): [${ typeName }!]! @default(value: [])
+      firestoreGetDocuments_${ typeName }
+      : [${ typeName }]!
 
-      ${ FIND_ONE_QUERY(typeName, 'Query') }(
-        where: FirestoreWhere${ typeName }
-      ): ${ typeName }
-
-      ${ FIND_BY_ID_QUERY(typeName, 'Query') }(
-        id: ID!
-      ): ${ typeName }
-
-      ${ DELETE_QUERY(typeName, 'Query') }(
-        paging: FirestorePaging
-        where: FirestoreWhere${ typeName }
-      ): [${ typeName }!]! @default(value: [])
-
-      ${ DELETE_ONE_QUERY(typeName, 'Query') }(
-        where: FirestoreWhere${ typeName }
-      ): ${ typeName }
-    
+      firestoreGetDocument_${ typeName }
+      : ${ typeName }
     }
   `)
-  schema.addQuery(`
+  schema.addMutation(`
     extend type Mutation {
-      ${ FIND_QUERY(typeName, 'Mutation') }(
-        paging: FirestorePaging
-        where: FirestoreWhere${ typeName }
-      ): [${ typeName }!]! @default(value: [])
-
-      ${ FIND_ONE_QUERY(typeName, 'Mutation') }(
-        where: FirestoreWhere${ typeName }
-      ): ${ typeName }
-
-      ${ FIND_BY_ID_QUERY(typeName, 'Mutation') }(
-        id: ID!
-      ): ${ typeName }
-    
+      firestoreSetDocument_${ typeName } (input: FirestoreDocument_${ typeName }) : ${ typeName }
     }
   `)
   }

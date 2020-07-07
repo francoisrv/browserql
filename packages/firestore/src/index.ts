@@ -1,15 +1,18 @@
-import { Plugin } from '@browserql/client'
+import { Plugin, Client } from '@browserql/client'
 import buildSchema from './buildSchema'
-import buildMutations from './buildMutations'
-import buildQueries from './buildQueries'
+import Collection from './Collection'
 
-export default function plugin(db: any): Plugin {
+export function plugin(db: any): Plugin {
   return function(ctx) {
     buildSchema(ctx.schema)
-    buildMutations(ctx.schema, ctx.mutations, ctx.getClient, db)
-    buildQueries(ctx.schema, ctx.mutations, ctx.getClient)
     return {}
   }
 }
 
-export * from './utils'
+export function connect(client: Client, db: any) {
+  return {
+    collection(name: string) {
+      return new Collection(name, db, client)
+    }
+  }
+}
