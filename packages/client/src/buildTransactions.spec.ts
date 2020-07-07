@@ -52,14 +52,7 @@ describe('Build transactions', () => {
     describe('Non scalar', () => {
       it('make return type for type', () => {
         const rt = makeReturnType('Todo', schema)
-        expect(rt.trim()).toEqual(`{
-  id 
-  title 
-  done 
-  info {
-    boomer 
-  }
-}`)
+        expect(rt.trim()).toEqual(`{ ...browserqlFragment_Todo }`)
       })
       it('should return type for enum', () => {
         const rt = makeReturnType('Size', schema)
