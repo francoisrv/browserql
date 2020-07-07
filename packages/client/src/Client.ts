@@ -134,7 +134,7 @@ export default class Client {
     const x = this.apollo.readFragment({
       id: data.id,
       fragment: gql`
-      fragment firestoreFragment_Foo on Foo {
+      fragment browserqlFragment_Foo on Foo {
         id
         name
         __typename

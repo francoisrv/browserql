@@ -1,4 +1,4 @@
-import { DocumentNode } from 'graphql'
+import { DocumentNode, FragmentDefinitionNode } from 'graphql'
 import Schema from './Schema'
 import Client from './Client'
 import { Dictionary } from 'lodash'
@@ -12,6 +12,7 @@ export interface      Transaction {
   type:               'query' | 'mutation'
   node:               DocumentNode
   source:             string
+  fragments:          FragmentDefinitionNode[]
 }
 
 export interface      PluginOptions {

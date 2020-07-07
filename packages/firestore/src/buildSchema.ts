@@ -21,13 +21,6 @@ export default function buildSchema(schema: Schema): void {
     }
     }
     `)
-    schema.extend(`
-    fragment firestoreFragment_Foo on Foo {
-      id
-      name
-
-    }
-    `)
     schema.addQuery(`
     extend type Query {
       firestoreGetDocuments_${ typeName }(

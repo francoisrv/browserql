@@ -84,7 +84,7 @@ export default class Collection {
     const queryName = `firestoreGetDocuments_${ this.name }`
     const input: any = {}
     this.client.write(queryName, [doc])
-    this.client.mergeData(queryName, doc)
+    // this.client.mergeData(queryName, doc)
   }
 
   async delete() {
