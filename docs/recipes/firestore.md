@@ -61,3 +61,17 @@ await db.collection('Player').set({
   team: (await db.collection('Team').fineOne({ name: 'Red team' })).id
 })
 ```
+
+## Populate results
+
+If a field has a relation to another document, its id will be displayed. You can choose to populate this field though
+
+```js
+// Do not populate
+player = await db.collection('Player').get({ single: true })
+typeof player.team === 'string'
+
+// Populate
+player = await db.collection('Player').get({ single: true, populate: 'team' })
+typeof player.team === 'object'
+```
