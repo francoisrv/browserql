@@ -1,9 +1,11 @@
-import { FieldDefinitionNode, FragmentDefinitionNode, TypeNode, ArgumentNode, InputValueDefinitionNode } from 'graphql'
-import {includes, compact} from 'lodash'
+import { FieldDefinitionNode, FragmentDefinitionNode, TypeNode, ArgumentNode, InputValueDefinitionNode, SelectionNode } from 'graphql'
+import {includes, compact, isArray, isUndefined} from 'lodash'
 import gql from 'graphql-tag'
 
 import { Transaction } from './types'
 import Schema from './Schema'
+import SchemaKinds from './Schema.kinds'
+import SchemaFragments from './Schema.fragments'
 
 const primitives = [
   'String',
@@ -19,34 +21,27 @@ const primitives = [
  * @param schema Schema - browserql schema
  * @param tab string - indentation
  */
-export function makeReturnType(type: string, schema: Schema, tab = ''): { source: string, fragment?: FragmentDefinitionNode } {
+export function makeReturnType(type: string, schema: Schema, tab = ''): string {
   // strip flags from type name if any
-  const realType = type
-    .replace(/!/g, '')
-    .replace(/\[/g, '')
-    .replace(/\]/g, '')
-    .trim()
+  const realType = SchemaKinds.printEndKind(type)
   // If scalar (ie, String, Int, etc.)
   if (includes(primitives, realType)) {
-    return { source: '' }
+    return ''
   }
   // If custom scalar
   const scalars = schema.scalars.getScalars().map(Schema.getName)
   if (includes(scalars, realType)) {
-    return { source: '' }
+    return ''
   }
   // If type
   if (schema.types.getType(realType)) {
-    return {
-      source: `{
+    return `{
     ...browserqlFragment_${ realType }
-  }`,
-      fragment: schema.fragments.getFragment(`browserqlFragment_${ realType }`)
-    }
+  }`
   }
   // If enumeration
   if (schema.enumerations.getEnumeration(realType)) {
-    return { source: '' }
+    return ''
   }
   throw new Error(`Could not make return type for: ${ type }`)
 }
@@ -64,7 +59,7 @@ export function makeTransactionSource(
     variables.push('(')
     params.push('(')
     args.forEach(arg => {
-      variables.push(`  $${ Schema.getName(arg) }: ${ Schema.printType(arg.type) }`)
+      variables.push(`  $${ Schema.getName(arg) }: ${ SchemaKinds.printKind(arg.type) }`)
       params.push(`    ${ Schema.getName(arg) }: $${ Schema.getName(arg) }`)
     })
     variables.push(')')
@@ -73,28 +68,43 @@ export function makeTransactionSource(
   const type = makeReturnType(kind, schema)
 return `
 ${ operationType }${ variables.join('\n') } {
-  ${ name }${ params.join('\n') } ${ type.source }
+  ${ name }${ params.join('\n') } ${ type }
 }
 `
 }
 
-export function makeTransaction(
-  type: 'query' | 'mutation',
-  field: FieldDefinitionNode,
-  schema: Schema
-): { source: string, fragment?: FragmentDefinitionNode } {
-  const kind = makeReturnType(Schema.printType(field.type), schema, '  ')
-  return {
-    source: makeTransactionSource(
-      type,
-      Schema.getName(field),
-      // @ts-ignore
-      field.arguments || [],
-      kind.source,
-      schema
-    ),
-    fragment: kind.fragment
+export function getNestedSelections(selection: SelectionNode) {
+
+}
+
+export function getNestedFragments(fragment: FragmentDefinitionNode): FragmentDefinitionNode[] {
+  const fragments: FragmentDefinitionNode[] = [fragment]
+  // @ts-ignore
+  const { selectionSet: { selections } } = fragment
+  for (const selection of selections) {
+    console.log(12, selection)
+    if (selection.kind === 'SelectionSet') {
+      
+    }
+    if (!isUndefined(selection.selectionSet)) {
+      fragments.push(...getNestedFragments(selection))
+    }
   }
+  return fragments
+}
+
+export function getTransactionFragments(
+  typeNode: TypeNode,
+  schema: Schema
+): FragmentDefinitionNode[] {
+  const type = SchemaKinds.printEndKind(typeNode)
+  if (schema.types.hasType(type)) {
+    const fragment = schema.fragments.getFragment(`browserqlFragment_${ type }`)
+    if (fragment) {
+      return getNestedFragments(fragment)
+    }
+  }
+  return []
 }
 
 export function buildTransaction(
@@ -104,14 +114,21 @@ export function buildTransaction(
 ): Transaction {
   const name = Schema.getName(field) as string
   const type = transactionType
-  const { source, fragment } = makeTransaction(transactionType, field, schema)
+  const args = 'arguments' in field && isArray(field.arguments) ? field.arguments : []
+  const source = makeTransactionSource(
+    transactionType,
+    Schema.getName(field),
+    args,
+    SchemaKinds.printKind(field.type),
+    schema
+  )
   const node = gql(source)
   return {
     name,
     type,
     source,
     node,
-    fragments: compact([fragment])
+    fragments: getTransactionFragments(field.type, schema)
   }
 }
 

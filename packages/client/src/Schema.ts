@@ -3,10 +3,16 @@ import {
   GraphQLSchema,
   buildASTSchema,
   print,
+  ArgumentNode,
+  DefinitionNode,
+  FieldDefinitionNode,
+  InputValueDefinitionNode,
+  ObjectFieldNode,
+  TypeNode,
+  SelectionNode,
 } from 'graphql'
 import gql from 'graphql-tag'
 
-import SchemaStatics from './Schema.statics'
 import SchemaTypes from './Schema.types'
 import SchemaQueries from './Schema.queries'
 import SchemaMutations from './Schema.mutations'
@@ -20,7 +26,30 @@ import SchemaKinds from './Schema.kinds'
 import SchemaArguments from './Schema.arguments'
 import SchemaFieldInputs from './Schema.fieldInputs'
 
-export default class Schema extends SchemaStatics {
+export default class Schema {
+  /**
+   * Get a node's name
+   * @param type {Node}
+   */
+  static getName(
+    type:
+    | ArgumentNode
+    | DefinitionNode
+    | FieldDefinitionNode
+    | InputValueDefinitionNode
+    | ObjectFieldNode
+    | TypeNode
+    | SelectionNode
+  ): string {
+    if ('name' in type) {
+      const { name } = type
+      if (name) {
+        return name.value
+      }
+    }
+    throw new Error('Could not get name from type')
+  }
+
   private readonly document: DocumentNode
   public readonly types: SchemaTypes
   public readonly queries: SchemaQueries
@@ -36,7 +65,6 @@ export default class Schema extends SchemaStatics {
   public readonly fieldInputs: SchemaFieldInputs
 
   constructor(schema: string | DocumentNode) {
-    super()
     this.document = typeof schema === 'string' ? gql(schema) : { ...schema }
     this.types = new SchemaTypes(this, this.document)
     this.queries = new SchemaQueries(this, this.document)

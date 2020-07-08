@@ -2,6 +2,7 @@ import { Schema } from ".";
 import { ObjectTypeDefinitionNode, DocumentNode, ObjectTypeExtensionNode, DefinitionNode } from "graphql";
 import { find } from "lodash";
 import gql from 'graphql-tag'
+import SchemaDirectives from "./Schema.directives";
 
 export default class SchemaTypes {
   static isType(type: DefinitionNode) {
@@ -35,13 +36,17 @@ export default class SchemaTypes {
     return find(this.getTypes(), t => Schema.getName(t) === name)
   }
 
+  hasType(name: string): boolean {
+    return Boolean(this.getType(name))
+  }
+
   getExtendedType(name: string): ObjectTypeExtensionNode | undefined {
     return find(this.getExtendedTypes(), t => Schema.getName(t) === name)
   }
 
   getTypesWithDirective(directive: string): ObjectTypeDefinitionNode[] {
     const types = this.getTypes()
-    return types.filter(type => Schema.hasDirective(type, directive))
+    return types.filter(type => SchemaDirectives.hasDirective(type, directive))
   }
 
   getTypeFields(name: string) {

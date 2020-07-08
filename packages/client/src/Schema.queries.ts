@@ -2,6 +2,7 @@ import Schema from "./Schema";
 import { DocumentNode, FieldDefinitionNode } from "graphql";
 import { find } from "lodash";
 import gql from 'graphql-tag'
+import SchemaDirectives from "./Schema.directives";
 
 export default class SchemaQueries {
   constructor(
@@ -46,7 +47,7 @@ export default class SchemaQueries {
 
   getQueriesWithDirective(directive: string) {
     const queries = this.getQueries()
-    return queries.filter(query => Schema.hasDirective(query, directive))
+    return queries.filter(query => SchemaDirectives.hasDirective(query, directive))
   }
 
   addQuery(query: string | DocumentNode) {

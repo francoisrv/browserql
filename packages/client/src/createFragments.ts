@@ -1,5 +1,6 @@
 import Schema from "./Schema";
 import { isArray } from "lodash";
+import SchemaKinds from "./Schema.kinds";
 
 export default function createFragments(schema: Schema) {
   const types = schema.types.getTypes()
@@ -10,7 +11,7 @@ export default function createFragments(schema: Schema) {
     }
     const fields = type.fields.map(field => {
       let str = Schema.getName(field)
-      const fieldKind = Schema.printEndType(field.type)
+      const fieldKind = SchemaKinds.printEndKind(field.type)
       const fieldType = schema.types.getType(fieldKind)
       if (fieldType) {
         str += ` {\n ...browserqlFragment_${ Schema.getName(fieldType)} \n}`

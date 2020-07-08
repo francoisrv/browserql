@@ -1,62 +1,66 @@
 import gql from 'graphql-tag'
-import { makeReturnType, makeTransactionSource } from './buildTransactions'
+import { makeReturnType, makeTransactionSource, buildTransaction, getTransactionFragments } from './buildTransactions'
 import Schema from './Schema'
-import { InputValueDefinitionNode } from 'graphql'
+import { InputValueDefinitionNode, FieldDefinitionNode, FragmentDefinitionNode, DocumentNode, TypeNode } from 'graphql'
 import SchemaFieldInputs from './Schema.fieldInputs'
+import SchemaFields from './Schema.fields'
+import SchemaKinds from './Schema.kinds'
 
 describe('Build transactions', () => {
-  const Query = gql`
-  scalar Foo
-  enum Size {
-    SMALL
-    MEDIUM
-    LARGE
-  }
-  type TodoInfo {
-    boomer: Boolean
-  }
-  type Todo {
-    id: ID!
-    title: String!
-    done: Boolean!
-    info: TodoInfo!
-  }
-  type Query {
-    a: [ID]!
-    b(c: ID, d: ID!, e: [ID!]): Int!
-    c: [Todo]
-    d: Foo
-  }
-  type Mutation {
-    e: [ID]!
-    f(c: ID, d: ID!, e: [ID!]): Int!
-    g: [Todo]
-  }
-  `
-  const schema = new Schema(Query)
-  // console.log(schema.toString())
   describe('Return type', () => {
+    const Query = gql`
+    scalar Foo
+    enum Size {
+      SMALL
+      MEDIUM
+      LARGE
+    }
+    type TodoInfo {
+      boomer: Boolean
+    }
+    type Todo {
+      id: ID!
+      title: String!
+      done: Boolean!
+      info: TodoInfo!
+    }
+    type Query {
+      a: [ID]!
+      b(c: ID, d: ID!, e: [ID!]): Int!
+      c: [Todo]
+      d: Foo
+      e: SIZE
+    }
+    type Mutation {
+      e: [ID]!
+      f(c: ID, d: ID!, e: [ID!]): Int!
+      g: [Todo]
+    }
+    `
+    const schema = new Schema(Query)
+    
     interface ReturnTypeTest {
       type: string
-      result: { source: string }
+      result: string
     }
 
     function makeTest(t: ReturnTypeTest) {
-      it(`${ t.type } >> ${ t.result.source }`, () => {
+      it(`${ t.type } >> ${ t.result }`, () => {
         const rt = makeReturnType(t.type, schema)
         expect(rt).toEqual(t.result)
       })
     }
 
     const tests: ReturnTypeTest[] = [
-      { type: 'ID', result: { source: '' } },
-      { type: '[ID!]!', result: { source: '' } },
-      { type: 'Foo', result: { source: '' } },
-      { type: '[Foo!]!', result: { source: '' } },
-      { type: 'Todo', result: { source: `{
+      { type: 'ID', result: '' },
+      { type: '[ID!]!', result: '' },
+      { type: 'Foo', result: '' },
+      { type: '[Foo!]!', result: '' },
+      { type: 'Todo', result: `{
     ...browserqlFragment_Todo
-  }` } },
-      { type: 'Size', result: { source: '' } },
+  }`
+      },
+      { type: 'Size', result: '' },
     ]
 
     for (const t of tests) {
@@ -64,7 +68,7 @@ describe('Build transactions', () => {
     }
   })
 
-  describe('Make transaction source', () => {
+  describe('Transaction source', () => {
     interface MakeSourceTest {
       type: 'query' | 'mutation'
       name: string
@@ -260,5 +264,179 @@ mutation(
     for (const t of tests) {
       makeTest(t)
     }
+  })
+
+  describe.only('Transaction fragments', () => {
+    interface FragmentTest {
+      label: string
+      type: TypeNode
+      schema: DocumentNode
+      fragments: string[]
+    }
+
+    function makeTest(t: FragmentTest) {
+      it(t.label, () => {
+        const fragments = getTransactionFragments(t.type, new Schema(t.schema))
+        expect(fragments).toHaveLength(t.fragments.length)
+        t.fragments.forEach((fragment, index) => {
+          expect(Schema.getName(fragments[index])).toEqual(fragment)
+        })
+      })
+    }
+
+    const tests: FragmentTest[] = [
+      // {
+      //   label: 'with 1 fragment',
+      //   type: SchemaKinds.buildKind('Todo'),
+      //   fragment: 'browserqlFragment_Todo',
+      //   schema: gql`
+      //   type Todo {
+      //     id: ID!
+      //   }
+      //   fragment browserqlFragment_Todo on Todo {
+      //     id
+      //   }
+      //   `
+      // },
+      {
+        label: 'with nested fragments',
+        type: SchemaKinds.buildKind('Player'),
+        fragments: ['browserqlFragment_Player', 'browserqlFragment_Team'],
+        schema: gql`
+        type Team {
+          name: String
+        }
+        type Player {
+          name: String
+          team: Team
+        }
+        fragment browserqlFragment_Team on Team {
+          name
+        }
+        fragment browserqlFragment_Player on Player {
+          name
+          team {
+            ...browserqlFragment_Team
+          }
+        }
+        `
+      }
+    ]
+
+    for (const t of tests) {
+      makeTest(t)
+    }
+  })
+
+  describe('Build transaction', () => {
+    interface MakeTransactionTest {
+      field: FieldDefinitionNode,
+      type: 'query' | 'mutation'
+      schema: Schema
+      source: string
+      name: string
+      fragments: string[]
+    }
+
+    function makeTest(t: MakeTransactionTest) {
+      it(t.source, () => {
+        const { source, name, fragments } = buildTransaction(
+          t.field,
+          t.type,
+          t.schema
+        )
+        expect(name).toEqual(t.name)
+        expect(source).toEqual(t.source)
+        expect(fragments).toHaveLength(t.fragments.length)
+        t.fragments.forEach((fragment, index) => {
+          expect(Schema.getName(fragments[index])).toEqual(fragment)
+        })
+      })
+    }
+
+    const tests: MakeTransactionTest[] = [
+      {
+        type: 'query',
+        field: SchemaFields.buildField('get', 'Boolean!'),
+        schema: new Schema(gql`
+        type Query {
+          get: Boolean!
+        }
+        `),
+        name: 'get',
+        source: `
+query {
+  get 
+}
+`,
+        fragments: []
+      },
+      {
+        type: 'query',
+        field: SchemaFields.buildField('get', 'Boolean!', {
+          inputs: [['id', 'ID!'], ['name', 'MyInput']]
+        }),
+        schema: new Schema(gql`
+        input MyInput {
+          foo: Int!
+        }
+        type Query {
+          get(id: ID! name: MyInput): Boolean!
+        }
+        `),
+        name: 'get',
+        source: `
+query(
+  $id: ID !
+  $name: MyInput
+) {
+  get(
+    id: $id
+    name: $name
+  ) 
+}
+`,
+        fragments: []
+      },
+      {
+        type: 'query',
+        field: SchemaFields.buildField('get', 'Barz!', {
+          inputs: [['id', 'ID!'], ['name', 'MyInput']]
+        }),
+        schema: new Schema(gql`
+        input MyInput {
+          foo: Int!
+        }
+        type Barz {
+          done: Boolean!
+        }
+        fragment browserqlFragment_Barz on Barz {
+          done
+        }
+        type Query {
+          get(id: ID! name: MyInput): Barz!
+        }
+        `),
+        name: 'get',
+        source: `
+query(
+  $id: ID !
+  $name: MyInput
+) {
+  get(
+    id: $id
+    name: $name
+  ) {
+    ...browserqlFragment_Barz
+  }
+}
+`,
+        fragments: ['browserqlFragment_Barz']
+      },
+    ]
+
+    for (const t of tests) {{
+      makeTest(t)
+    }}
   })
 })
