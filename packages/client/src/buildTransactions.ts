@@ -31,19 +31,21 @@ export function makeReturnType(type: string, schema: Schema, tab = ''): { source
     return { source: '' }
   }
   // If custom scalar
-  const scalars = schema.getScalars().map(Schema.getName)
+  const scalars = schema.scalars.getScalars().map(Schema.getName)
   if (includes(scalars, realType)) {
     return { source: '' }
   }
   // If type
-  if (schema.getType(realType)) {
+  if (schema.types.getType(realType)) {
     return {
-      source: `{ ...browserqlFragment_${ realType } }`,
-      fragment: schema.getFragment(`browserqlFragment_${ realType }`)
+      source: `{
+    ...browserqlFragment_${ realType }
+  }`,
+      fragment: schema.fragments.getFragment(`browserqlFragment_${ realType }`)
     }
   }
   // If enumeration
-  if (schema.getEnumeration(realType)) {
+  if (schema.enumerations.getEnumeration(realType)) {
     return { source: '' }
   }
   throw new Error(`Could not make return type for: ${ type }`)
@@ -66,14 +68,14 @@ export function makeTransactionSource(
       params.push(`    ${ Schema.getName(arg) }: $${ Schema.getName(arg) }`)
     })
     variables.push(')')
-    params.push(')')
+    params.push('  )')
   }
   const type = makeReturnType(kind, schema)
-  return `
-  ${ operationType }${ variables.join('\n') } {
-    ${ name }${ params.join('\n') } ${ type.source }
-  }
-  `
+return `
+${ operationType }${ variables.join('\n') } {
+  ${ name }${ params.join('\n') } ${ type.source }
+}
+`
 }
 
 export function makeTransaction(
@@ -116,13 +118,13 @@ export function buildTransaction(
 export default function buildTransactions(schema: Schema): Transaction[] {
   const transactions: Transaction[] = []
 
-  const queries = schema.getQueries()
+  const queries = schema.queries.getQueries()
 
   for (const query of queries) {
     transactions.push(buildTransaction(query, 'query', schema))
   }
 
-  const mutations = schema.getMutations()
+  const mutations = schema.mutations.getMutations()
 
   for (const mutation of mutations) {
     transactions.push(buildTransaction(mutation, 'mutation', schema))
