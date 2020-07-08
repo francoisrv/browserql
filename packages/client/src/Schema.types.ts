@@ -1,6 +1,7 @@
 import { Schema } from ".";
 import { ObjectTypeDefinitionNode, DocumentNode, ObjectTypeExtensionNode, DefinitionNode } from "graphql";
 import { find } from "lodash";
+import gql from 'graphql-tag'
 
 export default class SchemaTypes {
   static isType(type: DefinitionNode) {

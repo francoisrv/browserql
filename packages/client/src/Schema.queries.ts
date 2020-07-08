@@ -1,6 +1,7 @@
 import Schema from "./Schema";
 import { DocumentNode, FieldDefinitionNode } from "graphql";
 import { find } from "lodash";
+import gql from 'graphql-tag'
 
 export default class SchemaQueries {
   constructor(

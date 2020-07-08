@@ -1,10 +1,7 @@
 import gql from 'graphql-tag'
-import buildTransactions, { makeReturnType, printTransaction, printTransactionWithArguments, makeTransactionSource } from './buildTransactions'
+import { makeReturnType, makeTransactionSource } from './buildTransactions'
 import Schema from './Schema'
-import { find } from 'lodash'
 import { InputValueDefinitionNode } from 'graphql'
-import SchemaFields from './Schema.fields'
-import SchemaArguments from './Schema.arguments'
 import SchemaFieldInputs from './Schema.fieldInputs'
 
 describe('Build transactions', () => {

@@ -20,7 +20,7 @@ describe('Create fragments', () => {
     createFragments(schema)
   })
   it('should have added fragment for Foo', () => {
-    const fragment = schema.getFragment('browserqlFragment_Foo')
+    const fragment = schema.fragments.getFragment('browserqlFragment_Foo')
     expect(fragment).not.toBeUndefined()
     if (fragment) {
       expect(Schema.getName(fragment.typeCondition)).toEqual('Foo')
@@ -31,7 +31,7 @@ describe('Create fragments', () => {
     }
   })
   it('should have added fragment for Bar', () => {
-    const fragment = schema.getFragment('browserqlFragment_Bar')
+    const fragment = schema.fragments.getFragment('browserqlFragment_Bar')
     expect(fragment).not.toBeUndefined()
     if (fragment) {
       expect(Schema.getName(fragment.typeCondition)).toEqual('Bar')

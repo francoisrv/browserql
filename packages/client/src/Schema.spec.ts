@@ -1,6 +1,5 @@
 import gql from 'graphql-tag'
 import Schema from './Schema'
-import { printType } from 'graphql'
 
 function indentSource(source: string, tab = '      ') {
   const lines = source.split(/\n/)
@@ -38,9 +37,6 @@ function expectTypeToHaveDirective(type: any, directive: string) {
   expect(Schema.hasDirective(type, directive)).toBe(true)
 }
 
-function expectField(field: any) {
-  console.log(field)
-}
 
 describe('Schema', () => {
   describe('Print', () => {
@@ -94,7 +90,7 @@ type Query {
   describe('Types', () => {
     it('should get types', () => {
       const schema = new Schema('type Foo @foo { id: ID } type Bar { id: ID! }')
-      const types = schema.getTypes()
+      const types = schema.types.getTypes()
       expect(types).toHaveLength(2)
       expectType(types[0], { name: 'Foo' })
       expectType(types[1], { name: 'Bar' })
@@ -102,13 +98,13 @@ type Query {
     })
     it('should get type', () => {
       const schema = new Schema('type Foo @foo { id: ID } type Bar { id: ID! }')
-      const type = schema.getType('Foo')
+      const type = schema.types.getType('Foo')
       expectType(type, { name: 'Foo' })
       expectTypeToHaveDirective(type, 'foo')
     })
     it('should get types with directive', () => {
       const schema = new Schema('type Foo @foo { id: ID } type Bar { id: ID! }')
-      const types = schema.getTypesWithDirective('foo')
+      const types = schema.types.getTypesWithDirective('foo')
       expect(types).toHaveLength(1)
       expectType(types[0], { name: 'Foo' })
     })
@@ -121,7 +117,7 @@ type Query {
         name: String
       }
       `)
-      const fields = schema.getTypeFields('Foo')
+      const fields = schema.types.getTypeFields('Foo')
       expect(fields).toHaveLength(2)
     })
   })
@@ -129,12 +125,12 @@ type Query {
   describe('Queries', () => {
     it('should get query if any', () => {
       const schema = new Schema('type Query { foo: ID }')
-      const queries = schema.getQueries()
+      const queries = schema.queries.getQueries()
       expect(queries).toHaveLength(1)
     })
     it('should return empty if no queries', () => {
       const schema = new Schema('type Foo { foo: ID }')
-      const queries = schema.getQueries()
+      const queries = schema.queries.getQueries()
       expect(queries).toHaveLength(0)
     })
     it('should get extended queries', () => {
@@ -142,19 +138,19 @@ type Query {
       type Query { foo: ID }
       extend type Query { bar: ID }
       `)
-      const queries = schema.getQueries()
+      const queries = schema.queries.getQueries()
       expect(queries).toHaveLength(2)
     })
     it('should add query', () => {
       const schema = new Schema('type Foo { foo: ID }')
-      schema.addQuery('extend type Query { bar: String }')
-      const queries = schema.getQueries()
+      schema.queries.addQuery('extend type Query { bar: String }')
+      const queries = schema.queries.getQueries()
       expect(queries).toHaveLength(1)
     })
     it('should extend query', () => {
       const schema = new Schema('type Query { foo: ID }')
-      schema.addQuery('extend type Query { bar: String }')
-      const queries = schema.getQueries()
+      schema.queries.addQuery('extend type Query { bar: String }')
+      const queries = schema.queries.getQueries()
       expect(queries).toHaveLength(2)
     })
   })
@@ -162,7 +158,7 @@ type Query {
   describe('Directives', () => {
     it('should add directive as a string', () => {
       const schema = new Schema('type Foo @foo { id: ID }')
-      schema.addDirective('directive @foo on OBJECT')
+      schema.directives.addDirective('directive @foo on OBJECT')
     })
   })
 
@@ -173,7 +169,7 @@ type Query {
         bar: [ID]!
       }
       `)
-      const fields = schema.getTypeFields('Foo')
+      const fields = schema.types.getTypeFields('Foo')
       expect(Schema.printType(fields[0].type)).toEqual('[ ID ] !')
     })
   })
@@ -190,7 +186,7 @@ type Query {
         LARGE
       }
       `)
-      const enums = schema.getEnumerations()
+      const enums = schema.enumerations.getEnumerations()
       expect(enums).toHaveLength(1)
       expect(enums[0]).toHaveProperty('kind', 'EnumTypeDefinition')
       expect(Schema.getName(enums[0])).toEqual('Size')
@@ -207,7 +203,7 @@ type Query {
         LARGE
       }
       `)
-      const e = schema.getEnumeration('Size')
+      const e = schema.enumerations.getEnumeration('Size')
       // @ts-ignore
       expect(Schema.getName(e)).toEqual('Size')
     })

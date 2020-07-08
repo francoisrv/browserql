@@ -56,7 +56,7 @@ export default class Client {
       data = null
     }
     if (data === null) {
-      const query = this.schema.getQuery(name)
+      const query = this.schema.queries.getQuery(name)
       if (!query) {
         throw new Error(`Can not find query ${ name }`)
       }
