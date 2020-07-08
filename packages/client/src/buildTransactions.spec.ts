@@ -78,9 +78,8 @@ describe('Build transactions', () => {
     }
 
     function makeTest(t: MakeSourceTest) {
-      it(`should print ${ t.type } ${ t.name } with ${ t.args.length } arguments`, () => {
+      it(t.source, () => {
         const source = makeTransactionSource(t.type, t.name, t.args, t.kind, t.schema)
-        console.log(source)
         expect(source).toEqual(t.source)
       })
     }
