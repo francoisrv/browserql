@@ -1,7 +1,8 @@
 import gql from 'graphql-tag'
-import buildTransactions, { makeReturnType, printTransaction, printTransactionWithArguments } from './buildTransactions'
+import buildTransactions, { makeReturnType, printTransaction, printTransactionWithArguments, makeTransactionSource } from './buildTransactions'
 import Schema from './Schema'
 import { find } from 'lodash'
+import { InputValueDefinitionNode } from 'graphql'
 
 describe('Build transactions', () => {
   const Query = gql`
@@ -33,110 +34,67 @@ describe('Build transactions', () => {
   }
   `
   const schema = new Schema(Query)
-  console.log(schema.toString())
+  // console.log(schema.toString())
   describe('Return type', () => {
-    describe('Scalar', () => {
-      it('make return type for built-in scalar', () => {
-        const rt = makeReturnType('ID', schema)
-        expect(rt).toEqual('')
+    interface ReturnTypeTest {
+      type: string
+      result: { source: string }
+    }
+
+    function makeTest(t: ReturnTypeTest) {
+      it(`${ t.type } >> ${ t.result.source }`, () => {
+        const rt = makeReturnType(t.type, schema)
+        expect(rt).toEqual(t.result)
       })
-      it('make return type for built-in scalar with symbols', () => {
-        const rt = makeReturnType('[ID!]!', schema)
-        expect(rt).toEqual('')
-      })
-      it('make return type for custom scalar', () => {
-        const rt = makeReturnType('[Foo!]!', schema)
-        expect(rt).toEqual('')
-      })
-    })
-    describe('Non scalar', () => {
-      it('make return type for type', () => {
-        const rt = makeReturnType('Todo', schema)
-        expect(rt.trim()).toEqual(`{ ...browserqlFragment_Todo }`)
-      })
-      it('should return type for enum', () => {
-        const rt = makeReturnType('Size', schema)
-        expect(rt).toEqual('')
-      })
-    })
-    
+    }
+
+    const tests: ReturnTypeTest[] = [
+      { type: 'ID', result: { source: '' } },
+      { type: '[ID!]!', result: { source: '' } },
+      { type: 'Foo', result: { source: '' } },
+      { type: '[Foo!]!', result: { source: '' } },
+      { type: 'Todo', result: { source: '{ ...browserqlFragment_Todo }' } },
+      { type: 'Size', result: { source: '' } },
+    ]
+
+    for (const t of tests) {
+      makeTest(t)
+    }
   })
 
-  describe('Print transaction', () => {
-    describe('Query', () => {
-      it('should print query without arguments', () => {
-        const query = schema.getQueryType()
-        // @ts-ignore
-        const field = find(query.fields, f => Schema.getName(f) === 'a')
-        const t = printTransaction('query', field, schema)
-        expect(t.trim()).toEqual(`query {
-  a 
-}`)
-      })
-      it('should print query with arguments', () => {
-        const query = schema.getQueryType()
-        // @ts-ignore
-        const field = find(query.fields, f => Schema.getName(f) === 'b')
-        const t = printTransactionWithArguments('query', field, schema)
-        expect(t.trim()).toEqual(`query b (
-  $c: ID
-  $d: ID !
-  $e: [ ID ! ]
-) {
-  b (
-    c: $c
-    d: $d
-    e: $e
-  ) 
-}`)
-      })
-      it('should print query with non scalar kind', () => {
-        const query = schema.getQueryType()
-        // @ts-ignore
-        const field = find(query.fields, f => Schema.getName(f) === 'c')
-        const t = printTransaction('query', field, schema)
-        expect(t.trim()).toEqual(`query {
-  c { ...browserqlFragment_Todo }
-}`)
-      })
-    })
+  describe('Make transaction source', () => {
+    interface MakeSourceTest {
+      type: 'query' | 'mutation'
+      name: string
+      args: Readonly<InputValueDefinitionNode[]>
+      kind: string
+      schema: Schema
+      regex: RegExp
+    }
 
-    describe('Mutation', () => {
-      it('should print mutation without arguments', () => {
-        const mutation = schema.getMutationType()
-        // @ts-ignore
-        const field = find(mutation.fields, f => Schema.getName(f) === 'e')
-        const t = printTransaction('mutation', field, schema)
-        expect(t.trim()).toEqual(`mutation {
-  e 
-}`)
+    function makeTest(t: MakeSourceTest) {
+      it(`should print ${ t.type } ${ t.name } with ${ t.args.length } arguments`, () => {
+        const source = makeTransactionSource(t.type, t.name, t.args, t.kind, t.schema)
+        console.log(source)
+        expect(source).toMatch(t.regex)
       })
-      it('should print mutation with arguments', () => {
-        const mutation = schema.getMutationType()
-        // @ts-ignore
-        const field = find(mutation.fields, f => Schema.getName(f) === 'f')
-        const t = printTransactionWithArguments('mutation', field, schema)
-        expect(t.trim()).toEqual(`mutation f (
-  $c: ID
-  $d: ID !
-  $e: [ ID ! ]
-) {
-  f (
-    c: $c
-    d: $d
-    e: $e
-  ) 
-}`)
-      })
-      it('should print mutation with non scalar kind', () => {
-        const mutation = schema.getMutationType()
-        // @ts-ignore
-        const field = find(mutation.fields, f => Schema.getName(f) === 'g')
-        const t = printTransaction('mutation', field, schema)
-        expect(t.trim()).toEqual(`mutation {
-  g { ...browserqlFragment_Todo }
-}`)
-      })
-    })
+    }
+
+    const tests: MakeSourceTest[] = [
+      {
+        type: 'query',
+        name: 'fetchAll',
+        args: [],
+        kind: 'String',
+        schema: new Schema(gql`
+        type Query { fetchAll: String }
+        `),
+        regex: /^\s+query \{\s+fetchAll\s+\}/
+      }
+    ]
+
+    for (const t of tests) {
+      makeTest(t)
+    }
   })
 })

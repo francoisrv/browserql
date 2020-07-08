@@ -1,5 +1,5 @@
-import { FieldDefinitionNode, FragmentDefinitionNode, TypeNode } from 'graphql'
-import {includes} from 'lodash'
+import { FieldDefinitionNode, FragmentDefinitionNode, TypeNode, ArgumentNode, InputValueDefinitionNode } from 'graphql'
+import {includes, compact} from 'lodash'
 import gql from 'graphql-tag'
 
 import { Transaction } from './types'
@@ -52,13 +52,26 @@ export function makeReturnType(type: string, schema: Schema, tab = ''): { source
 export function makeTransactionSource(
   operationType: 'query' | 'mutation',
   name: string,
-  kind: string
+  args: Readonly<InputValueDefinitionNode[]>,
+  kind: string,
+  schema: Schema
 ) {
-  let variables = ''
-  let params = ''
+  const variables: string[] = []
+  const params: string[] = []
+  if (args.length) {
+    variables.push('(')
+    params.push('(')
+    args.forEach(arg => {
+      variables.push(`  $${ Schema.getName(arg) }: ${ Schema.printType(arg.type) }`)
+      params.push(`    ${ Schema.getName(arg) }: $${ Schema.getName(arg) }`)
+    })
+    variables.push(')')
+    params.push(')')
+  }
+  const type = makeReturnType(kind, schema)
   return `
-  ${ operationType }${ variables } {
-    ${ name }${ params } ${ kind }
+  ${ operationType }${ variables.join('\n') } {
+    ${ name }${ params.join('\n') } ${ type.source }
   }
   `
 }
@@ -70,49 +83,16 @@ export function makeTransaction(
 ): { source: string, fragment?: FragmentDefinitionNode } {
   const kind = makeReturnType(Schema.printType(field.type), schema, '  ')
   return {
-    source: makeTransactionSource(type, Schema.getName(field), kind.source),
+    source: makeTransactionSource(
+      type,
+      Schema.getName(field),
+      // @ts-ignore
+      field.arguments || [],
+      kind.source,
+      schema
+    ),
     fragment: kind.fragment
   }
-}
-
-export function printTransaction(
-  type: 'query' | 'mutation',
-  field: FieldDefinitionNode,
-  schema: Schema
-): string {
-  return `${ type } {
-  ${
-    [
-      Schema.getName(field),
-      makeReturnType(Schema.printType(field.type), schema, '  ')
-    ].join(' ')
-  }
-}`
-}
-
-export function printTransactionWithArguments(
-  type: 'query' | 'mutation',
-  field: FieldDefinitionNode,
-  schema: Schema,
-): string {
-  const lines: string[] = [
-    `${ type } ${ Schema.getName(field) } (`
-  ]
-  if (field.arguments) {
-    field.arguments.forEach(arg => {
-      lines.push(`  $${ Schema.getName(arg) }: ${ Schema.printType(arg.type) }`)
-    })
-  }
-  lines.push(') {')
-  lines.push(`  ${ Schema.getName(field) } (`)
-  if (field.arguments) {
-    field.arguments.forEach(arg => {
-      lines.push(`    ${ Schema.getName(arg) }: $${ Schema.getName(arg) }`)
-    })
-  }
-  lines.push(`  ) ${ makeReturnType(Schema.printType(field.type), schema) }`)
-  lines.push('}')
-  return lines.join('\n')
 }
 
 export function buildTransaction(
@@ -122,32 +102,14 @@ export function buildTransaction(
 ): Transaction {
   const name = Schema.getName(field) as string
   const type = transactionType
-  const fragments: Transaction["fragments"] = []
-  let source
-  if (
-    ('arguments' in field) && 
-    Array.isArray(field.arguments) &&
-    field.arguments.length
-  ) {
-    source = printTransactionWithArguments(
-      transactionType,
-      field,
-      schema,
-    )
-  } else {
-    source = printTransaction(
-      transactionType,
-      field,
-      schema
-    )
-  }
+  const { source, fragment } = makeTransaction(transactionType, field, schema)
   const node = gql(source)
   return {
     name,
     type,
     source,
     node,
-    fragments
+    fragments: compact([fragment])
   }
 }
 
