@@ -81,6 +81,9 @@ export function getNestedSelections(
   if ('selectionSet' in selection && !isUndefined(selection.selectionSet)) {
     for (const subSelection of selection.selectionSet.selections) {
       const name = Schema.getName(subSelection)
+      if (name === 'TeamFragment') {
+        console.log(subSelection)
+      }
       const fragment = schema.fragments.getFragment(name)
       if (fragment) {
         fragments.push(fragment)
