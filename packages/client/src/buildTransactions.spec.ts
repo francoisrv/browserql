@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
-import { makeReturnType, makeTransactionSource, buildTransaction, getTransactionFragments } from './buildTransactions'
+import { makeReturnType, makeTransactionSource, buildTransaction, getTransactionFragments, getNestedFragments } from './buildTransactions'
 import Schema from './Schema'
-import { InputValueDefinitionNode, FieldDefinitionNode, FragmentDefinitionNode, DocumentNode, TypeNode } from 'graphql'
+import { InputValueDefinitionNode, FieldDefinitionNode, FragmentDefinitionNode, DocumentNode, TypeNode, parse } from 'graphql'
 import SchemaFieldInputs from './Schema.fieldInputs'
 import SchemaFields from './Schema.fields'
 import SchemaKinds from './Schema.kinds'
@@ -266,7 +266,88 @@ mutation(
     }
   })
 
-  describe.only('Transaction fragments', () => {
+  describe.only('Nested fragments', () => {
+    interface NestedTest {
+      fragment: DocumentNode
+      label: string
+      fragments: string[]
+    }
+
+    function makeTest(t: NestedTest) {
+      it(t.label, () => {
+        const fragments = getNestedFragments(t.fragment.definitions[1] as FragmentDefinitionNode, new Schema(t.fragment))
+        expect(fragments).toHaveLength(t.fragments.length)
+        t.fragments.forEach((fragment, index) => {
+          expect(Schema.getName(fragments[index])).toEqual(fragment)
+        })
+      })
+    }
+
+    const tests: NestedTest[] = [
+      {
+        label: 'Single',
+        fragments: ['TodoFragment'],
+        fragment: parse(`
+        type Todo { id: ID }
+        fragment TodoFragment on Todo { id }
+        `)
+      },
+      {
+        label: 'Several',
+        fragments: ['TodoFragment', 'TodoUser'],
+        fragment: parse(`
+        type Todo { id: ID user: User }
+        fragment TodoFragment on Todo { id user { ...TodoUser } }
+        type User { id: ID }
+        fragment TodoUser on User { id }
+        `)
+      },
+      {
+        label: 'Nested',
+        fragments: ['TodoFragment', 'UserFragment', 'TeamFragment', 'CityFragment'],
+        fragment: gql`
+        type Todo {
+          id: ID
+          user: User
+          team: Team
+        }
+        
+        fragment TodoFragment on Todo {
+          id
+          user {
+            ...UserFragment
+          }
+          team {
+            ...TeamFragment
+          }
+        }
+        
+        type User { id: ID }
+        
+        fragment UserFragment on User { id }
+        
+        type Team { id: ID city: City }
+        
+        fragment TeamFragment on Team {
+          id
+          city {
+            ...CityFragment
+          }
+        }
+
+        type City { id: ID }
+
+        fragment CityFragment on City { id: ID }
+        `
+      },
+    ]
+
+    for (const t of tests) {
+      makeTest(t)
+    }
+  })
+
+  describe('Transaction fragments', () => {
     interface FragmentTest {
       label: string
       type: TypeNode

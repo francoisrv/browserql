@@ -1,4 +1,4 @@
-import { FieldDefinitionNode, FragmentDefinitionNode, TypeNode, ArgumentNode, InputValueDefinitionNode, SelectionNode } from 'graphql'
+import { FieldDefinitionNode, FragmentDefinitionNode, TypeNode, ArgumentNode, InputValueDefinitionNode, SelectionNode, InlineFragmentNode } from 'graphql'
 import {includes, compact, isArray, isUndefined} from 'lodash'
 import gql from 'graphql-tag'
 
@@ -73,22 +73,32 @@ ${ operationType }${ variables.join('\n') } {
 `
 }
 
-export function getNestedSelections(selection: SelectionNode) {
-
+export function getNestedSelections(
+  selection: SelectionNode | InlineFragmentNode,
+  schema: Schema
+): FragmentDefinitionNode[] {
+  const fragments: FragmentDefinitionNode[] = []
+  if ('selectionSet' in selection && !isUndefined(selection.selectionSet)) {
+    for (const subSelection of selection.selectionSet.selections) {
+      const name = Schema.getName(subSelection)
+      const fragment = schema.fragments.getFragment(name)
+      if (fragment) {
+        fragments.push(fragment)
+      }
+      fragments.push(...getNestedSelections(subSelection, schema))
+    }
+  }
+  return fragments
 }
 
-export function getNestedFragments(fragment: FragmentDefinitionNode): FragmentDefinitionNode[] {
+export function getNestedFragments(
+  fragment: FragmentDefinitionNode,
+  schema: Schema
+): FragmentDefinitionNode[] {
   const fragments: FragmentDefinitionNode[] = [fragment]
-  // @ts-ignore
   const { selectionSet: { selections } } = fragment
   for (const selection of selections) {
-    console.log(12, selection)
-    if (selection.kind === 'SelectionSet') {
-      
-    }
-    if (!isUndefined(selection.selectionSet)) {
-      fragments.push(...getNestedFragments(selection))
-    }
+    fragments.push(...getNestedSelections(selection, schema))
   }
   return fragments
 }
@@ -101,7 +111,7 @@ export function getTransactionFragments(
   if (schema.types.hasType(type)) {
     const fragment = schema.fragments.getFragment(`browserqlFragment_${ type }`)
     if (fragment) {
-      return getNestedFragments(fragment)
+      return getNestedFragments(fragment, schema)
     }
   }
   return []
