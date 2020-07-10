@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { makeReturnType, makeTransactionSource, buildTransaction, getTransactionFragments, getNestedFragments } from './buildTransactions'
+import buildTransactions, { makeReturnType, makeTransactionSource, buildTransaction, getTransactionFragments, getNestedFragments } from './buildTransactions'
 import Schema from './Schema'
 import { InputValueDefinitionNode, FieldDefinitionNode, FragmentDefinitionNode, DocumentNode, TypeNode, parse } from 'graphql'
 import SchemaFieldInputs from './Schema.fieldInputs'
@@ -545,6 +545,42 @@ query(
   })
 
   describe('Build transactions', () => {
-    
+    it('should build transactions', () => {
+      const schema = new Schema(gql`
+      type Country {
+        name: String!
+      }
+      fragment CountryFragment on Country {
+        name
+      }
+      type City {
+        name: String!
+        country: Country!
+      }
+      fragment CityFragment on City {
+        name
+        country {
+          ...CountryFragment
+        }
+      }
+      type Street {
+        name: String!
+        city: City!
+      }
+      fragment StreetFragment on Street {
+        name
+        city {
+          ...CityFragment
+        }
+      }
+      type Query {
+        getCountry(name: String!): Country
+        getCity(name: string! country: String): City
+        getStreet(name: String! city: String! country: String!): Street
+      }
+      `)
+      const transactions = buildTransactions(schema)
+      console.log(transactions)
+    })
   })
 })
