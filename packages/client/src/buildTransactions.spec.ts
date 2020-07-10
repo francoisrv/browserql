@@ -266,7 +266,7 @@ mutation(
     }
   })
 
-  describe.only('Nested fragments', () => {
+  describe('Nested fragments', () => {
     interface NestedTest {
       fragment: DocumentNode
       label: string
@@ -304,7 +304,7 @@ mutation(
       },
       {
         label: 'Nested',
-        fragments: ['TodoFragment', 'UserFragment', 'TeamFragment', 'CityFragment'],
+        fragments: ['TodoFragment', 'UserFragment', 'TeamFragment', 'CityFragment', 'CountryFragment'],
         fragment: gql`
         type Todo {
           id: ID
@@ -322,11 +322,18 @@ mutation(
           }
         }
         
-        type User { id: ID }
+        type User {
+          id: ID
+        }
         
-        fragment UserFragment on User { id }
+        fragment UserFragment on User {
+          id
+        }
         
-        type Team { id: ID city: City }
+        type Team {
+          id: ID
+          city: City
+        }
         
         fragment TeamFragment on Team {
           id
@@ -335,9 +342,25 @@ mutation(
           }
         }
 
-        type City { id: ID }
+        type City {
+          id: ID
+          country: CountryFragment
+        }
 
-        fragment CityFragment on City { id: ID }
+        fragment CityFragment on City {
+          id
+          country {
+            ...CountryFragment
+          }
+        }
+
+        type Country {
+          id: ID
+        }
+
+        fragment CountryFragment on Country {
+          id
+        }
         `
       },
     ]
@@ -366,19 +389,19 @@ mutation(
     }
 
     const tests: FragmentTest[] = [
-      // {
-      //   label: 'with 1 fragment',
-      //   type: SchemaKinds.buildKind('Todo'),
-      //   fragment: 'browserqlFragment_Todo',
-      //   schema: gql`
-      //   type Todo {
-      //     id: ID!
-      //   }
-      //   fragment browserqlFragment_Todo on Todo {
-      //     id
-      //   }
-      //   `
-      // },
+      {
+        label: 'with 1 fragment',
+        type: SchemaKinds.buildKind('Todo'),
+        fragments: ['browserqlFragment_Todo'],
+        schema: gql`
+        type Todo {
+          id: ID!
+        }
+        fragment browserqlFragment_Todo on Todo {
+          id
+        }
+        `
+      },
       {
         label: 'with nested fragments',
         type: SchemaKinds.buildKind('Player'),
@@ -519,5 +542,9 @@ query(
     for (const t of tests) {{
       makeTest(t)
     }}
+  })
+
+  describe('Build transactions', () => {
+    
   })
 })

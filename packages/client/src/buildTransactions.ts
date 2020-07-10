@@ -1,5 +1,5 @@
 import { FieldDefinitionNode, FragmentDefinitionNode, TypeNode, ArgumentNode, InputValueDefinitionNode, SelectionNode, InlineFragmentNode } from 'graphql'
-import {includes, compact, isArray, isUndefined} from 'lodash'
+import {includes, compact, isArray, isUndefined, uniqBy} from 'lodash'
 import gql from 'graphql-tag'
 
 import { Transaction } from './types'
@@ -81,14 +81,11 @@ export function getNestedSelections(
   if ('selectionSet' in selection && !isUndefined(selection.selectionSet)) {
     for (const subSelection of selection.selectionSet.selections) {
       const name = Schema.getName(subSelection)
-      if (name === 'TeamFragment') {
-        console.log(subSelection)
-      }
       const fragment = schema.fragments.getFragment(name)
       if (fragment) {
         fragments.push(fragment)
+        fragments.push(...getNestedFragments(fragment, schema))
       }
-      fragments.push(...getNestedSelections(subSelection, schema))
     }
   }
   return fragments
@@ -98,11 +95,12 @@ export function getNestedFragments(
   fragment: FragmentDefinitionNode,
   schema: Schema
 ): FragmentDefinitionNode[] {
-  const fragments: FragmentDefinitionNode[] = [fragment]
+  let fragments: FragmentDefinitionNode[] = [fragment]
   const { selectionSet: { selections } } = fragment
   for (const selection of selections) {
     fragments.push(...getNestedSelections(selection, schema))
   }
+  fragments = uniqBy(fragments, Schema.getName)
   return fragments
 }
 

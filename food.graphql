@@ -1,0 +1,22 @@
+type User {
+  name: String!
+  avatar: ID!
+}
+
+type Pizza {
+  name: String!
+}
+
+type Ingredient {
+  name: String!
+}
+
+type Rating {
+  pizza: ID!
+  user: ID!
+}
+
+type Query {
+  viewPizzas: [Pizza]
+  viewPizza(id: ID!): Pizza
+}
