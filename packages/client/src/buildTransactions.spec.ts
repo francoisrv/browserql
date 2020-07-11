@@ -550,37 +550,123 @@ query(
       type Country {
         name: String!
       }
-      fragment CountryFragment on Country {
+      fragment browserqlFragment_Country on Country {
         name
       }
       type City {
         name: String!
         country: Country!
       }
-      fragment CityFragment on City {
+      fragment browserqlFragment_City on City {
         name
         country {
-          ...CountryFragment
+          ...browserqlFragment_Country
         }
       }
       type Street {
         name: String!
         city: City!
       }
-      fragment StreetFragment on Street {
+      fragment browserqlFragment_Street on Street {
         name
         city {
-          ...CityFragment
+          ...browserqlFragment_City
         }
       }
       type Query {
         getCountry(name: String!): Country
-        getCity(name: string! country: String): City
+        getCity(name: String! country: String!): City
         getStreet(name: String! city: String! country: String!): Street
+      }
+      type Mutation {
+        updateCountry(name: String!): Country
+        setFoo: ID
       }
       `)
       const transactions = buildTransactions(schema)
-      console.log(transactions)
+      expect(transactions).toHaveLength(5)
+      const expected = [
+        {
+          name: 'getCountry',
+          type: 'query',
+          source: `
+query(
+  $name: String !
+) {
+  getCountry(
+    name: $name
+  ) {
+    ...browserqlFragment_Country
+  }
+}
+`
+        },
+        {
+          name: 'getCity',
+          type: 'query',
+          source: `
+query(
+  $name: String !
+  $country: String !
+) {
+  getCity(
+    name: $name
+    country: $country
+  ) {
+    ...browserqlFragment_City
+  }
+}
+`
+        },
+        {
+          name: 'getStreet',
+          type: 'query',
+          source: `
+query(
+  $name: String !
+  $city: String !
+  $country: String !
+) {
+  getStreet(
+    name: $name
+    city: $city
+    country: $country
+  ) {
+    ...browserqlFragment_Street
+  }
+}
+`
+        },
+        {
+          name: 'updateCountry',
+          type: 'mutation',
+          source: `
+mutation(
+  $name: String !
+) {
+  updateCountry(
+    name: $name
+  ) {
+    ...browserqlFragment_Country
+  }
+}
+`
+        },
+        {
+          name: 'setFoo',
+          type: 'mutation',
+          source: `
+mutation {
+  setFoo 
+}
+`
+        },
+      ]
+      expected.forEach((x, i) => {
+        expect(transactions[i]).toHaveProperty('name', x.name)
+        expect(transactions[i]).toHaveProperty('type', x.type)
+        expect(transactions[i]).toHaveProperty('source', x.source)
+      })
     })
   })
 })
