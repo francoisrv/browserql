@@ -93,7 +93,7 @@ export default function connect(options: ConnectOptions): Client {
 
   const link = new SchemaLink({
     schema: ast,
-    // rootValue,
+    rootValue,
     context: { getBrowserQLClient }
   })
   

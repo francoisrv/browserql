@@ -15,26 +15,31 @@ Advantages:
 Here's an example of todo app with browserql:
 
 ```graphql
-type Todo {
-  name: String!
-}
+type Todo { name: String @unique, done: Boolean @default(value: false) }
 
-type Query {
-  getTodos: [ Todo ]
-}
+type Query { getTodos: [ Todo ]! }
 
 type Mutation {
-  addTodo(name: String!): Todo
-  @write(query: "getTodos" data: { name: "name" @arg })
+  addTodo(name: String!): Todo! @push(type: "Todo" data: { name: "name" @variable })
+
+  addTodos(names: [String!]): [ Todo ]!
+  @push(type: "Todo" data: { name: "name" @variable } @each)
+}
+```
+
+```graphql
+type Todo @model {
+  name: String @unique
+  done: Boolean @default(value: false)
 }
 ```
 
 ```js
 const client = connect({ schema })
 
-client.query('getTodos') // []
-await client.mutate('addTodo', { name: 'Buy milk' })
-client.query('getTodos') // ["Buy milk"]
+client.plugins.model('Todo').find() // []
+await client.plugins.model('Todo').insertOne({ name: 'Buy milk' })
+client.plugins.model('Todo').find() // ["Buy milk"]
 ```
 
 ## Cache
