@@ -4,42 +4,14 @@ browserql
 Use graphql in the browser as a state manager.
 
 ```graphql
-type Todo {
-  id:       ID!
-  title:    String!
-  done:     Boolean!
+type Todo @model {
+  name: String! @unique
+  done: Boolean! @default(value: false)
 }
 
-input TodoFilters {
-  title:    String
-  done:     Boolean
-}
-
-input AddTodo {
-  title:    String!
-  done:     Boolean = false
-}
-
-input Paging {
-  page:     Int @default(0)
-  perPage:  Int @defaul(25)
-}
-
-type Query {
-  getTodos(
-    where:    TodoFilter
-    paging:   Paging
-  )
-  : [Todo]
-  @bqfetch(get: "/todos")
-}
-
-type Mutation {
-  addToDo(
-    input:    AddTodo
-  )
-  : Todo
-  @bqfetch(post: "/todos")
+type State @state {
+  counter: Int! @default(value: 100)
+  isLoggedIn: Boolean! @default(value: false)
 }
 ```
 

@@ -15,7 +15,6 @@ import createFragments from './createFragments'
 
 export default function connect(options: ConnectOptions): Client {
   const cache = new InMemoryCache()
-  const { queries: inputQueries = {} } = options
   const { mutations: inputMutations = {} } = options
   const context: any = {}
   const schema = new Schema(options.schema)
@@ -36,13 +35,7 @@ export default function connect(options: ConnectOptions): Client {
   scalar JSON
   scalar JSONObject
   `)
-
-  for (const name in inputQueries) {
-    const resolver = new Query(name, getBrowserQLClient)
-    queries[name] = resolver
-    resolver.push(inputQueries[name])
-  }
-
+  
   for (const name in inputMutations) {
     const resolver = new Mutation(name, getBrowserQLClient)
     mutations[name] = resolver
@@ -53,7 +46,6 @@ export default function connect(options: ConnectOptions): Client {
     for (const plugin of options.plugins) {
       const res = plugin({
         schema,
-        queries,
         mutations,
         getClient: getBrowserQLClient
       })
@@ -63,12 +55,6 @@ export default function connect(options: ConnectOptions): Client {
       if (res.onClient) {
         onClients.push(res.onClient)
       }
-    }
-  }
-
-  for (const name in queries) {
-    if (!rootValue[name]) {
-      rootValue[name] = queries[name].execute.bind(queries[name])
     }
   }
 
@@ -93,7 +79,7 @@ export default function connect(options: ConnectOptions): Client {
 
   const link = new SchemaLink({
     schema: ast,
-    rootValue,
+    // rootValue,
     context: { getBrowserQLClient }
   })
   

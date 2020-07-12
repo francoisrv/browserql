@@ -101,15 +101,17 @@ scalar JSONObject
       const schema = gql`
       type Query { foo(bar: String!): String! }
       `
-      const foo = ({bar}: any) => `hello ${ bar }`
-      const client = connect({ schema, queries: { foo } })
-      await client.apollo.query({
+      const client = connect({ schema })
+      client.apollo.writeQuery({
         query: gql`
         query($bar: String!) {
           foo(bar: $bar)
         }
         `,
-        variables: { bar: 'joe' }
+        variables: { bar: 'joe' },
+        data: {
+          foo: 'hello joe'
+        }
       })
       const data = client.readQuery('foo', { bar: 'joe' })
       expect(data).toEqual('hello joe')
@@ -118,8 +120,7 @@ scalar JSONObject
       const schema = gql`
       type Query { foolz(bar: String!): String! }
       `
-      const foolz = ({bar}: any) => `hello ${ bar }`
-      const client = connect({ schema, queries: { foolz } })
+      const client = connect({ schema })
       let failed = false
       try {
         client.readQuery('foolz', { bar: 'joe' })
@@ -135,15 +136,17 @@ scalar JSONObject
       const schema = gql`
       type Query { blues(bar: String!): String! }
       `
-      const blues = ({bar}: any) => `hello ${ bar }`
-      const client = connect({ schema, queries: { blues } })
-      await client.apollo.query({
+      const client = connect({ schema })
+      client.apollo.writeQuery({
         query: gql`
         query($bar: String!) {
           blues(bar: $bar)
         }
         `,
-        variables: { bar: 'joe' }
+        variables: { bar: 'joe' },
+        data: {
+          foo: 'hello joe'
+        }
       })
       const data = client.readCache('blues', { bar: 'joe' })
       expect(data).toEqual('hello joe')
@@ -165,6 +168,43 @@ scalar JSONObject
       const client = connect({ schema, queries: { car } })
       const data = client.readCache('car', { bar: 'joe' })
       expect(data).toEqual('')
+    })
+  })
+
+  describe('Read', () => {
+    it('should execute query if any', () => {
+      const schema = gql`
+      type Bear {
+        age: Int!
+      }
+      type Query {
+        getBear(age: Int!): Bear!
+      }
+      `
+      const getBear = ({ age }: any) => ({ age })
+      const client = connect({
+        schema,
+        queries: {getBear}
+      })
+      const data = client.read('getBear', { age: 48 })
+      expect(data).toEqual({ age: 48 })
+    })
+    it('should read cache', () => {
+      const schema = gql`
+      type Pinguin {
+        age: Int!
+      }
+      type Query {
+        getPinguin(age: Int!): Pinguin!
+      }
+      `
+      const getPinguin = ({ age }: any) => ({ age })
+      const client = connect({
+        schema,
+        queries: {getPinguin}
+      })
+      const data = client.read('getBear', { age: 48 })
+      expect(data).toEqual({ age: 48 })
     })
   })
 })
