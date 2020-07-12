@@ -48,7 +48,7 @@ export default class Client {
     return data[name]
   }
 
-  readCache(name: string, variables?: any) {
+  read(name: string, variables?: any) {
     let data
     try {
       data = this.readQuery(name, variables)
@@ -61,17 +61,6 @@ export default class Client {
         throw new Error(`Can not find query ${ name }`)
       }
       return defaultValue(query.type)
-    }
-    return data
-  }
-
-  read(name: string, variables?: any) {
-    let data = null
-    if (name in this.queries) {
-      data = this.queries[name].execute(variables)
-    }
-    if (data === null || typeof data === 'undefined') {
-      return this.readCache(name, variables)
     }
     return data
   }
