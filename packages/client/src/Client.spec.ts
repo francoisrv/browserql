@@ -135,10 +135,6 @@ scalar JSONObject
     it('should return cache content if any', async () => {
       const schema = gql`
       type Query { blues(bar: String!): String! }
-
-      type Query {
-        getFoos(page: Int): [Foo]
-      }
       `
       const client = connect({ schema })
       client.apollo.writeQuery({
@@ -174,7 +170,16 @@ scalar JSONObject
   })
 
   describe('Get query', () => {
-
+    it('should get query', () => {
+      const schema = gql`
+      type Query {
+        canada: String
+      }
+      `
+      const client = connect({ schema })
+      const query = client.getQuery('canada')
+      expect(query).toHaveProperty('kind', 'Document')
+    })
   })
 
   describe('Query', () => {
