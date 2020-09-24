@@ -1,5 +1,5 @@
-- [Concepts](concepts)
-
-- Clients
-  - [cacheQL](clients/cacheQL)
-  - [cacheQL](clients/cacheQL)
+- Doc
+  - [Schema](doc/schema)
+  - [Resolvers](doc/resolvers)
+  - [Connect](doc/connect)
+  - [Client](doc/client)
