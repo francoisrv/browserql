@@ -7,7 +7,8 @@
   ],
   "scripts": {
     "w": "yarn workspace",
-    "all": "yarn workspaces"
+    "all": "yarn workspaces",
+    "docsify": "docsify serve ./docs"
   },
   "dependencies": {
     "lodash": "^4.17.15"
