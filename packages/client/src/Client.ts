@@ -1,120 +1,117 @@
-import find from 'lodash.find'
-import get from 'lodash.get'
-import ApolloClient from 'apollo-client'
-import { DocumentNode } from 'graphql'
-import { Transaction } from './types'
-import Schema from './Schema'
-import { Dictionary, isArray } from 'lodash'
-import Query from './Query'
-import defaultValue from './defaultValue'
-import gql from 'graphql-tag'
+import find from 'lodash.find';
+import get from 'lodash.get';
+import ApolloClient from 'apollo-client';
+import { DocumentNode } from 'graphql';
+import { MutationResolver, Transaction } from './types';
+import Schema from './Schema';
+import { Dictionary, isArray } from 'lodash';
+import Query from './Query';
+import defaultValue from './defaultValue';
+import gql from 'graphql-tag';
 
 export default class Client {
-
   constructor(
     public readonly apollo: ApolloClient<any>,
-    private readonly queries: Dictionary<Query>,
     private readonly schema: Schema,
     private readonly transactions: Transaction[],
-    private readonly context: any,
-    private readonly source: string,
-  ) {
-  }
+    public readonly mutations: Dictionary<MutationResolver>
+  ) {}
 
   // SCHEMA
 
   printSchema() {
-    return this.source
+    return this.schema.toString();
   }
 
   getSchema() {
-    return this.schema
+    return this.schema;
   }
 
   // TRANSACTIONS
 
   getTransaction(name: string): Transaction | undefined {
-    return find(this.transactions, { name })
+    return find(this.transactions, { name });
   }
 
   // QUERY
 
   readQuery(name: string, variables?: any) {
-    const query = this.getQuery(name)
+    const query = find(this.transactions, { name });
     if (!query) {
-      throw new Error(`Could not find query: ${ name }`)
+      throw new Error(`Could not find query: ${name}`);
     }
-    const data = this.apollo.readQuery({ query, variables })
-    return data[name]
+    const data = this.apollo.readQuery({ query: query.node, variables });
+    return data[name];
   }
 
   read(name: string, variables?: any) {
-    let data
+    let data;
     try {
-      data = this.readQuery(name, variables)
+      data = this.readQuery(name, variables);
     } catch (error) {
-      data = null
+      data = null;
     }
     if (data === null) {
-      const query = this.schema.queries.getQuery(name)
+      const query = this.schema.queries.getQuery(name);
       if (!query) {
-        throw new Error(`Can not find query ${ name }`)
+        throw new Error(`Can not find query ${name}`);
       }
-      return defaultValue(query.type)
+      return defaultValue(query.type);
     }
-    return data
-  }
-
-  getQuery(name: string): DocumentNode | undefined {
-    return get(find(this.transactions, { name }), 'node')
+    return data;
   }
 
   query(name: string, variables?: any) {
-    return this.read(name, variables)
+    return this.read(name, variables);
   }
 
   write(name: string, data: any, variables?: any) {
-    const query = this.getQuery(name)
+    const query = find(this.transactions, { name });
     if (!query) {
-      throw new Error(`Could not find query: ${ name }`)
+      throw new Error(`Could not find query: ${name}`);
     }
+    console.log('query!', query);
     return this.apollo.writeQuery({
-      query,
+      query: query.node,
       variables,
-      data: { [name]: data }
-    })
+      data: { [name]: data },
+    });
   }
 
   // MUTATION
 
   getMutation(name: string): DocumentNode | undefined {
-    return this.getQuery(name)
+    const mutation = find(this.transactions, { name });
+    if (mutation) {
+      return mutation.node;
+    }
+    return undefined;
   }
 
-  mutate(name: string, variables?: any) {
-    const mutation = this.getMutation(name)
+  async mutate(name: string, variables?: any) {
+    const mutation = this.getMutation(name);
     if (!mutation) {
-      throw new Error(`Could not find mutation: ${ name }`)
+      throw new Error(`Could not find mutation: ${name}`);
     }
-    return this.apollo.mutate({
+    await this.apollo.mutate({
       mutation,
-      variables
-    })
+      variables,
+    });
   }
 
   // CONTEXT
 
   getContext(path?: string) {
     if (path) {
-      return get(this.context, path)
+      return get(this.context, path);
     }
-    return this.context
+    return this.context;
   }
 
   // TRANSACTIONS
 
   getTransactions() {
-    return this.transactions
+    return this.transactions;
   }
 
   // DATA
@@ -123,14 +120,14 @@ export default class Client {
     const x = this.apollo.readFragment({
       id: data.id,
       fragment: gql`
-      fragment browserqlFragment_Foo on Foo {
-        id
-        name
-        __typename
-      }
-      `
-    })
-    console.log({x})
+        fragment browserqlFragment_Foo on Foo {
+          id
+          name
+          __typename
+        }
+      `,
+    });
+    console.log({ x });
     // const current = this.query(name, variables)
     // if (!isArray(current)) {
     //   throw new Error('Not an array')

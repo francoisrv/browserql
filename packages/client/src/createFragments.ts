@@ -1,27 +1,28 @@
-import Schema from "./Schema";
-import { isArray } from "lodash";
-import SchemaKinds from "./Schema.kinds";
+import Schema from './Schema';
+import { isArray } from 'lodash';
+import SchemaKinds from './Schema.kinds';
 
 export default function createFragments(schema: Schema) {
-  const types = schema.types.getTypes()
+  const types = schema.types.getTypes();
   for (const type of types) {
-    const typeName = Schema.getName(type)
+    const typeName = Schema.getName(type);
     if (!('fields' in type) || !isArray(type.fields) || !type.fields.length) {
-      throw new Error(`No fields found for type ${ typeName }`)
+      throw new Error(`No fields found for type ${typeName}`);
     }
-    const fields = type.fields.map(field => {
-      let str = Schema.getName(field)
-      const fieldKind = SchemaKinds.printEndKind(field.type)
-      const fieldType = schema.types.getType(fieldKind)
+    const fields = type.fields.map((field) => {
+      let str = Schema.getName(field);
+      const fieldKind = SchemaKinds.printEndKind(field.type);
+      const fieldType = schema.types.getType(fieldKind);
       if (fieldType) {
-        str += ` {\n ...browserqlFragment_${ Schema.getName(fieldType)} \n}`
+        str += ` {\n ...browserqlFragment_${Schema.getName(fieldType)} \n}`;
       }
-      return str
-    })
+      return str;
+    });
     schema.extend(`
-    fragment browserqlFragment_${ typeName } on ${ typeName } {
-      ${ fields.join('\n') }
+    fragment browserqlFragment_${typeName} on ${typeName} {
+      __typename
+      ${fields.join('\n')}
     }
-    `)
+    `);
   }
 }

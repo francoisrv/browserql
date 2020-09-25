@@ -1,105 +1,82 @@
-import ApolloClient from 'apollo-client'
-import { InMemoryCache } from 'apollo-cache-inmemory'
-import { SchemaLink } from 'apollo-link-schema'
-import gql from 'graphql-tag'
-import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json'
+import ApolloClient from 'apollo-client';
+import {
+  InMemoryCache,
+  IntrospectionFragmentMatcher,
+} from 'apollo-cache-inmemory';
+import { SchemaLink } from 'apollo-link-schema';
+import gql from 'graphql-tag';
+import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json';
 
-import Client from './Client'
-import { Transaction, ConnectOptions } from './types'
-import Schema from './Schema'
-import buildTransactions from './buildTransactions'
-import { Dictionary } from 'lodash'
-import Query from './Query'
-import Mutation from './Mutation'
-import createFragments from './createFragments'
+import Client from './Client';
+import { Transaction, ConnectOptions } from './types';
+import Schema from './Schema';
+import buildTransactions from './buildTransactions';
+import createFragments from './createFragments';
+import { map } from 'lodash';
 
 export default function connect(options: ConnectOptions): Client {
-  const cache = new InMemoryCache()
-  const { mutations: inputMutations = {} } = options
-  const context: any = {}
-  const schema = new Schema(options.schema)
+  const cache = new InMemoryCache({
+    addTypename: true,
+    fragmentMatcher: new IntrospectionFragmentMatcher({
+      introspectionQueryResultData: {
+        __schema: {
+          types: [],
+        },
+      },
+    }),
+  });
+  const { mutations = {} } = options;
+  const schema = new Schema(options.schema);
+
   const rootValue: any = {
     JSON: GraphQLJSON,
     JSONObject: GraphQLJSONObject,
-  }
-  const queries: Dictionary<Query> = {}
-  const mutations: Dictionary<Mutation> = {}
-  const onClients: ((client: Client) => void)[] = []
-  let browserQLClient: Client
-
-  function getBrowserQLClient() {
-    return browserQLClient
-  }
+  };
 
   schema.extend(gql`
-  scalar JSON
-  scalar JSONObject
-  `)
-  
-  for (const name in inputMutations) {
-    const resolver = new Mutation(name, getBrowserQLClient)
-    mutations[name] = resolver
-    resolver.push(inputMutations[name])
-  }
+    scalar JSON
+    scalar JSONObject
 
-  if (options.plugins) {
-    for (const plugin of options.plugins) {
-      const res = plugin({
-        schema,
-        mutations,
-        getClient: getBrowserQLClient
-      })
-      if (res.context) {
-        Object.assign(context, res.context)
-      }
-      if (res.onClient) {
-        onClients.push(res.onClient)
-      }
+    type MutationResult {
+      done: Boolean!
     }
-  }
+  `);
 
   for (const name in mutations) {
     if (!rootValue[name]) {
-      rootValue[name] = mutations[name].execute.bind(mutations[name])
+      rootValue[name] = mutations[name];
     }
   }
 
-  createFragments(schema)
+  createFragments(schema);
 
-  const transactions: Transaction[] = buildTransactions(schema)
+  const transactions: Transaction[] = buildTransactions(schema);
 
-  let ast: any
+  let ast: any;
 
   try {
-    ast = schema.toAST()
+    ast = schema.toAST();
   } catch (error) {
-    console.log(schema.toString())
-    throw error
+    console.log(schema.toString());
+    throw error;
   }
 
-  const link = new SchemaLink({
-    schema: ast,
-    // rootValue,
-    context: { getBrowserQLClient }
-  })
-  
-  const client = new ApolloClient({
-    link,
+  console.log(schema.toString());
+
+  console.log(transactions);
+
+  let browserQLClient: Client;
+
+  const client: ApolloClient<any> = new ApolloClient({
+    link: new SchemaLink({
+      schema: ast,
+      rootValue,
+      context: () => ({ client: browserQLClient }),
+    }),
     cache,
-  })
+  });
 
-  browserQLClient = new Client(
-    client,
-    queries,
-    schema,
-    transactions,
-    context,
-    schema.toString()
-  )
+  browserQLClient = new Client(client, schema, transactions, mutations);
 
-  for (const onClient of onClients) {
-    onClient(browserQLClient)
-  }
-
-  return browserQLClient
+  return browserQLClient;
 }

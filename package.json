@@ -6,12 +6,13 @@
     "packages/*"
   ],
   "scripts": {
-    "w": "yarn workspace",
-    "all": "yarn workspaces",
+    "w": "bash workspace.sh",
+    "W": "yarn workspaces",
     "docsify": "docsify serve ./docs"
   },
   "dependencies": {
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "typescript": "^4.0.3"
   },
   "resolutions": {
     "graphql": "14.6.0"

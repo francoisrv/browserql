@@ -1,5 +1,6 @@
 - Doc
-  - [Schema](doc/schema)
-  - [Resolvers](doc/resolvers)
   - [Connect](doc/connect)
   - [Client](doc/client)
+- Examples
+  - [Todo](examples/todo)
+  - [HTTP](examples/http)
