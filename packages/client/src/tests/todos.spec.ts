@@ -36,7 +36,7 @@ const client = connect({
   `,
   mutations: {
     async addTodo({ name }, { client }) {
-      const todos = client.query('getTodos');
+      const todos = client.query<Todo[]>('getTodos');
       const nextTodo = {
         __typename: 'Todo',
         name,

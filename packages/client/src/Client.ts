@@ -61,7 +61,7 @@ export default class Client {
     return data;
   }
 
-  query(name: string, variables?: any) {
+  query<D = any>(name: string, variables?: any): D {
     return this.read(name, variables);
   }
 
