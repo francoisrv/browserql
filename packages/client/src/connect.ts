@@ -57,13 +57,8 @@ export default function connect(options: ConnectOptions): Client {
   try {
     ast = schema.toAST();
   } catch (error) {
-    console.log(schema.toString());
     throw error;
   }
-
-  console.log(schema.toString());
-
-  console.log(transactions);
 
   let browserQLClient: Client;
 

@@ -1,6 +1,10 @@
 import gql from 'graphql-tag';
 import connect from '../connect';
 
+interface Todo {
+  name: string;
+}
+
 const client = connect({
   schema: gql`
     """
@@ -33,14 +37,12 @@ const client = connect({
   mutations: {
     async addTodo({ name }, { client }) {
       const todos = client.query('getTodos');
-      console.log('jeffrey', todos);
-      client.write('getTodos', {}, [
-        ...todos,
-        {
-          __typename: 'Todo',
-          name,
-        },
-      ]);
+      const nextTodo = {
+        __typename: 'Todo',
+        name,
+      };
+      const nextTodos = [...todos, nextTodo];
+      client.write<Todo[]>('getTodos', nextTodos, {});
     },
   },
 });

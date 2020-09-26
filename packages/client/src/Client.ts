@@ -65,12 +65,11 @@ export default class Client {
     return this.read(name, variables);
   }
 
-  write(name: string, data: any, variables?: any) {
+  write<D = any>(name: string, data: D, variables?: any) {
     const query = find(this.transactions, { name });
     if (!query) {
       throw new Error(`Could not find query: ${name}`);
     }
-    console.log('query!', query);
     return this.apollo.writeQuery({
       query: query.node,
       variables,
@@ -127,7 +126,6 @@ export default class Client {
         }
       `,
     });
-    console.log({ x });
     // const current = this.query(name, variables)
     // if (!isArray(current)) {
     //   throw new Error('Not an array')

@@ -37,6 +37,7 @@ export function makeReturnType(type: string, schema: Schema): string {
   // If type
   if (schema.types.getType(realType)) {
     return `{
+    __typename
     ...${AUTO_GENERATED_FRAGMENTS_PREFIX.concat(realType)}
   }`;
   }
