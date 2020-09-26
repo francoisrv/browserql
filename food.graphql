@@ -1,22 +1,44 @@
+enum Role {
+  developer
+  contractor
+}
+
 type User {
-  name: String!
-  avatar: ID!
+  fullName: String!
+  role: Role!
 }
 
-type Pizza {
-  name: String!
+type Project {
+  name: String
 }
 
-type Ingredient {
-  name: String!
+type Contract {
+  project: ID!
+  
 }
 
-type Rating {
-  pizza: ID!
-  user: ID!
-}
+@react-router
+type Router {
+  getUsers(users: Boolean!): UsersPage
+  
+  getDevelopers(developers: Boolean!): DevelopersPage
+  getDeveloper(developers: String!): DeveloperPage
 
-type Query {
-  viewPizzas: [Pizza]
-  viewPizza(id: ID!): Pizza
+  getContractors(contractors: Boolean!): ContractorsPage
+  getContractor(contractor: String!): ContractorPage
+  
+  
+  
+  
+  getUserSkills(users: Id! skills: Boolean!): UserSkillsPage
+  getUserSkill(user: Id! skills: String!): UserSkillPage
+
+  getUserMissions(users: Id! missions: Boolean!): UserMissionsPage
+  getUserMission(user: Id! missions: String!): UserMissionPage
+  
+  getSkills(skills: Boolean!): SkillsPage
+  getSkill(skills: String!): SkillPage
+
+  getMissions(missions: Boolean!): MissionsPage
+  getMission(missions: String!): MissionPage
 }
