@@ -12,7 +12,7 @@
 | 8.0.0   | Firestore extension   | Backlog     | Oct 19th 2020   |
 | 9.0.0   | CouchDB extension     | Backlog     | Oct 19th 2020   |
 
-## Simple client
+## v1.0.0 Simple client
 
 Allow user to use graphql client-side only by starting an in-memory server
 
@@ -24,3 +24,24 @@ const { apollo } = connect({ schema })
   // ...
 </ApolloProvider>
 ```
+
+- Main
+  - write (rewrite the cache)
+- String
+  - append (add)
+  - prepend
+- Number
+  - sum
+  - substract
+  - multiply
+  - divide
+- Boolean
+  - toggle
+- Object
+  - merge
+- Array
+  - push
+  - pushLeft
+  - pull
+  - pullRight
+  - concatenate

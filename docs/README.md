@@ -16,14 +16,7 @@ You could use a drop-in replacement for other state managements solutions such a
 
 Note that this is a solution in case you are **not** using GraphQL already in the back-end -- even though it should be possible to use both.
 
-Use this for any other back-end management (http, sockets) -- if any at all.
-
-## Concept
-
-`browserql` relies heavily on Apollo's cache and differs from a regular Apollo client in the following:
-
-- queries are synchronous actions that read from the cache
-- mutations are asynchronous actions that write to the cache
+Use this for any other back-end management (http, sockets) -- or none at all.
 
 ## Usage
 
@@ -31,364 +24,49 @@ Let's use a todo app to illustrate:
 
 ```js
 import connect from '@browserql/client';
+import gql from 'graphql-tag';
 
 // schema can be a string or a GraphQL Document Node object
-const schema = `
-```
+const schema = gql`
+  // Put here the schema for a todo
+  type Todo {
+    name: String!
+  }
 
-```graphql
-"""
-The Todo model
-"""
-type Todo {
-  name: String!
-}
+  type Query {
+    // get all todos
+    getTodos: [Todo!]!
+  }
 
-"""
-Queries access the cache
-"""
-type Query {
-  getTodos: [Todo!]!
-}
+  type Mutation {
+    // add a new todo
+    addTodo(name: String!)
+  }
+`;
 
-"""
-Mutations update the cache - note that mutations should always use MutationResult as return kind
-"""
-type Mutation {
-  addTodo(name: String!)
-}
+const queries = {
+  async getTodos() {
+    return get('/api/todos');
+  },
+};
 
-```
-
-```js
-`
-
-// Resolvers are for mutations only and cannot be applied to queries
-// Since queries are cache accessors and have no side effects
 const mutations = {
-  async addTodo(todo, { client }) {
-    client.cache.getTodos().push(todo);
+  async addTodo(todo) {
+    return post('/api/todos', { todo });
   },
 };
 
 // Create a new browserql client
-const client = connect({ schema, mutations });
+const { apollo: client } = connect({ schema, queries, mutations });
 
 // You can now access the cache
-client.queries.getTodos(); // []
-
-// And update the cache
-await client.mutations.addTodo({ name: 'Buy milk' });
-
-// The cache is now updated
-client.queries.getTodos(); // [{ name: 'Buy milk' }]
-```
-
-```graphql
-@firestore(collection: "todos") type Todo { name: String! }
-```
-
-```jsx
-function Todos() {
-  const [todos, { loading, error }] = useFirestore('Todo').get();
-
-  if (error) {
-    return <div>{error.message}</div>;
-  }
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <ul>
-      {todos.map((todo) => (
-        <li key={todo.id}>{todo.name}</li>
-      ))}
-    </ul>
-  );
-}
-
-function addTodo() {
-  const [value, setValue] = React.useState('');
-  const [addTodo, { loading, error }] = useFirestore('Todo').add({
-    name: value,
-  });
-  const handleSubmit = () => {
-    addTodo({ name: value });
-  };
-
-  return (
-    <>
-      <input
-        type='text'
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-      <input type='submit' onClick={handleSubmit} />
-    </>
-  );
-}
-
-function App() {
-  return (
-    <>
-      <Todos />
-      <AddTodo />
-    </>
-  );
-}
-
-ReactDOM.render(
-  <FirestoreProvider
-    schema={gql`@firestore(collection: "todos") type Todo { name: String! }`}
-  >
-    <App />
-  </FirestoreProvider>
-);
-```
-
-```graphql
-@rest(path: "/todos") type Todo { name: String! }
-```
-
-```jsx
-function Todos() {
-  const [todos, { loading, error }] = useRest('Todo').get();
-
-  if (error) {
-    return <div>{error.message}</div>;
-  }
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <ul>
-      {todos.map((todo) => (
-        <li key={todo.id}>{todo.name}</li>
-      ))}
-    </ul>
-  );
-}
-
-function addTodo() {
-  const [value, setValue] = React.useState('');
-  const [addTodo, { loading, error }] = useRest('Todo').post({
-    name: value,
-  });
-  const handleSubmit = () => {
-    addTodo({ name: value });
-  };
-
-  return (
-    <>
-      <input
-        type='text'
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-      <input type='submit' onClick={handleSubmit} />
-    </>
-  );
-}
-
-function App() {
-  return (
-    <>
-      <Todos />
-      <AddTodo />
-    </>
-  );
-}
-
-ReactDOM.render(
-  <FirestoreProvider
-    schema={gql`@firestore(collection: "todos") type Todo { name: String! }`}
-  >
-    <App />
-  </FirestoreProvider>
-);
-```
-
-```graphql
-type QueueItem {
-  rank: Int!
-  productVariantId: ID!
-}
-
-type ShippingAddress {
-  streetAddress: String!
-  city: String!
-  state: String!
-  zipCode: String!
-}
-
-type Customer {
-  cid: ID!
-  shippingAddress: ShippingAddress!
-  queue: [QueueItem!]!
-}
-
-type Query {
-  @get(path: "/customer")
-  getCustomer(
-    cid: ID!
-    shop: String!
-  ): Customer
-}
-
-type Mutation {
-  @put
-  setShippingAddress(
-    cid: CID!
-    shippingAddress: ShippingAddressInput!
-  ): Customer
-
-  @put
-  addProductToQueue(
-    cid: ID!
-    productVariantId: ID!
-  ): Customer
-
-  @put
-  removeProductFromQueue(
-    cid: ID!
-    productVariantId: ID!
-  ): Customer
-
-  @put
-  reorderQueue(
-    cid: ID!
-    currentRank: Int!
-    nextRank: Int!
-  ): Customer
-}
-```
-
-```jsx
-const client = connect({ schema });
-client.extend(
-  http({
-    baseUrl: 'http://api.com/v1',
-    retry: {
-      maxAttempts: Infinity,
-      strategy: http.STRATEGY,
-    },
-  })
-);
-
-function ShippingAddress(props) {
-  const [setShippingAddress, { loading, error, data, called }] = useHttp(
-    'setShippingAddress'
-  );
-
-  const handleSubmit = () => {
-    setShippingAddress({
-      cid: props.cid,
-      shippingAddress: {
-        streetAddress,
-      },
-    });
-  };
-}
-
-function Customer(props) {
-  const [customer, { loading, error }] = useHttp('getCustomer', props);
-}
-```
-
-```graphql
-@pubsub(event: "message")
-type Message {
-  message: String!
-  user: ID!
-}
-
-@fireauth
-type User
-
-
-@firestore
-type MultipleQA {
-  question: String!
-  options: [String!]!
-  answer: Int!
-}
-
-@firestore
-type Settings {
-  mathQuestions: [ID!]!
-}
-```
-
-```jsx
-function Question(props) {
-  const [{ question, answer: solution }, { loading, error }] = useFirestore(
-    'MathQuestion'
-  ).get(props.id);
-  const [answer, setAnswer] = React.useState(0);
-  const validate = () => {
-    if (answer === solution) {
+await client.query({
+  query: gql`
+    query {
+      getTodos {
+        name
+      }
     }
-  };
-
-  return (
-    <>
-      <h1>{question}</h1>
-      <input
-        type='number'
-        value={answer}
-        onChange={(e) => setAnswer(Number(e.target.value))}
-      />
-      <button onClick={validate}>Validate</button>
-    </>
-  );
-}
-
-function Questions() {
-  const [qas] = useFirestore('MultipleQA').get();
-  const shuffle = range(mathQuestions);
-}
-
-const client = connect({ schema });
-client.extend(
-  pubsub({
-    ws: 'ws://api.com/v1',
-    reconnect: Infinity,
-  })
-);
-
-function Messages() {
-  const [messages] = useSubscribe('Message');
-
-  return (
-    <ul>
-      {messages.map(({ message }, index) => (
-        <li key={index}>{message}</li>
-      ))}
-    </ul>
-  );
-}
-
-function Messager(props) {
-  const [publishMessage] = usePublish('Message');
-  const [message, setMessage] = React.useState('');
-
-  const handleSubmit = () => {
-    publishMessage({ message });
-  };
-
-  return (
-    <>
-      <input type='text' value={message} />
-      <input type='submit' onClick={handleSubmit} />
-    </>
-  );
-}
-
-function Customer(props) {
-  const [customer, { loading, error }] = useHttp('getCustomer', props);
-}
+  `,
+});
 ```
