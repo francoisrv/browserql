@@ -48,9 +48,6 @@ type Todo {
 Queries access the cache
 """
 type Query {
-  """
-  Get all todos in cache
-  """
   getTodos: [Todo!]!
 }
 
@@ -58,21 +55,19 @@ type Query {
 Mutations update the cache - note that mutations should always use MutationResult as return kind
 """
 type Mutation {
-  """
-  Add a new todo in cache
-  """
   addTodo(name: String!)
 }
-`;
+
 ```
 
 ```js
+`
+
 // Resolvers are for mutations only and cannot be applied to queries
 // Since queries are cache accessors and have no side effects
 const mutations = {
   async addTodo(todo, { client }) {
-    const todos = client.query("getTodos");
-    client.write("getTodos", {}, [...todos, todo]);
+    client.cache.getTodos().push(todo);
   },
 };
 
@@ -80,13 +75,13 @@ const mutations = {
 const client = connect({ schema, mutations });
 
 // You can now access the cache
-client.query("getTodos"); // []
+client.queries.getTodos(); // []
 
 // And update the cache
-await client.mutate("addTodo", { name: "Buy milk" });
+await client.mutations.addTodo({ name: 'Buy milk' });
 
 // The cache is now updated
-client.query("getTodos"); // [{ name: 'Buy milk' }]
+client.queries.getTodos(); // [{ name: 'Buy milk' }]
 ```
 
 ```graphql
@@ -95,7 +90,7 @@ client.query("getTodos"); // [{ name: 'Buy milk' }]
 
 ```jsx
 function Todos() {
-  const [todos, { loading, error }] = useFirestore("Todo").get();
+  const [todos, { loading, error }] = useFirestore('Todo').get();
 
   if (error) {
     return <div>{error.message}</div>;
@@ -115,8 +110,8 @@ function Todos() {
 }
 
 function addTodo() {
-  const [value, setValue] = React.useState("");
-  const [addTodo, { loading, error }] = useFirestore("Todo").add({
+  const [value, setValue] = React.useState('');
+  const [addTodo, { loading, error }] = useFirestore('Todo').add({
     name: value,
   });
   const handleSubmit = () => {
@@ -126,11 +121,11 @@ function addTodo() {
   return (
     <>
       <input
-        type="text"
+        type='text'
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
-      <input type="submit" onClick={handleSubmit} />
+      <input type='submit' onClick={handleSubmit} />
     </>
   );
 }
@@ -159,7 +154,7 @@ ReactDOM.render(
 
 ```jsx
 function Todos() {
-  const [todos, { loading, error }] = useRest("Todo").get();
+  const [todos, { loading, error }] = useRest('Todo').get();
 
   if (error) {
     return <div>{error.message}</div>;
@@ -179,8 +174,8 @@ function Todos() {
 }
 
 function addTodo() {
-  const [value, setValue] = React.useState("");
-  const [addTodo, { loading, error }] = useRest("Todo").post({
+  const [value, setValue] = React.useState('');
+  const [addTodo, { loading, error }] = useRest('Todo').post({
     name: value,
   });
   const handleSubmit = () => {
@@ -190,11 +185,11 @@ function addTodo() {
   return (
     <>
       <input
-        type="text"
+        type='text'
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
-      <input type="submit" onClick={handleSubmit} />
+      <input type='submit' onClick={handleSubmit} />
     </>
   );
 }
@@ -276,7 +271,7 @@ type Mutation {
 const client = connect({ schema });
 client.extend(
   http({
-    baseUrl: "http://api.com/v1",
+    baseUrl: 'http://api.com/v1',
     retry: {
       maxAttempts: Infinity,
       strategy: http.STRATEGY,
@@ -286,7 +281,7 @@ client.extend(
 
 function ShippingAddress(props) {
   const [setShippingAddress, { loading, error, data, called }] = useHttp(
-    "setShippingAddress"
+    'setShippingAddress'
   );
 
   const handleSubmit = () => {
@@ -300,7 +295,7 @@ function ShippingAddress(props) {
 }
 
 function Customer(props) {
-  const [customer, { loading, error }] = useHttp("getCustomer", props);
+  const [customer, { loading, error }] = useHttp('getCustomer', props);
 }
 ```
 
@@ -331,7 +326,7 @@ type Settings {
 ```jsx
 function Question(props) {
   const [{ question, answer: solution }, { loading, error }] = useFirestore(
-    "MathQuestion"
+    'MathQuestion'
   ).get(props.id);
   const [answer, setAnswer] = React.useState(0);
   const validate = () => {
@@ -343,7 +338,7 @@ function Question(props) {
     <>
       <h1>{question}</h1>
       <input
-        type="number"
+        type='number'
         value={answer}
         onChange={(e) => setAnswer(Number(e.target.value))}
       />
@@ -353,20 +348,20 @@ function Question(props) {
 }
 
 function Questions() {
-  const [qas] = useFirestore("MultipleQA").get();
+  const [qas] = useFirestore('MultipleQA').get();
   const shuffle = range(mathQuestions);
 }
 
 const client = connect({ schema });
 client.extend(
   pubsub({
-    ws: "ws://api.com/v1",
+    ws: 'ws://api.com/v1',
     reconnect: Infinity,
   })
 );
 
 function Messages() {
-  const [messages] = useSubscribe("Message");
+  const [messages] = useSubscribe('Message');
 
   return (
     <ul>
@@ -378,8 +373,8 @@ function Messages() {
 }
 
 function Messager(props) {
-  const [publishMessage] = usePublish("Message");
-  const [message, setMessage] = React.useState("");
+  const [publishMessage] = usePublish('Message');
+  const [message, setMessage] = React.useState('');
 
   const handleSubmit = () => {
     publishMessage({ message });
@@ -387,13 +382,13 @@ function Messager(props) {
 
   return (
     <>
-      <input type="text" value={message} />
-      <input type="submit" onClick={handleSubmit} />
+      <input type='text' value={message} />
+      <input type='submit' onClick={handleSubmit} />
     </>
   );
 }
 
 function Customer(props) {
-  const [customer, { loading, error }] = useHttp("getCustomer", props);
+  const [customer, { loading, error }] = useHttp('getCustomer', props);
 }
 ```

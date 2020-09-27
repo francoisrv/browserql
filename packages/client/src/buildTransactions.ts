@@ -4,7 +4,8 @@ import {
   TypeNode,
   InputValueDefinitionNode,
   SelectionNode,
-  InlineFragmentNode,, print
+  InlineFragmentNode,
+  print,
 } from 'graphql';
 import { concat, includes, isArray, isUndefined, uniqBy } from 'lodash';
 import gql from 'graphql-tag';

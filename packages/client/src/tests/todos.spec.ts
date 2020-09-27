@@ -36,27 +36,22 @@ const client = connect({
   `,
   mutations: {
     async addTodo({ name }, { client }) {
-      const todos = client.query<Todo[]>('getTodos');
-      const nextTodo = {
-        __typename: 'Todo',
-        name,
-      };
-      const nextTodos = [...todos, nextTodo];
-      client.write<Todo[]>('getTodos', nextTodos, {});
+      client.cache.getTodos().push({ name });
     },
   },
 });
 
 test('it should get initial state from cache', () => {
-  const todos = client.query('getTodos');
+  client.queries;
+  const todos = client.queries.getTodos();
   expect(todos).toEqual([]);
 });
 
 test('it should update cache', async () => {
-  await client.mutate('addTodo', { name: 'Buy milk' });
+  await client.mutations.addTodo({ name: 'Buy milk' });
 });
 
 test('it should get updated state from cache', () => {
-  const todos = client.query('getTodos');
+  const todos = client.queries.getTodos();
   expect(todos).toEqual([{ name: 'Buy milk', __typename: 'Todo' }]);
 });

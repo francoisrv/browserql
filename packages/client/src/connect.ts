@@ -14,7 +14,7 @@ import buildTransactions from './buildTransactions';
 import createFragments from './createFragments';
 import { map } from 'lodash';
 
-export default function connect(options: ConnectOptions): Client {
+export default function connect(options: ConnectOptions) {
   const cache = new InMemoryCache({
     addTypename: true,
     fragmentMatcher: new IntrospectionFragmentMatcher({
@@ -60,7 +60,9 @@ export default function connect(options: ConnectOptions): Client {
     throw error;
   }
 
-  let browserQLClient: Client;
+  type ThisClientType = Client<typeof schema>;
+
+  let browserQLClient: ThisClientType;
 
   const client: ApolloClient<any> = new ApolloClient({
     link: new SchemaLink({
@@ -71,7 +73,7 @@ export default function connect(options: ConnectOptions): Client {
     cache,
   });
 
-  browserQLClient = new Client(client, schema, transactions, mutations);
+  browserQLClient = new Client<typeof schema>(client, schema, transactions);
 
   return browserQLClient;
 }
