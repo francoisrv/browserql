@@ -1,8 +1,0 @@
-type Query {
-  getName: String! @default(value: "1.0.0")
-}
-
-type Mutation {
-  setName(name: String): Unrelated
-  @write(query: "getName" data: param("name"))
-}

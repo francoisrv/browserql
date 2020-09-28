@@ -1,3 +1,0 @@
-type Restaurant @model(id: "_id") {
-  name: String!
-}
