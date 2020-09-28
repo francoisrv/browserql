@@ -10,10 +10,11 @@ const client = connect(ConnectOptions);
 
 ## Options
 
-View [here](https://github.com/francoisrv/browserql/blob/master/packages/client/src/types.ts)
+View [here](https://github.com/francoisrv/browserql/blob/master/packages/client/src/types/ConnectOptions.ts)
 
 ```ts
 export interface ConnectOptions {
+  directives?: Dictionary<GraphQLDirective>;
   mutations?: Dictionary<GraphQLOperation>;
   queries?: Dictionary<GraphQLOperation>;
   scalars?: Dictionary<GraphQLScalar>;
@@ -46,18 +47,23 @@ The following resolvers are accepted:
 - [x] Queries
 - [x] Mutations
 - [x] Scalars
-- [ ] Directives (support coming soon)
+- [x] Directives
 
 ```js
 import gql from 'graphql-tag';
 import GraphQLJSON from 'graphql-type-json';
+import { DeprecatedDirective } from 'graphql-directive-deprecated';
 import connect from '@browserql/client';
 
 const schema = gql`
   scalar JSON
 
+  directive @deprecated(
+    reason: String = "No longer supported"
+  ) on FIELD_DEFINITION | ENUM_VALUE
+
   type Foo {
-    json: JSON
+    json: JSON @deprecated(reason: "Use newField.")
   }
 
   type Query {
@@ -83,6 +89,10 @@ const mutations = {
 
 const scalars = {
   JSON: GraphQLJSON,
+};
+
+const directives: {
+  deprecated: DeprecatedDirective,
 };
 
 const client = connect({ schema, queries, mutations, scalars });

@@ -7,6 +7,7 @@ import { Dictionary } from '../types';
  * In order to create a client
  */
 export interface ConnectOptions {
+  directives?: Dictionary<GraphQLDirective>;
   mutations?: Dictionary<GraphQLOperation>;
   queries?: Dictionary<GraphQLOperation>;
   scalars?: Dictionary<GraphQLScalar>;
@@ -16,3 +17,5 @@ export interface ConnectOptions {
 export type GraphQLOperation = (data: any) => any | Promise<any>;
 
 export type GraphQLScalar = any;
+
+export type GraphQLDirective = any;
