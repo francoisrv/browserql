@@ -5,7 +5,9 @@ import {
 } from 'apollo-cache-inmemory';
 import { SchemaLink } from 'apollo-link-schema';
 import gql from 'graphql-tag';
-import { buildASTSchema } from 'graphql';
+import { print } from 'graphql';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+
 import { ConnectOptions } from './types/ConnectOptions';
 
 export default function connect(options: ConnectOptions) {
@@ -19,7 +21,12 @@ export default function connect(options: ConnectOptions) {
       },
     }),
   });
-  const { mutations = {}, queries = {}, scalars = {} } = options;
+  const {
+    mutations = {},
+    queries = {},
+    scalars = {},
+    directives = {},
+  } = options;
   const schema =
     typeof options.schema === 'string' ? gql(options.schema) : options.schema;
 
@@ -43,12 +50,13 @@ export default function connect(options: ConnectOptions) {
     }
   }
 
-  const ast = buildASTSchema(schema);
-
   const client: ApolloClient<any> = new ApolloClient({
     link: new SchemaLink({
-      schema: ast,
-      rootValue,
+      rootValue: rootValue,
+      schema: makeExecutableSchema({
+        typeDefs: print(schema),
+        schemaDirectives: directives,
+      }),
     }),
     cache,
   });

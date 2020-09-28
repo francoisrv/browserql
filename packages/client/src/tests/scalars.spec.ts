@@ -27,7 +27,7 @@ const { apollo: client } = connect({
   },
 });
 
-test('it should get initial state from cache', async () => {
+test('it should get scalars', async () => {
   const { data } = await client.query({
     query: gql`
       query {
