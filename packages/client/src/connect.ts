@@ -5,14 +5,9 @@ import {
 } from 'apollo-cache-inmemory';
 import { SchemaLink } from 'apollo-link-schema';
 import gql from 'graphql-tag';
-import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json';
+import { buildASTSchema } from 'graphql';
 
-import Client from './Client';
-import { Transaction, ConnectOptions } from './types';
-import Schema from './Schema';
-import buildTransactions from './buildTransactions';
-import createFragments from './createFragments';
-import { map } from 'lodash';
+import { ConnectOptions } from './types';
 
 export default function connect(options: ConnectOptions) {
   const cache = new InMemoryCache({
@@ -25,22 +20,17 @@ export default function connect(options: ConnectOptions) {
       },
     }),
   });
-  const { mutations = {} } = options;
-  const schema = new Schema(options.schema);
+  const { mutations = {}, queries = {} } = options;
+  const schema =
+    typeof options.schema === 'string' ? gql(options.schema) : options.schema;
 
-  const rootValue: any = {
-    JSON: GraphQLJSON,
-    JSONObject: GraphQLJSONObject,
-  };
+  const rootValue: any = {};
 
-  schema.extend(gql`
-    scalar JSON
-    scalar JSONObject
-
-    type MutationResult {
-      done: Boolean!
+  for (const name in queries) {
+    if (!rootValue[name]) {
+      rootValue[name] = queries[name];
     }
-  `);
+  }
 
   for (const name in mutations) {
     if (!rootValue[name]) {
@@ -48,32 +38,15 @@ export default function connect(options: ConnectOptions) {
     }
   }
 
-  createFragments(schema);
-
-  const transactions: Transaction[] = buildTransactions(schema);
-
-  let ast: any;
-
-  try {
-    ast = schema.toAST();
-  } catch (error) {
-    throw error;
-  }
-
-  type ThisClientType = Client<typeof schema>;
-
-  let browserQLClient: ThisClientType;
+  const ast = buildASTSchema(schema);
 
   const client: ApolloClient<any> = new ApolloClient({
     link: new SchemaLink({
       schema: ast,
       rootValue,
-      context: () => ({ client: browserQLClient }),
     }),
     cache,
   });
 
-  browserQLClient = new Client<typeof schema>(client, schema, transactions);
-
-  return browserQLClient;
+  return { apollo: client };
 }

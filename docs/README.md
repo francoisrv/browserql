@@ -12,7 +12,7 @@ Or have you ever worked in a front-end app that does not use GraphQL as a back-e
 
 You could benefit from GraphQL's schema syntax to model your data, and [Apollo's cache](https://www.apollographql.com/docs/react/caching/cache-interaction/) to store your data dynamically.
 
-You could use a drop-in replacement for other state managements solutions such as [Redux](https://redux.js.org/).
+You could use as a drop-in replacement for other state managements solutions such as [Redux](https://redux.js.org/).
 
 Note that this is a solution in case you are **not** using GraphQL already in the back-end -- even though it should be possible to use both.
 

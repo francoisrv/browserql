@@ -5,53 +5,77 @@ interface Todo {
   name: string;
 }
 
-const client = connect({
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+let todos: { name: string }[] = [];
+
+const { apollo: client } = connect({
   schema: gql`
-    """
-    The Todo model
-    """
     type Todo {
       name: String!
     }
 
-    """
-    Queries access the cache
-    """
     type Query {
-      """
-      Get all todos in cache
-      """
       getTodos: [Todo!]!
     }
 
-    """
-    Mutations update the cache - note that mutations always return a MutationResult object
-    """
     type Mutation {
-      """
-      Add a new todo in cache
-      """
-      addTodo(name: String!): MutationResult
+      addTodo(name: String!): Todo
     }
   `,
+  queries: {
+    async getTodos() {
+      await wait(250);
+      return todos;
+    },
+  },
   mutations: {
-    async addTodo({ name }, { client }) {
-      client.cache.getTodos().push({ name });
+    async addTodo(todo: { name: string }) {
+      await wait(250);
+      todos.push(todo);
+      return todo;
     },
   },
 });
 
-test('it should get initial state from cache', () => {
-  client.queries;
-  const todos = client.queries.getTodos();
-  expect(todos).toEqual([]);
+test('it should get initial state from cache', async () => {
+  const { data } = await client.query({
+    query: gql`
+      query {
+        getTodos {
+          name
+        }
+      }
+    `,
+  });
+  expect(data.getTodos).toEqual([]);
 });
 
 test('it should update cache', async () => {
-  await client.mutations.addTodo({ name: 'Buy milk' });
+  await client.mutate({
+    mutation: gql`
+      mutation addTodoMutation($name: String!) {
+        addTodo(name: $name) {
+          name
+        }
+      }
+    `,
+    variables: {
+      name: 'Buy milk',
+    },
+  });
 });
 
-test('it should get updated state from cache', () => {
-  const todos = client.queries.getTodos();
-  expect(todos).toEqual([{ name: 'Buy milk', __typename: 'Todo' }]);
+test('it should get updated state from cache', async () => {
+  const { data } = await client.query({
+    query: gql`
+      query {
+        getTodos {
+          name
+        }
+      }
+    `,
+    fetchPolicy: 'no-cache',
+  });
+  expect(data.getTodos).toEqual([{ name: 'Buy milk', __typename: 'Todo' }]);
 });
