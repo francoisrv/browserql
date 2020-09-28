@@ -1,6 +1,0 @@
-- Doc
-  - [Connect](doc/connect)
-  - [Client](doc/client)
-- Examples
-  - [Todo](examples/todo)
-  - [HTTP](examples/http)

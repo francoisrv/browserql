@@ -46,12 +46,14 @@ const schema = gql`
 
 const queries = {
   async getTodos() {
+    // Get todos somehow, ie http
     return get('/api/todos');
   },
 };
 
 const mutations = {
   async addTodo(todo) {
+    // Update todos somehow, ie http
     return post('/api/todos', { todo });
   },
 };
@@ -59,7 +61,7 @@ const mutations = {
 // Create a new browserql client
 const { apollo: client } = connect({ schema, queries, mutations });
 
-// You can now access the cache
+// You can now access the apollo client as you would normally do:
 await client.query({
   query: gql`
     query {
@@ -70,3 +72,7 @@ await client.query({
   `,
 });
 ```
+
+## Roadmap
+
+You can check the roadmap [here](ROADMAP.md)

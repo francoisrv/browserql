@@ -1,150 +1,78 @@
 # browserql
 
-Use graphql in the browser
+Use graphql in the browser 🚀
 
-```ts
-import { connect, state } from 'browserql';
-import firestore from 'browserql-plugin-firestore';
+## Abstract
 
-connect({
-  schema,
-  plugins: [state(), firestore()],
-});
+Wouldn't it be cool to use [GraphQL](https://graphql.org/) as a state manager for browser apps?
 
-const schema = `
-type Todo {
-  id:       ID!
-  title:    String!
-  done:     Boolean!
-}
+Or have you ever worked in a front-end app that does not use GraphQL as a back-end and end up missing using Apollo to handle your state?
 
-input TodoFilters {
-  title:    String
-  done:     Boolean
-}
+### Introducing browserql
 
-input Paging {
-  page:     Int @default(0)
-  perPage:  Int @defaul(25)
-}
+You could benefit from GraphQL's schema syntax to model your data, and [Apollo's cache](https://www.apollographql.com/docs/react/caching/cache-interaction/) to store your data dynamically.
 
-type Query {
-  getTodos(
+You could use as a drop-in replacement for other state managements solutions such as [Redux](https://redux.js.org/).
 
-    where:    TodoFilter
-    paging:   Paging
-  
-  ):        [Todo]  @bqstate(get: "Todo")
-                    @bqfetch(get: "/todos")
-}
+Note that this is a solution in case you are **not** using GraphQL already in the back-end -- even though it should be possible to use both.
 
-type Mutation {
-  addToDo(
+Use this for any other back-end management (http, sockets) -- or none at all.
 
-    title: String!
-    done: Boolean = false
-  
-  ):        Todo    @bqfetch(post: "/todos")
-}
+## Usage
+
+Let's use a todo app to illustrate:
+
+```js
+import connect from '@browserql/client';
+import gql from 'graphql-tag';
+
+// schema can be a string or a GraphQL Document Node object
+const schema = gql`
+  // Put here the schema for a todo
+  type Todo {
+    name: String!
+  }
+
+  type Query {
+    // get all todos
+    getTodos: [Todo!]!
+  }
+
+  type Mutation {
+    // add a new todo
+    addTodo(name: String!)
+  }
 `;
 
-// Create a in-browser Graphql server and return a client to it
-const client = connect({ schema, resolvers });
-```
-
-```ts
-import { connect } from '@browserql/core';
-
-const schema = `
-type Query {
-  hello(person: String!): String!
-}
-`;
-const resolvers = {
-  Query: {
-    hello: ({ person }) => `Hello ${person}`,
+const queries = {
+  async getTodos() {
+    // Get todos somehow, ie http
+    return get('/api/todos');
   },
 };
 
-// Create a in-browser Graphql server and return a client to it
-const client = connect({ schema, resolvers });
-```
+const mutations = {
+  async addTodo(todo) {
+    // Update todos somehow, ie http
+    return post('/api/todos', { todo });
+  },
+};
 
-## With transactions
+// Create a new browserql client
+const { apollo: client } = connect({ schema, queries, mutations });
 
-```ts
-client.transactions.getQuery('hello');
-```
-
-## State management
-
-```graphql
-type State {
-  flag: Boolean! @bqdefault(bool: false)
-}
-
-type Query {
-  getFlag: Boolean! @bqstate(get: "State.flag")
-}
-
-type Mutation {
-  toggleFlag: Boolean! @bqstate(toggle: "State.flag")
-}
-```
-
-```ts
-import { connect, state } from 'browserql';
-
-const plugins = [state()];
-
-const client = connect({ schema, plugins });
-```
-
-## With fetch
-
-You can plug your queries and mutations to end-points that will be HTTP fetched
-
-```graphql
-type Todo {
-  id: ID!
-  title: String!
-}
-
-type Query {
-  getTodos: [Todo!]! @bqfetch(get: "/todos")
-}
-
-type Mutation {
-  addTodo(title: String): Todo @bqfetch(post: "/todos")
-}
-```
-
-```ts
-import { connect, rest } from 'browserql';
-
-const client = connect({
-  schema,
-  plugins: [
-    rest({
-      base: 'http://example.com',
-      json: true,
-    }),
-  ],
+// You can now access the apollo client as you would normally do:
+await client.query({
+  query: gql`
+    query {
+      getTodos {
+        name
+      }
+    }
+  `,
 });
 ```
 
-```ts
-import { connect, schema } from 'browserql';
+## Roadmap
 
-const client = connect({
-  plugins: [
-    schema({
-      transactions: [
-        `query getPosts(blogId: ID!) {
-          ...PostFragment  
-        }`,
-      ],
-    }),
-  ],
-});
-```
+You can check the roadmap [here](ROADMAP.md)
