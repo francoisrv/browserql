@@ -6,8 +6,7 @@ import {
 import { SchemaLink } from 'apollo-link-schema';
 import gql from 'graphql-tag';
 import { buildASTSchema } from 'graphql';
-
-import { ConnectOptions } from './types';
+import { ConnectOptions } from './types/ConnectOptions';
 
 export default function connect(options: ConnectOptions) {
   const cache = new InMemoryCache({
@@ -20,7 +19,7 @@ export default function connect(options: ConnectOptions) {
       },
     }),
   });
-  const { mutations = {}, queries = {} } = options;
+  const { mutations = {}, queries = {}, scalars = {} } = options;
   const schema =
     typeof options.schema === 'string' ? gql(options.schema) : options.schema;
 
@@ -35,6 +34,12 @@ export default function connect(options: ConnectOptions) {
   for (const name in mutations) {
     if (!rootValue[name]) {
       rootValue[name] = mutations[name];
+    }
+  }
+
+  for (const name in scalars) {
+    if (!rootValue[name]) {
+      rootValue[name] = scalars[name];
     }
   }
 
