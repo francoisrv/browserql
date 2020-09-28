@@ -1,220 +1,78 @@
-# @browserql/client
+# browserql
 
 Use graphql in the browser 🚀
 
-**browserql works better with [plugins](/plugins.md)**
+## Abstract
 
-## Why?
+Wouldn't it be cool to use [GraphQL](https://graphql.org/) as a state manager for browser apps?
 
-- 💪 powerful state management of your front-end app including offline via apollo cache
-- 💡 easy-to-reason code layout thanks to graphql syntax
-- 🤩 all-in-the-browser
+Or have you ever worked in a front-end app that does not use GraphQL as a back-end and end up missing using Apollo to handle your state?
+
+### Introducing browserql
+
+You could benefit from GraphQL's schema syntax to model your data, and [Apollo's cache](https://www.apollographql.com/docs/react/caching/cache-interaction/) to store your data dynamically.
+
+You could use as a drop-in replacement for other state managements solutions such as [Redux](https://redux.js.org/).
+
+Note that this is a solution in case you are **not** using GraphQL already in the back-end -- even though it should be possible to use both.
+
+Use this for any other back-end management (http, sockets) -- or none at all.
 
 ## Usage
 
+Let's use a todo app to illustrate:
+
 ```js
 import connect from '@browserql/client';
+import gql from 'graphql-tag';
 
-const schema = `
-type Query {
-  counter: Int!
-}
+// schema can be a string or a GraphQL Document Node object
+const schema = gql`
+  // Put here the schema for a todo
+  type Todo {
+    name: String!
+  }
 
-type Mutation {
-  incrementCounter: BResult
-}
+  type Query {
+    // get all todos
+    getTodos: [Todo!]!
+  }
+
+  type Mutation {
+    // add a new todo
+    addTodo(name: String!)
+  }
 `;
-const resolvers = {
-  incrementCounter: async (client) => {
-    const counter = client.query('counter');
-    await client.update('counter', null, counter);
+
+const queries = {
+  async getTodos() {
+    // Get todos somehow, ie http
+    return get('/api/todos');
   },
 };
 
-const client = connect({ schema, resolvers });
-
-const counter = client.query('counter');
-
-console.log(counter.data); // 0
-
-await client.mutate('incrementCounter');
-
-console.log(counter.data); // 1
-```
-
-## Todo example
-
-```graphql
-type Todo {
-  name: String!
-  id: ID! @uuid
-  done: Boolean!
-}
-
-type Query {
-  getTodos: [Todo!]!
-}
-
-type Mutation {
-  addTodo(todo: Todo!): BResult
-  markTodoAsDone(id: ID!): BResult
-}
-```
-
-```js
 const mutations = {
-  addTodo: (client, { todo }) =>
-    client.write('getTodos', null, [...client.read('getTodos'), todo]),
-
-  markTodoAsDone: (client, { id }) =>
-    client.write(
-      'getTodos',
-      null,
-      client.read('getTodos').map((todo) => ({
-        ...todo,
-        done: todo.id === id ? true : todo.done,
-      }))
-    ),
-};
-```
-
-```js
-client.query('getTodos');
-// []
-
-await client.mutate('addTodo', { todo: { name: 'Buy milk' } });
-
-client.query('getTodos');
-// [{ id: 'xxx', name: 'Buy milk', done: false }]
-
-await client.mutate('markTodoAsDone', { id: 'xxx' });
-
-client.query('getTodos');
-// [{ id: 'xxx', name: 'Buy milk', done: true }]
-```
-
-## connect
-
-```ts
-declare function connect(options: ConnectOptions): BrowserQLClient;
-```
-
-### options
-
-```ts
-interface ConnectOptions {
-  schema: Schema | Schema[];
-
-  assumeValid?: boolean;
-  plugins?: PluginCaller[];
-  resolvers?: { [name: string]: Function };
-}
-```
-
-#### schema
-
-```ts
-type Schema = DocumentNode | GraphQLSchema | string;
-```
-
-You can pass either a string, a document node or a graphQL schema object -- or an array with any of these three.
-
-#### assumeValid
-
-The schema needs te be valid, unless specified otherwise via the `assumeValid` option:
-
-```js
-connect({ schema, assumeValid: false });
-```
-
-#### plugins
-
-Plugins can:
-
-- extend schema
-- extend resolvers
-- extend context
-
-```ts
-type PluginCaller = (...args: any[]) => PluginInvoker;
-
-type PluginInvoker = (
-  schema: GraphQLSchema,
-  resolvers: { [name: string]: Function },
-  context: object
-) => Plugin;
-
-interface Plugin {
-  schema: GraphQLSchema;
-  resolvers: { [name: string]: Function };
-  context: object;
-}
-```
-
-```js
-import {
-  getTypesWithDirective,
-  getName,
-  printDirective,
-  DIRECTIVE_LOCATION,
-} from 'browserql-utils';
-
-// Add an id field to a type
-function modelDirective(schema) {
-  return {
-    schema: [
-      printDirective('model', DIRECTIVE_LOCATION.OBJECT),
-      ...getTypesWithDirective('model', schema).map(
-        (type) => `extend type ${getName(type)} { id: ID! }`
-      ),
-    ],
-  };
-}
-
-const schema = 'type Model @model { title: String! }';
-
-const client = connect({ schema, plugins: [modelDirective] });
-
-client.printType('Model');
-// type Model {
-//   id: ID!
-//   title: String!
-// }
-```
-
-#### resolvers
-
-```js
-const schema = `
-type Query {
-  ping: String
-}
-
-type Mutation {
-  pong: string
-}
-`;
-const resolvers = {
-  ping: () => 'pong',
-  pong: () => 'ping',
+  async addTodo(todo) {
+    // Update todos somehow, ie http
+    return post('/api/todos', { todo });
+  },
 };
 
-connect({ schema, resolvers });
+// Create a new browserql client
+const { apollo: client } = connect({ schema, queries, mutations });
+
+// You can now access the apollo client as you would normally do:
+await client.query({
+  query: gql`
+    query {
+      getTodos {
+        name
+      }
+    }
+  `,
+});
 ```
 
-### client
+## Roadmap
 
-```ts
-interface Client {
-  apollo: ApolloProvider;
-
-  getTransaction(name: string): Transaction;
-  printQuery(): string;
-  getContext(path?: string): object;
-  getQuery(name: string): DocumentNode;
-  getSchema(): GraphQLSchema;
-  getResolvers(): object;
-}
-```
-
-### members
+You can check the roadmap [here](ROADMAP.md)
