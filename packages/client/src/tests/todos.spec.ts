@@ -38,7 +38,7 @@ const { apollo: client } = connect({
   },
 });
 
-test('it should get initial state from cache', async () => {
+test('it should make a query', async () => {
   const { data } = await client.query({
     query: gql`
       query {
@@ -51,7 +51,7 @@ test('it should get initial state from cache', async () => {
   expect(data.getTodos).toEqual([]);
 });
 
-test('it should update cache', async () => {
+test('it should make a mutation', async () => {
   await client.mutate({
     mutation: gql`
       mutation addTodoMutation($name: String!) {
@@ -66,7 +66,7 @@ test('it should update cache', async () => {
   });
 });
 
-test('it should get updated state from cache', async () => {
+test('it should make the same query', async () => {
   const { data } = await client.query({
     query: gql`
       query {
