@@ -1,6 +1,6 @@
 # Connect
 
-Create a new [browserql client](doc/client)
+Create a new browserql client
 
 ## Usage
 
@@ -10,36 +10,80 @@ const client = connect(ConnectOptions);
 
 ## Options
 
+View [here](https://github.com/francoisrv/browserql/blob/master/packages/client/src/types.ts)
+
 ```ts
 export interface ConnectOptions {
-  debug?: boolean;
-  mutations?: Dictionary<MutationMiddleware>;
+  mutations?: Dictionary<GraphQLOperation>;
+  queries?: Dictionary<GraphQLOperation>;
+  scalars?: Dictionary<GraphQLScalar>;
   schema: DocumentNode | string;
 }
 ```
 
 ## Schema
 
-Use [graphql](https://graphql.org/learn/schema/) schema.
-
-## Mutations
-
-An object where to put the mutation resolvers.
-
-Note that mutations are supposed to handle side-effects and/or write to the cache, so they do not return anything.
-
-A resolver's name must match a mutation's name in the [schema](doc/schema).
-
-A resolver's only argument is the browserql client.
-
-It must wrap a function that can be asynchronous.
-
-### Example
+Schema can be either a string or a document node:
 
 ```js
-const addTodo = (client) => async ({ name }) => {
-  // Any side effects
-  // You can interact with the client, like writing to the cache;
-  client.write('getTodos', {}, [{ name }]);
+const schema = 'type Query { hello: String }';
+
+// Or
+import gql from 'graphql-tag';
+const schema = gql`
+  type Query {
+    hello: String
+  }
+`;
+
+const client = connect({ schema });
+```
+
+## Resolvers
+
+The following resolvers are accepted:
+
+- [x] Queries
+- [x] Mutations
+- [x] Scalars
+- [ ] Directives (support coming soon)
+
+```js
+import gql from 'graphql-tag';
+import GraphQLJSON from 'graphql-type-json';
+import connect from '@browserql/client';
+
+const schema = gql`
+  scalar JSON
+
+  type Foo {
+    json: JSON
+  }
+
+  type Query {
+    getFoo(json: JSON!): Foo
+  }
+
+  type Mutation {
+    setFoo(json: JSON!): Foo
+  }
+`;
+
+const queries = {
+  getFoo({ json }) {
+    return { json };
+  },
 };
+
+const mutations = {
+  setFoo({ json }) {
+    return { json };
+  },
+};
+
+const scalars = {
+  JSON: GraphQLJSON,
+};
+
+const client = connect({ schema, queries, mutations, scalars });
 ```
