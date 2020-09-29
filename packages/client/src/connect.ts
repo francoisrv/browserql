@@ -9,6 +9,7 @@ import { print } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 import { ConnectOptions } from './types/ConnectOptions';
+import { Dictionary } from './types';
 
 export default function connect(options: ConnectOptions) {
   const cache = new InMemoryCache({
@@ -22,10 +23,11 @@ export default function connect(options: ConnectOptions) {
     }),
   });
   const {
+    directives = {},
+    extensions = {},
     mutations = {},
     queries = {},
     scalars = {},
-    directives = {},
   } = options;
   const schema =
     typeof options.schema === 'string' ? gql(options.schema) : options.schema;
@@ -50,6 +52,12 @@ export default function connect(options: ConnectOptions) {
     }
   }
 
+  const ext: Dictionary<any> = {};
+
+  for (const name in extensions) {
+    ext[name] = extensions[name]();
+  }
+
   const client: ApolloClient<any> = new ApolloClient({
     link: new SchemaLink({
       rootValue: rootValue,
@@ -61,5 +69,5 @@ export default function connect(options: ConnectOptions) {
     cache,
   });
 
-  return { apollo: client };
+  return { apollo: client, extensions: ext };
 }

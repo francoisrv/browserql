@@ -31,27 +31,6 @@ Add support for resolvers:
 - [x] Scalars
 - [x] Directives
 
-## Extended client
+## Extensions
 
-- [ ] Contracts
-- [ ] Access
-
-Contracts are pre-generated client queries and mutations, along with their fragments
-
-```js
-const client = connect({
-  schema,
-  extensions: {
-    contracts: contracts(),
-    cache: cache(),
-  },
-});
-client.apollo.query({
-  query: client.ext.contracts.query('getUser'),
-  variables: { id: '1234' },
-});
-
-client.ext.cache.query.getUser({ id: '1234' });
-client.ext.cache.mutate.insertUser({});
-client.ext.cache.write.getUser({ id: '1234' }, { name: 'Foo' });
-```
+Accept extensions

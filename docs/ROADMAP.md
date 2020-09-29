@@ -4,7 +4,7 @@
 | ------- | --------------------- | ------------- | --------------- |
 | 1.3.0   | Simple client         | **Published** | Sep 28th 2020   |
 | 1.6.0   | Resolvers             | **Published** | Sep 28th 2020   |
-|         | Extensions            | _Backlog_     | October 2020    |
+|         | Extensions            | In Progress   | October 2020    |
 |         | Cache client          | _Backlog_     | October 2020    |
 |         | Directives            | _Backlog_     | October 2020    |
 |         | Http extension        | _Backlog_     | November 2020   |
