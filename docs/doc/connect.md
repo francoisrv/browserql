@@ -4,25 +4,19 @@ Create a new browserql client
 
 ## Usage
 
+Call connect with [ConnectOptions](https://github.com/francoisrv/browserql/blob/master/packages/client/src/types/ConnectOptions.ts)
+
 ```js
 const client = connect(ConnectOptions);
+console.log(client);
+// {
+//   apollo: ApolloClient;
+// }
 ```
 
 ## Options
 
-View [here](https://github.com/francoisrv/browserql/blob/master/packages/client/src/types/ConnectOptions.ts)
-
-```ts
-export interface ConnectOptions {
-  directives?: Dictionary<GraphQLDirective>;
-  mutations?: Dictionary<GraphQLOperation>;
-  queries?: Dictionary<GraphQLOperation>;
-  scalars?: Dictionary<GraphQLScalar>;
-  schema: DocumentNode | string;
-}
-```
-
-## Schema
+### Schema
 
 Schema can be either a string or a document node:
 
@@ -40,7 +34,7 @@ const schema = gql`
 const client = connect({ schema });
 ```
 
-## Resolvers
+### Resolvers
 
 The following resolvers are accepted:
 
@@ -97,3 +91,5 @@ const directives: {
 
 const client = connect({ schema, queries, mutations, scalars });
 ```
+
+### Extensions
