@@ -9,7 +9,8 @@
     "w": "bash workspace.sh",
     "W": "yarn workspaces",
     "docsify": "docsify serve ./docs",
-    "docsify:update": "cp docs/README.md . && cp docs/ROADMAP.md ."
+    "docsify:update": "cp docs/README.md . && cp docs/ROADMAP.md .",
+    "add:pkg": "bash add-package.sh"
   },
   "dependencies": {
     "husky": "^4.3.0",
@@ -21,7 +22,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run docsify:update && yarn W run build && yarn W run test"
+      "pre-commit": "npm run docsify:update"
     }
   }
 }
