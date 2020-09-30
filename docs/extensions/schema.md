@@ -96,3 +96,34 @@ const schema = enhanceSchema(gql`
 
 const queries = schema.getQueries({ extendedOnly: true }); // lambda
 ```
+
+### getQueryByName
+
+Get a query by name
+
+```js
+const schema = enhanceSchema(gql`
+  type Query {
+    foo: String
+    bar: Int
+    barz: [Boolean]
+  }
+`);
+
+const query = schema.getQueryByName('foo');
+```
+
+### getQueryArguments
+
+Return array of query arguments
+
+```js
+const schema = enhanceSchema(gql`
+  type Query {
+    foo(bar: Int, barz: Int): Int
+  }
+`);
+
+const query = schema.getQueryByName('foo');
+schema.getQueryArguments(query);
+```

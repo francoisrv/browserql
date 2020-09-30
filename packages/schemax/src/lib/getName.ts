@@ -10,6 +10,7 @@ import {
 
 export default function getName(
   type:
+    | undefined
     | ArgumentNode
     | DefinitionNode
     | FieldDefinitionNode
@@ -18,11 +19,14 @@ export default function getName(
     | TypeNode
     | SelectionNode
 ): string {
+  if (typeof type === 'undefined') {
+    return '';
+  }
   if ('name' in type) {
     const { name } = type;
     if (name) {
       return name.value;
     }
   }
-  throw new Error('Could not get name from type');
+  return '';
 }
