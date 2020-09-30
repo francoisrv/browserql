@@ -1,8 +1,8 @@
 {
   "name": "@browserql/schemax",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "dist/index.js",
-  "types": "dist/index.ts.d",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && yarn tsc",
     "watch": "yarn build -w",
