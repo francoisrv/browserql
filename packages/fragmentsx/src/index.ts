@@ -37,6 +37,7 @@ function makeFragment(
 export default function buildFragments(document: string | DocumentNode) {
   const schema = enhanceSchema(document);
   const queries = schema.getQueries();
+  const mutations = schema.getMutations();
   const fragments: Dictionary<Fragment> = {};
   function buildFragment(query: FieldDefinitionNode) {
     const { type: queryKind } = parseKind(getKind(query));
@@ -48,6 +49,7 @@ export default function buildFragments(document: string | DocumentNode) {
     }
   }
   queries.forEach(buildFragment);
+  mutations.forEach(buildFragment);
   return {
     get(name: string): string | null {
       const fragment = fragments[name];

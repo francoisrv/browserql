@@ -18,61 +18,6 @@ Note that this is a solution in case you are **not** using GraphQL already in th
 
 Use this for any other back-end management (http, sockets) -- or none at all.
 
-## Usage
+## Documentation
 
-Let's use a todo app to illustrate:
-
-```js
-import connect from '@browserql/client';
-import gql from 'graphql-tag';
-
-// schema can be a string or a GraphQL Document Node object
-const schema = gql`
-  // Put here the schema for a todo
-  type Todo {
-    name: String!
-  }
-
-  type Query {
-    // get all todos
-    getTodos: [Todo!]!
-  }
-
-  type Mutation {
-    // add a new todo
-    addTodo(name: String!)
-  }
-`;
-
-const queries = {
-  async getTodos() {
-    // Get todos somehow, ie http
-    return get('/api/todos');
-  },
-};
-
-const mutations = {
-  async addTodo(todo) {
-    // Update todos somehow, ie http
-    return post('/api/todos', { todo });
-  },
-};
-
-// Create a new browserql client
-const { apollo: client } = connect({ schema, queries, mutations });
-
-// You can now access the apollo client as you would normally do:
-await client.query({
-  query: gql`
-    query {
-      getTodos {
-        name
-      }
-    }
-  `,
-});
-```
-
-## Roadmap
-
-You can check the roadmap [here](ROADMAP.md)
+[Documentation](https://francoisrv.github.io/browserql/#/)
