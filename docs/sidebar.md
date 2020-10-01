@@ -12,3 +12,4 @@
 - Extensions
 
   - [Cache](extensions/cache)
+  - [HTTP](extensions/http)

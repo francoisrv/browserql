@@ -1,5 +1,6 @@
-import gql from 'graphql-tag';
-import makeContracts from '.';
+import { print } from 'graphql'
+import gql from 'graphql-tag'
+import makeContracts from '.'
 
 const schema = `
 type Category {
@@ -13,12 +14,13 @@ type Todo {
 
 type Query {
   getTodo(name: String! id: ID!): Todo!
+  getInt: Int!
 }
 
 type Mutation {
   setTodo(name: String! id: ID!): Todo!
 }
-`;
+`
 
 const query = `query getTodoQuery(
   $name: String !
@@ -39,7 +41,7 @@ fragment TodoFragment on Todo {
 }
 fragment CategoryFragment on Category {
   id
-}`;
+}`
 
 const mutation = `mutation setTodoMutation(
   $name: String !
@@ -60,24 +62,33 @@ fragment TodoFragment on Todo {
 }
 fragment CategoryFragment on Category {
   id
-}`;
+}`
 
-const contracts = makeContracts(schema);
+const primitive = `query {
+  getInt
+}`
+
+const contracts = makeContracts(schema)
 
 test('it should have queries', () => {
-  expect(contracts).toHaveProperty('Query');
-});
+  expect(contracts).toHaveProperty('Query')
+})
 
 test('it should have mutations', () => {
-  expect(contracts).toHaveProperty('Mutation');
-});
+  expect(contracts).toHaveProperty('Mutation')
+})
 
 test('it should have query', () => {
-  expect(contracts.Query).toHaveProperty('getTodo');
-  expect(contracts.Query.getTodo).toEqual(gql(query));
-});
+  expect(contracts.Query).toHaveProperty('getTodo')
+  expect(contracts.Query.getTodo).toEqual(gql(query))
+})
 
 test('it should have mutation', () => {
-  expect(contracts.Mutation).toHaveProperty('setTodo');
-  expect(contracts.Mutation.setTodo).toEqual(gql(mutation));
-});
+  expect(contracts.Mutation).toHaveProperty('setTodo')
+  expect(contracts.Mutation.setTodo).toEqual(gql(mutation))
+})
+
+test('it should work with primitive', () => {
+  expect(contracts.Query).toHaveProperty('getInt')
+  expect(contracts.Query.getInt).toEqual(gql(primitive))
+})
