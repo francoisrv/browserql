@@ -1,4 +1,8 @@
-import { FieldDefinitionNode, TypeNode } from 'graphql';
+import {
+  FieldDefinitionNode,
+  InputValueDefinitionNode,
+  TypeNode,
+} from 'graphql';
 import getName from './getName';
 
 function findKind(type: TypeNode): string {
@@ -14,6 +18,8 @@ function findKind(type: TypeNode): string {
   return '';
 }
 
-export default function getKind(def: FieldDefinitionNode) {
+export default function getKind(
+  def: FieldDefinitionNode | InputValueDefinitionNode
+) {
   return findKind(def.type);
 }
