@@ -13,11 +13,11 @@ const schema = enhanceSchema(gql`
 `);
 
 test('it should get query by name', () => {
-  const query = schema.getQueryByName('foo');
+  const query = schema.getQuery('foo');
   expect(getName(query)).toEqual('foo');
 });
 
 test('it should get extended query by name', () => {
-  const query = schema.getQueryByName('barz');
+  const query = schema.getQuery('barz');
   expect(getName(query)).toEqual('barz');
 });
