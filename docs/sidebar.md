@@ -2,10 +2,13 @@
 
   - [connect](doc/connect)
 
-- Extensions
+- Utilities
 
   - [Contracts](extensions/contracts)
+  - [Fragments](extensions/fragments)
+  - [Resolved](extensions/resolved)
   - [Schema](extensions/schema)
 
-- Other
-  - [Road Map](ROADMAP)
+- Extensions
+
+  - [Cache](extensions/cache)
