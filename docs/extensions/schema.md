@@ -204,6 +204,81 @@ const getTodo = schema.getQuery('getTodo');
 console.log(getKind(getTodo)); // Todo
 ```
 
+### getMutations
+
+Return all mutations in schema
+
+```js
+const schema = enhanceSchema(gql`
+  type Query {
+    foo: String
+  }
+  type Mutation {
+    A: ID
+    B: ID
+  }
+  extend type Mutation {
+    C: ID
+  }
+`);
+
+const queries = schema.getMutations(); // [A, B, C]
+```
+
+You can exclude extended mutations like this:
+
+```js
+const schema = enhanceSchema(gql`
+  type Query {
+    foo: String
+  }
+  type Mutation {
+    A: ID
+    B: ID
+  }
+  extend type Mutation {
+    C: ID
+  }
+`);
+
+const mutations = schema.getMutations({ includeExtended: false }); // [A, B]
+```
+
+Only get extended mutations
+
+```js
+const schema = enhanceSchema(gql`
+  type Query {
+    foo: String
+  }
+  type Mutation {
+    A: ID
+    B: ID
+  }
+  extend type Mutation {
+    C: ID
+  }
+`);
+
+const mutations = schema.getMutations({ extendedOnly: true }); // [C]
+```
+
+### getMutation
+
+```js
+const schema = enhanceSchema(gql`
+  type Query {
+    foo: String
+  }
+  type Mutation {
+    A: ID
+    B: ID
+  }
+`);
+
+schema.getMutation('A');
+```
+
 ### getType
 
 Get a type by name

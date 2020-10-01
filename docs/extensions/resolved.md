@@ -1,8 +1,8 @@
 # Resolved
 
 ```js
-import gql from "graphql-tag";
-import resolve from "@browserql/resolve";
+import gql from 'graphql-tag';
+import resolve from '@browserql/resolved';
 
 const schema = gql`
   type Query {
@@ -12,5 +12,5 @@ const schema = gql`
 
 const resolved = resolve(schema);
 
-apolloClient.query(resolved.Query.foo({ id: "123" }));
+apolloClient.query(resolved.Query.foo({ id: '123' }));
 ```
