@@ -22,8 +22,6 @@
     "graphql": "14.6.0"
   },
   "husky": {
-    "hooks": {
-      "pre-commit": "npm run docsify:update"
-    }
+    "hooks": {}
   }
 }
