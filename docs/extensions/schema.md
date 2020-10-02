@@ -5,7 +5,7 @@ API on top of GraphQL for easier access
 ## Usage
 
 ```js
-import enhanceSchema from '@browserql/schemax';
+import enhanceSchema from '@browserql/schemax'
 
 const schema = enhanceSchema(gql`
   type Todo {
@@ -14,9 +14,9 @@ const schema = enhanceSchema(gql`
   type Query {
     getTodo: Todo
   }
-`);
+`)
 
-const queries = schema.getQueries();
+const queries = schema.getQueries()
 ```
 
 ## Static API
@@ -26,7 +26,7 @@ const queries = schema.getQueries();
 Return a kind as a string
 
 ```js
-import enhanceSchema, { getKind } from '@browserql/schemax';
+import enhanceSchema, { getKind } from '@browserql/schemax'
 
 const schema = enhanceSchema(gql`
   type Todo {
@@ -35,10 +35,10 @@ const schema = enhanceSchema(gql`
   type Query {
     getTodo: Todo!
   }
-`);
+`)
 
-const getTodo = schema.getQueryByName('getTodo');
-console.log(getKind(getTodo)); // Todo!
+const getTodo = schema.getQueryByName('getTodo')
+console.log(getKind(getTodo)) // Todo!
 ```
 
 ### getName
@@ -46,7 +46,7 @@ console.log(getKind(getTodo)); // Todo!
 Return the name of a GraphQL definition node
 
 ```js
-import enhanceSchema, { getName } from '@browserql/schemax';
+import enhanceSchema, { getName } from '@browserql/schemax'
 
 const schema = enhanceSchema(gql`
   type Todo {
@@ -55,11 +55,11 @@ const schema = enhanceSchema(gql`
   type Query {
     getTodo: Todo
   }
-`);
+`)
 
-const queries = schema.getQueries();
+const queries = schema.getQueries()
 
-queries.find((query) => getName(query) === 'getTodo');
+queries.find((query) => getName(query) === 'getTodo')
 ```
 
 ### parseKind
@@ -67,7 +67,7 @@ queries.find((query) => getName(query) === 'getTodo');
 Return kind's info
 
 ```js
-import enhanceSchema, { getKind, parseKind } from '@browserql/schemax';
+import enhanceSchema, { getKind, parseKind } from '@browserql/schemax'
 
 const schema = enhanceSchema(gql`
   type Todo {
@@ -76,11 +76,11 @@ const schema = enhanceSchema(gql`
   type Query {
     getTodo: [Todo!]!
   }
-`);
+`)
 
-const getTodo = schema.getQueryByName('getTodo');
-const kind = getKind(getTodo); // [Todo!]!
-console.log(parseKind(kind));
+const getTodo = schema.getQueryByName('getTodo')
+const kind = getKind(getTodo) // [Todo!]!
+console.log(parseKind(kind))
 
 // {
 //   type: 'Todo',
@@ -92,6 +92,40 @@ console.log(parseKind(kind));
 
 ## API
 
+### extend
+
+Extend a schema
+
+```js
+const schema1 = gql`
+  type Todo {
+    id: ID!
+    name: String!
+  }
+
+  type Query {
+    getTodo: Todo
+  }
+`
+
+const schema2 = gql`
+  type Customer {
+    id: ID!
+    name: String!
+  }
+
+  type Query {
+    getCustomer: Customer
+  }
+`
+
+const schema = enhanceSchema(schema1)
+
+schema.extend(schema2)
+
+schema.getQuery('getCustomer')
+```
+
 ### getArguments
 
 Return array of arguments
@@ -101,10 +135,10 @@ const schema = enhanceSchema(gql`
   type Query {
     foo(bar: Int, barz: Int): Int
   }
-`);
+`)
 
-const foo = schema.getQueryByName('foo');
-schema.getArguments(foo); // [bar, barz]
+const foo = schema.getQueryByName('foo')
+schema.getArguments(foo) // [bar, barz]
 ```
 
 ### getByName
@@ -128,9 +162,9 @@ const schema = enhanceSchema(gql`
   type Query {
     a: A
   }
-`);
+`)
 
-schema.getByName('C');
+schema.getByName('C')
 ```
 
 ### getQueries
@@ -147,9 +181,9 @@ const schema = enhanceSchema(gql`
   extend type Query {
     lambda: Float
   }
-`);
+`)
 
-const queries = schema.getQueries(); // foo, bar, barz, lambda
+const queries = schema.getQueries() // foo, bar, barz, lambda
 ```
 
 You can exclude extended queries like this:
@@ -164,9 +198,9 @@ const schema = enhanceSchema(gql`
   extend type Query {
     lambda: Float
   }
-`);
+`)
 
-const queries = schema.getQueries({ includeExtended: false }); // foo, bar, barz
+const queries = schema.getQueries({ includeExtended: false }) // foo, bar, barz
 ```
 
 Only get extended queries
@@ -181,15 +215,15 @@ const schema = enhanceSchema(gql`
   extend type Query {
     lambda: Float
   }
-`);
+`)
 
-const queries = schema.getQueries({ extendedOnly: true }); // lambda
+const queries = schema.getQueries({ extendedOnly: true }) // lambda
 ```
 
 ### getQuery
 
 ```js
-import enhanceSchema, { getKind } from '@browserql/schemax';
+import enhanceSchema, { getKind } from '@browserql/schemax'
 
 const schema = enhanceSchema(gql`
   type Todo {
@@ -198,10 +232,10 @@ const schema = enhanceSchema(gql`
   type Query {
     getTodo: Todo
   }
-`);
+`)
 
-const getTodo = schema.getQuery('getTodo');
-console.log(getKind(getTodo)); // Todo
+const getTodo = schema.getQuery('getTodo')
+console.log(getKind(getTodo)) // Todo
 ```
 
 ### getMutations
@@ -220,9 +254,9 @@ const schema = enhanceSchema(gql`
   extend type Mutation {
     C: ID
   }
-`);
+`)
 
-const queries = schema.getMutations(); // [A, B, C]
+const queries = schema.getMutations() // [A, B, C]
 ```
 
 You can exclude extended mutations like this:
@@ -239,9 +273,9 @@ const schema = enhanceSchema(gql`
   extend type Mutation {
     C: ID
   }
-`);
+`)
 
-const mutations = schema.getMutations({ includeExtended: false }); // [A, B]
+const mutations = schema.getMutations({ includeExtended: false }) // [A, B]
 ```
 
 Only get extended mutations
@@ -258,9 +292,9 @@ const schema = enhanceSchema(gql`
   extend type Mutation {
     C: ID
   }
-`);
+`)
 
-const mutations = schema.getMutations({ extendedOnly: true }); // [C]
+const mutations = schema.getMutations({ extendedOnly: true }) // [C]
 ```
 
 ### getMutation
@@ -274,9 +308,9 @@ const schema = enhanceSchema(gql`
     A: ID
     B: ID
   }
-`);
+`)
 
-schema.getMutation('A');
+schema.getMutation('A')
 ```
 
 ### getType
@@ -292,9 +326,9 @@ const schema = enhanceSchema(gql`
   type B {
     id: ID
   }
-`);
+`)
 
-const type = schema.getType('A'); // A
+const type = schema.getType('A') // A
 ```
 
 ### getTypes
@@ -318,7 +352,17 @@ const schema = enhanceSchema(gql`
   type Query {
     a: A
   }
-`);
+`)
 
-const types = schema.getTypes(); // [A, B]
+const types = schema.getTypes() // [A, B]
+```
+
+### print
+
+Print schema
+
+```js
+const schema = enhanceSchema('type Query { hello: String }')
+schema.extend('type Query { bye: String }')
+schema.print()
 ```

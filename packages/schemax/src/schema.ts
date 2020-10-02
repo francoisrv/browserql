@@ -1,22 +1,25 @@
-import { DocumentNode } from 'graphql';
-import gql from 'graphql-tag';
-import getByName from './lib/getByName';
+import { DocumentNode, print } from 'graphql'
+import gql from 'graphql-tag'
 
-import getExtendedQueries from './lib/getExtendedQueries';
-import getMutation from './lib/getMutation';
+import extend from './lib/extend'
+import getByName from './lib/getByName'
+import getExtendedQueries from './lib/getExtendedQueries'
+import getMutation from './lib/getMutation'
 import getMutations, {
   Options as GetMutationsOptions,
-} from './lib/getMutations';
-import getQueries, { Options as GetQueriesOptions } from './lib/getQueries';
-import getQueryArguments from './lib/getQueryArguments';
-import getQueryByName from './lib/getQueryByName';
-import getType from './lib/getType';
-import getTypes from './lib/getTypes';
+} from './lib/getMutations'
+import getQueries, { Options as GetQueriesOptions } from './lib/getQueries'
+import getQueryArguments from './lib/getQueryArguments'
+import getQueryByName from './lib/getQueryByName'
+import getType from './lib/getType'
+import getTypes from './lib/getTypes'
 
 export default function enhanceSchema(schema: string | DocumentNode) {
-  const document = typeof schema === 'string' ? gql(schema) : schema;
+  const document = typeof schema === 'string' ? gql(schema) : schema
 
   return {
+    extend: (document1: string | DocumentNode) => extend(document, document1),
+    print: () => print(document),
     getExtendedQueries: () => getExtendedQueries(document as DocumentNode),
     getQueries: (options: GetQueriesOptions = {}) =>
       getQueries(document as DocumentNode, options),
@@ -28,5 +31,5 @@ export default function enhanceSchema(schema: string | DocumentNode) {
     getMutations: (options: GetMutationsOptions = {}) =>
       getMutations(document as DocumentNode, options),
     getMutation: (name: string) => getMutation(document, name),
-  };
+  }
 }
