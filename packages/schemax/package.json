@@ -1,13 +1,13 @@
 {
   "name": "@browserql/schemax",
-  "version": "1.10.2",
+  "version": "1.10.5",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && yarn tsc",
     "watch": "yarn build -w",
     "test": "jest dist",
-    "prepublish": "npm run build && npm test"
+    "prepublishOnly": "yarn build && yarn test"
   },
   "dependencies": {
     "graphql": "^15.3.0",
