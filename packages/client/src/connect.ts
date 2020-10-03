@@ -1,17 +1,19 @@
-import ApolloClient from 'apollo-client';
+import ApolloClient from 'apollo-client'
 import {
   InMemoryCache,
   IntrospectionFragmentMatcher,
-} from 'apollo-cache-inmemory';
-import { SchemaLink } from 'apollo-link-schema';
-import gql from 'graphql-tag';
-import { print } from 'graphql';
-import { makeExecutableSchema } from '@graphql-tools/schema';
+} from 'apollo-cache-inmemory'
+import { SchemaLink } from 'apollo-link-schema'
+import gql from 'graphql-tag'
+import { print } from 'graphql'
+import { makeExecutableSchema } from '@graphql-tools/schema'
 
-import { ConnectOptions } from './types/ConnectOptions';
-import { Dictionary } from './types';
+import { ConnectMiddleware, ConnectOptions } from './types/ConnectOptions'
 
-export default function connect(options: ConnectOptions) {
+export default function connect(
+  options: ConnectOptions,
+  ...middlewares: ConnectMiddleware[]
+) {
   const cache = new InMemoryCache({
     addTypename: true,
     fragmentMatcher: new IntrospectionFragmentMatcher({
@@ -21,44 +23,39 @@ export default function connect(options: ConnectOptions) {
         },
       },
     }),
-  });
+  })
+
   const {
     directives = {},
-    extensions = {},
     mutations = {},
     queries = {},
     scalars = {},
-  } = options;
-  const schema =
-    typeof options.schema === 'string' ? gql(options.schema) : options.schema;
+  } = options
 
-  const rootValue: any = {};
+  const schema =
+    typeof options.schema === 'string' ? gql(options.schema) : options.schema
+
+  const rootValue: any = {}
 
   for (const name in queries) {
     if (!rootValue[name]) {
-      rootValue[name] = queries[name];
+      rootValue[name] = queries[name]
     }
   }
 
   for (const name in mutations) {
     if (!rootValue[name]) {
-      rootValue[name] = mutations[name];
+      rootValue[name] = mutations[name]
     }
   }
 
   for (const name in scalars) {
     if (!rootValue[name]) {
-      rootValue[name] = scalars[name];
+      rootValue[name] = scalars[name]
     }
   }
 
-  const ext: Dictionary<any> = {};
-
-  for (const name in extensions) {
-    ext[name] = extensions[name]();
-  }
-
-  const client: ApolloClient<any> = new ApolloClient({
+  return new ApolloClient({
     link: new SchemaLink({
       rootValue: rootValue,
       schema: makeExecutableSchema({
@@ -67,7 +64,5 @@ export default function connect(options: ConnectOptions) {
       }),
     }),
     cache,
-  });
-
-  return { apollo: client, extensions: ext };
+  })
 }

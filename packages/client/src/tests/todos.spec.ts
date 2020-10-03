@@ -1,15 +1,15 @@
-import gql from 'graphql-tag';
-import connect from '../connect';
+import gql from 'graphql-tag'
+import connect from '../connect'
 
 interface Todo {
-  name: string;
+  name: string
 }
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-let todos: { name: string }[] = [];
+let todos: { name: string }[] = []
 
-const { apollo: client } = connect({
+const client = connect({
   schema: gql`
     type Todo {
       name: String!
@@ -25,18 +25,18 @@ const { apollo: client } = connect({
   `,
   queries: {
     async getTodos() {
-      await wait(250);
-      return todos;
+      await wait(250)
+      return todos
     },
   },
   mutations: {
     async addTodo(todo: { name: string }) {
-      await wait(250);
-      todos.push(todo);
-      return todo;
+      await wait(250)
+      todos.push(todo)
+      return todo
     },
   },
-});
+})
 
 test('it should make a query', async () => {
   const { data } = await client.query({
@@ -47,9 +47,9 @@ test('it should make a query', async () => {
         }
       }
     `,
-  });
-  expect(data.getTodos).toEqual([]);
-});
+  })
+  expect(data.getTodos).toEqual([])
+})
 
 test('it should make a mutation', async () => {
   await client.mutate({
@@ -63,8 +63,8 @@ test('it should make a mutation', async () => {
     variables: {
       name: 'Buy milk',
     },
-  });
-});
+  })
+})
 
 test('it should make the same query', async () => {
   const { data } = await client.query({
@@ -76,6 +76,6 @@ test('it should make the same query', async () => {
       }
     `,
     fetchPolicy: 'no-cache',
-  });
-  expect(data.getTodos).toEqual([{ name: 'Buy milk', __typename: 'Todo' }]);
-});
+  })
+  expect(data.getTodos).toEqual([{ name: 'Buy milk', __typename: 'Todo' }])
+})

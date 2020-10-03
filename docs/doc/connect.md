@@ -7,11 +7,7 @@ Create a new browserql client
 Call connect with [ConnectOptions](https://github.com/francoisrv/browserql/blob/master/packages/client/src/types/ConnectOptions.ts)
 
 ```js
-const client = connect(ConnectOptions)
-console.log(client)
-// {
-//   apollo: ApolloClient;
-// }
+const client = connect(ConnectOptions) // ApolloClient
 ```
 
 ## Options
@@ -90,4 +86,48 @@ const directives: {
 };
 
 const client = connect({ schema, queries, mutations, scalars });
+```
+
+## Extensions
+
+You can pass different schemas along with their resolvers by queuing them.
+
+Each middleware receive the current schema along with tits resolvers
+
+```js
+const main = {
+  schema: gql`
+    type Todo {
+      id: ID!
+    }
+
+    type Query {
+      getTodo: Todo
+    }
+  `,
+  queries: {
+    getTodo() {
+      // ....
+    },
+  },
+}
+
+const extension = () => ({
+  schema: gql`
+    type Customer {
+      id: ID!
+    }
+
+    type Query {
+      getCustomer: Customer
+    }
+  `,
+  queries: {
+    getCustomer() {
+      // ....
+    },
+  },
+})
+
+const client = connect(main, extension)
 ```
