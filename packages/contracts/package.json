@@ -1,6 +1,6 @@
 {
   "name": "@browserql/contracts",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "ISC",
@@ -21,7 +21,7 @@
     "build": "rm -rf dist && yarn tsc",
     "watch": "yarn build -w",
     "test": "jest dist",
-    "prepublishOnly": "npm run build && npm test"
+    "prepublishOnly": "yarn build && yarn test"
   },
   "dependencies": {
     "@browserql/fragmentsx": "^1.1.0",

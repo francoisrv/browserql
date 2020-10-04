@@ -126,6 +126,10 @@ schema.extend(schema2)
 schema.getQuery('getCustomer')
 ```
 
+### get
+
+Returns the document node
+
 ### getArguments
 
 Return array of arguments

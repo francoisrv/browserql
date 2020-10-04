@@ -1,7 +1,7 @@
-import gql from 'graphql-tag';
-import GraphQLJSON from 'graphql-type-json';
+import gql from 'graphql-tag'
+import GraphQLJSON from 'graphql-type-json'
 
-import connect from '../connect';
+import connect from '../connect'
 
 const schema = gql`
   scalar JSON
@@ -13,19 +13,19 @@ const schema = gql`
   type Query {
     getObject: Object
   }
-`;
+`
 
-const { apollo: client } = connect({
+const { client } = connect({
   schema,
   scalars: {
     JSON: GraphQLJSON,
   },
   queries: {
     getObject() {
-      return { json: [1, 2] };
+      return { json: [1, 2] }
     },
   },
-});
+})
 
 test('it should get scalars', async () => {
   const { data } = await client.query({
@@ -36,9 +36,9 @@ test('it should get scalars', async () => {
         }
       }
     `,
-  });
+  })
   expect(data.getObject).toEqual({
     __typename: 'Object',
     json: [1, 2],
-  });
-});
+  })
+})

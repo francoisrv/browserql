@@ -25,7 +25,7 @@ cat <<JSON > packages/$1/package.json
     "build": "rm -rf dist && yarn tsc",
     "watch": "yarn build -w",
     "test": "jest dist",
-    "prepublishOnly": "npm run build && npm test"
+    "prepublishOnly": "yarn build && yarn test"
   }
 }
 JSON
@@ -59,3 +59,5 @@ TS
 
 yarn
 yarn w $1 add -D typescript jest @types/jest @types/node
+
+cp .npmrc packages/$1

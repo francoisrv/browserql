@@ -18,6 +18,7 @@ export default function enhanceSchema(schema: string | DocumentNode) {
   const document = typeof schema === 'string' ? gql(schema) : schema
 
   return {
+    get: () => document,
     extend: (document1: string | DocumentNode) => extend(document, document1),
     print: () => print(document),
     getExtendedQueries: () => getExtendedQueries(document as DocumentNode),
