@@ -9,7 +9,7 @@ type Customer {
 }
 
 type Query {
-  getCustomer(id: ID!): Customer @get(url: "https://api.com/v1/customer")
+  getCustomer(id: ID!): Customer @get(url: "https://api.com/v1/customer/:id")
 }
 
 type Mutation {
@@ -17,21 +17,62 @@ type Mutation {
 }
 ```
 
+## With browserql
+
+```js
+import connect from '@browserql/client'
+import connectHttp from '@browserql/http'
+import resolve from '@browserql/resolved'
+
+import schema from './schema.graphql'
+
+const { client, schema: finalSchema } = connect({ schema }, connectHttp())
+
+const resolved = resolve(finalSchema)
+
+await client.query(resolved.Query.getCustomer({ id: '1234' }))
+```
+
+## With React
+
 ```jsx
-import gql from 'graphql-tag';
-import connect from '@browserql/client';
-import { connectCache, withCache } from '@browserql/cache';
-import connectHttp from '@browserql/http';
-
-const connectedCache = connectCache(schema);
-
-const cache = withCache(connect(connectCache(schema)));
+import { useHttp } from '@browserql/http-react'
 
 function Customer() {
-  const [customer, { loading, error }] = useHttp().query.getCustomer({
+  const [customer, { loading, error }] = useHttp().query('getCustomer', {
     id: props.id,
-  });
+  })
 
-  return <div>{customer.name}</div>;
+  if (loading) return <div>Loading</div>
+  if (error) return <div>{error.message}</div>
+
+  return <div>{customer.name}</div>
 }
+
+function AddCustomer() {
+  const [name, setName] = React.useState('')
+  const { run, loading, error, data } = useHttp().mutation('addCustomer')
+
+  const handleSubmit = () => {
+    run({ name })
+  }
+
+  return (
+    <>
+      <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <input type="submit" onClick={handleSubmit} />
+    </>
+  )
+}
+
+render(
+  <ApolloProvider client={client}>
+    <Customer />
+    <AddCustomer />
+  </ApolloProvider>
+)
 ```
