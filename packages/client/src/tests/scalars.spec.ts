@@ -15,7 +15,7 @@ const schema = gql`
   }
 `
 
-const client = connect({
+const { client } = connect({
   schema,
   scalars: {
     JSON: GraphQLJSON,

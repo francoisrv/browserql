@@ -43,7 +43,7 @@ const schema = gql`
   }
 `
 
-const client = connect({
+const { client } = connect({
   schema,
   directives: {
     deprecated: DeprecatedDirective,

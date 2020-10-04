@@ -59,7 +59,7 @@ const mutations = {
 }
 
 // Create a new browserql client
-const client = connect({ schema, queries, mutations })
+const { client } = connect({ schema, queries, mutations })
 
 // You can now access the apollo client as you would normally do:
 await client.query({

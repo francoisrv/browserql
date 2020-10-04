@@ -7,8 +7,10 @@ import { SchemaLink } from 'apollo-link-schema'
 import gql from 'graphql-tag'
 import { print } from 'graphql'
 import { makeExecutableSchema } from '@graphql-tools/schema'
+import enhanceSchema from '@browserql/schemax'
 
 import { ConnectMiddleware, ConnectOptions } from './types/ConnectOptions'
+import { merge } from 'lodash'
 
 export default function connect(
   options: ConnectOptions,
@@ -25,15 +27,26 @@ export default function connect(
     }),
   })
 
-  const {
-    directives = {},
-    mutations = {},
-    queries = {},
-    scalars = {},
-  } = options
+  let { directives = {}, mutations = {}, queries = {}, scalars = {} } = options
 
   const schema =
     typeof options.schema === 'string' ? gql(options.schema) : options.schema
+
+  const schemax = enhanceSchema(schema)
+
+  for (const middleware of middlewares) {
+    const response = middleware(schemax.get(), {
+      directives,
+      mutations,
+      queries,
+      scalars,
+    })
+    schemax.extend(response.schema)
+    directives = merge(directives, response.directives)
+    mutations = merge(mutations, response.mutations)
+    queries = merge(queries, response.queries)
+    scalars = merge(scalars, response.scalars)
+  }
 
   const rootValue: any = {}
 
@@ -55,7 +68,7 @@ export default function connect(
     }
   }
 
-  return new ApolloClient({
+  const apollo = new ApolloClient({
     link: new SchemaLink({
       rootValue: rootValue,
       schema: makeExecutableSchema({
@@ -65,4 +78,13 @@ export default function connect(
     }),
     cache,
   })
+
+  return {
+    client: apollo,
+    schema: schemax.get(),
+    directives,
+    mutations,
+    queries,
+    scalars,
+  }
 }

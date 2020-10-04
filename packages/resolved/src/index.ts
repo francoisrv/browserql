@@ -1,39 +1,29 @@
-import { DocumentNode, print } from 'graphql'
+import { DocumentNode } from 'graphql'
 import makeContracts from '@browserql/contracts'
 
-type Operation<T> = {
-  [name in keyof T]: (
-    variables: any
-  ) =>
-    | {
-        query: DocumentNode
-        variables: any
-      }
-    | {
-        mutation: DocumentNode
-        variables: any
-      }
-}
-
-export default function resolve(document: string | DocumentNode) {
+export default function resolve<Q = any, M = any>(
+  document: string | DocumentNode
+) {
   const contracts = makeContracts(document)
-  const Query: Partial<Operation<typeof contracts>> = {}
-  const Mutation: Partial<Operation<typeof contracts>> = {}
+  const Query: any = {}
+  const Mutation: any = {}
+
   for (const query in contracts.Query) {
-    console.log(print(contracts.Query[query]))
-    Query[query as keyof typeof contracts] = (variables = {}) => ({
+    Query[query] = (variables = {}) => ({
       query: contracts.Query[query],
       variables,
     })
   }
+
   for (const mutation in contracts.Mutation) {
-    Mutation[mutation as keyof typeof contracts] = (variables = {}) => ({
+    Mutation[mutation] = (variables = {}) => ({
       mutation: contracts.Mutation[mutation],
       variables,
     })
   }
+
   return {
-    Query,
-    Mutation,
+    Query: Query as Q,
+    Mutation: Mutation as M,
   }
 }

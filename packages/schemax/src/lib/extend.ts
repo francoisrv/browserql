@@ -14,6 +14,7 @@ export default function extend(
         def.kind === 'ObjectTypeDefinition' &&
         (getName(def) === 'Query' || getName(def) === 'Mutation')
       ) {
+        // @ts-ignore
         def.kind = 'ObjectTypeExtension'
       }
       return def

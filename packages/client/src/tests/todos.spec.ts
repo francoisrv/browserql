@@ -9,7 +9,7 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 let todos: { name: string }[] = []
 
-const client = connect({
+const { client } = connect({
   schema: gql`
     type Todo {
       name: String!

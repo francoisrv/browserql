@@ -7,7 +7,7 @@ Create a new browserql client
 Call connect with [ConnectOptions](https://github.com/francoisrv/browserql/blob/master/packages/client/src/types/ConnectOptions.ts)
 
 ```js
-const client = connect(ConnectOptions) // ApolloClient
+const { client } = connect(ConnectOptions) // ApolloClient
 ```
 
 ## Options
@@ -27,7 +27,7 @@ const schema = gql`
   }
 `
 
-const client = connect({ schema })
+const { client } = connect({ schema })
 ```
 
 ### Resolvers
@@ -85,7 +85,7 @@ const directives: {
   deprecated: DeprecatedDirective,
 };
 
-const client = connect({ schema, queries, mutations, scalars });
+const { client } = connect({ schema, queries, mutations, scalars });
 ```
 
 ## Extensions
@@ -129,5 +129,5 @@ const extension = () => ({
   },
 })
 
-const client = connect(main, extension)
+const { client, schema, queries } = connect(main, extension)
 ```
