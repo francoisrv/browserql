@@ -6,7 +6,8 @@ import {
   ObjectFieldNode,
   TypeNode,
   SelectionNode,
-} from 'graphql';
+  DirectiveNode,
+} from 'graphql'
 
 export default function getName(
   type:
@@ -18,15 +19,16 @@ export default function getName(
     | ObjectFieldNode
     | TypeNode
     | SelectionNode
+    | DirectiveNode
 ): string {
   if (typeof type === 'undefined') {
-    return '';
+    return ''
   }
   if ('name' in type) {
-    const { name } = type;
+    const { name } = type
     if (name) {
-      return name.value;
+      return name.value
     }
   }
-  return '';
+  return ''
 }

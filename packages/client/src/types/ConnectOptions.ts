@@ -24,7 +24,7 @@ export type GraphQLScalar = any
 export type GraphQLDirective = any
 
 export interface ConnectMiddlewareResponse extends Resolvers {
-  schema: DocumentNode
+  schema?: DocumentNode
 }
 
 export type ConnectMiddleware = (

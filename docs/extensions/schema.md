@@ -62,6 +62,26 @@ const queries = schema.getQueries()
 queries.find((query) => getName(query) === 'getTodo')
 ```
 
+### hasDirective
+
+Check if a definition has a given directive
+
+```js
+import enhanceSchema, { hasDirective } from '@browserql/schemax'
+
+const schema = enhanceSchema(gql`
+  directive @foo on FIELD_DEFINITION
+
+  type Query {
+    getTodo: Todo @foo
+  }
+`)
+
+const queries = schema.getQueries()
+
+const getTodo = queries.find((query) => hasDirective(query, 'foo'))
+```
+
 ### parseKind
 
 Return kind's info

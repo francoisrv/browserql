@@ -1,5 +1,7 @@
 # http
 
+## Usage
+
 ```graphql
 # schema.graphql
 
@@ -9,15 +11,17 @@ type Customer {
 }
 
 type Query {
-  getCustomer(id: ID!): Customer @get(url: "https://api.com/v1/customer/:id")
+  getCustomer(id: ID!): Customer
+    @httpGet(url: "https://api.com/v1/customer/:id")
 }
 
 type Mutation {
-  addCustomer(name: String!): Customer @post(url: "https://api.com/v1/customer")
+  addCustomer(name: String!): Customer
+    @httpPost(url: "https://api.com/v1/customer")
 }
 ```
 
-## With browserql
+### Connect
 
 ```js
 import connect from '@browserql/client'
@@ -33,7 +37,7 @@ const resolved = resolve(finalSchema)
 await client.query(resolved.Query.getCustomer({ id: '1234' }))
 ```
 
-## With React
+### With React
 
 ```jsx
 import { useHttp } from '@browserql/http-react'
