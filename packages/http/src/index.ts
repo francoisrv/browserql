@@ -2,7 +2,6 @@ import { ConnectMiddleware } from '@browserql/client'
 import enhanceSchema, { getName, hasDirective } from '@browserql/schemax'
 import { DocumentNode } from 'graphql'
 import gql from 'graphql-tag'
-import GraphQLJSON from 'graphql-type-json'
 
 interface ConnectHttpOptions {
   directives?: {
@@ -22,8 +21,6 @@ export default function connectHttp(
 ): ConnectMiddleware {
   return function (document: DocumentNode) {
     const ourSchema = gql`
-      scalar JSON
-
       directive @httpGet(url: String) on FIELD_DEFINITION
 
       directive @httpPost(url: String) on FIELD_DEFINITION
@@ -33,33 +30,6 @@ export default function connectHttp(
       directive @httpDelete(url: String) on FIELD_DEFINITION
 
       directive @httpHead(url: String) on FIELD_DEFINITION
-
-      enum HttpMethod {
-        GET
-        POST
-        PUT
-        DELETE
-        HEAD
-      }
-
-      input HttpHeaders {
-        name: String!
-        value: String!
-      }
-
-      type HttpResponse {
-        statusCode: Int!
-        body: String
-      }
-
-      type Query {
-        httpRequest(
-          method: HttpMethod = GET
-          url: String!
-          body: JSON
-          headers: HttpHeaders
-        ): HttpResponse
-      }
     `
     const schema = enhanceSchema(document)
     const targetQueries = schema
@@ -88,9 +58,6 @@ export default function connectHttp(
     return {
       schema: ourSchema,
       queries: targetQueries,
-      scalars: {
-        JSON: GraphQLJSON,
-      },
     }
   }
 }

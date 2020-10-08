@@ -6,11 +6,11 @@ import enhanceSchema, { getName } from '@browserql/schemax'
 const main = {
   schema: gql`
     type Todo {
-      id: ID!
+      id: ID! @foo
     }
 
     type Query {
-      getTodo: Todo
+      getTodo: Todo @foo
     }
   `,
   queries: {
@@ -22,6 +22,8 @@ const main = {
 
 const extension = () => ({
   schema: gql`
+    directive @foo on FIELD_DEFINITION
+
     type Customer {
       id: ID!
     }

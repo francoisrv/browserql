@@ -1,6 +1,7 @@
 import gql from 'graphql-tag'
 import connect from '@browserql/client'
 import resolve from '@browserql/resolved'
+import enhanceSchema from '@browserql/schemax'
 
 import './fetch-test'
 import connectHttp from '.'
@@ -16,18 +17,26 @@ const schema = gql`
   }
 `
 
-const { client, schema: finalSchema } = connect({ schema }, connectHttp())
+const { client, schema: finalSchema, queries, mutations } = connect(
+  { schema },
+  connectHttp()
+)
 
-const resolved = resolve(finalSchema)
+const resolved = resolve<any>(finalSchema)
+
+test('it should have a query resolver for getTodo', () => {
+  expect(queries).toHaveProperty('getTodos')
+})
 
 test('it should get http', async () => {
-  globalThis.fetchResponse = [
-    { id: 1, title: 'Todo1' },
-    { id: 2, title: 'Todo2' },
-    { id: 3, title: 'Todo3' },
-    { id: 4, title: 'Todo4' },
-    { id: 5, title: 'Todo5' },
+  const expected = [
+    { id: '1', title: 'Todo1', __typename: 'Todo' },
+    { id: '2', title: 'Todo2', __typename: 'Todo' },
+    { id: '3', title: 'Todo3', __typename: 'Todo' },
+    { id: '4', title: 'Todo4', __typename: 'Todo' },
+    { id: '5', title: 'Todo5', __typename: 'Todo' },
   ]
+  globalThis.fetchResponse = [...expected]
   const response = await client.query(resolved.Query.getTodos())
-  console.log(response)
+  expect(response.data.getTodos).toEqual(expected)
 })
