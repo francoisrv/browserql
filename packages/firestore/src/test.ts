@@ -40,6 +40,11 @@ const { client, schema: finalSchema, queries, mutations } = connect(
 
 const resolved = resolve<any>(finalSchema)
 
+afterAll(() => {
+  console.log('STOP')
+  client.stop()
+})
+
 test('it should have a query resolver for getTodo', async () => {
   const response = await client.query(
     resolved.Query.firestorePaginate({
