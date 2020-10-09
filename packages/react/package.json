@@ -1,7 +1,7 @@
 {
   "name": "@browserql/react",
-  "version": "1.12.0",
-  "main": "dist/index.jsx",
+  "version": "2.0.0",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "ISC",
   "keywords": [
