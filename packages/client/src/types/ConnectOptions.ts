@@ -14,7 +14,7 @@ export interface Resolvers {
  * In order to create a client
  */
 export interface ConnectOptions extends Resolvers {
-  schema: DocumentNode | string
+  schema?: DocumentNode | string
 }
 
 export type GraphQLOperation = (data: any) => any | Promise<any>
@@ -27,7 +27,4 @@ export interface ConnectMiddlewareResponse extends Resolvers {
   schema?: DocumentNode
 }
 
-export type ConnectMiddleware = (
-  schema: DocumentNode,
-  resolvers: Resolvers
-) => ConnectMiddlewareResponse
+export type ConnectMiddleware = (options: ConnectOptions) => ConnectMiddlewareResponse

@@ -4,12 +4,17 @@ import gql from 'graphql-tag'
 import GraphQLJSON from 'graphql-type-json'
 import * as firebase from 'firebase/app'
 import 'firebase/firestore'
+import enhanceSchema from '@browserql/schemax'
 
-export function connectFirestore(): ConnectMiddleware {
+interface ConnectOptions {
+  schema?: DocumentNode | string
+}
+
+export default function connectFirestore(options: ConnectOptions = {}): ConnectMiddleware {
   return function (document: DocumentNode) {
     const db = firebase.firestore()
 
-    const schema = gql`
+    const schema = enhanceSchema(gql`
       scalar JSON
 
       directive @firestore(collection: String) on OBJECT
@@ -31,12 +36,17 @@ export function connectFirestore(): ConnectMiddleware {
       type Query {
         firestorePaginate(collection: String!, where: FirestoreWhere): JSON
       }
-    `
+    `)
+
+    if (options.schema) {
+      schema.extend(options.schema)
+    }
+    
     const queries = {
       async firestorePaginate({ collection: collectionName }: any) {
         const collection = db.collection(collectionName)
         const querySnapshot = await collection.get()
-        const docs = []
+        const docs: any[] = []
         querySnapshot.forEach((doc) => {
           docs.push({ id: doc.id, ...doc.data() })
         })
@@ -46,6 +56,6 @@ export function connectFirestore(): ConnectMiddleware {
     const scalars = {
       JSON: GraphQLJSON,
     }
-    return { schema, queries, scalars }
+    return { schema: schema.get(), queries, scalars }
   }
 }

@@ -5,17 +5,13 @@ import {
 } from 'apollo-cache-inmemory'
 import { SchemaLink } from 'apollo-link-schema'
 import gql from 'graphql-tag'
-import { print } from 'graphql'
+import { DocumentNode } from 'graphql'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import enhanceSchema from '@browserql/schemax'
 
 import { ConnectMiddleware, ConnectOptions } from './types/ConnectOptions'
-import { merge } from 'lodash'
 
-export default function connect(
-  options: ConnectOptions,
-  ...middlewares: ConnectMiddleware[]
-) {
+export default function connect(...args: Array<ConnectOptions|ConnectMiddleware>) {
   const cache = new InMemoryCache({
     addTypename: true,
     fragmentMatcher: new IntrospectionFragmentMatcher({
@@ -27,28 +23,64 @@ export default function connect(
     }),
   })
 
-  let { directives = {}, mutations = {}, queries = {}, scalars = {} } = options
-
-  const schema =
-    typeof options.schema === 'string' ? gql(options.schema) : options.schema
-
-  const schemax = enhanceSchema(schema)
-
-  for (const middleware of middlewares) {
-    const response = middleware(schemax.get(), {
-      directives,
-      mutations,
-      queries,
-      scalars,
-    })
-    schemax.extend(response.schema)
-    directives = merge(directives, response.directives)
-    mutations = merge(mutations, response.mutations)
-    queries = merge(queries, response.queries)
-    scalars = merge(scalars, response.scalars)
-  }
+  let document: DocumentNode | null = null
+  let schema: ReturnType<typeof enhanceSchema> | null = null
 
   const rootValue: any = {}
+  const directives: any = {}
+  const queries: any = {}
+  const mutations: any = {}
+  const scalars: any = {}
+
+  function applyArg(arg: ConnectOptions) {
+    if (arg.schema) {
+      if (!schema) {
+        schema = enhanceSchema(arg.schema)
+      } else {
+        schema.extend(arg.schema)
+      }
+    }
+
+    if (arg.queries) {
+      for (const name in arg.queries) {
+        queries[name] = arg.queries[name]
+      }
+    }
+
+    if (arg.mutations) {
+      for (const name in arg.mutations) {
+        mutations[name] = arg.mutations[name]
+      }
+    }
+
+    if (arg.scalars) {
+      for (const name in arg.scalars) {
+        scalars[name] = arg.scalars[name]
+      }
+    }
+
+    if (arg.directives) {
+      for (const name in arg.directives) {
+        if (!directives[name]) {
+          directives[name] = arg.directives[name]
+        }
+      }
+    }
+  }
+
+  for (const arg of args) {
+    if (typeof arg == 'object') {
+      applyArg(arg)
+    } else {
+      applyArg(arg({
+        schema: document || undefined,
+        queries,
+        mutations,
+        scalars,
+        directives,
+      }))
+    }
+  }
 
   for (const name in queries) {
     if (!rootValue[name]) {
@@ -72,7 +104,7 @@ export default function connect(
     link: new SchemaLink({
       rootValue: rootValue,
       schema: makeExecutableSchema({
-        typeDefs: print(schema),
+        typeDefs: schema ? (schema as ReturnType<typeof enhanceSchema>).print() : '',
         schemaDirectives: directives,
       }),
     }),
@@ -81,7 +113,7 @@ export default function connect(
 
   return {
     client: apollo,
-    schema: schemax.get(),
+    schema: schema ? (schema as ReturnType<typeof enhanceSchema>).get() : '',
     directives,
     mutations,
     queries,

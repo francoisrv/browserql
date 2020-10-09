@@ -7,7 +7,7 @@ Create a new browserql client
 Call connect with [ConnectOptions](https://github.com/francoisrv/browserql/blob/master/packages/client/src/types/ConnectOptions.ts)
 
 ```js
-const { client } = connect(ConnectOptions) // ApolloClient
+const { client } = connect(...ConnectOptions)
 ```
 
 ## Options

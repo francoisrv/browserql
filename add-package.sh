@@ -25,7 +25,7 @@ cat <<JSON > packages/$1/package.json
     "build": "rm -rf dist && yarn tsc",
     "watch": "yarn build -w",
     "test": "jest dist",
-    "prepublishOnly": "yarn build && yarn test"
+    "prepublishOnly": "git tag | xargs git tag -d && yarn build && yarn test"
   }
 }
 JSON
