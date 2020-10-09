@@ -1,6 +1,6 @@
 {
   "name": "@browserql/react",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "main": "dist/index.jsx",
   "types": "dist/index.d.ts",
   "license": "ISC",
@@ -21,8 +21,7 @@
     "build": "rm -rf dist && yarn tsc",
     "watch": "yarn build -w",
     "test": "jest dist",
-    "prepublishOnly": "yarn build && yarn test",
-    "postpublish": "echo hello"
+    "prepublishOnly": "git tag | xargs git tag -d && yarn build && yarn test"
   },
   "dependencies": {
     "@apollo/client": "^3.2.2",
