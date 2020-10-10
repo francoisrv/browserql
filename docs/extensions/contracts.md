@@ -16,7 +16,7 @@ type Query {
 ```
 
 ```js
-import { makeContracts } from '@browserql/contracts';
+import makeContracts from '@browserql/contracts';
 import schema from './schema.graphql';
 
 const contracts = makeContracts(schema);

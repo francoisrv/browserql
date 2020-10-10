@@ -6,6 +6,7 @@
 
   - [Contracts](extensions/contracts)
   - [Fragments](extensions/fragments)
+  - [React Test](extensions/react-test)
   - [Resolved](extensions/resolved)
   - [Schema](extensions/schema)
 
