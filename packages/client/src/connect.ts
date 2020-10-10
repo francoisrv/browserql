@@ -4,14 +4,13 @@ import {
   IntrospectionFragmentMatcher,
 } from 'apollo-cache-inmemory'
 import { SchemaLink } from 'apollo-link-schema'
-import gql from 'graphql-tag'
 import { DocumentNode } from 'graphql'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import enhanceSchema from '@browserql/schemax'
 
-import { ConnectMiddleware, ConnectOptions } from './types/ConnectOptions'
+import { Schemaql, SchemaqlFactory } from './types'
 
-export default function connect(...args: Array<ConnectOptions|ConnectMiddleware>) {
+export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
   const cache = new InMemoryCache({
     addTypename: true,
     fragmentMatcher: new IntrospectionFragmentMatcher({
@@ -32,7 +31,7 @@ export default function connect(...args: Array<ConnectOptions|ConnectMiddleware>
   const mutations: any = {}
   const scalars: any = {}
 
-  function applyArg(arg: ConnectOptions) {
+  function applyArg(arg: Schemaql) {
     if (arg.schema) {
       if (!schema) {
         schema = enhanceSchema(arg.schema)
@@ -73,7 +72,7 @@ export default function connect(...args: Array<ConnectOptions|ConnectMiddleware>
       applyArg(arg)
     } else {
       applyArg(arg({
-        schema: document || undefined,
+        schema: document || '',
         queries,
         mutations,
         scalars,
@@ -100,11 +99,13 @@ export default function connect(...args: Array<ConnectOptions|ConnectMiddleware>
     }
   }
 
+  const typeDefs = schema ? (schema as ReturnType<typeof enhanceSchema>).print() : ''
+
   const apollo = new ApolloClient({
     link: new SchemaLink({
       rootValue: rootValue,
       schema: makeExecutableSchema({
-        typeDefs: schema ? (schema as ReturnType<typeof enhanceSchema>).print() : '',
+        typeDefs,
         schemaDirectives: directives,
       }),
     }),

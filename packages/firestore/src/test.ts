@@ -43,14 +43,14 @@ const resolved = resolve<any>(finalSchema)
 afterAll(() => {
   console.log('STOP')
   client.stop()
-  process.exit(0)
+  // process.exit(0)
 })
 
 test('it should have a query resolver for getTodo', async () => {
-  // const response = await client.query(
-  //   resolved.Query.firestorePaginate({
-  //     collection: 'projects',
-  //   })
-  // )
-  // console.log(response.data.firestorePaginate)
+  const response = await client.query(
+    resolved.Query.firestorePaginate({
+      collection: 'projects',
+    })
+  )
+  expect(response.data).toHaveProperty('firestorePaginate')
 })

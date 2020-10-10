@@ -1,31 +1,28 @@
 import { ApolloProvider, DocumentNode, useQuery } from '@apollo/client';
-import connect, { ConnectMiddleware, ConnectOptions } from '@browserql/client';
+import connect, { Schemaql, SchemaqlFactory } from '@browserql/client';
 import React from 'react';
 
 interface Props {
   client?: any
   schema?: DocumentNode | string
-  extensions?: ConnectMiddleware[]
+  extensions?: Array<Schemaql|SchemaqlFactory>
 }
 
-export const BrowserqlContext = React.createContext({})
+export const BrowserqlContext = React.createContext<Schemaql>({})
 
 export function BrowserqlProvider(props: React.PropsWithChildren<Props>) {
-  if (props.client) {
-    return (
-      <ApolloProvider client={props.client.client}>
-        {props.children}
-      </ApolloProvider>
-    )
+  let { client } = props
+  if (!client) {
+    const connectors: Array<Schemaql|SchemaqlFactory> = []
+    if (props.schema) {
+      connectors.push({ schema: props.schema })
+    }
+    if (props.extensions) {
+      connectors.push(...props.extensions)
+    }
+    client = connect(...connectors)
   }
-  const connectors: Array<ConnectOptions|ConnectMiddleware> = []
-  if (props.schema) {
-    connectors.push({ schema: props.schema })
-  }
-  if (props.extensions) {
-    connectors.push(...props.extensions)
-  }
-  const client = connect(...connectors)
+
   return (
     // @ts-ignore
     <ApolloProvider client={client.client}>
@@ -36,18 +33,18 @@ export function BrowserqlProvider(props: React.PropsWithChildren<Props>) {
   )
 }
 
-type GraphQLProps = {
+type GraphQLProps<D = any> = {
   query: DocumentNode
   variables?: any
   renderLoading?: React.ReactNode
   renderError?: React.ReactNode | ((e: Error) => React.ReactNode)
   renderNull?: React.ReactNode
   renderEmpty?: React.ReactNode
-  render?: (data: any, loading: boolean, error: Error | undefined) => React.ReactNode
-  renderEach?: (item: any, index: number, data: any[], loading: boolean, error: Error | undefined) => React.ReactNode
+  render?: (data: D, loading: boolean, error: Error | undefined) => React.ReactNode
+  renderEach?: (item: D, index: number, data: D[], loading: boolean, error: Error | undefined) => React.ReactNode
 }
 
-export function GraphQLQuery(props: GraphQLProps) {
+export function GraphQLQuery<D = any>(props: GraphQLProps<D>) {
   const { data, loading, error } = useQuery(props.query, { variables: props.variables })
   let accessor: any = null
   if (error && props.renderError) {

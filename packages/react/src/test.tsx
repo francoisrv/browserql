@@ -1,12 +1,12 @@
 import { gql } from '@apollo/client';
 import connect from '@browserql/client';
 import React from 'react';
-// import render from '../../react-test/dist'
 import makeContracts from '@browserql/contracts'
-import { render, fireEvent, waitFor, screen, act } from '@testing-library/react'
-import '@testing-library/jest-dom/extend-expect'
+import { render, waitFor, screen } from '@testing-library/react'
+import '@testing-library/jest-dom'
 
-import { BrowserqlProvider, GraphQLQuery } from '.';
+import { BrowserqlContext, BrowserqlProvider, GraphQLQuery } from '.';
+import { keys } from 'lodash';
 
 const schema = gql`
 type Todo {
@@ -28,12 +28,11 @@ const client = connect({ schema, queries })
 
 const contracts = makeContracts(client.schema)
 
-const wait = (ms = 0) => new Promise(resolve => setTimeout(resolve, ms))
 
 test('it should execute a query', async () => {
   render(
     <BrowserqlProvider client={client}>
-      <GraphQLQuery
+      <GraphQLQuery<{ name: string }[]>
         query={contracts.Query.getTodos}
         variables={{ empty: false }}
         renderLoading={<div data-testid="loading">Loading</div>}
@@ -52,4 +51,29 @@ test('it should execute a query', async () => {
 
   expect(screen.getByTestId('todos'))
   .toContainHTML('<li>Buy milk</li>')
+})
+
+function Foo() {
+  const ctx = React.useContext(BrowserqlContext)
+
+  return <div data-testid="foo">{ keys(ctx).join(', ') }</div>
+}
+
+test('it should have context', () => {
+  render(
+    <BrowserqlProvider client={client}>
+      <Foo />
+    </BrowserqlProvider>
+  )
+
+  expect(screen.getByTestId('foo'))
+  .toContainHTML('<div data-testid="foo">client, schema, directives, mutations, queries, scalars</div>')
+})
+
+test('it should fix bug 44', () => {
+  render(
+    <BrowserqlProvider extensions={[{ schema: 'type Query { todo: Todo } type Todo { id: ID }'}]}>
+      <div />
+    </BrowserqlProvider>
+  )
 })

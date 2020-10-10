@@ -1,17 +1,12 @@
-import { ConnectMiddleware } from '@browserql/client'
-import { DocumentNode } from 'graphql'
+import { Schemaql, SchemaqlFactory } from '@browserql/client'
 import gql from 'graphql-tag'
 import GraphQLJSON from 'graphql-type-json'
 import * as firebase from 'firebase/app'
 import 'firebase/firestore'
 import enhanceSchema from '@browserql/schemax'
 
-interface ConnectOptions {
-  schema?: DocumentNode | string
-}
-
-export default function connectFirestore(options: ConnectOptions = {}): ConnectMiddleware {
-  return function (document: DocumentNode) {
+export default function connectFirestore(options: Schemaql = {}): SchemaqlFactory {
+  return function () {
     const db = firebase.firestore()
 
     const schema = enhanceSchema(gql`

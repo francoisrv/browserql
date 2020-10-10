@@ -1,5 +1,4 @@
 import gql from 'graphql-tag'
-import connect from '@browserql/client'
 import resolve from '.'
 
 const schema = gql`
@@ -24,10 +23,10 @@ const mutations = {
   },
 }
 
-const { apollo: client } = connect({ schema, queries, mutations })
-
 const resolved = resolve(schema)
 
 test('it should execute query', async () => {
-  const { data } = await client.query(resolved.Query.getInt({ int: 1 }))
+  const r = resolved.Query.getInt({ int: 1 })
+  expect(r).toHaveProperty('query')
+  expect(r).toHaveProperty('variables', { int: 1 })
 })

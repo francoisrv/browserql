@@ -4,13 +4,15 @@ Create a new browserql client
 
 ## Usage
 
-Call connect with [ConnectOptions](https://github.com/francoisrv/browserql/blob/master/packages/client/src/types/ConnectOptions.ts)
+You call it with a spread array of arguments. Each argument must be a Schemaql object or a function - that is given a Schemaql object and returns a Schemaql object.
 
 ```js
-const { client } = connect(...ConnectOptions)
+function connect(
+  (...args: Array<Schemaql | ((s: Schemaql) => SchemaQL)>)
+): Schemaql & { apollo: ApolloServer }
 ```
 
-## Options
+## Schemaql
 
 ### Schema
 
@@ -86,48 +88,4 @@ const directives: {
 };
 
 const { client } = connect({ schema, queries, mutations, scalars });
-```
-
-## Extensions
-
-You can pass different schemas along with their resolvers by queuing them.
-
-Each middleware receive the current schema along with tits resolvers
-
-```js
-const main = {
-  schema: gql`
-    type Todo {
-      id: ID!
-    }
-
-    type Query {
-      getTodo: Todo
-    }
-  `,
-  queries: {
-    getTodo() {
-      // ....
-    },
-  },
-}
-
-const extension = () => ({
-  schema: gql`
-    type Customer {
-      id: ID!
-    }
-
-    type Query {
-      getCustomer: Customer
-    }
-  `,
-  queries: {
-    getCustomer() {
-      // ....
-    },
-  },
-})
-
-const { client, schema, queries } = connect(main, extension)
 ```

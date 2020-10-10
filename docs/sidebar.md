@@ -13,4 +13,5 @@
 - Extensions
 
   - [Cache](extensions/cache)
+  - [Firestore](extensions/http)
   - [HTTP](extensions/http)

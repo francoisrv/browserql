@@ -3,7 +3,7 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "types": ["jest", "testing-library"],
+    "types": ["jest"],
     "jsx": "react"
   }
 }
