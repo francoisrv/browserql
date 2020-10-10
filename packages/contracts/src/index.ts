@@ -1,7 +1,7 @@
 import { DocumentNode, FieldDefinitionNode } from 'graphql'
-import enhanceSchema, { getKind, getName, parseKind } from '@browserql/schemax'
+import enhanceSchema, { getArguments, getKind, getName, parseKind } from '@browserql/schema'
 import { Dictionary } from 'lodash'
-import makeFragments from '@browserql/fragmentsx'
+import makeFragments from '@browserql/fragments'
 import gql from 'graphql-tag'
 
 export default function makeContracts(document: string | DocumentNode) {
@@ -17,7 +17,7 @@ export default function makeContracts(document: string | DocumentNode) {
     field: FieldDefinitionNode
   ) => {
     const name = getName(field)
-    const args = schema.getArguments(field)
+    const args = getArguments(field)
     const { type } = parseKind(getKind(field))
     const matchingType = schema.getType(type)
     const parts: string[] = []

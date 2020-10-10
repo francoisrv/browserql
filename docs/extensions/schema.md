@@ -5,7 +5,7 @@ API on top of GraphQL for easier access
 ## Usage
 
 ```js
-import enhanceSchema from '@browserql/schemax'
+import enhanceSchema from '@browserql/schema'
 
 const schema = enhanceSchema(gql`
   type Todo {
@@ -26,7 +26,7 @@ const queries = schema.getQueries()
 Return a kind as a string
 
 ```js
-import enhanceSchema, { getKind } from '@browserql/schemax'
+import enhanceSchema, { getKind } from '@browserql/schema'
 
 const schema = enhanceSchema(gql`
   type Todo {
@@ -46,7 +46,7 @@ console.log(getKind(getTodo)) // Todo!
 Return the name of a GraphQL definition node
 
 ```js
-import enhanceSchema, { getName } from '@browserql/schemax'
+import enhanceSchema, { getName } from '@browserql/schema'
 
 const schema = enhanceSchema(gql`
   type Todo {
@@ -67,7 +67,7 @@ queries.find((query) => getName(query) === 'getTodo')
 Check if a definition has a given directive
 
 ```js
-import enhanceSchema, { hasDirective } from '@browserql/schemax'
+import enhanceSchema, { hasDirective } from '@browserql/schema'
 
 const schema = enhanceSchema(gql`
   directive @foo on FIELD_DEFINITION
@@ -87,7 +87,7 @@ const getTodo = queries.find((query) => hasDirective(query, 'foo'))
 Return kind's info
 
 ```js
-import enhanceSchema, { getKind, parseKind } from '@browserql/schemax'
+import enhanceSchema, { getKind, parseKind } from '@browserql/schema'
 
 const schema = enhanceSchema(gql`
   type Todo {
@@ -247,7 +247,7 @@ const queries = schema.getQueries({ extendedOnly: true }) // lambda
 ### getQuery
 
 ```js
-import enhanceSchema, { getKind } from '@browserql/schemax'
+import enhanceSchema, { getKind } from '@browserql/schema'
 
 const schema = enhanceSchema(gql`
   type Todo {

@@ -3,7 +3,7 @@ import {
   FieldDefinitionNode,
   ObjectTypeDefinitionNode,
 } from 'graphql';
-import enhanceSchema, { getKind, getName, parseKind } from '@browserql/schemax';
+import enhanceSchema, { getKind, getName, parseKind } from '@browserql/schema';
 import { Dictionary } from 'lodash';
 
 interface Fragment {

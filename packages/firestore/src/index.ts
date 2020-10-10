@@ -1,16 +1,15 @@
 import { Schemaql, SchemaqlFactory } from '@browserql/client'
+import enhanceSchema, { getName, hasDirective } from '@browserql/schema'
 import gql from 'graphql-tag'
 import GraphQLJSON from 'graphql-type-json'
 import * as firebase from 'firebase/app'
 import 'firebase/firestore'
-import enhanceSchema, { getName, hasDirective } from '@browserql/schemax'
 
 export default function connectFirestore(options: Schemaql = {}): SchemaqlFactory {
   return function (schemaql: Schemaql) {
-    console.log({schemaql})
     const db = firebase.firestore()
 
-    const schema = enhanceSchema(gql`
+    const baseSchema = enhanceSchema(gql`
       scalar JSON
 
       directive @firestore(collection: String) on OBJECT
@@ -30,18 +29,25 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
       }
     `)
 
-    if (schemaql.schema) {
-      schema.extend(schemaql.schema)
-    }
+    let schema: ReturnType<typeof enhanceSchema> | null = null
 
     if (options.schema) {
-      schema.extend(options.schema)
+      schema = enhanceSchema(options.schema)
+      if (schemaql.schema) {
+        schema.extend(schemaql.schema)
+      }
+    } else if (schemaql.schema) {
+      schema = enhanceSchema(schemaql.schema)
     }
+
+    if (!schema) {
+      return {}
+    }
+
+    const x = schema
 
     const targetTypes = schema.getTypes().filter(type => hasDirective(type, 'firestore'))
 
-    console.log('targetTypes', targetTypes)
-    
     const queries: Schemaql['queries'] = {}
 
     targetTypes.forEach(type => {
@@ -53,7 +59,7 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
       queries[getOne] = () => {}
       queries[getMany] = () => {}
       
-      schema.extend(gql`
+      x.extend(gql`
         type Query {
           ${getOne}(where: [FirestoreWhere] id: ID): ${name}
           ${getMany}(where: [FirestoreWhere]): [${name}]!
@@ -65,6 +71,6 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
       JSON: GraphQLJSON,
     }
     
-    return { schema: schema.get(), queries, scalars }
+    return { schema: baseSchema.get(), queries, scalars }
   }
 }

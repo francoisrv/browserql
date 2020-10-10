@@ -5,8 +5,8 @@ Auto-generate fragments for query and mutation kinds
 ## Usage
 
 ```js
-import gql from "graphql-tag";
-import buildFragments from "@browserql/fragmentsx";
+import gql from 'graphql-tag'
+import buildFragments from '@browserql/fragments'
 
 const schema = gql`
   type Todo {
@@ -18,9 +18,9 @@ const schema = gql`
   type Query {
     getTodo: Todo
   }
-`;
+`
 
-const fragments = buildFragments(schema);
+const fragments = buildFragments(schema)
 
 apolloClient.query({
   query: `
@@ -29,16 +29,16 @@ apolloClient.query({
       ...TodoFragment
     }
   }
-  ${fragments.get("Todo")}
+  ${fragments.get('Todo')}
   `,
-});
+})
 ```
 
 ## Nested fragments
 
 ```js
-import gql from "graphql-tag";
-import buildFragments from "@browserql/fragmentsx";
+import gql from 'graphql-tag'
+import buildFragments from '@browserql/fragments'
 
 const schema = gql`
   type Category {
@@ -56,10 +56,10 @@ const schema = gql`
   type Query {
     getTodo: Todo
   }
-`;
+`
 
-const fragments = buildFragments(schema);
-console.log(fragments.get("Todo"))`
+const fragments = buildFragments(schema)
+console.log(fragments.get('Todo'))`
 fragment TodoFragment on Todo {
   id
   name
@@ -71,5 +71,5 @@ fragment CategoryFragment on Category {
   id
   name
 }
-`;
+`
 ```

@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
-import resolve from '@browserql/resolved'
+import enhanceSchema, { getName } from '../../../schema/dist'
+
 import connect from '../connect'
-import enhanceSchema, { getName } from '@browserql/schemax'
 
 const main = {
   schema: gql`
@@ -43,7 +43,7 @@ const client = connect(main, extension)
 
 test('it should have been extended', () => {
   expect(client).toHaveProperty('schema')
-  const doc = enhanceSchema(client.schema)
+  const doc = enhanceSchema(client.schema as string)
   expect(getName(doc.getType('Todo'))).toEqual('Todo')
   expect(getName(doc.getType('Customer'))).toEqual('Customer')
   expect(getName(doc.getQuery('getTodo'))).toEqual('getTodo')

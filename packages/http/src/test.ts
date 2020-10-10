@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import connect from '@browserql/client'
 import resolve from '@browserql/resolved'
-import enhanceSchema from '@browserql/schemax'
+import enhanceSchema from '@browserql/schema'
 
 import './fetch-test'
 import connectHttp from '.'

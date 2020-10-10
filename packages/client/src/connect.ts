@@ -5,9 +5,11 @@ import {
 } from 'apollo-cache-inmemory'
 import { SchemaLink } from 'apollo-link-schema'
 import { makeExecutableSchema } from '@graphql-tools/schema'
-import enhanceSchema from '@browserql/schemax'
+import enhanceSchema from '../../schema/dist'
 
 import { Schemaql, SchemaqlFactory } from './types'
+import { DocumentNode, print } from 'graphql'
+import gql from 'graphql-tag'
 
 export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
   const cache = new InMemoryCache({
@@ -22,6 +24,7 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
   })
 
   let schema: ReturnType<typeof enhanceSchema> | null = null
+  const schemas: string[] = []
 
   const rootValue: any = {}
   const directives: any = {}
@@ -36,6 +39,7 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
       } else {
         schema.extend(arg.schema)
       }
+      schemas.push(enhanceSchema(arg.schema).print())
     }
 
     if (arg.queries) {
@@ -97,21 +101,24 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
     }
   }
 
-  const typeDefs = schema ? (schema as ReturnType<typeof enhanceSchema>).print() : ''
+  const typeDefs = schemas
+
+  const executableSchema = makeExecutableSchema({
+    typeDefs,
+    schemaDirectives: directives,
+  })
 
   const apollo = new ApolloClient({
     link: new SchemaLink({
       rootValue: rootValue,
-      schema: makeExecutableSchema({
-        typeDefs,
-        schemaDirectives: directives,
-      }),
+      schema: executableSchema,
     }),
     cache,
   })
 
   return {
     client: apollo,
+    cache,
     schema: schema ? (schema as ReturnType<typeof enhanceSchema>).get() : '',
     directives,
     mutations,

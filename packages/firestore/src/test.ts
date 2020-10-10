@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import connect from '@browserql/client'
 import resolve from '@browserql/resolved'
-import enhanceSchema from '@browserql/schemax'
+import enhanceSchema, { getName } from '@browserql/schema'
 
 import connectFirestore from '.'
 
@@ -39,7 +39,7 @@ const { client, schema: finalSchema, queries, mutations } = connect(
 )
 
 const resolved = resolve<any>(finalSchema)
-// const enhanced = enhanceSchema(finalSchema)
+const enhanced = enhanceSchema(finalSchema)
 
 afterAll(() => {
   console.log('STOP')
@@ -48,9 +48,15 @@ afterAll(() => {
 })
 
 test('there should be the query resolvers', () => {
-  expect(resolved.Query).toHaveProperty('firestore_get_Todo')
+  expect(resolved.Query).toHaveProperty('firestore_getOne_Todo')
   expect(resolved.Query).toHaveProperty('firestore_getMany_Todo')
 });
+
+test('there should be the query schemas', ()=> {
+  const queries = enhanced.getQueries()
+  expect(queries.find(q => getName(q) === 'firestore_getOne_Todo')).not.toBeUndefined()
+  expect(queries.find(q => getName(q) === 'firestore_getMany_Todo')).not.toBeUndefined()
+})
 
 // test('it should have a query resolver for getTodo', async () => {
 //   const response = await client.query(

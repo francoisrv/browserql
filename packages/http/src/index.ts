@@ -1,5 +1,5 @@
 import { ConnectMiddleware } from '@browserql/client'
-import enhanceSchema, { getName, hasDirective } from '@browserql/schemax'
+import enhanceSchema, { getName, hasDirective } from '@browserql/schema'
 import { DocumentNode } from 'graphql'
 import gql from 'graphql-tag'
 

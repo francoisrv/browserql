@@ -1,4 +1,3 @@
-import { print } from 'graphql'
 import gql from 'graphql-tag'
 import { getName } from '..'
 import enhanceSchema from '../schema'
@@ -29,6 +28,8 @@ const schema = enhanceSchema(schema1)
 
 schema.extend(schema2)
 
+console.log(schema.print())
+
 test('it should have extended schema', () => {
   const query = schema.getQuery('getCustomer')
   expect(getName(query)).toEqual('getCustomer')
@@ -51,4 +52,22 @@ test('it should work when 1st schema does not have a query, but the 2nd does', a
   )
   const source = s.print()
   expect(source).not.toMatch('extend type Query')
+})
+
+test('it should remove duplicate entries', () => {
+  const s = enhanceSchema(
+    gql`
+      type Foo {
+        id: ID!
+      }
+    `
+  )
+  s.extend(
+    gql`
+      type Foo {
+        id: ID!
+      }
+    `
+  )
+  console.log(s.print())
 })

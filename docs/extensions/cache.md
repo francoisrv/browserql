@@ -1,5 +1,13 @@
 # Cache
 
+## Abstract
+
+With cache, you deal directly with the apollo cache.
+
+Queries are synchronous getters of the cache.
+
+Mutations can update the cache and run asynchronous side effects.
+
 ## Usage
 
 ```js
@@ -17,7 +25,7 @@ const schema = gql`
   }
 
   type Mutation {
-    addTodo(name: String!): CacheMutation
+    addTodo(name: String!): void
   }
 `
 
