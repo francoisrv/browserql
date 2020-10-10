@@ -8,7 +8,7 @@ export function useFirestore(collection: string) {
   return {
     get(...queries: Query[]) {
       const ctx = React.useContext(BrowserqlContext)
-      const resolved = resolve(ctx.schema)
+      const resolved = resolve(ctx.schema as string)
       const { loading, error, data } = useQuery(resolved.Query.firestorePaginate({
         collection,
         where: queries,

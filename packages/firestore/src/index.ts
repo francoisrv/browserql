@@ -38,7 +38,7 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
     }
     
     const queries = {
-      async firestorePaginate({ collection: collectionName }: any) {
+      async firestorePaginate({ collection: collectionName, where }: any) {
         const collection = db.collection(collectionName)
         const querySnapshot = await collection.get()
         const docs: any[] = []
