@@ -60,7 +60,7 @@ test('there should be the query schemas', ()=> {
 
 // test('it should have a query resolver for getTodo', async () => {
 //   const response = await client.query(
-//     resolved.Query.firestorePaginate({
+//     resolved.Query.firestore_getOne_Todo({
 //       collection: 'projects',
 //     })
 //   )
