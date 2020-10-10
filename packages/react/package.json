@@ -1,6 +1,6 @@
 {
   "name": "@browserql/react",
-  "version": "2.2.0",
+  "version": "2.4.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "ISC",
@@ -40,6 +40,7 @@
     "@types/testing-library__jest-dom": "^5.9.4",
     "@types/testing-library__react": "^10.2.0",
     "graphql": "^15.3.0",
-    "jest": "^26.5.2"
+    "jest": "^26.5.2",
+    "ts-jest": "^26.4.1"
   }
 }
