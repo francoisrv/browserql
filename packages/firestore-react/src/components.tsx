@@ -7,6 +7,9 @@ import { Query } from './utils';
 interface Props<A = any> {
   get: string
   where?: Query[]
+  id?: string
+  size?: number
+  page?: number
   render: (a: A) => ReactNode
 }
 

@@ -1,9 +1,11 @@
 # Cache
 
+## Usage
+
 ```js
 import gql from 'graphql-tag'
 import connect from '@browserql/client'
-import { useCache, withCache } from '@browserql/cache'
+import { connectCache, exposeCache } from '@browserql/cache'
 
 const schema = gql`
   type Todo {
@@ -11,17 +13,25 @@ const schema = gql`
   }
 
   type Query {
-    getTodos: [Todo]
+    getTodos: [Todo] @cache
   }
 
   type Mutation {
-    addTodo(name: String!): CacheMutation @push(query: "getTodos")
+    addTodo(name: String!): CacheMutation
   }
 `
 
-const client = connect(useCache(schema, { mutations: { addTodo } }))
+const mutations = {
+  async addTodo({ name }, { cache }) {
+    cache.push({
+      query: 'getTodo',
+      data: { name },
+    })
+  },
+}
 
-const cache = withCache(client)
+const client = connect(connectCache({ schema }))
+const cache = exposeCache(client)
 
 //
 
@@ -32,81 +42,46 @@ await cache.mutate.addTodo({ name: 'Buy milk' })
 cache.query.getTodos() // [{ name: 'Buy milk' }]
 ```
 
+## With React
+
 ```js
-const schema = gql`
-  type Query {
-    isConnected: Boolean!
-    getSteps: Int!
-    getOptions: [Int]!
-  }
-`
-
-const cache = withCache(connect(useCache(schema)))
-
-//
-cache.query.isConnected() // false
-await cache.toggle.isConnected()
-cache.query.isConnected() // true
-
-const [isConnected, { toggle }] = useCache().isConnected()
-
-//
-cache.query.getSteps() // 0
-await cache.increment(10).getSteps()
-cache.query.getSteps() // 10
-
-const [steps, { increment }] = useCache().getSteps()
-
-//
-cache.query.getOptions() // []
-await cache.push(10).getOptions()
-cache.query.getOptions() // [10]
-```
-
-```jsx
 import React from 'react'
 import { render } from 'react-dom'
-import { Provider, useCache } from '@browserql/cache-react'
-import { connectCache, withCache } from '@browserql/cache'
-import gql from 'graphql-tag'
+import { BrowserqlProvider } from '@browserql/react'
+import { useCache } from '@browserql/cache-react'
 
-const schema = gql`
-  type Query {
-    isConnected: Boolean!
-    getSteps: Int!
-  }
-`
-
-const client = connect(connectCache(schema))
-const cache = withCache(client)
-
-function Connector() {
-  const [connected, { toggle }] = useCache('isConnected')
+function Todos() {
+  const todos = useCache.query('getTodos')
 
   return (
-    <button onClick={toggle.execute} disabled={toggle.loading}>
-      {connected ? 'Is connected' : 'Is not connected'}
-    </button>
+    <ul>
+      {todos.map((todo) => (
+        <li key={todo.name}>{todo.name}</li>
+      ))}
+    </ul>
   )
 }
 
-function Steps() {
-  const [steps, { increment }] = useCache('getSteps')
-  const handleClick = () => increment.execute(10)
+function AddTodo() {
+  const [value, setValue] = React.useState(value)
+  const [addTodo, { loading, error, data }] = useCache.mutate('addTodo')
+
+  const handleSubmit = () => {
+    addTodo({ name: value })
+  }
 
   return (
-    <button onClick={handleClick} disabled={increment.loading}>
-      {steps}
-    </button>
+    <>
+      <input value={value} onChange={(e) => setValue(e.target.value)} />
+      <input type="submit" onClick={handleSubmit} disabled={loading} />
+    </>
   )
 }
 
 render(
-  <Provider schema={schema}>
-    <>
-      <Connector />
-      <Steps />
-    </>
-  </Provider>
+  <BrowserqlProvider client={client}>
+    <AddTodo />
+    <Todos />
+  </BrowserqlProvider>
 )
 ```

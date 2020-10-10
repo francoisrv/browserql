@@ -1,9 +1,10 @@
-import { DocumentNode, isTypeExtensionNode } from 'graphql';
+import { DocumentNode, ObjectTypeDefinitionNode } from 'graphql';
 import getName from './getName';
 
-export default function getTypes(document: DocumentNode) {
+export default function getTypes(document: DocumentNode): ObjectTypeDefinitionNode[] {
   const { definitions } = document;
-  return definitions
+  const next = definitions
     .filter((def) => def.kind === 'ObjectTypeDefinition')
     .filter((def) => getName(def) !== 'Query' && getName(def) !== 'Mutation');
+  return next as ObjectTypeDefinitionNode[]
 }

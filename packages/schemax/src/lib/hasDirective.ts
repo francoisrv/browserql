@@ -1,8 +1,8 @@
-import { FieldDefinitionNode, OperationDefinitionNode } from 'graphql'
+import { FieldDefinitionNode, FragmentDefinitionNode, ObjectTypeDefinitionNode, OperationDefinitionNode } from 'graphql'
 import { getName } from '..'
 
 export default function hasDirective(
-  node: FieldDefinitionNode | OperationDefinitionNode,
+  node: FieldDefinitionNode | OperationDefinitionNode | FragmentDefinitionNode | ObjectTypeDefinitionNode,
   name: string
 ) {
   const { directives = [] } = node

@@ -6,7 +6,6 @@
 
   - [Contracts](extensions/contracts)
   - [Fragments](extensions/fragments)
-  - [React Test](extensions/react-test)
   - [Resolved](extensions/resolved)
   - [Schema](extensions/schema)
 
@@ -15,3 +14,5 @@
   - [Cache](extensions/cache)
   - [Firestore](extensions/http)
   - [HTTP](extensions/http)
+  - [Rest](extensions/http)
+  - [State](extensions/state)

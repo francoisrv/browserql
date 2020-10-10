@@ -4,7 +4,6 @@ import {
   IntrospectionFragmentMatcher,
 } from 'apollo-cache-inmemory'
 import { SchemaLink } from 'apollo-link-schema'
-import { DocumentNode } from 'graphql'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import enhanceSchema from '@browserql/schemax'
 
@@ -22,7 +21,6 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
     }),
   })
 
-  let document: DocumentNode | null = null
   let schema: ReturnType<typeof enhanceSchema> | null = null
 
   const rootValue: any = {}
@@ -72,7 +70,7 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
       applyArg(arg)
     } else {
       applyArg(arg({
-        schema: document || '',
+        schema: schema ? (schema as ReturnType<typeof enhanceSchema>).get() : '',
         queries,
         mutations,
         scalars,

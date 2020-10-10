@@ -21,14 +21,14 @@
     "build": "rm -rf dist && yarn tsc",
     "watch": "yarn build -w",
     "test": "jest dist",
-    "prepublishOnly": "npm run build && npm test"
+    "prepublishOnly": "git tag | xargs git tag -d && yarn build && yarn test"
   },
   "dependencies": {
     "typescript": "^4.0.3"
   },
   "devDependencies": {
     "@types/jest": "^26.0.14",
-    "@types/node": "^14.11.2",
-    "jest": "^26.4.2"
+    "@types/node": "^14.11.8",
+    "jest": "^26.5.2"
   }
 }

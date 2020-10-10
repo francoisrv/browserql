@@ -24,8 +24,8 @@
     "prepublishOnly": "git tag | xargs git tag -d && yarn build && yarn test"
   },
   "dependencies": {
-    "@browserql/client": "^3.5.0",
-    "@browserql/schemax": "^1.12.0",
+    "@browserql/client": "^3.7.0",
+    "@browserql/schemax": "^1.14.0",
     "firebase": "^7.23.0",
     "graphql-type-json": "^0.3.2",
     "typescript": "^4.0.3"

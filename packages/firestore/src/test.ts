@@ -39,6 +39,7 @@ const { client, schema: finalSchema, queries, mutations } = connect(
 )
 
 const resolved = resolve<any>(finalSchema)
+// const enhanced = enhanceSchema(finalSchema)
 
 afterAll(() => {
   console.log('STOP')
@@ -46,11 +47,16 @@ afterAll(() => {
   // process.exit(0)
 })
 
-test('it should have a query resolver for getTodo', async () => {
-  const response = await client.query(
-    resolved.Query.firestorePaginate({
-      collection: 'projects',
-    })
-  )
-  expect(response.data).toHaveProperty('firestorePaginate')
-})
+test('there should be the query resolvers', () => {
+  expect(resolved.Query).toHaveProperty('firestore_get_Todo')
+  expect(resolved.Query).toHaveProperty('firestore_getMany_Todo')
+});
+
+// test('it should have a query resolver for getTodo', async () => {
+//   const response = await client.query(
+//     resolved.Query.firestorePaginate({
+//       collection: 'projects',
+//     })
+//   )
+//   expect(response.data).toHaveProperty('firestorePaginate')
+// })
