@@ -41,6 +41,10 @@ const { client, schema: finalSchema, queries, mutations } = connect(
 const resolved = resolve<any>(finalSchema)
 const enhanced = enhanceSchema(finalSchema)
 
+console.log(enhanced.print())
+
+console.log(queries)
+
 afterAll(() => {
   console.log('STOP')
   client.stop()
@@ -58,11 +62,12 @@ test('there should be the query schemas', ()=> {
   expect(queries.find(q => getName(q) === 'firestore_getMany_Todo')).not.toBeUndefined()
 })
 
-// test('it should have a query resolver for getTodo', async () => {
-//   const response = await client.query(
-//     resolved.Query.firestore_getOne_Todo({
-//       collection: 'projects',
-//     })
-//   )
-//   expect(response.data).toHaveProperty('firestorePaginate')
-// })
+test('it should have a query resolver for getTodo', async () => {
+  const response = await client.query(
+    resolved.Query.firestore_getOne_Todo({
+      // collection: 'projects',
+    })
+  )
+  console.log(response)
+  // expect(response.data).toHaveProperty('firestorePaginate')
+})

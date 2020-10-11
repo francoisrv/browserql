@@ -14,11 +14,7 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
 
       directive @firestore(collection: String) on OBJECT
 
-      type FirestoreResponse {
-        data: JSON
-      }
-
-      enum FirestoreWhereOperator {ya
+      enum FirestoreWhereOperator {
         EQUALS
       }
 
@@ -57,7 +53,9 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
       const getMany = `firestore_getMany_${name}`
       
       queries[getOne] = () => {}
-      queries[getMany] = () => {}
+      queries[getMany] = async () => {
+        console.log('hello')
+      }
       
       x.extend(gql`
         type Query {

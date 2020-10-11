@@ -40,17 +40,16 @@ await client.query(resolved.Query.getCustomer({ id: '1234' }))
 ### With React
 
 ```jsx
-import { useHttp } from '@browserql/http-react'
+import { Httpql, useHttp } from '@browserql/http-react'
 
 function Customer() {
-  const [customer, { loading, error }] = useHttp().query('getCustomer', {
-    id: props.id,
-  })
-
-  if (loading) return <div>Loading</div>
-  if (error) return <div>{error.message}</div>
-
-  return <div>{customer.name}</div>
+  return (
+    <Httpql
+      query="getCustomer"
+      variables={{ id: props.id }}
+      render={(customer) => <div>Hello {customer.name}</div>}
+    />
+  )
 }
 
 function AddCustomer() {

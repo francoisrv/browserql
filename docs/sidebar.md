@@ -14,5 +14,13 @@
   - [Cache](extensions/cache)
   - [Firestore](extensions/http)
   - [HTTP](extensions/http)
-  - [Rest](extensions/http)
+  - [Rest](extensions/rest)
   - [State](extensions/state)
+
+- Integrations
+
+  - [React](extensions/react)
+
+- Posts
+
+  - [An alternative to useQuery in GraphQL](posts/An-alternative-to-use-query-for-graphql)
