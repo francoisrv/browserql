@@ -1,11 +1,14 @@
-export async function paginate(db: string) {
-  return function pageinateFirestore({ collection: collectionName, where }: any) {
-    const collection = db.collection(collectionName)
-    const querySnapshot = await collection.get()
-    const docs: any[] = []
-    querySnapshot.forEach((doc) => {
-      docs.push({ id: doc.id, ...doc.data() })
-    })
-    return docs
-  }
+import * as firebase from 'firebase/app'
+import 'firebase/firestore'
+
+export async function paginate(collectionName: string) {
+  const db = firebase.firestore()
+  const collection = db.collection(collectionName)
+  const querySnapshot = await collection.get()
+  const docs: any[] = []
+  querySnapshot.forEach((doc) => {
+    docs.push({ id: doc.id, ...doc.data() })
+  })
+  console.log('paginate', collectionName, docs)
+  return docs
 }

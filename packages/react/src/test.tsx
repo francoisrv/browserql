@@ -13,7 +13,7 @@ type Todo {
   name: String!
 }
 
-type Query {
+extend type Query {
   getTodos(empty: Boolean!): [Todo!]!
 }
 `
@@ -67,12 +67,12 @@ test('it should have context', () => {
   )
 
   expect(screen.getByTestId('foo'))
-  .toContainHTML('<div data-testid="foo">client, cache, schema, directives, mutations, queries, scalars</div>')
+  .toContainHTML('<div data-testid="foo">apollo, client, cache, schema, directives, mutations, queries, scalars</div>')
 })
 
 test('it should fix bug 44', () => {
   render(
-    <BrowserqlProvider extensions={[{ schema: 'type Query { todo: Todo } type Todo { id: ID }'}]}>
+    <BrowserqlProvider extensions={[{ schema: 'extend type Query { todo: Todo } type Todo { id: ID }'}]}>
       <div />
     </BrowserqlProvider>
   )

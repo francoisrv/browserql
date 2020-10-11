@@ -7,6 +7,7 @@
   ],
   "scripts": {
     "c": "bash scripts/command.sh",
+    "p": "bash scripts/pkgjson.sh",
     "w": "bash scripts/workspace.sh",
     "W": "yarn workspaces",
     "docsify": "docsify serve ./docs",

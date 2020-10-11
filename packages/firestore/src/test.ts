@@ -28,8 +28,9 @@ firebase.initializeApp(firebaseConfig)
 // firebase.auth()
 
 const schema = gql`
-  type Todo @firestore {
+  type Project @firestore {
     title: String!
+    id: ID!
   }
 `
 
@@ -41,33 +42,30 @@ const { client, schema: finalSchema, queries, mutations } = connect(
 const resolved = resolve<any>(finalSchema)
 const enhanced = enhanceSchema(finalSchema)
 
-console.log(enhanced.print())
-
-console.log(queries)
+// console.log(enhanced.print())
 
 afterAll(() => {
-  console.log('STOP')
-  client.stop()
+  // client.stop()
   // process.exit(0)
 })
 
 test('there should be the query resolvers', () => {
-  expect(resolved.Query).toHaveProperty('firestore_getOne_Todo')
-  expect(resolved.Query).toHaveProperty('firestore_getMany_Todo')
+  expect(resolved.Query).toHaveProperty('firestore_getOne_Project')
+  expect(resolved.Query).toHaveProperty('firestore_getMany_Project')
 });
 
 test('there should be the query schemas', ()=> {
   const queries = enhanced.getQueries()
-  expect(queries.find(q => getName(q) === 'firestore_getOne_Todo')).not.toBeUndefined()
-  expect(queries.find(q => getName(q) === 'firestore_getMany_Todo')).not.toBeUndefined()
+  expect(queries.find(q => getName(q) === 'firestore_getOne_Project')).not.toBeUndefined()
+  expect(queries.find(q => getName(q) === 'firestore_getMany_Project')).not.toBeUndefined()
 })
 
-test('it should have a query resolver for getTodo', async () => {
+test('it should have a query resolver for getProject', async () => {
   const response = await client.query(
-    resolved.Query.firestore_getOne_Todo({
+    resolved.Query.firestore_getMany_Project({
       // collection: 'projects',
     })
   )
-  console.log(response)
-  // expect(response.data).toHaveProperty('firestorePaginate')
+  expect(response.data).toHaveProperty('firestore_getMany_Project')
+  expect(Array.isArray(response.data.firestore_getMany_Project)).toBe(true)
 })
