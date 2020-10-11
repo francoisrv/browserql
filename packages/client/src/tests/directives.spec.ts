@@ -39,24 +39,19 @@ const { client } = connect({
     deprecated: DeprecatedDirective,
   },
   queries: {
-    getObject() {
-      return { json: 'hello' }
+    hello() {
+      return 'hello'
     },
   },
 })
 
 test('it should get query', async () => {
-  // const { data } = await client.query({
-  //   query: gql`
-  //     query {
-  //       getObject {
-  //         json
-  //       }
-  //     }
-  //   `,
-  // })
-  // expect(data.getObject).toEqual({
-  //   __typename: 'Object',
-  //   json: 'hello',
-  // })
+  const { data } = await client.query({
+    query: gql`
+      query {
+        hello
+      }
+    `,
+  })
+  expect(data.hello).toEqual('hello')
 })

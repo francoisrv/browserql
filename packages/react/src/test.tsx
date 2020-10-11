@@ -4,9 +4,9 @@ import React from 'react';
 import makeContracts from '@browserql/contracts'
 import { render, waitFor, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { keys } from 'lodash';
 
 import { BrowserqlContext, BrowserqlProvider, GraphQLQuery } from '.';
-import { keys } from 'lodash';
 
 const schema = gql`
 type Todo {
