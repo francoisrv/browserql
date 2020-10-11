@@ -15,11 +15,11 @@ const { client } = connect({
       name: String!
     }
 
-    type Query {
+    extend type Query {
       getTodos: [Todo!]!
     }
 
-    type Mutation {
+    extend type Mutation {
       addTodo(name: String!): Todo
     }
   `,

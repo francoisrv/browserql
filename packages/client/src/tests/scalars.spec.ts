@@ -10,7 +10,7 @@ const schema = gql`
     json: JSON
   }
 
-  type Query {
+  extend type Query {
     getObject: Object
   }
 `

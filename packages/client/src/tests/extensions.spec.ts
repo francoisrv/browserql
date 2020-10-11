@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import enhanceSchema, { getName } from '../../../schema/dist'
+import enhanceSchema, { getName } from '@browserql/schema'
 
 import connect from '../connect'
 
@@ -9,7 +9,7 @@ const main = {
       id: ID! @foo
     }
 
-    type Query {
+    extend type Query {
       getTodo: Todo @foo
     }
   `,
@@ -28,7 +28,7 @@ const extension = () => ({
       id: ID!
     }
 
-    type Query {
+    extend type Query {
       getCustomer: Customer
     }
   `,
@@ -43,7 +43,7 @@ const client = connect(main, extension)
 
 test('it should have been extended', () => {
   expect(client).toHaveProperty('schema')
-  const doc = enhanceSchema(client.schema as string)
+  const doc = enhanceSchema(client.schema)
   expect(getName(doc.getType('Todo'))).toEqual('Todo')
   expect(getName(doc.getType('Customer'))).toEqual('Customer')
   expect(getName(doc.getQuery('getTodo'))).toEqual('getTodo')

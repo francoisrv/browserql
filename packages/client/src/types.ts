@@ -5,12 +5,15 @@ export type Dictionary<A = any> = {
   [name: string]: A;
 };
 
-export interface Schemaql {
-  schema?: DocumentNode | string
+export interface Resolvers {
   queries?: Dictionary<(...args: any[]) => any>
   mutations?: Dictionary<(...args: any[]) => any>
   scalars?: Dictionary<GraphQLScalarType>
-  directives?: Dictionary<Function>
+  directives?: Record<string, typeof SchemaDirectiveVisitor>
+}
+
+export interface Schemaql extends Resolvers {
+  schema?: DocumentNode | string
 }
 
 export type SchemaqlFactory = (obj: Schemaql) => Schemaql

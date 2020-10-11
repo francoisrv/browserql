@@ -1,30 +1,20 @@
-import ApolloClient from 'apollo-client'
-import {
-  InMemoryCache,
-  IntrospectionFragmentMatcher,
-} from 'apollo-cache-inmemory'
-import { SchemaLink } from 'apollo-link-schema'
-import { makeExecutableSchema } from '@graphql-tools/schema'
-import enhanceSchema from '../../schema/dist'
+import { DocumentNode } from 'graphql'
+import { mergeTypeDefs } from '@graphql-tools/merge'
 
+import makeCache from './cache'
 import { Schemaql, SchemaqlFactory } from './types'
-import { DocumentNode, print } from 'graphql'
-import gql from 'graphql-tag'
+import makeSchema from './schema'
+import makeApolloClient from './apollo'
 
 export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
-  const cache = new InMemoryCache({
-    addTypename: true,
-    fragmentMatcher: new IntrospectionFragmentMatcher({
-      introspectionQueryResultData: {
-        __schema: {
-          types: [],
-        },
-      },
-    }),
-  })
+  const cache = makeCache()
 
-  let schema: ReturnType<typeof enhanceSchema> | null = null
-  const schemas: string[] = []
+  const schemas: Array<string|DocumentNode> = [
+    `
+    type Query { browserqlQuery: ID }
+    type Mutation { browserqlMutation: ID }
+    `
+  ]
 
   const rootValue: any = {}
   const directives: any = {}
@@ -34,12 +24,7 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
 
   function applyArg(arg: Schemaql) {
     if (arg.schema) {
-      if (!schema) {
-        schema = enhanceSchema(arg.schema)
-      } else {
-        schema.extend(arg.schema)
-      }
-      schemas.push(enhanceSchema(arg.schema).print())
+      schemas.push(arg.schema)
     }
 
     if (arg.queries) {
@@ -74,7 +59,7 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
       applyArg(arg)
     } else {
       applyArg(arg({
-        schema: schema ? (schema as ReturnType<typeof enhanceSchema>).get() : '',
+        schema: mergeTypeDefs(schemas),
         queries,
         mutations,
         scalars,
@@ -101,25 +86,15 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
     }
   }
 
-  const typeDefs = schemas
+  const schema = makeSchema(schemas, directives)
 
-  const executableSchema = makeExecutableSchema({
-    typeDefs,
-    schemaDirectives: directives,
-  })
-
-  const apollo = new ApolloClient({
-    link: new SchemaLink({
-      rootValue: rootValue,
-      schema: executableSchema,
-    }),
-    cache,
-  })
+  const apollo = makeApolloClient(rootValue, schema, cache)
 
   return {
+    apollo,
     client: apollo,
     cache,
-    schema: schema ? (schema as ReturnType<typeof enhanceSchema>).get() : '',
+    schema: mergeTypeDefs(schemas),
     directives,
     mutations,
     queries,

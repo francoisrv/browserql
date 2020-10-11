@@ -6,7 +6,8 @@
     "packages/*"
   ],
   "scripts": {
-    "w": "bash workspace.sh",
+    "c": "bash scripts/command.sh",
+    "w": "bash scripts/workspace.sh",
     "W": "yarn workspaces",
     "docsify": "docsify serve ./docs",
     "docsify:update": "cp docs/README.md . && cp docs/ROADMAP.md .",
