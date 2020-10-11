@@ -28,7 +28,7 @@ const schema = enhanceSchema(schema1)
 
 schema.extend(schema2)
 
-console.log(schema.print())
+// console.log(schema.print())
 
 test('it should have extended schema', () => {
   const query = schema.getQuery('getCustomer')
@@ -71,3 +71,13 @@ test('it should remove duplicate entries', () => {
   )
   console.log(s.print())
 })
+
+test.only('ttttttt', () => {
+  const s1 = gql`
+  type Foo { a: ID }
+  `
+  const s2 = gql`
+  type Query { a: ID }
+  `
+  
+});

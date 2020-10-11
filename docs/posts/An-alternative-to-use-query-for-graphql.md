@@ -21,7 +21,7 @@ function View(props) {
   // -----------
 
   const { data, loading, error } = useQuery(QUERY, { name: props.name })
-  if (error) return <div>Error</div>
+  if (error) return <div>{error.message}</div>
   if (loading) return <div>Loading</div>
   if (!data.getTodo) return <div>Not found</div>
   return <h1>{data.getTodo.name}</h1>
@@ -34,6 +34,8 @@ function View(props) {
     <Browserql
       query={QUERY}
       variables={{ name: props.name }}
+      renderLoading={<div>Loading</div>}
+      renderError={(error) => <div>{error.message}</div>}
       render={(todo) => (todo ? <h1>{todo.name}</h1> : <div>Not found</div>)}
     />
   )
@@ -41,43 +43,6 @@ function View(props) {
 ```
 
 **`Browserql` actually uses the apollo hooks, so this is a sugar-coated option. More like a coding preference.**
-
-## Dive deep
-
-The `props` of `Browserql` are pretty self-explanatory:
-
-- `query` The same you would use for the first argument of `useQuery`
-- `variables` The same you would use for the second argument of `useQuery`
-
-Now it has different `props` related to rendering options. The default one is passed via the render property:
-
-```jsx
-<Browserql
-  query={QUERY}
-  render={(data, loading, error) => {
-    if (loading) return 'Loading'
-    if (error) return 'Error'
-    if (data) return JSON.stringify(data)
-  }}
-/>
-```
-
-So render will be called for the 3 possible states:
-
-- loading
-- error
-- success
-
-You can however set a specific renderer for each state:
-
-```jsx
-<Browserql
-  query={QUERY}
-  renderLoading={<div>Loading</div>}
-  renderError={(error) => <div>{error.message}</div>}
-  render={(data) => <pre>{JSON.stringify(data)}</pre>}
-/>
-```
 
 ## Use mutation
 

@@ -12,6 +12,7 @@
   "dependencies": {
     "graphql": "^15.3.0",
     "graphql-tag": "^2.11.0",
+    "graphql-tools": "^6.2.4",
     "lodash.find": "^4.6.0",
     "typescript": "^4.0.3"
   },
