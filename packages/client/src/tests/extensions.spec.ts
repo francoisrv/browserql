@@ -51,3 +51,7 @@ test('it should have been extended', () => {
   expect(client.queries).toHaveProperty('getTodo')
   expect(client.queries).toHaveProperty('getCustomer')
 })
+
+test('it should extend from empty', () => {
+  // const x = connect()
+})

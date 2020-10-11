@@ -2,9 +2,9 @@ import type { Schemaql, SchemaqlFactory } from '@browserql/client'
 import enhanceSchema, { getName, hasDirective } from '@browserql/schema'
 import gql from 'graphql-tag'
 import GraphQLJSON from 'graphql-type-json'
-
-import { DocumentNode } from 'graphql'
+import { DocumentNode, print } from 'graphql'
 import { mergeTypeDefs } from '@graphql-tools/merge'
+
 import { paginate } from './queries'
 
 const SCHEMA = gql`
@@ -30,6 +30,7 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
 
     if (options.schema) {
       typeDefs.push(options.schema)
+      nextTypeDefs.push(options.schema)
     }
     if (schemaql.schema) {
       typeDefs.push(schemaql.schema)
@@ -61,7 +62,7 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
         return await paginate(name)
       }
 
-      nextTypeDefs.push(gql`
+      nextTypeDefs.push(`
         extend type Query {
           ${getOne}(where: [FirestoreWhere] id: ID): ${name}
           ${getMany}(where: [FirestoreWhere]): [${name}]!
@@ -72,7 +73,13 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
     const scalars = {
       JSON: GraphQLJSON,
     }
-    
-    return { schema: mergeTypeDefs(nextTypeDefs), queries, scalars }
+
+    const merged = mergeTypeDefs(nextTypeDefs)
+
+    return {
+      schema: merged,
+      queries,
+      scalars,
+    }
   }
 }

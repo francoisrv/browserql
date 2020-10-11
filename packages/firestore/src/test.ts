@@ -35,8 +35,7 @@ const schema = gql`
 `
 
 const { client, schema: finalSchema, queries, mutations } = connect(
-  { schema },
-  connectFirestore()
+  connectFirestore({ schema })
 )
 
 const resolved = resolve<any>(finalSchema)

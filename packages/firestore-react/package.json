@@ -26,6 +26,7 @@
   "dependencies": {
     "@apollo/client": "^3.2.2",
     "@browserql/contracts": "^1.2.0",
+    "@browserql/firestore": "^1.12.0",
     "@browserql/react": "^2.11.0",
     "@browserql/resolved": "^1.4.0",
     "typescript": "^4.0.3"
