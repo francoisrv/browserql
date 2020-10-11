@@ -1,11 +1,13 @@
-import { ApolloProvider, DocumentNode, useQuery } from '@apollo/client';
+import { ApolloProvider, DocumentNode, FetchResult, useMutation, useQuery } from '@apollo/client';
 import connect, { Schemaql, SchemaqlFactory } from '@browserql/client';
-import React from 'react';
+import React, { ReactNode, useState } from 'react';
 
 interface Props {
   client?: any
   schema?: DocumentNode | string
   extensions?: Array<Schemaql|SchemaqlFactory>
+  queries?: Schemaql['queries']
+  mutations?: Schemaql['mutations']
 }
 
 export const BrowserqlContext = React.createContext<Schemaql>({})
@@ -20,7 +22,10 @@ export function BrowserqlProvider(props: React.PropsWithChildren<Props>) {
     if (props.extensions) {
       connectors.push(...props.extensions)
     }
-    client = connect(...connectors)
+    client = connect(...connectors, {
+      queries: props.queries,
+      mutations: props.mutations,
+    })
   }
 
   return (
@@ -33,7 +38,7 @@ export function BrowserqlProvider(props: React.PropsWithChildren<Props>) {
   )
 }
 
-type GraphQLProps<D = any> = {
+type BrowserqlQueryProps<D = any> = {
   query: DocumentNode
   variables?: any
   renderLoading?: React.ReactNode
@@ -44,7 +49,7 @@ type GraphQLProps<D = any> = {
   renderEach?: (item: D, index: number, data: D[], loading: boolean, error: Error | undefined) => React.ReactNode
 }
 
-export function GraphQLQuery<D = any>(props: GraphQLProps<D>) {
+export function BrowserqlQuery<D = any>(props: BrowserqlQueryProps<D>) {
   const { data, loading, error } = useQuery(props.query, { variables: props.variables })
   let accessor: any = null
   if (error && props.renderError) {
@@ -79,4 +84,39 @@ export function GraphQLQuery<D = any>(props: GraphQLProps<D>) {
     return props.render(accessor, loading, error)
   }
   return <span />
+}
+
+interface BrowserqlMutationProps<D = any> {
+  mutation: DocumentNode
+  renderLoading?: ReactNode
+  renderError?: ReactNode | ((e: Error) => ReactNode)
+  render: (mutation: (options: D) => Promise<FetchResult<D>>, args: {
+    loading: boolean
+    error?: Error
+    data?: D
+    called: number
+  }) => ReactNode
+}
+
+export function BrowserqlMutation<D = any>(props: BrowserqlMutationProps<D>) {
+  const [mutation, { loading, error, data }] = useMutation(props.mutation)
+  const [called, setCalled] = useState(0)
+  if (error && props.renderError) {
+    if (typeof props.renderError === 'function') {
+      return props.renderError(error)
+    }
+    return props.renderError
+  }
+  if (loading && props.renderLoading) {
+    return props.renderLoading
+  }
+  return props.render(async (...args: any[]) => {
+    setCalled(called + 1)
+    const data = await mutation({ variables: args[0] })
+    if (data.data) {
+      const [key] = Object.keys(data.data)
+      return {...data.data[key as keyof typeof data.data]}
+    }
+    return data
+  }, { loading, error, data, called })
 }
