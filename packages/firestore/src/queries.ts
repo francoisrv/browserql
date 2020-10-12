@@ -1,18 +1,22 @@
 import * as firebase from 'firebase/app'
 import 'firebase/firestore'
-import { Query } from './types'
+import { Query, QueryOperator } from './types'
 
 const db = firebase.firestore()
 
-function makeWhereQuery(query: any, where: Query[]) {
-
+function makeQuery(collection: string, where?: Query[]) {
+  let query = db.collection(collection)
+  if (where) {
+    for (const q of where) {
+      // @ts-ignore
+      query = query.where(q.field, q.operator, q.value)
+    }
+  }
+  return query
 }
 
-export async function paginate(collectionName: string, where?: Query[]) {
-  let query = db.collection(collectionName)
-  if (where) {
-    makeWhereQuery(query, where)
-  }
+export async function paginate(collection: string, where?: Query[]) {
+  const query = makeQuery(collection, where)
   const querySnapshot = await query.get()
   const docs: any[] = []
   querySnapshot.forEach((doc) => {
@@ -21,9 +25,8 @@ export async function paginate(collectionName: string, where?: Query[]) {
   return docs
 }
 
-export async function getOne(collectionName: string, where?: Query[]) {
-  const collection = db.collection(collectionName)
-  let query = collection
+export async function getOne(collection: string, where?: Query[]) {
+  const query = makeQuery(collection, where)
   query.limit(1)
   const querySnapshot = await query.get()
   let doc: any

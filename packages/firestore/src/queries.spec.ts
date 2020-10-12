@@ -6,15 +6,15 @@ import './firebaseConfig'
 import { getById, getOne, paginate } from './queries'
 import { where } from './utils'
 
-mockFirebase({
-  database: {
-    foos: [
-      { id: 'abc123', name: 'Homer Simpson' },
-      { id: 'abc456', name: 'Lisa Simpson' },
-    ],
-    posts: [{ id: '123abc', title: 'Really cool title' }],
-  },
-})
+// mockFirebase({
+//   database: {
+//     foos: [
+//       { id: 'abc123', name: 'Homer Simpson' },
+//       { id: 'abc456', name: 'Lisa Simpson' },
+//     ],
+//     posts: [{ id: '123abc', title: 'Really cool title' }],
+//   },
+// })
 
 const tests = [{"id":"b7a9kQCqq5QnmgeSTqv7","foo":"barz"},{"id":"mA3PZxGjX3zGOVQrT4uj","foo":"bar"}]
 
@@ -31,7 +31,7 @@ test('paginate', async () => {
 test('paginate with where', async () => {
   const docs = await paginate('tests', [where('foo').equals('bar')])
   expect(Array.isArray(docs)).toBe(true)
-  expect(docs).toHaveLength(tests.length)
+  expect(docs).toHaveLength(1)
   docs.forEach(doc => {
     expect(doc).toHaveProperty('id')
     expect(doc).toHaveProperty('foo')
