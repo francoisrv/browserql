@@ -7,6 +7,8 @@ import { mergeTypeDefs } from '@graphql-tools/merge'
 
 import { paginate } from './queries'
 
+export * from './types'
+
 const SCHEMA = gql`
   scalar JSON
 

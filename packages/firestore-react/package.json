@@ -27,13 +27,16 @@
     "@apollo/client": "^3.2.2",
     "@browserql/contracts": "^1.2.0",
     "@browserql/firestore": "^1.12.0",
-    "@browserql/react": "^2.11.0",
+    "@browserql/react": "^2.17.0",
     "@browserql/resolved": "^1.4.0",
     "typescript": "^4.0.3"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.0.4",
     "@types/jest": "^26.0.14",
     "@types/node": "^14.11.8",
+    "firestore-jest-mock": "^0.6.0",
     "jest": "^26.5.2"
   },
   "peerDependencies": {

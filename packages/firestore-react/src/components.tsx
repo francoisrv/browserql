@@ -1,4 +1,4 @@
-import { BrowserqlContext, GraphQLQuery } from '@browserql/react';
+import { BrowserqlContext, BrowserqlQuery } from '@browserql/react';
 import React, { ReactNode } from 'react';
 import makeContracts from '@browserql/contracts'
 
@@ -22,7 +22,7 @@ export function Firestoreql<A = any>(props: Props<A>) {
   }
 
   return (
-    <GraphQLQuery
+    <BrowserqlQuery
       query={contracts.Query.firestorePaginate}
       variables={variables}
       renderLoading="Loading"
