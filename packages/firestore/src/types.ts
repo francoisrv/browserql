@@ -7,3 +7,9 @@ export interface Query {
   value: any
   operator: QueryOperator
 }
+
+export interface QueryFilters {
+  page?: number
+  size?: number
+  orderBy?: string
+}

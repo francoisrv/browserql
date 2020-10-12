@@ -12,21 +12,7 @@ export * from './utils'
 
 export * from './types'
 
-const SCHEMA = gql`
-  scalar JSON
-
-  directive @firestore(collection: String) on OBJECT
-
-  enum FirestoreWhereOperator {
-    EQUALS
-  }
-
-  input FirestoreWhere {
-    field: String!
-    operator: FirestoreWhereOperator!
-    value: JSON!
-  }
-`
+import SCHEMA from './schema'
 
 export default function connectFirestore(options: Schemaql = {}): SchemaqlFactory {
   return function (schemaql: Schemaql) {
@@ -67,9 +53,17 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
 
       nextTypeDefs.push(`
         extend type Query {
-          ${getOneName}(where: [FirestoreWhere]): ${name}
+          ${getOneName}(
+            where: [FirestoreWhere]
+            filters: FirestoreFilters
+          ): ${name}
+          
           ${getByIdName}(id: ID): ${name}
-          ${getManyName}(where: [FirestoreWhere]): [${name}]!
+          
+          ${getManyName}(
+            where: [FirestoreWhere]
+            filters: FirestoreFilters
+          ): [${name}]!
         }
       `)
     })

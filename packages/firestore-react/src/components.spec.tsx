@@ -20,7 +20,7 @@ mockFirebase({
   },
 });
 
-test('it should work with query', () => {
+test('it should work with query', async () => {
   const schema = gql`
     type Test @firestore(collection: "tests") {
       id: ID!
@@ -37,14 +37,21 @@ test('it should work with query', () => {
         where={[where('done').equals(false)]}
         size={10}
         orderBy="name"
-        render={(tests) => (
-          <ul>
-            {tests.map((todo) => (
-              <li key={todo.id}>{todo.name}</li>
+        renderLoading={<div data-testid="loading">Loading</div>}
+        render={(tests: { id: string, name: string }[]) => (
+          <ul data-testid="tests">
+            {tests.map((test) => (
+              <li key={test.id}>{test.name}</li>
             ))}
           </ul>
         )}
       />
     </BrowserqlProvider>
   )
+
+  expect(screen.getByTestId('loading')).toContainHTML(
+    '<div data-testid="loading">Loading</div>'
+  )
+
+  // await waitFor(() => screen.getByTestId('tests'))
 });

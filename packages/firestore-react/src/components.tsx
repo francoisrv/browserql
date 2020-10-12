@@ -5,7 +5,7 @@ import { Query } from '@browserql/firestore';
 
 type QueryAction =
 | { paginate: string }
-| { getOne: string }
+| { get: string }
 
 type MutationAction =
 | { add: string }
@@ -53,8 +53,8 @@ function makeVariables<A = any>(props: Props<A>) {
 
   if ('paginate' in props) {
     collection = props.paginate
-  } else if ('getOne' in props) {
-    collection = props.getOne
+  } else if ('get' in props) {
+    collection = props.get
   } else if ('add' in props) {
     collection = props.add
   } else if ('delete' in props) {
@@ -66,14 +66,22 @@ function makeVariables<A = any>(props: Props<A>) {
   }
 
   return {
-    collection
+    collection,
+    where: 'where' in props ? props.where : [],
+    filters: {
+      orderBy: 'orderBy' in props ? props.orderBy : null,
+      size: 'size' in props ? props.size : null,
+    }
   }
 }
 
 function getAction<A = any>(props: Props<A>) {
   if ('paginate' in props) {
     return 'getMany'
-  } else if ('getOne' in props) {
+  } else if ('get' in props) {
+    if ('id' in props) {
+      return 'getById'
+    }
     return 'getOne'
   } else if ('add' in props) {
     return 'add'
@@ -93,13 +101,14 @@ export function Firestoreql<A = any>(props: Props<A>) {
 
   const name = `firestore_${getAction<A>(props)}_${variables.collection}`
 
-  if ('paginate' in props || 'getOne' in props) {
+  if ('paginate' in props || 'get' in props) {
     return (
       <BrowserqlQuery<A>
         query={contracts.Query[name]}
         variables={variables}
         renderLoading={props.renderLoading}
         renderError={props.renderError}
+        // @ts-ignore
         render={props.render}
       />
     )
