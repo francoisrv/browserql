@@ -1,13 +1,15 @@
 # Firestore
 
+## Usage
+
+### Schema
+
 ```gql
 type Todo @firestore {
   name: String!
   done: Boolean!
 }
 ```
-
-## Usage
 
 ### Connect firestore with browserql
 
@@ -78,7 +80,7 @@ function AddTodo() {
           <input value={name} onChange={(e) => setName(e.target.value)} />
           <input
             type="submit"
-            onClick={() => addTodo(name)}
+            onClick={() => addTodo({ name })}
             disabled={loading}
           />
         </form>
