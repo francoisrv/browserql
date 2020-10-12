@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/client'
+import { Query } from '@browserql/firestore'
 import { BrowserqlContext } from '@browserql/react'
 import resolve from '@browserql/resolved'
 import React from 'react'
-import { Query } from './utils'
 
 export function useFirestore(collection: string) {
   return {

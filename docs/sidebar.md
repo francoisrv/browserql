@@ -12,7 +12,7 @@
 - Extensions
 
   - [Cache](extensions/cache)
-  - [Firestore](extensions/http)
+  - [Firestore](extensions/firestore)
   - [HTTP](extensions/http)
   - [Rest](extensions/rest)
   - [State](extensions/state)

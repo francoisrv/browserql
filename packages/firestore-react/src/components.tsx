@@ -1,8 +1,7 @@
 import { BrowserqlContext, BrowserqlQuery } from '@browserql/react';
 import React, { ReactNode } from 'react';
 import makeContracts from '@browserql/contracts'
-
-import { Query } from './utils';
+import { Query } from '@browserql/firestore';
 
 interface Props<A = any> {
   get: string
