@@ -38,6 +38,7 @@ test('it should work with query', async () => {
         size={10}
         orderBy="name"
         renderLoading={<div data-testid="loading">Loading</div>}
+        renderError={e => <div>{e.message}</div>}
         render={(tests: { id: string, name: string }[]) => (
           <ul data-testid="tests">
             {tests.map((test) => (
@@ -56,4 +57,7 @@ test('it should work with query', async () => {
   await act(async () => {
     await waitFor(() => screen.getByTestId('tests'))
   })
+
+  expect(screen.getByTestId('tests'))
+  .toBeEmptyDOMElement()
 });

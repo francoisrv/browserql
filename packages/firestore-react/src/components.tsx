@@ -65,9 +65,17 @@ function makeVariables<A = any>(props: Props<A>) {
     collection = props.updateOne
   }
 
+  const where: Query[] = []
+
+  if ('where' in props && Array.isArray(props.where)) {
+    where.push(...props.where)
+  }
+
+  console.log('where', where)
+
   return {
     collection,
-    where: 'where' in props ? props.where : [],
+    where,
     filters: {
       orderBy: 'orderBy' in props ? props.orderBy : null,
       size: 'size' in props ? props.size : null,

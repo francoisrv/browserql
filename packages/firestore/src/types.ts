@@ -1,5 +1,5 @@
 export enum QueryOperator {
-  equals = '=='
+  equals = "equals"
 }
 
 export interface Query {

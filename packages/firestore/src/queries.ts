@@ -5,12 +5,16 @@ import { Query, QueryFilters, QueryOperator } from './types'
 
 const db = firebase.firestore()
 
+const operators = {
+  equals: '=='
+}
+
 function makeQuery(collection: string, where?: Query[], filters?: QueryFilters) {
   let query = db.collection(collection)
   if (where) {
     for (const q of where) {
       // @ts-ignore
-      query = query.where(q.field, q.operator, q.value)
+      query = query.where(q.field, operators[q.operator] || '==', q.value)
     }
   }
   if (filters) {

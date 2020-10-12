@@ -6,7 +6,7 @@ scalar JSON
 directive @firestore(collection: String) on OBJECT
 
 enum FirestoreWhereOperator {
-  EQUALS
+  equals
 }
 
 input FirestoreFilters {
