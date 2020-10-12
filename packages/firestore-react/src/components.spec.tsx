@@ -53,5 +53,7 @@ test('it should work with query', async () => {
     '<div data-testid="loading">Loading</div>'
   )
 
-  // await waitFor(() => screen.getByTestId('tests'))
+  await act(async () => {
+    await waitFor(() => screen.getByTestId('tests'))
+  })
 });
