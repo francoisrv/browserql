@@ -55,6 +55,8 @@ function Todos() {
       where={[where('done').equals(false)]}
       size={10}
       orderBy="name"
+      dontRenderLoading
+      dontRenderError
       render={(todos) => (
         <ul>
           {todos.map((todo) => (
