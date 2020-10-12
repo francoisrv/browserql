@@ -2,11 +2,13 @@ import type { Schemaql, SchemaqlFactory } from '@browserql/client'
 import enhanceSchema, { getName, hasDirective } from '@browserql/schema'
 import gql from 'graphql-tag'
 import GraphQLJSON from 'graphql-type-json'
-import { DocumentNode, print } from 'graphql'
+import { DocumentNode } from 'graphql'
 import { mergeTypeDefs } from '@graphql-tools/merge'
 
-import { paginate, getOne, getById } from './queries'
+import { paginate, getOne } from './queries'
 import { convertName } from './utils'
+
+export * from './utils'
 
 export * from './types'
 

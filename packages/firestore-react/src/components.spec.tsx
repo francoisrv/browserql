@@ -1,3 +1,6 @@
+// @ts-ignore
+import { mockFirebase } from 'firestore-jest-mock'
+import './firebaseConfig'
 import { render, waitFor, screen, fireEvent, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { BrowserqlProvider } from '@browserql/react';
@@ -6,8 +9,6 @@ import connectFirestore, { where } from '@browserql/firestore'
 import React from 'react';
 
 import { Firestoreql } from './components';
-// @ts-ignore
-import { mockFirebase } from 'firestore-jest-mock'
 
 mockFirebase({
   database: {
@@ -21,7 +22,7 @@ mockFirebase({
 
 test('it should work with query', () => {
   const schema = gql`
-    type Test @firestore(collection: "users") {
+    type Test @firestore(collection: "tests") {
       id: ID!
       foo: String!
     }
@@ -32,13 +33,13 @@ test('it should work with query', () => {
   render(
     <BrowserqlProvider extensions={[firestore]}>
       <Firestoreql<{ id: string, name: string }[]>
-        paginate="Todo"
+        paginate="Test"
         where={[where('done').equals(false)]}
         size={10}
         orderBy="name"
-        render={(todos) => (
+        render={(tests) => (
           <ul>
-            {todos.map((todo) => (
+            {tests.map((todo) => (
               <li key={todo.id}>{todo.name}</li>
             ))}
           </ul>
