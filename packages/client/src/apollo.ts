@@ -8,6 +8,9 @@ export default function makeApolloClient(rootValue: any, schema: GraphQLSchema, 
     link: new SchemaLink({
       rootValue,
       schema,
+      context: () => ({
+        foo: true
+      })
     }),
     cache,
   })

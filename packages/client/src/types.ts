@@ -14,6 +14,7 @@ export interface Resolvers {
 
 export interface Schemaql extends Resolvers {
   schema?: DocumentNode | string
+  context?: Dictionary<any>
 }
 
 export type SchemaqlFactory = (obj: Schemaql) => Schemaql

@@ -21,6 +21,7 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
   const queries: any = {}
   const mutations: any = {}
   const scalars: any = {}
+  const context: any = {}
 
   function applyArg(arg: Schemaql) {
     if (arg.schema) {
@@ -52,6 +53,10 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
         }
       }
     }
+
+    if (arg.context) {
+      Object.assign(context, arg.context)
+    }
   }
 
   for (const arg of args) {
@@ -64,6 +69,7 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
         mutations,
         scalars,
         directives,
+        context,
       }))
     }
   }
@@ -99,5 +105,6 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
     mutations,
     queries,
     scalars,
+    context,
   }
 }
