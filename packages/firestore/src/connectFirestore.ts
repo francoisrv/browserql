@@ -1,15 +1,14 @@
 import type { DocumentNode } from 'graphql'
 import type { Schemaql, SchemaqlFactory } from '@browserql/types'
 
-import enhanceSchema, { getName, hasDirective } from '@browserql/schema'
+import enhanceSchema, { hasDirective } from '@browserql/schema'
 import GraphQLJSON from 'graphql-type-json'
 import { mergeTypeDefs } from '@graphql-tools/merge'
 
-import { paginate, getOne, getById } from './queries'
-import { convertName } from './utils'
 import SCHEMA from './schema'
-import { Query, QueryFilters } from './types'
 import makeContext from './makeContext'
+import makeOperations from './makeOperations'
+import makeResolvers from './makeResolvers'
 
 export default function connectFirestore(options: Schemaql = {}): SchemaqlFactory {
   return function (schemaql: Schemaql) {
@@ -32,42 +31,9 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
     const queries: Schemaql['queries'] = {}
 
     targetTypes.forEach(type => {
-      const name = getName(type)
-      const collection = convertName(name)
-      
-      const getOneName = `firestore_getOne_${name}`
-      const getManyName = `firestore_getMany_${name}`
-      const getByIdName = `firestore_getById_${name}`
-      
-      queries[getOneName] = async (variables: any) => {
-        return await getOne(collection, variables.where)
-      }
-      queries[getByIdName] = async (variables: any) => {
-        return await getById(collection, variables.id)
-      }
-      queries[getManyName] = async ({ where }: any) => {
-        return await paginate(collection, where)
-      }
+      Object.assign(queries, makeResolvers(type))
 
-      nextTypeDefs.push(`
-        extend type ${name} {
-          id: ID!
-        }
-
-        extend type Query {
-          ${getOneName}(
-            where: [FirestoreWhere]
-            filters: FirestoreFilters
-          ): ${name}
-          
-          ${getByIdName}(id: ID): ${name}
-          
-          ${getManyName}(
-            where: [FirestoreWhere]
-            filters: FirestoreFilters
-          ): [${name}]!
-        }
-      `)
+      nextTypeDefs.push(makeOperations(type))
     })
 
     const scalars = {

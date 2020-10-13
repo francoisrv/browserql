@@ -7,16 +7,16 @@ export default function makeName(...names: string[]) {
 
 export function makeNames(collection: string) {
   return {
-    paginate: makeName('paginate', name),
-    getOne: makeName('getOne', name),
-    getById: makeName('getById', name),
-    addOne: makeName('addOne', name),
-    addMany: makeName('addMany', name),
-    deleteOne: makeName('deleteOne', name),
-    deleteById: makeName('deleteById', name),
-    deleteMany: makeName('deleteMany', name),
-    updateOne: makeName('updateOne', name),
-    updateById: makeName('updateById', name),
-    updateMany: makeName('updateMany', name),
+    paginate: makeName('paginate', collection),
+    getOne: makeName('getOne', collection),
+    getById: makeName('getById', collection),
+    addOne: makeName('addOne', collection),
+    addMany: makeName('addMany', collection),
+    deleteOne: makeName('deleteOne', collection),
+    deleteById: makeName('deleteById', collection),
+    deleteMany: makeName('deleteMany', collection),
+    updateOne: makeName('updateOne', collection),
+    updateById: makeName('updateById', collection),
+    updateMany: makeName('updateMany', collection),
   }
 }

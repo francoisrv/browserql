@@ -130,6 +130,31 @@ extend type Mutation {
 
 #### paginate
 
+```js
+await firestore.exec.paginate('Todo', where('done').equals(false), {
+  size: 10,
+  page: 2,
+  orderBy: 'name',
+})
+
+await client.apollo.mutate(
+  firestore.model('Todo').paginate(where('done').equals(false), {
+    size: 10,
+    page: 2,
+    orderBy: 'name',
+  })
+)
+```
+
+```graphql
+extend type Mutation {
+  paginate(
+    where: [ Where ]
+    filters: Filters
+  ): [ $Type ! ] !
+}
+```
+
 #### updateById
 
 #### updateMany

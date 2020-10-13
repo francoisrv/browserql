@@ -10,7 +10,6 @@ const operators = {
 }
 
 function makeQuery(collection: string, where?: Query | Query[], filters?: QueryFilters) {
-  const q = new Query
 
   let query = db.collection(collection)
   if (where) {
