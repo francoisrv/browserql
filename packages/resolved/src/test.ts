@@ -1,3 +1,5 @@
+import type { Dictionary, Resolved } from '.'
+
 import gql from 'graphql-tag'
 import resolve from '.'
 
@@ -23,7 +25,13 @@ const mutations = {
   },
 }
 
-const resolved = resolve(schema)
+interface V {
+  int: number
+}
+
+type GetInt = Resolved<V>
+
+const resolved = resolve<{ getInt: GetInt }>(schema)
 
 test('it should execute query', async () => {
   const r = resolved.Query.getInt({ int: 1 })

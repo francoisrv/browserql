@@ -1,5 +1,6 @@
 export enum QueryOperator {
-  equals = "equals"
+  equals = "equals",
+  references = "references",
 }
 
 export interface Query {
@@ -12,4 +13,5 @@ export interface QueryFilters {
   page?: number
   size?: number
   orderBy?: string
+  populate?: string | string[]
 }

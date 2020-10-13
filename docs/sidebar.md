@@ -13,6 +13,7 @@
 
   - [Cache](extensions/cache)
   - [Firestore](extensions/firestore)
+  - [Firestore with React](extensions/firestore-react)
   - [HTTP](extensions/http)
   - [Rest](extensions/rest)
   - [State](extensions/state)

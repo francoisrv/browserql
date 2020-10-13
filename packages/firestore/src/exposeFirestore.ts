@@ -1,5 +1,6 @@
-import { BrowserqlClient } from "@browserql/client";
+import type { BrowserqlClient } from "@browserql/types";
 import { getById, getOne, paginate } from "./queries";
+
 import { Query, QueryFilters } from "./types";
 
 export default function exportFirestore(client: BrowserqlClient) {

@@ -1,17 +1,14 @@
 import { DocumentNode } from 'graphql'
 import makeContracts from '@browserql/contracts'
-import { BrowserqlClient } from '@browserql/client'
 
-type Dictionary<A = any> = {
+export type Dictionary<A = any> = {
   [name: string]: A
 }
 
-type Resolver<
-  V extends Dictionary = {},
-  D = any
+export type Resolved<
+  V extends any = any
 > = (
   variables: V,
-  context: BrowserqlClient['context']
 ) => {
   query: DocumentNode
   variables: V
@@ -20,11 +17,11 @@ type Resolver<
   variables: V
 }
 
-type Resolvers = Dictionary<Resolver>
+type Resolvers = Dictionary<Resolved>
 
 export default function resolve<
-  Q extends Resolvers = {},
-  M extends Resolvers = {}
+  Q extends Resolvers = Dictionary,
+  M extends Resolvers = Dictionary
 >(
   document: string | DocumentNode
 ) {

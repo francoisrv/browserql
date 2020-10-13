@@ -4,7 +4,7 @@
 
 ### Schema
 
-```gql
+```graphql
 type Todo @firestore {
   name: String!
   done: Boolean!
@@ -14,8 +14,8 @@ type Todo @firestore {
 ### Connect firestore with browserql
 
 ```js
-import connect from '@browserql/client'
-import connectFirestore from '@browserql/firestore'
+import connect from 'browserql'
+import connectFirestore from 'firestoreql'
 
 import schema from './schema.graphql'
 
@@ -30,69 +30,108 @@ const client = connect(connectFirestore({ schema }))
 import { exposeFirestore, where } from '@browserql/firestore'
 
 const firestore = exposeFirestore(client)
-
-await firestore
-  .model('Todo')
-  .paginate(where('done').equals(false), { size: 10, orderBy: 'name' })
-
-await firestore.model('Todo').add({ name: 'Buy milk', done: false })
 ```
 
-### With React
+#### Use it inside apollo via `model`
 
 ```js
-import React, { useState } from 'react'
-import { render } from 'react-dom'
-import { where } from '@browserql/firestore'
-import { BrowserqlProvider } from '@browserql/react'
-import { Firestoreql } from '@browserql/firestore-react'
-import connectFirestore from '@browserql/firestore'
+await client.apollo.query(
+  firestore
+    .model('Todo')
+    .paginate(where('done').equals(false), { size: 10, orderBy: 'name' })
+)
 
-import schema from './schema.graphql'
-
-function Todos() {
-  return (
-    <Firestoreql
-      paginate="Todo"
-      where={[where('done').equals(false)]}
-      size={10}
-      orderBy="name"
-      dontRenderLoading
-      dontRenderError
-      render={(todos) => (
-        <ul>
-          {todos.map((todo) => (
-            <li key={todo.id}>{todo.name}</li>
-          ))}
-        </ul>
-      )}
-    />
-  )
-}
-
-function AddTodo() {
-  const [name, setName] = useState('')
-  return (
-    <Firestoreql
-      add="Todo"
-      render={(addTodo, { loading, error }) => (
-        <form>
-          <input value={name} onChange={(e) => setName(e.target.value)} />
-          <input
-            type="submit"
-            onClick={() => addTodo({ name })}
-            disabled={loading}
-          />
-        </form>
-      )}
-    />
-  )
-}
-
-render(
-  <BrowserqlProvider {...connectFirestore({ schema })}>
-    <Todos />
-    <AddTodo />
-  </BrowserqlProvider>
+await client.apollo.mutate(
+  firestore.model('Todo').addOne({ name: 'Buy milk', done: false })
 )
 ```
+
+#### Use it inside resolvers via `exec`
+
+```js
+const schema = gql`
+  extend type Query {
+    getCurrentTodos: [Todo!]!
+  }
+`
+
+const queries = {
+  async getCurrentTodos() {
+    return await firestore.exec.paginate('Todo', where('done').equals(false))
+  },
+}
+```
+
+## API
+
+### connectFirestore
+
+### exposeFirestore
+
+### Utilities
+
+`@browserql/firestore` gives you a set of utilities. You need to _expose_ them first in order to use them
+
+```js
+import connect from 'browserql'
+import connectFirestore from 'firestoreql'
+
+const client = connect(connectFirestore())
+const firestore = exposeFirestore(client)
+```
+
+`firestore` is now an object with these 2 properties:
+
+- `model()`
+- `exec`
+
+Both share the same interface (view below)
+
+#### Model
+
+#### Exec
+
+### Interface
+
+#### addMany
+
+```js
+await firestore.exec.addMany('Todo', [
+  { name: 'Buy milk' },
+  { name: 'Pick up laundry' },
+])
+
+await client.apollo.mutate(
+  firestore
+    .model('Todo')
+    .addMany([{ name: 'Buy milk' }, { name: 'Pick up laundry' }])
+)
+```
+
+```graphql
+extend type Mutation {
+  addMany([ $TypeAsAnInput ! ] !): [ $Type ! ] !
+}
+```
+
+#### addOne
+
+#### count
+
+#### deleteById
+
+#### deleteMany
+
+#### deleteOne
+
+#### getById
+
+#### getOne
+
+#### paginate
+
+#### updateById
+
+#### updateMany
+
+#### updateOne

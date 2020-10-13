@@ -9,12 +9,19 @@ const operators = {
   equals: '=='
 }
 
-function makeQuery(collection: string, where?: Query[], filters?: QueryFilters) {
+function makeQuery(collection: string, where?: Query | Query[], filters?: QueryFilters) {
+  const q = new Query
+
   let query = db.collection(collection)
   if (where) {
-    for (const q of where) {
+    if (Array.isArray(where)) {
+      for (const q of where) {
+        // @ts-ignore
+        query = query.where(q.field, operators[q.operator] || '==', q.value)
+      }
+    } else {
       // @ts-ignore
-      query = query.where(q.field, operators[q.operator] || '==', q.value)
+      query = query.where(where.field, where.operator || '==', where.value)
     }
   }
   if (filters) {
@@ -30,7 +37,7 @@ function makeQuery(collection: string, where?: Query[], filters?: QueryFilters) 
   return query
 }
 
-export async function paginate(collection: string, where?: Query[], filters?: QueryFilters) {
+export async function paginate(collection: string, where?: Query | Query[], filters?: QueryFilters) {
   const query = makeQuery(collection, where, filters)
   const querySnapshot = await query.get()
   const docs: any[] = []
@@ -40,7 +47,7 @@ export async function paginate(collection: string, where?: Query[], filters?: Qu
   return docs
 }
 
-export async function getOne(collection: string, where?: Query[], filters?: QueryFilters) {
+export async function getOne(collection: string, where?: Query | Query[], filters?: QueryFilters) {
   const query = makeQuery(collection, where, filters)
   query.limit(1)
   const querySnapshot = await query.get()
@@ -58,3 +65,15 @@ export async function getById(collectionName: string, id: string){
   const doc = await collection.doc(id).get()
   return { id: doc.id, ...doc.data() }
 }
+
+export async function addOne() {}
+
+export async function addMany() {}
+
+export async function deleteOne() {}
+
+export async function deleteMany() {}
+
+export async function updateOne() {}
+
+export async function updateMany() {}

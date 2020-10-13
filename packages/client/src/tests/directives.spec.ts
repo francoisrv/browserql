@@ -1,6 +1,6 @@
-import gql from 'graphql-tag'
+import type { GraphQLEnumValue, GraphQLField } from 'graphql'
 
-import { GraphQLEnumValue, GraphQLField } from 'graphql'
+import gql from 'graphql-tag'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 
 import connect from '../connect'

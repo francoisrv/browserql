@@ -1,8 +1,14 @@
-import { DocumentNode } from 'graphql'
+import type { DocumentNode } from 'graphql'
+
+import type {
+  BrowserqlClient,
+  Schemaql,
+  SchemaqlFactory,
+} from '@browserql/types'
+
 import { mergeTypeDefs } from '@graphql-tools/merge'
 
 import makeCache from './cache'
-import { BrowserqlClient, Schemaql, SchemaqlFactory } from './types'
 import makeSchema from './schema'
 import makeApolloClient from './apollo'
 

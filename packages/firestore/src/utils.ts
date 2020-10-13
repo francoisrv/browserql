@@ -9,6 +9,14 @@ export function where(field: string) {
         value,
         operator: QueryOperator.equals,
       }
+    },
+
+    references(collection: string): Query {
+      return {
+        field,
+        value: collection,
+        operator: QueryOperator.references,
+      }
     }
   }
 }

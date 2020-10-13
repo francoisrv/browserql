@@ -1,23 +1,21 @@
-import type { Schemaql, SchemaqlFactory } from '@browserql/client'
+import type { DocumentNode } from 'graphql'
+import type { Schemaql, SchemaqlFactory } from '@browserql/types'
+
 import enhanceSchema, { getName, hasDirective } from '@browserql/schema'
-import gql from 'graphql-tag'
 import GraphQLJSON from 'graphql-type-json'
-import { DocumentNode } from 'graphql'
 import { mergeTypeDefs } from '@graphql-tools/merge'
 
 import { paginate, getOne, getById } from './queries'
 import { convertName } from './utils'
-
-export * from './utils'
-
-export * from './types'
-
 import SCHEMA from './schema'
+import { Query, QueryFilters } from './types'
+import makeContext from './makeContext'
 
 export default function connectFirestore(options: Schemaql = {}): SchemaqlFactory {
   return function (schemaql: Schemaql) {
     const typeDefs: Array<DocumentNode | string> = []
     const nextTypeDefs: Array<DocumentNode | string> = [SCHEMA]
+    const context = makeContext()
 
     if (options.schema) {
       typeDefs.push(options.schema)
@@ -71,7 +69,7 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
         }
       `)
     })
-    
+
     const scalars = {
       JSON: GraphQLJSON,
     }
@@ -82,6 +80,7 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
       schema: merged,
       queries,
       scalars,
+      context,
     }
   }
 }
