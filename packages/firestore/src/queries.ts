@@ -24,7 +24,7 @@ function makeQuery(collection: string, where?: Query[], filters?: QueryFilters) 
     }
     if (filters.orderBy) {
       // @ts-ignore
-      query = query.orderBy(filters.orderBy)
+      query = query.orderBy(filters.orderBy, 'asc')
     }
   }
   return query

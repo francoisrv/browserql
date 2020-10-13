@@ -5,7 +5,7 @@ import GraphQLJSON from 'graphql-type-json'
 import { DocumentNode } from 'graphql'
 import { mergeTypeDefs } from '@graphql-tools/merge'
 
-import { paginate, getOne } from './queries'
+import { paginate, getOne, getById } from './queries'
 import { convertName } from './utils'
 
 export * from './utils'
@@ -45,13 +45,17 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
         return await getOne(collection, variables.where)
       }
       queries[getByIdName] = async (variables: any) => {
-        return await getOne(collection, variables.id)
+        return await getById(collection, variables.id)
       }
       queries[getManyName] = async ({ where }: any) => {
         return await paginate(collection, where)
       }
 
       nextTypeDefs.push(`
+        extend type ${name} {
+          id: ID!
+        }
+
         extend type Query {
           ${getOneName}(
             where: [FirestoreWhere]

@@ -20,29 +20,28 @@ mockFirebase({
   },
 });
 
-test('it should work with query', async () => {
-  const schema = gql`
-    type Test @firestore(collection: "tests") {
-      id: ID!
-      foo: String!
-    }
-  `
+const schema = gql`
+  type Test @firestore(collection: "tests") {
+    id: ID!
+    foo: String!
+  }
+`
 
-  const firestore = connectFirestore({ schema })
+const firestore = connectFirestore({ schema })
 
+test('it should work with paginate', async () => {
   render(
     <BrowserqlProvider extensions={[firestore]}>
-      <Firestoreql<{ id: string, name: string }[]>
+      <Firestoreql<{ id: string, foo: string }[]>
         paginate="Test"
-        where={[where('done').equals(false)]}
         size={10}
-        orderBy="name"
+        orderBy="foo"
         renderLoading={<div data-testid="loading">Loading</div>}
         renderError={e => <div>{e.message}</div>}
-        render={(tests: { id: string, name: string }[]) => (
+        render={(tests: { id: string, foo: string }[]) => (
           <ul data-testid="tests">
             {tests.map((test) => (
-              <li key={test.id}>{test.name}</li>
+              <li key={test.id}>{test.foo}</li>
             ))}
           </ul>
         )}
@@ -59,5 +58,30 @@ test('it should work with query', async () => {
   })
 
   expect(screen.getByTestId('tests'))
-  .toBeEmptyDOMElement()
+  .toContainHTML('<li>barz</li><li>bar</li>')
+});
+
+test('it should work with get by id', async () => {
+  render(
+    <BrowserqlProvider extensions={[firestore]}>
+      <Firestoreql<{ id: string, foo: string }>
+        get="Test"
+        id="b7a9kQCqq5QnmgeSTqv7"
+        renderLoading={<div data-testid="loading">Loading</div>}
+        renderError={e => <div>{e.message}</div>}
+        render={(test: { id: string, foo: string }) => <div data-testid="test">{ test.foo }</div>}
+      />
+    </BrowserqlProvider>
+  )
+
+  expect(screen.getByTestId('loading')).toContainHTML(
+    '<div data-testid="loading">Loading</div>'
+  )
+
+  await act(async () => {
+    await waitFor(() => screen.getByTestId('test'))
+  })
+
+  expect(screen.getByTestId('test'))
+  .toContainHTML('<div data-testid="test">barz</div>')
 });

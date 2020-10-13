@@ -31,7 +31,7 @@ interface Extra {
   error?: Error
 }
 
-type PropsQuery<A = any> =
+type FirestoreqlPropsQuery<A = any> =
 & QueryAction
 & Option
 & Renders
@@ -39,16 +39,16 @@ type PropsQuery<A = any> =
   render: (data: A, extra: Extra) => ReactNode
 }
 
-type PropsMutation<A = any> =
+type FirestoreqlPropsMutation<A = any> =
 & MutationAction
 & Renders
 & {
   render: (action: any, extra: Extra) => ReactNode
 }
 
-type Props<A = any> = PropsQuery<A> | PropsMutation
+export type FirestoreqlProps<A = any> = FirestoreqlPropsQuery<A> | FirestoreqlPropsMutation
 
-function makeVariables<A = any>(props: Props<A>) {
+function makeVariables<A = any>(props: FirestoreqlProps<A>) {
   let collection
 
   if ('paginate' in props) {
@@ -71,11 +71,10 @@ function makeVariables<A = any>(props: Props<A>) {
     where.push(...props.where)
   }
 
-  console.log('where', where)
-
   return {
     collection,
     where,
+    id: 'id' in props ? props.id : null,
     filters: {
       orderBy: 'orderBy' in props ? props.orderBy : null,
       size: 'size' in props ? props.size : null,
@@ -83,7 +82,7 @@ function makeVariables<A = any>(props: Props<A>) {
   }
 }
 
-function getAction<A = any>(props: Props<A>) {
+function getAction<A = any>(props: FirestoreqlProps<A>) {
   if ('paginate' in props) {
     return 'getMany'
   } else if ('get' in props) {
@@ -102,12 +101,17 @@ function getAction<A = any>(props: Props<A>) {
   }
 }
 
-export function Firestoreql<A = any>(props: Props<A>) {
+export function Firestoreql<A = any>(props: FirestoreqlProps<A>) {
   const ctx = React.useContext(BrowserqlContext)
   const contracts = makeContracts(ctx.schema as string)
   const variables = makeVariables<A>(props)
 
   const name = `firestore_${getAction<A>(props)}_${variables.collection}`
+
+  console.log({
+    name,
+    variables,
+  })
 
   if ('paginate' in props || 'get' in props) {
     return (
