@@ -1,7 +1,31 @@
 import { DocumentNode } from 'graphql'
 import makeContracts from '@browserql/contracts'
+import { BrowserqlClient } from '@browserql/client'
 
-export default function resolve<Q = any, M = any>(
+type Dictionary<A = any> = {
+  [name: string]: A
+}
+
+type Resolver<
+  V extends Dictionary = {},
+  D = any
+> = (
+  variables: V,
+  context: BrowserqlClient['context']
+) => {
+  query: DocumentNode
+  variables: V
+} | {
+  mutation: DocumentNode
+  variables: V
+}
+
+type Resolvers = Dictionary<Resolver>
+
+export default function resolve<
+  Q extends Resolvers = {},
+  M extends Resolvers = {}
+>(
   document: string | DocumentNode
 ) {
   const contracts = makeContracts(document)

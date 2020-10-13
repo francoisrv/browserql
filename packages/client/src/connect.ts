@@ -2,11 +2,11 @@ import { DocumentNode } from 'graphql'
 import { mergeTypeDefs } from '@graphql-tools/merge'
 
 import makeCache from './cache'
-import { Schemaql, SchemaqlFactory } from './types'
+import { BrowserqlClient, Schemaql, SchemaqlFactory } from './types'
 import makeSchema from './schema'
 import makeApolloClient from './apollo'
 
-export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
+export default function connect(...args: Array<Schemaql|SchemaqlFactory>): BrowserqlClient {
   const cache = makeCache()
 
   const schemas: Array<string|DocumentNode> = [
@@ -94,17 +94,23 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>) {
 
   const schema = makeSchema(schemas, directives)
 
-  const apollo = makeApolloClient(rootValue, schema, cache)
+  const apollo = makeApolloClient(rootValue, schema, cache, context)
 
-  return {
+  const finalSchema = mergeTypeDefs(schemas)
+
+  const browserqlClient = {
     apollo,
     client: apollo,
     cache,
-    schema: mergeTypeDefs(schemas),
+    schema: finalSchema,
     directives,
     mutations,
     queries,
     scalars,
-    context,
+    context
   }
+
+  browserqlClient.context.browserqlClient = browserqlClient
+
+  return browserqlClient
 }
