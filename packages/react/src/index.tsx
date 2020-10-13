@@ -47,6 +47,8 @@ type BrowserqlQueryProps<D = any> = {
   renderEmpty?: React.ReactNode
   render?: (data: D, loading: boolean, error: Error | undefined) => React.ReactNode
   renderEach?: (item: D, index: number, data: D[], loading: boolean, error: Error | undefined) => React.ReactNode
+  dontRenderLoading?: boolean
+  dontRenderError?: boolean
 }
 
 export function BrowserqlQuery<D = any>(props: BrowserqlQueryProps<D>) {

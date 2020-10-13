@@ -5,6 +5,8 @@ scalar JSON
 
 directive @firestore(collection: String) on OBJECT
 
+directive @firestore_ref on FIELD_DEFINITION
+
 enum FirestoreWhereOperator {
   equals
 }
