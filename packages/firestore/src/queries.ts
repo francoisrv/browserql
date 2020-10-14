@@ -43,7 +43,7 @@ async function getDocument<A = any>(doc: firebase.firestore.QueryDocumentSnapsho
   }
   for (const a in pretty) {
     if (
-      pretty[a].constructor.name === 'n' && (
+      (pretty[a].constructor.name === 'n' || pretty[a].constructor.name === 'r') && (
         typeof pretty[a] === 'object' &&
         pretty[a] !== null &&
         'get' in pretty[a]
