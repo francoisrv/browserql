@@ -24,6 +24,8 @@ interface Option {
 type Renders = {
   renderLoading?: ReactNode
   renderError?: ReactNode | ((e: Error) => ReactNode)
+  renderNull?: ReactNode
+  renderEmpty?: ReactNode
 }
 
 interface Extra {
@@ -35,9 +37,17 @@ type FirestoreqlPropsQuery<A = any> =
 & QueryAction
 & Option
 & Renders
-& {
+& ({
   render: (data: A, extra: Extra) => ReactNode
-}
+} | {
+  renderEach?: (
+    item: A,
+    index: number,
+    data: A[],
+    loading: boolean,
+    error: Error | undefined
+  ) => ReactNode
+})
 
 type FirestoreqlPropsMutation<A = any> =
 & MutationAction
@@ -84,7 +94,7 @@ function makeVariables<A = any>(props: FirestoreqlProps<A>) {
 
 function getAction<A = any>(props: FirestoreqlProps<A>) {
   if ('paginate' in props) {
-    return 'getMany'
+    return 'paginate'
   } else if ('get' in props) {
     if ('id' in props) {
       return 'getById'
@@ -108,10 +118,17 @@ export function Firestoreql<A = any>(props: FirestoreqlProps<A>) {
 
   const name = `firestore_${getAction<A>(props)}_${variables.collection}`
 
-  console.log({
-    name,
-    variables,
-  })
+  const contract = contracts.Query[name]
+
+  if (!contract) {
+    if (props.renderError) {
+      if (typeof props.renderError === 'function') {
+        return props.renderError(new Error(`Query not found: ${ name }`))
+      } else {
+        return props.renderError
+      }
+    }
+  }
 
   if ('paginate' in props || 'get' in props) {
     return (
@@ -122,6 +139,12 @@ export function Firestoreql<A = any>(props: FirestoreqlProps<A>) {
         renderError={props.renderError}
         // @ts-ignore
         render={props.render}
+        // @ts-ignore
+        renderEach={props.renderEach}
+        // @ts-ignore
+        renderEmpty={props.renderEmpty}
+        // @ts-ignore
+        renderNull={props.renderNull}
       />
     )
   }

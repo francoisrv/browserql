@@ -1,5 +1,5 @@
 import type { ObjectTypeDefinitionNode } from 'graphql'
-import type { Schemaql } from '@browserql/client'
+import type { Schemaql } from '@browserql/types'
 
 import { getName } from '@browserql/schema'
 

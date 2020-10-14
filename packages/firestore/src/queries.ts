@@ -20,7 +20,7 @@ function makeQuery(collection: string, where?: Query | Query[], filters?: QueryF
       }
     } else {
       // @ts-ignore
-      query = query.where(where.field, where.operator || '==', where.value)
+      query = query.where(where.field, operators[where.operator] || '==', where.value)
     }
   }
   if (filters) {
@@ -36,14 +36,33 @@ function makeQuery(collection: string, where?: Query | Query[], filters?: QueryF
   return query
 }
 
+async function getDocument<A = any>(doc: firebase.firestore.QueryDocumentSnapshot<A>) {
+  const pretty: any = {
+    id: doc.id || 'xxxxxxxxxxxxxxxxxx',
+    ...doc.data()
+  }
+  for (const a in pretty) {
+    if (
+      pretty[a].constructor.name === 'n' && (
+        typeof pretty[a] === 'object' &&
+        pretty[a] !== null &&
+        'get' in pretty[a]
+      )) {
+      const res = await pretty[a].get()
+      pretty[a] = await getDocument(res)
+    }
+  }
+  return pretty
+}
+
 export async function paginate(collection: string, where?: Query | Query[], filters?: QueryFilters) {
   const query = makeQuery(collection, where, filters)
   const querySnapshot = await query.get()
   const docs: any[] = []
-  querySnapshot.forEach((doc) => {
-    docs.push({ id: doc.id, ...doc.data() })
+  querySnapshot.forEach(async (doc) => {
+    docs.push(doc)
   })
-  return docs
+  return await Promise.all(docs.map(getDocument))
 }
 
 export async function getOne(collection: string, where?: Query | Query[], filters?: QueryFilters) {
@@ -56,13 +75,13 @@ export async function getOne(collection: string, where?: Query | Query[], filter
       doc = d
     }
   })
-  return { id: doc.id, ...doc.data() }
+  return await getDocument(doc)
 }
 
 export async function getById(collectionName: string, id: string){
   const collection = db.collection(collectionName)
   const doc = await collection.doc(id).get()
-  return { id: doc.id, ...doc.data() }
+  return await getDocument(doc)
 }
 
 export async function addOne() {}

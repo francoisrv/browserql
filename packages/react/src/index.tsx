@@ -1,6 +1,14 @@
-import { ApolloProvider, DocumentNode, FetchResult, useMutation, useQuery } from '@apollo/client';
-import connect, { Schemaql, SchemaqlFactory } from '@browserql/client';
-import React, { ReactNode, useState } from 'react';
+import type { Schemaql, SchemaqlFactory } from '@browserql/types'
+import type { DocumentNode } from 'graphql'
+
+import {
+  ApolloProvider,
+  FetchResult,
+  useMutation,
+  useQuery,
+} from '@apollo/client'
+import connect from '@browserql/client'
+import React, { ReactNode, useState } from 'react'
 
 interface Props {
   client?: any
@@ -8,6 +16,8 @@ interface Props {
   extensions?: Array<Schemaql|SchemaqlFactory>
   queries?: Schemaql['queries']
   mutations?: Schemaql['mutations']
+  directives?: Schemaql['directives']
+  scalars?: Schemaql['scalars']
 }
 
 export const BrowserqlContext = React.createContext<Schemaql>({})
@@ -25,12 +35,14 @@ export function BrowserqlProvider(props: React.PropsWithChildren<Props>) {
     client = connect(...connectors, {
       queries: props.queries,
       mutations: props.mutations,
+      directives: props.directives,
+      scalars: props.scalars,
     })
   }
 
   return (
     // @ts-ignore
-    <ApolloProvider client={client.client}>
+    <ApolloProvider client={client.apollo}>
       <BrowserqlContext.Provider value={client}>
         {props.children}
       </BrowserqlContext.Provider>

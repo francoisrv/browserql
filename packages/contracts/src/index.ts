@@ -1,6 +1,6 @@
-import { DocumentNode, FieldDefinitionNode } from 'graphql'
+import type { DocumentNode, FieldDefinitionNode } from 'graphql'
 import enhanceSchema, { getArguments, getKind, getName, parseKind } from '@browserql/schema'
-import { Dictionary } from 'lodash'
+import type { Dictionary } from 'lodash'
 import makeFragments from '@browserql/fragments'
 import gql from 'graphql-tag'
 

@@ -67,7 +67,7 @@ test('it should have context', () => {
   )
 
   expect(screen.getByTestId('foo'))
-  .toContainHTML('<div data-testid="foo">apollo, client, cache, schema, directives, mutations, queries, scalars</div>')
+  .toContainHTML('<div data-testid="foo">apollo, client, cache, schema, directives, mutations, queries, scalars, context</div>')
 })
 
 test('it should fix bug 44', () => {

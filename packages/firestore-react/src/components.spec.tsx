@@ -5,7 +5,7 @@ import { render, waitFor, screen, fireEvent, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { BrowserqlProvider } from '@browserql/react';
 import { gql } from '@apollo/client';
-import connectFirestore, { where } from '@browserql/firestore'
+import { connectFirestore, where } from '@browserql/firestore'
 import React from 'react';
 
 import { Firestoreql } from './components';
@@ -21,7 +21,7 @@ mockFirebase({
 });
 
 const schema = gql`
-  type Test @firestore(collection: "tests") {
+  type Test @firestore {
     id: ID!
     foo: String!
   }
@@ -58,7 +58,7 @@ test('it should work with paginate', async () => {
   })
 
   expect(screen.getByTestId('tests'))
-  .toContainHTML('<li>barz</li><li>bar</li>')
+  .toContainHTML('<ul data-testid="tests"><li>bar</li><li>barz</li></ul>')
 });
 
 test('it should work with get by id', async () => {
