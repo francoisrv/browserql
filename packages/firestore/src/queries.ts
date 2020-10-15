@@ -1,7 +1,12 @@
+import type { BrowserqlContext, BrowserqlClient } from '@browserql/types'
+
 import * as firebase from 'firebase/app'
 import 'firebase/firestore'
+import gql from 'graphql-tag'
 import { isNumber } from 'lodash'
-import { Query, QueryFilters, QueryOperator } from './types'
+import buildFragments from '../../fragments/dist'
+
+import type { Query, QueryFilters } from './types'
 
 const db = firebase.firestore()
 
@@ -55,14 +60,38 @@ async function getDocument<A = any>(doc: firebase.firestore.QueryDocumentSnapsho
   return pretty
 }
 
-export async function paginate(collection: string, where?: Query | Query[], filters?: QueryFilters) {
-  const query = makeQuery(collection, where, filters)
-  const querySnapshot = await query.get()
-  const docs: any[] = []
-  querySnapshot.forEach(async (doc) => {
-    docs.push(doc)
+export interface PaginateProps {
+  collection: string
+  type: string
+  where?: Query | Query[]
+  filters?: QueryFilters
+}
+
+export async function paginate(props: PaginateProps, client: BrowserqlClient) {
+  const query = makeQuery(props.collection, props.where, props.filters)
+  let resolved = false
+  return new Promise((resolve, reject) => {
+    query.onSnapshot(async querySnapshot => {
+      const docs: any[] = []
+      querySnapshot.forEach(async (doc) => {
+        docs.push(doc)
+      })
+      const documents = await Promise.all(docs.map(getDocument))
+      if (!resolved) {
+        resolved = true
+        resolve(documents)
+      } else {
+        const fragments = buildFragments(client.schema)
+        documents.forEach(doc => {
+          client.apollo.cache.writeFragment({
+            id: doc.id,
+            fragment: gql(fragments.get(props.type) as string),
+            data: doc,
+          })
+        })
+      }
+    })
   })
-  return await Promise.all(docs.map(getDocument))
 }
 
 export async function getOne(collection: string, where?: Query | Query[], filters?: QueryFilters) {

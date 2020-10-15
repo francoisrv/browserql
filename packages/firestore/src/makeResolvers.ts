@@ -1,5 +1,5 @@
 import type { ObjectTypeDefinitionNode } from 'graphql'
-import type { Schemaql } from '@browserql/types'
+import type { Schemaql, BrowserqlContext } from '@browserql/types'
 
 import { getName } from '@browserql/schema'
 
@@ -17,13 +17,14 @@ export default function makeResolvers(type: ObjectTypeDefinitionNode) {
 
   Object.keys(names).map(queryName => {
     const fullName = names[queryName as keyof typeof names]
-    queries[fullName] = async (variables: any) => {
+    queries[fullName] = async (variables: any, ctx: BrowserqlContext) => {
       switch (queryName) {
-        case 'paginate': return await paginate(
+        case 'paginate': return await paginate({
           collection,
-          variables.where,
-          variables.filters,
-        )
+          type: name,
+          where: variables.where,
+          filters: variables.filters,
+        }, ctx.browserqlClient)
 
         case 'getOne': return await getOne(
           collection,

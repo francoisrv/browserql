@@ -24,6 +24,7 @@
     "prepublishOnly": "git tag | xargs git tag -d && yarn build && yarn test"
   },
   "dependencies": {
+    "@browserql/fragments": "^1.6.0",
     "@browserql/schema": "^1.18.0",
     "firebase": "^7.23.0",
     "graphql-type-json": "^0.3.2",

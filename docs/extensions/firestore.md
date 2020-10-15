@@ -62,6 +62,16 @@ const queries = {
 }
 ```
 
+## Schema
+
+### Subscription
+
+All the queries subscribe by default. You can ask a query **not** to subscribe this way:
+
+```js
+firestore.model('Todo').getById({ id: '1234' }, { subscribe: false })
+```
+
 ## API
 
 ### connectFirestore
