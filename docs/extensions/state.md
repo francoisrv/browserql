@@ -5,27 +5,22 @@
 ```graphql
 // schema.graphql
 
-type Todo {
-  id: ID!
-}
-
 type State @state {
   isLoggedIn: Boolean!
-  selectedTodo: Todo
-  counter: Int!
 }
 ```
 
 ```js
-const client = connect({ schema }, connectState())
+import connect from '@browserql/client'
+import { connectState, makeState } from '@browserql/state'
 
-const state = exposeState(client)
+const client = connect(connectState({ schema }))
 
-await state.get.isLoggedIn()
+const state = makeState(client)
 
-await state.toggle.isLoggedIn()
-
-await state.increment.counter()
+state.State.isLoggedIn.get()
+state.State.isLoggedIn.set(false)
+state.State.isLoggedIn.toggle()
 ```
 
 ## API
