@@ -27,10 +27,10 @@ export default function makeState(client: BrowserqlClient): State {
       const fieldName = getName(field)
       state[typeName][fieldName] = {
         get() {
-          return get(typeName, fieldName, kind)
+          return get(client, typeName, field)
         },
         set(data: any) {
-          return set(typeName, fieldName, data)
+          return set(client, typeName, fieldName, data)
         }
       }
     })
