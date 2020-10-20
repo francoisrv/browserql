@@ -1,4 +1,4 @@
-import type { ObjectTypeDefinitionNode } from 'graphql'
+import type { DirectiveNode, ObjectTypeDefinitionNode, StringValueNode } from 'graphql'
 import type { Schemaql, BrowserqlContext } from '@browserql/types'
 
 import { getName } from '@browserql/schema'
@@ -9,7 +9,12 @@ import { convertName } from './utils'
 
 export default function makeResolvers(type: ObjectTypeDefinitionNode) {
   const name = getName(type)
-  const collection = convertName(name)
+  const { directives = [] } = type
+  const directive = directives.find(directive => getName(directive) === 'firestore') as DirectiveNode
+  const { arguments: args = [] } = directive
+  const collectionArg = args.find(arg => getName(arg) === 'collection')
+  const collection = collectionArg ? (collectionArg.value as StringValueNode).value : convertName(name)
+  console.log({collection})
 
   const names = makeNames(name)
 
