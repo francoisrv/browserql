@@ -56,7 +56,7 @@ test('it should get query', async () => {
   expect(data.hello).toEqual('hello')
 })
 
-test.only('it should get query', async () => {
+test('it should get query', async () => {
   class FooDirective extends SchemaDirectiveVisitor {
     public constructor(config: any) {
       super(config)
@@ -66,6 +66,12 @@ test.only('it should get query', async () => {
       console.log({ field });
       field.isDeprecated = true
       field.deprecationReason = this.args.reason
+    }
+
+    public visitEnumValue(value: GraphQLEnumValue) {
+      // console.log({ value });
+      value.isDeprecated = true;
+      value.deprecationReason = this.args.reason;
     }
   }
 
