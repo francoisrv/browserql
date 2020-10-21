@@ -1,6 +1,6 @@
 {
   "name": "@browserql/client",
-  "version": "3.24.0",
+  "version": "3.25.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "ISC",
