@@ -19,7 +19,7 @@ import { where } from './utils'
 const tests = [{"id":"b7a9kQCqq5QnmgeSTqv7","foo":"barz"},{"id":"mA3PZxGjX3zGOVQrT4uj","foo":"bar"}]
 
 test('paginate', async () => {
-  const docs = await paginate('tests')
+  const docs = await paginate<any[]>({ collection: 'tests' })
   expect(Array.isArray(docs)).toBe(true)
   expect(docs).toHaveLength(tests.length)
   docs.forEach(doc => {
@@ -29,7 +29,10 @@ test('paginate', async () => {
 })
 
 test('paginate with where', async () => {
-  const docs = await paginate('tests', [where('foo').equals('bar')])
+  const docs = await paginate({
+    collection: 'tests',
+    where: [where('foo').equals('bar')],
+  })
   expect(Array.isArray(docs)).toBe(true)
   expect(docs).toHaveLength(1)
   docs.forEach(doc => {

@@ -1,12 +1,14 @@
 import type { BrowserqlContext, BrowserqlClient } from '@browserql/types'
 
-import * as firebase from 'firebase/app'
+import firebase from 'firebase/app'
 import 'firebase/firestore'
+import { ObjectTypeDefinitionNode } from 'graphql'
 import gql from 'graphql-tag'
 import { isNumber } from 'lodash'
 import buildFragments from '../../fragments/dist'
 
 import type { Query, QueryFilters } from './types'
+import { getCollectionName } from './utils'
 
 const db = firebase.firestore()
 
@@ -60,38 +62,43 @@ async function getDocument<A = any>(doc: firebase.firestore.QueryDocumentSnapsho
   return pretty
 }
 
+async function getDocuments<A = unknown>(snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) {
+  const docs: A[] = []
+  snapshot.forEach(async doc => {
+    docs.push(await getDocument(doc))
+  })
+  return docs
+}
+
 export interface PaginateProps {
   collection: string
-  type: string
   where?: Query | Query[]
   filters?: QueryFilters
 }
 
-export async function paginate(props: PaginateProps, client: BrowserqlClient) {
+export async function paginate<D = unknown>(
+  props: PaginateProps,
+  onSnapshot?: (documents: D[]) => void,
+): Promise<D[]> {
   const query = makeQuery(props.collection, props.where, props.filters)
-  let resolved = false
-  return new Promise((resolve, reject) => {
-    query.onSnapshot(async querySnapshot => {
-      const docs: any[] = []
-      querySnapshot.forEach(async (doc) => {
-        docs.push(doc)
+
+  if (onSnapshot) {
+    let resolved = false
+    return new Promise(resolve => {
+      query.onSnapshot(async snapshot => {
+        const documents = await getDocuments<D>(snapshot);
+        if (!resolved) {
+          resolved = true
+          resolve(documents)
+        } else {
+          onSnapshot(documents);
+        }
       })
-      const documents = await Promise.all(docs.map(getDocument))
-      if (!resolved) {
-        resolved = true
-        resolve(documents)
-      } else {
-        const fragments = buildFragments(client.schema)
-        documents.forEach(doc => {
-          client.apollo.cache.writeFragment({
-            id: doc.id,
-            fragment: gql(fragments.get(props.type) as string),
-            data: doc,
-          })
-        })
-      }
     })
-  })
+  } else {
+    const snapshot = await query.get();
+    return await getDocuments<D>(snapshot);
+  }
 }
 
 export async function getOne(collection: string, where?: Query | Query[], filters?: QueryFilters) {

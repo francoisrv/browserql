@@ -1,3 +1,6 @@
+import { Dictionary } from '@browserql/types'
+import * as queries from './queries'
+
 const patterns = ['firestore']
 const glue = '_'
 
@@ -6,17 +9,11 @@ export default function makeName(...names: string[]) {
 }
 
 export function makeNames(collection: string) {
-  return {
-    paginate: makeName('paginate', collection),
-    getOne: makeName('getOne', collection),
-    getById: makeName('getById', collection),
-    addOne: makeName('addOne', collection),
-    addMany: makeName('addMany', collection),
-    deleteOne: makeName('deleteOne', collection),
-    deleteById: makeName('deleteById', collection),
-    deleteMany: makeName('deleteMany', collection),
-    updateOne: makeName('updateOne', collection),
-    updateById: makeName('updateById', collection),
-    updateMany: makeName('updateMany', collection),
+  const names: Dictionary<string> = {}
+  for (const query in queries) {
+    if (typeof queries[query as keyof typeof queries]) {
+      names[query] = makeName(query, collection)
+    }
   }
+  return names
 }

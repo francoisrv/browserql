@@ -1,18 +1,30 @@
+import enhanceSchema from '@browserql/schema'
+import type { DocumentNode } from 'graphql'
 import { getById, getOne, paginate } from "./queries"
 import { Query, QueryFilters } from "./types"
-import { convertName } from "./utils"
+import { convertName, getCollectionName } from "./utils"
 
-export default function makeContext() {
+export default function makeContext(schema: DocumentNode) {
+  const enhanced = enhanceSchema(schema)
+
   return {
     firestore: {
       exec: {
         async paginate(
-          collection: string,
+          typeName: string,
           where?: Query | Query[],
           filters?: QueryFilters
         ) {
-          const collectionName = convertName(collection)
-          return await paginate(collectionName, where, filters)
+          const type = enhanced.getType(typeName)
+          if (!type) {
+            throw new Error(`firestoreql.exec: Type not in schema: ${typeName}`)
+          }
+          const collectionName = getCollectionName(type)
+          return await paginate({
+            collection: collectionName,
+            where,
+            filters,
+          })
         },
 
         async getOne(

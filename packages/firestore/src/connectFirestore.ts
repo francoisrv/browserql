@@ -14,7 +14,6 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
   return function (schemaql: Schemaql) {
     const typeDefs: Array<DocumentNode | string> = []
     const nextTypeDefs: Array<DocumentNode | string> = [SCHEMA]
-    const context = makeContext()
 
     if (options.schema) {
       typeDefs.push(options.schema)
@@ -41,6 +40,8 @@ export default function connectFirestore(options: Schemaql = {}): SchemaqlFactor
     }
 
     const merged = mergeTypeDefs(nextTypeDefs)
+
+    const context = makeContext(merged)
 
     return {
       schema: merged,

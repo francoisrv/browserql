@@ -1,3 +1,5 @@
+import { getName } from '@browserql/schema'
+import { DirectiveNode, ObjectTypeDefinitionNode, StringValueNode } from 'graphql'
 import { camelCase } from 'lodash'
 import { Query, QueryOperator } from './types'
 
@@ -27,4 +29,13 @@ export function plural(name: string) {
 
 export function convertName(name: string) {
   return plural(camelCase(name)).toLowerCase()
+}
+
+export function getCollectionName(type: ObjectTypeDefinitionNode) {
+  const name = getName(type)
+  const { directives = [] } = type
+  const directive = directives.find(directive => getName(directive) === 'firestore') as DirectiveNode
+  const { arguments: args = [] } = directive
+  const collectionArg = args.find(arg => getName(arg) === 'collection')
+  return collectionArg ? (collectionArg.value as StringValueNode).value : convertName(name)
 }

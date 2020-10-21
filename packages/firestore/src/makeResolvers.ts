@@ -5,16 +5,20 @@ import { getName } from '@browserql/schema'
 
 import { makeNames } from './makeName'
 import { getById, getOne, paginate } from './queries'
-import { convertName } from './utils'
+import { convertName, getCollectionName } from './utils'
+import buildFragments from '@browserql/fragments'
+import gql from 'graphql-tag'
 
+/**
+ * 
+ * @param type {ObjectTypeDefinitionNode} A GraphQL type with a firestore directive
+ * @example makeResolvers(gql`type Foo @firestore`)
+ * @description Provided a type tagged as a firestore collection, this will create all the
+ * queries and mutations for that type
+ */
 export default function makeResolvers(type: ObjectTypeDefinitionNode) {
   const name = getName(type)
-  const { directives = [] } = type
-  const directive = directives.find(directive => getName(directive) === 'firestore') as DirectiveNode
-  const { arguments: args = [] } = directive
-  const collectionArg = args.find(arg => getName(arg) === 'collection')
-  const collection = collectionArg ? (collectionArg.value as StringValueNode).value : convertName(name)
-  console.log({collection})
+  const collection = getCollectionName(type)
 
   const names = makeNames(name)
 
@@ -23,13 +27,22 @@ export default function makeResolvers(type: ObjectTypeDefinitionNode) {
   Object.keys(names).map(queryName => {
     const fullName = names[queryName as keyof typeof names]
     queries[fullName] = async (variables: any, ctx: BrowserqlContext) => {
+      const { apollo, schema } = ctx.browserqlClient
+      const fragments = buildFragments(schema)
       switch (queryName) {
         case 'paginate': return await paginate({
           collection,
-          type: name,
           where: variables.where,
           filters: variables.filters,
-        }, ctx.browserqlClient)
+        }, (documents: { id: string }[]) => {
+          documents.forEach(doc => {
+            apollo.cache.writeFragment({
+              id: doc.id,
+              fragment: gql(fragments.get(name) as string),
+              data: doc,
+            })
+          })
+        })
 
         case 'getOne': return await getOne(
           collection,
