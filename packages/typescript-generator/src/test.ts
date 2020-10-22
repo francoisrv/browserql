@@ -28,6 +28,11 @@ test('it should write typescript', () => {
     foo: ID!
     bar(g: String, f: [Int]!): Foo
   }
+
+  type Mutation {
+    foo: ID!
+    bar(g: String, f: [Int]!): Foo
+  }
   `
   console.log(generateTypescript(schema))
 })

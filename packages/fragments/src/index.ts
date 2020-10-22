@@ -50,7 +50,7 @@ export default function buildFragments(document: string | DocumentNode) {
   }
   queries.forEach(buildFragment);
   mutations.forEach(buildFragment);
-  return {
+  const f = {
     get(name: string): string | null {
       const fragment = fragments[name];
       if (!fragment) {
@@ -62,5 +62,10 @@ export default function buildFragments(document: string | DocumentNode) {
       }
       return results.join('\n');
     },
+    printAll(): string {
+      const lines = Object.keys(fragments).map(f.get)
+      return lines.join('\n\n')
+    }
   };
+  return f
 }

@@ -1,5 +1,5 @@
 
-import type { DocumentNode } from 'graphql'
+import type { DocumentNode, FieldDefinitionNode } from 'graphql'
 import enhanceSchema, { getKind, getName, parseKind, ParsedType } from '@browserql/schema'
 
 interface Options {
@@ -43,6 +43,29 @@ function parseType(type: ParsedType, schema: any, options: Options) {
   return parsed
 }
 
+function makeFunction(query: FieldDefinitionNode, enhanced: any, options: Options) {
+  const q: string[] = ['  ', getName(query)]
+  const { arguments: args = [] } = query
+  if (!args.length) {
+    q.push('()')
+  } else {
+    q.push('(\n    variables: {')
+    q.push(...args.map(arg => {
+      const argType = parseKind(getKind(arg))
+      return `\n      ${
+        getName(arg)
+      }${
+        argType.required ? '' : '?'
+      }: ${
+        parseType(argType, enhanced, options)
+      },`
+    }))
+    q.push('\n    }\n  )')
+  }
+  q.push(`: Promise<${parseType(parseKind(getKind(query)), enhanced, options)}>`)
+  return q.join('')
+}
+
 export default function generateTypescript(
   schema: DocumentNode,
   options: Options = {}
@@ -79,26 +102,7 @@ export default function generateTypescript(
   }
   if (queries.length) {
     for (const query of queries) {
-      const q: string[] = ['  ', getName(query)]
-      const { arguments: args = [] } = query
-      if (!args.length) {
-        q.push('()')
-      } else {
-        q.push('(')
-        q.push(...args.map(arg => {
-          const argType = parseKind(getKind(arg))
-          return `\n    ${
-            getName(arg)
-          }${
-            argType.required ? '' : '?'
-          }: ${
-            parseType(argType, enhanced, options)
-          },`
-        }))
-        q.push('\n  )')
-      }
-      q.push(`: Promise<${parseType(parseKind(getKind(query)), enhanced, options)}>`)
-      qs.push(q.join(''))
+      qs.push(makeFunction(query, enhanced, options))
     }
     typescripts.push(`${
       options.useExport ? 'export ' : ''
@@ -110,26 +114,7 @@ export default function generateTypescript(
   }
   if (mutations.length) {
     for (const mutation of mutations) {
-      const m: string[] = ['  ', getName(mutation)]
-      const { arguments: args = [] } = mutation
-      if (!args.length) {
-        m.push('()')
-      } else {
-        m.push('(')
-        m.push(...args.map(arg => {
-          const argType = parseKind(getKind(arg))
-          return `\n    ${
-            getName(arg)
-          }${
-            argType.required ? '' : '?'
-          }: ${
-            parseType(argType, enhanced, options)
-          },`
-        }))
-        m.push('\n  )')
-      }
-      m.push(`: Promise<${parseType(parseKind(getKind(mutation)), enhanced, options)}>`)
-      ms.push(m.join(''))
+      ms.push(makeFunction(mutation, enhanced, options))
     }
     typescripts.push(`${
       options.useExport ? 'export ' : ''
