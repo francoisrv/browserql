@@ -13,7 +13,7 @@ import React, { ReactNode, useState } from 'react'
 interface Props {
   client?: any
   schema?: DocumentNode | string
-  extensions?: Array<Schemaql|SchemaqlFactory>
+  extensions?: Array<Schemaql | SchemaqlFactory>
   queries?: Schemaql['queries']
   mutations?: Schemaql['mutations']
   directives?: Schemaql['directives']
@@ -25,7 +25,7 @@ export const BrowserqlContext = React.createContext<Schemaql>({})
 export function BrowserqlProvider(props: React.PropsWithChildren<Props>) {
   let { client } = props
   if (!client) {
-    const connectors: Array<Schemaql|SchemaqlFactory> = []
+    const connectors: Array<Schemaql | SchemaqlFactory> = []
     if (props.schema) {
       connectors.push({ schema: props.schema })
     }
@@ -57,14 +57,26 @@ type BrowserqlQueryProps<D = any> = {
   renderError?: React.ReactNode | ((e: Error) => React.ReactNode)
   renderNull?: React.ReactNode
   renderEmpty?: React.ReactNode
-  render?: (data: D, loading: boolean, error: Error | undefined) => React.ReactNode
-  renderEach?: (item: D, index: number, data: D[], loading: boolean, error: Error | undefined) => React.ReactNode
+  render?: (
+    data: D,
+    loading: boolean,
+    error: Error | undefined
+  ) => React.ReactNode
+  renderEach?: (
+    item: D,
+    index: number,
+    data: D[],
+    loading: boolean,
+    error: Error | undefined
+  ) => React.ReactNode
   dontRenderLoading?: boolean
   dontRenderError?: boolean
 }
 
 export function BrowserqlQuery<D = any>(props: BrowserqlQueryProps<D>) {
-  const { data, loading, error } = useQuery(props.query, { variables: props.variables })
+  const { data, loading, error } = useQuery(props.query, {
+    variables: props.variables,
+  })
   let accessor: any = null
   if (error && props.renderError) {
     if (typeof props.renderError === 'function') {
@@ -75,7 +87,7 @@ export function BrowserqlQuery<D = any>(props: BrowserqlQueryProps<D>) {
   if (loading && props.renderLoading) {
     return props.renderLoading
   }
-  if (!loading && !error && data ) {
+  if (!loading && !error && data) {
     const [queryName] = Object.keys(data)
     accessor = data[queryName]
   }
@@ -89,7 +101,11 @@ export function BrowserqlQuery<D = any>(props: BrowserqlQueryProps<D>) {
     if (props.renderEach) {
       return (
         <>
-          {accessor.map((item, index, items) => props.renderEach && props.renderEach(item, index, items, loading, error))}
+          {accessor.map(
+            (item, index, items) =>
+              props.renderEach &&
+              props.renderEach(item, index, items, loading, error)
+          )}
         </>
       )
     }
@@ -104,12 +120,15 @@ interface BrowserqlMutationProps<D = any> {
   mutation: DocumentNode
   renderLoading?: ReactNode
   renderError?: ReactNode | ((e: Error) => ReactNode)
-  render: (mutation: (options: D) => Promise<FetchResult<D>>, args: {
-    loading: boolean
-    error?: Error
-    data?: D
-    called: number
-  }) => ReactNode
+  render: (
+    mutation: (options: D) => Promise<FetchResult<D>>,
+    args: {
+      loading: boolean
+      error?: Error
+      data?: D
+      called: number
+    }
+  ) => ReactNode
 }
 
 export function BrowserqlMutation<D = any>(props: BrowserqlMutationProps<D>) {
@@ -124,13 +143,16 @@ export function BrowserqlMutation<D = any>(props: BrowserqlMutationProps<D>) {
   if (loading && props.renderLoading) {
     return props.renderLoading
   }
-  return props.render(async (...args: any[]) => {
-    setCalled(called + 1)
-    const data = await mutation({ variables: args[0] })
-    if (data.data) {
-      const [key] = Object.keys(data.data)
-      return {...data.data[key as keyof typeof data.data]}
-    }
-    return data
-  }, { loading, error, data, called })
+  return props.render(
+    async (...args: any[]) => {
+      setCalled(called + 1)
+      const data = await mutation({ variables: args[0] })
+      if (data.data) {
+        const [key] = Object.keys(data.data)
+        return { ...data.data[key as keyof typeof data.data] }
+      }
+      return data
+    },
+    { loading, error, data, called }
+  )
 }

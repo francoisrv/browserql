@@ -18,8 +18,8 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>): Brows
 
   const schemas: Array<string|DocumentNode> = [
     `
-    type Query { browserqlQuery: ID }
-    type Mutation { browserqlMutation: ID }
+    type Query { _: ID }
+    type Mutation { _: ID }
     `
   ]
 
@@ -118,11 +118,6 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>): Brows
   }
 
   browserqlClient.context.browserqlClient = browserqlClient
-
-  console.log({
-    ...browserqlClient,
-    schema: enhanceSchema(browserqlClient.schema).print()
-  })
 
   return browserqlClient
 }
