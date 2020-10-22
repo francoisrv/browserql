@@ -4,6 +4,7 @@ import gql from 'graphql-tag'
 import extend from './lib/extend'
 import getByName from './lib/getByName'
 import getExtendedQueries from './lib/getExtendedQueries'
+import getInputs from './lib/getInputs'
 import getMutation from './lib/getMutation'
 import getMutations, {
   Options as GetMutationsOptions,
@@ -46,6 +47,10 @@ class Schema {
   
   getTypes() {
     return getTypes(this.document)
+  }
+
+  getInputs() {
+    return getInputs(this.document)
   }
   
   getByName(name: string) {
