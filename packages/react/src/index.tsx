@@ -75,47 +75,64 @@ type BrowserqlQueryProps<D = any> = {
 }
 
 export function BrowserqlQuery<D = any>(props: BrowserqlQueryProps<D>) {
-  const { data, loading, error } = useQuery(props.query, {
-    variables: props.variables,
-    ...props.queryProps,
-  })
-  let accessor: any = null
-  if (error && props.renderError) {
+  try {
+    if (!props.query) {
+    }
+
+    const { data, loading, error } = useQuery(props.query, {
+      variables: props.variables,
+    })
+
+    if (error) {
+      throw error
+    }
+
+    let accessor: any = null
+
+    if (loading && props.renderLoading) {
+      return props.renderLoading
+    }
+
+    if (!loading && !error && data) {
+      const [queryName] = Object.keys(data)
+      accessor = data[queryName]
+    }
+
+    if (!loading && !error && data === null && props.renderNull) {
+      return props.renderNull
+    }
+
+    if (Array.isArray(accessor)) {
+      if (!accessor.length && props.renderEmpty) {
+        return props.renderEmpty
+      }
+      if (props.renderEach) {
+        return (
+          <>
+            {accessor.map(
+              (item, index, items) =>
+                props.renderEach &&
+                props.renderEach(item, index, items, loading, error)
+            )}
+          </>
+        )
+      }
+    }
+
+    if ('render' in props && props.render && accessor) {
+      return props.render(accessor, loading, error)
+    }
+
+    return <span />
+  } catch (error) {
     if (typeof props.renderError === 'function') {
       return props.renderError(error)
     }
-    return props.renderError
-  }
-  if (loading && props.renderLoading) {
-    return props.renderLoading
-  }
-  if (!loading && !error && data) {
-    const [queryName] = Object.keys(data)
-    accessor = data[queryName]
-  }
-  if (!loading && !error && data === null && props.renderNull) {
-    return props.renderNull
-  }
-  if (Array.isArray(accessor)) {
-    if (!accessor.length && props.renderEmpty) {
-      return props.renderEmpty
+    if (props.renderError) {
+      return props.renderError
     }
-    if (props.renderEach) {
-      return (
-        <>
-          {accessor.map(
-            (item, index, items) =>
-              props.renderEach &&
-              props.renderEach(item, index, items, loading, error)
-          )}
-        </>
-      )
-    }
+    return <span />
   }
-  if ('render' in props && props.render && accessor) {
-    return props.render(accessor, loading, error)
-  }
-  return <span />
 }
 
 interface BrowserqlMutationProps<D = any> {
