@@ -232,7 +232,9 @@ test('bug 233', () => {
   }
   `)
   toMacthLines(fragments.get('QueueResponse') as string, `fragment QueueResponseFragment on QueueResponse {
-    queue
+    queue {
+      ...OrderFragment 
+    }
   }
   fragment OrderFragment on Order {
     cid
@@ -341,5 +343,4 @@ test('bug 44', () => {
     mutation: Mutation
   }
   `)
-  console.log(fragments.get('ProjectIntegration'))
 });

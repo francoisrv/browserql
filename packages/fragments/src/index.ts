@@ -26,9 +26,9 @@ function makeFragment(
     const fieldType = schema.getType(fieldKind);
     if (fieldType) {
       dependencies.push(fieldKind);
+      fragment += ` {\n    ...${fieldKind}Fragment \n  }`;
       if (!(fieldKind in fragments)) {
         makeFragment(fieldType, fragments, schema);
-        fragment += ` {\n    ...${fieldKind}Fragment \n  }`;
       }
     }
   }

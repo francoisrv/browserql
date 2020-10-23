@@ -1,7 +1,10 @@
 import { BrowserqlContext } from '@browserql/react'
 import enhanceSchema from '@browserql/schema'
 import NativeGraphiQL from 'graphiql'
-import { FetcherParams } from 'graphiql/dist/components/GraphiQL'
+import type {
+  FetcherParams,
+  GraphiQLProps,
+} from 'graphiql/dist/components/GraphiQL'
 import {
   getIntrospectionQuery,
   buildClientSchema,
@@ -12,9 +15,16 @@ import {
 import gql from 'graphql-tag'
 
 import 'graphiql/graphiql.min.css'
-import React, { useState } from 'react'
+import React, { CSSProperties, useState } from 'react'
 
-export default function GraphiQL() {
+interface Props {
+  buttonStyle?: CSSProperties
+  rootStyle?: CSSProperties
+  graphiqlProps?: GraphiQLProps
+}
+
+export default function GraphiQL(props: Props) {
+  const { buttonStyle, rootStyle, graphiqlProps } = props
   const ctx = React.useContext(BrowserqlContext)
   const schema = enhanceSchema(ctx.schema as string)
   const [open, setOpen] = useState(false)
@@ -63,6 +73,7 @@ export default function GraphiQL() {
           zIndex: 9999,
           bottom: 20,
           right: 20,
+          ...buttonStyle,
         }}
         onClick={() => setOpen(!open)}
       >
@@ -77,15 +88,16 @@ export default function GraphiQL() {
             right: 20,
             left: 20,
             top: 20,
-            // border: '5px solid black',
-            // borderRadius: 12,
             boxShadow: '0 0 5px 5px rgba(0, 0, 0, 0.3)',
+            opacity: 0.95,
+            ...rootStyle,
           }}
         >
           <NativeGraphiQL
             // @ts-ignore
             fetcher={graphQLFetcher}
             schema={introspection}
+            {...graphiqlProps}
           />
         </div>
       )}
