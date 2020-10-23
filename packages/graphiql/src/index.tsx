@@ -79,28 +79,27 @@ export default function GraphiQL(props: Props) {
       >
         {open ? 'Close' : 'Open'} GraphiQL
       </button>
-      {open && (
-        <div
-          style={{
-            position: 'fixed',
-            zIndex: 9998,
-            bottom: 20,
-            right: 20,
-            left: 20,
-            top: 20,
-            boxShadow: '0 0 5px 5px rgba(0, 0, 0, 0.3)',
-            opacity: 0.95,
-            ...rootStyle,
-          }}
-        >
-          <NativeGraphiQL
-            // @ts-ignore
-            fetcher={graphQLFetcher}
-            schema={introspection}
-            {...graphiqlProps}
-          />
-        </div>
-      )}
+      <div
+        style={{
+          position: 'fixed',
+          zIndex: 9998,
+          height: 'calc(100vh - 40px)',
+          right: 20,
+          left: 20,
+          top: open ? 20 : '-100vh',
+          transition: 'all 0.35s ease-out',
+          boxShadow: '0 0 5px 5px rgba(0, 0, 0, 0.3)',
+          opacity: 0.95,
+          ...rootStyle,
+        }}
+      >
+        <NativeGraphiQL
+          // @ts-ignore
+          fetcher={graphQLFetcher}
+          schema={introspection}
+          {...graphiqlProps}
+        />
+      </div>
     </>
   )
 }
