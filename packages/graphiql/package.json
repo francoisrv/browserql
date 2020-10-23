@@ -1,6 +1,6 @@
 {
   "name": "@browserql/graphiql",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "ISC",
@@ -20,17 +20,17 @@
   "scripts": {
     "build": "rm -rf dist && yarn tsc",
     "watch": "yarn build -w",
-    "test": "jest dist",
+    "test": "echo jest dist",
     "prepublishOnly": "git tag | xargs git tag -d && yarn build && yarn test"
   },
   "dependencies": {
     "@browserql/react": "^2.31.0",
     "@browserql/schema": "^1.22.0",
-    "@browserql/types": "^1.2.0",
     "graphiql": "^1.0.6",
     "typescript": "^4.0.3"
   },
   "devDependencies": {
+    "@types/codemirror": "^0.0.98",
     "@types/jest": "^26.0.15",
     "@types/node": "^14.14.2",
     "jest": "^26.6.1"
