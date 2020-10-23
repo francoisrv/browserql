@@ -1,7 +1,6 @@
-import { DefinitionNode, DocumentNode } from 'graphql'
+import { print, DefinitionNode, DocumentNode } from 'graphql'
 import gql from 'graphql-tag'
 import { findIndex } from 'lodash'
-import { DefinitionInfo } from 'typescript'
 import { getName } from '..'
 
 export default function extend(
