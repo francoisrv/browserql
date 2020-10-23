@@ -1,5 +1,4 @@
 import { BrowserqlContext } from '@browserql/react'
-import type { BrowserqlClient } from '@browserql/types'
 import enhanceSchema from '@browserql/schema'
 import NativeGraphiQL from 'graphiql'
 import { FetcherParams } from 'graphiql/dist/components/GraphiQL'
@@ -28,18 +27,29 @@ export default function GraphiQL() {
       // @ts-ignore
       schema: buildSchema(print(ctx.schema)),
     })
+    // @ts-ignore
     return buildClientSchema(data)
   }
 
   async function graphQLFetcher(graphQLParams: FetcherParams) {
-    return await ctx.apollo.query({
-      query: gql(query),
-    })
+    if ('query' in graphQLParams) {
+      const { query } = graphQLParams
+      if (/^query/.test(query)) {
+        return await ctx.apollo.query({
+          query: gql(query),
+        })
+      } else if (/^mutation/.test(query)) {
+        return await ctx.apollo.mutate({
+          mutation: gql(query),
+        })
+      }
+    }
   }
 
   if (!introspection) {
     setTimeout(async () => {
       const x = await makeSchema()
+      // @ts-ignore
       setIntrospection(x)
     })
     return <div />
@@ -72,7 +82,11 @@ export default function GraphiQL() {
             boxShadow: '0 0 5px 5px rgba(0, 0, 0, 0.3)',
           }}
         >
-          <NativeGraphiQL fetcher={graphQLFetcher} schema={introspection} />
+          <NativeGraphiQL
+            // @ts-ignore
+            fetcher={graphQLFetcher}
+            schema={introspection}
+          />
         </div>
       )}
     </>

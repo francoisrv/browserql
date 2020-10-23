@@ -560,31 +560,6 @@
     graphql "^14.0.0"
     graphql-tag "^2.11.0"
 
-"@browserql/contracts@^1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@browserql/contracts/-/contracts-1.9.0.tgz#a7dc1a3e89263caf9976fe637ae38ead8bbce82e"
-  integrity sha512-EPcSLO+rq1jeamygArOIhGaPvEH1Q3Qi9Y9ounCyHKTvXAsIk3gk1ofYUsuTOTV9IVUs/h4Em9wnL8xszQ0wlw==
-  dependencies:
-    "@browserql/fragments" "^1.8.0"
-    "@browserql/schema" "^1.18.0"
-    graphql "^15.3.0"
-    graphql-tag "^2.11.0"
-    typescript "^4.0.3"
-
-"@browserql/react@^2.31.0":
-  version "2.31.0"
-  resolved "https://registry.yarnpkg.com/@browserql/react/-/react-2.31.0.tgz#f6b2c21bb93526b785d641dc32da519ae3e46e28"
-  integrity sha512-6EgCgXUSHemIUyzl4fykJu+V2ckY2egNw3ltSl7C//f1tXRWeBk+Lt9K2DuRqVCrgkWo/mSk2ZmFFVbmQbC3dg==
-  dependencies:
-    "@apollo/client" "^3.2.2"
-    "@browserql/client" "^3.22.0"
-    "@browserql/contracts" "^1.9.0"
-    "@browserql/fragments" "^1.8.0"
-    "@browserql/types" "^1.1.0"
-    "@types/react" "^16.9.51"
-    react "^16.13.1"
-    typescript "^4.0.3"
-
 "@browserql/schemax@^1.10.5":
   version "1.14.0"
   resolved "https://registry.yarnpkg.com/@browserql/schemax/-/schemax-1.14.0.tgz#a5e002ae568af1240801f512395b6e1f9f2cab00"
@@ -593,13 +568,6 @@
     graphql "^15.3.0"
     graphql-tag "^2.11.0"
     lodash.find "^4.6.0"
-    typescript "^4.0.3"
-
-"@browserql/types@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@browserql/types/-/types-1.2.0.tgz#ed37602cba249cfe4fb491158975eb1ae1231cd3"
-  integrity sha512-WbWfvrMbdjU/KHbUAW/wk/aML0KjAFi8mj0JvBKryxz2TYPqTkuFbWTAUs3dYh557CWttnc7z1/JTKEJUiUFjQ==
-  dependencies:
     typescript "^4.0.3"
 
 "@cnakazawa/watch@^1.0.3":
@@ -2734,6 +2702,18 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
+"@types/codemirror@^0.0.98":
+  version "0.0.98"
+  resolved "https://registry.yarnpkg.com/@types/codemirror/-/codemirror-0.0.98.tgz#b35c7a4ab1fc1684b08a4e3eb65240020556ebfb"
+  integrity sha512-cbty5LPayy2vNSeuUdjNA9tggG+go5vAxmnLDRWpiZI5a+RDBi9dlozy4/jW/7P/gletbBWbQREEa7A81YxstA==
+  dependencies:
+    "@types/tern" "*"
+
+"@types/estree@*":
+  version "0.0.45"
+  resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.45.tgz#e9387572998e5ecdac221950dab3e8c3b16af884"
+  integrity sha512-jnqIUKDUqJbDIUxm0Uj7bnlMnRm1T/eZ9N+AVMqhPgzrba2GhGG5o/jCTwmdPK709nEZsGoMzXEDUjcXHa3W0g==
+
 "@types/glob@^7.1.1":
   version "7.1.3"
   resolved "https://registry.yarnpkg.com/@types/glob/-/glob-7.1.3.tgz#e6ba80f36b7daad2c685acd9266382e68985c183"
@@ -2906,6 +2886,13 @@
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.0.tgz#7036640b4e21cc2f259ae826ce843d277dad8cff"
   integrity sha512-RJJrrySY7A8havqpGObOB4W92QXKJo63/jFLLgpvOtsGUqbQZ9Sbgl35KMm1DjC6j7AvmmU2bIno+3IyEaemaw==
+
+"@types/tern@*":
+  version "0.23.3"
+  resolved "https://registry.yarnpkg.com/@types/tern/-/tern-0.23.3.tgz#4b54538f04a88c9ff79de1f6f94f575a7f339460"
+  integrity sha512-imDtS4TAoTcXk0g7u4kkWqedB3E4qpjXzCpD2LU5M5NAXHzCDsypyvXSaG7mM8DKYkCRa7tFp4tS/lp/Wo7Q3w==
+  dependencies:
+    "@types/estree" "*"
 
 "@types/testing-library__jest-dom@^5.9.1", "@types/testing-library__jest-dom@^5.9.4":
   version "5.9.4"

@@ -1,4 +1,8 @@
-import type { Schemaql, SchemaqlFactory } from '@browserql/types'
+import type {
+  BrowserqlClient,
+  Schemaql,
+  SchemaqlFactory,
+} from '@browserql/types'
 import type { DocumentNode } from 'graphql'
 
 import {
@@ -20,7 +24,10 @@ interface Props {
   scalars?: Schemaql['scalars']
 }
 
-export const BrowserqlContext = React.createContext<Schemaql>({})
+export const BrowserqlContext = React.createContext<BrowserqlClient>(
+  // @ts-ignore
+  {}
+)
 
 export function BrowserqlProvider(props: React.PropsWithChildren<Props>) {
   let { client } = props
