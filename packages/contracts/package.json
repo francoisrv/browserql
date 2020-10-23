@@ -1,6 +1,6 @@
 {
   "name": "@browserql/contracts",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "ISC",
@@ -24,7 +24,7 @@
     "prepublishOnly": "yarn build && yarn test"
   },
   "dependencies": {
-    "@browserql/fragments": "^1.6.0",
+    "@browserql/fragments": "^1.8.0",
     "@browserql/schema": "^1.18.0",
     "graphql": "^15.3.0",
     "graphql-tag": "^2.11.0",

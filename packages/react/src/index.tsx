@@ -71,7 +71,7 @@ type BrowserqlQueryProps<D = any> = {
   ) => React.ReactNode
   dontRenderLoading?: boolean
   dontRenderError?: boolean
-  queryProps: Parameters<typeof useQuery>[1]
+  queryProps?: Parameters<typeof useQuery>[1]
 }
 
 export function BrowserqlQuery<D = any>(props: BrowserqlQueryProps<D>) {
@@ -148,7 +148,7 @@ interface BrowserqlMutationProps<D = any> {
       called: number
     }
   ) => ReactNode
-  mutationProps: Parameters<typeof useMutation>[1]
+  mutationProps?: Parameters<typeof useMutation>[1]
 }
 
 export function BrowserqlMutation<D = any>(props: BrowserqlMutationProps<D>) {
@@ -171,11 +171,11 @@ export function BrowserqlMutation<D = any>(props: BrowserqlMutationProps<D>) {
       setCalled(called + 1)
       const data = await mutation({ variables: args[0] })
       if (data.data) {
-        const [key] = Object.keys(data.data)
-        return { ...data.data[key as keyof typeof data.data] }
+        const [key] = Object.keys(data.data as object)
+        return { ...(data.data as any)[key as keyof typeof data.data] }
       }
       return data
     },
-    { loading, error, data, called }
+    { loading, error, data: data as D, called }
   )
 }
