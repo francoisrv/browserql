@@ -152,7 +152,10 @@ interface BrowserqlMutationProps<D = any> {
 }
 
 export function BrowserqlMutation<D = any>(props: BrowserqlMutationProps<D>) {
-  const [mutation, { loading, error, data }] = useMutation(props.mutation, props.mutationProps)
+  const [mutation, { loading, error, data }] = useMutation(
+    props.mutation,
+    props.mutationProps
+  )
   const [called, setCalled] = useState(0)
   if (error && props.renderError) {
     if (typeof props.renderError === 'function') {
