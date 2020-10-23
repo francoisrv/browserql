@@ -24,10 +24,12 @@ function makeFragment(
     fragment += `\n  ${getName(field)}`;
     const { type: fieldKind } = parseKind(getKind(field));
     const fieldType = schema.getType(fieldKind);
-    if (fieldType && !(fieldKind in fragments)) {
+    if (fieldType) {
       dependencies.push(fieldKind);
-      makeFragment(fieldType, fragments, schema);
-      fragment += ` {\n    ...${fieldKind}Fragment \n  }`;
+      if (!(fieldKind in fragments)) {
+        makeFragment(fieldType, fragments, schema);
+        fragment += ` {\n    ...${fieldKind}Fragment \n  }`;
+      }
     }
   }
   fragment += '\n}';

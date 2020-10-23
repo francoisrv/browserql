@@ -1,5 +1,13 @@
 import buildFragments from '.';
 
+function toMacthLines(a: string, b: string) {
+  const as = a.split('\n')
+  const bs = b.split('\n')
+  as.forEach((aa, index) => {
+    expect(aa.trim()).toEqual(bs[index].trim());
+  })
+}
+
 const schema = `
 type Category {
   id: ID!
@@ -81,7 +89,166 @@ fragment UserFragment on User {
   );
 });
 
-test.only('bug 44', () => {
+test('bug 233', () => {
+  const fragments = buildFragments(`
+  type Query {
+    browserqlQuery: ID
+    getCustomerOrderHistory(customer: String!): OrderHistoryResponse! @lambda
+    getCustomerQueue(customer: String!): QueueResponse! @lambda
+    getReferrals(customer: String!): ReferralsResponse! @lambda
+    getShopCustomers(shopName: String!): CustomersResponse! @lambda
+    shopify(create: Boolean, ids: [BigInt], limit: Int, product: BigInt, productId: BigInt, productVariant: BigInt, productVariants: Boolean, products: Boolean, shopName: String!): JSON @lambda
+  }
+  
+  type Mutation {
+    browserqlMutation: ID
+    addItemToQueue(cid: String!, planId: String!, shopifyProductId: Int!, shopifyProductVariantId: Int!): QueueResponse! @lambda
+    fulfillOrder(customer: String!, shopifyProductVariantId: BigInt!): [Order!]! @lambda(method: POST)
+  }
+  
+  type QueueResponse {
+    queue: [Order!]!
+  }
+  
+  type OrderHistoryResponse {
+    orderHistory: [Order!]!
+  }
+  
+  type ShippingAddress {
+    city: String
+    state: String
+    streetAddress: String
+    zipCode: String
+  }
+  
+  type SubscriptionItemPriceRecurring {
+    interval: String
+    interval_count: Int
+    trial_period_days: Int
+  }
+  
+  type SubscriptionItemPrice {
+    active: Boolean
+    created: Int
+    currency: String
+    id: String
+    livemode: Boolean
+    nickname: String
+    product: String
+    recurring: SubscriptionItemPriceRecurring
+    unit_amount: Int
+  }
+  
+  type SubscriptionItem {
+    id: String
+    created: Int
+    price: SubscriptionItemPrice
+    quantity: Int
+    subscription: String
+  }
+  
+  type SubscriptionItemData {
+    data: [SubscriptionItem]
+  }
+  
+  type Subscription {
+    billing_cycle_anchor: Int
+    cancel_at: Int
+    cancel_at_period_end: Boolean @default(value: false)
+    canceled_at: Int
+    created: Int
+    current_period_end: Int
+    current_period_start: Int
+    customer: ID
+    id: ID
+    items: SubscriptionItemData @default(value: [])
+    start_date: Int
+    status: ID
+  }
+  
+  type Customer {
+    acceptsMarketing: Boolean
+    cid: String!
+    email: String
+    firstName: String
+    lastUpdated: Int
+    shippingAddress: ShippingAddress
+    shopName: String!
+    sid: String @deprecated
+    stripeId: String!
+    subscriptions: [Subscription] @default(value: [])
+    totalOrders: Int @default(value: 0)
+    totalSpent: Int @default(value: 0)
+  }
+  
+  type Order {
+    cid: String!
+    dateCreated: Date @default(function: "now")
+    dateFulfilled: Date
+    fulfilled: Boolean @default(value: false)
+    planId: String!
+    rank: Int
+    shopifyOrderId: BigInt
+    shopifyProductId: BigInt!
+    shopifyProductVariantId: BigInt!
+  }
+  
+  type Referral {
+    referrer: String!
+    referred: String!
+  }
+  
+  type ReferralsResponse {
+    referrals: [Referral!]!
+  }
+  
+  type CustomersResponse {
+    customers: [Customer!]!
+  }
+  
+  scalar JSON
+  
+  scalar Date
+  
+  scalar BigInt
+  
+  directive @default(function: String, value: JSON) on FIELD_DEFINITION
+  
+  directive @extends(type: String!) on OBJECT
+  
+  enum LambdaMethod {
+    GET
+    POST
+    PUT
+    DELETE
+  }
+  
+  directive @lambda(method: LambdaMethod) on FIELD_DEFINITION
+  
+  schema {
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
+  }
+  `)
+  toMacthLines(fragments.get('QueueResponse') as string, `fragment QueueResponseFragment on QueueResponse {
+    queue
+  }
+  fragment OrderFragment on Order {
+    cid
+    dateCreated
+    dateFulfilled
+    fulfilled
+    planId
+    rank
+    shopifyOrderId
+    shopifyProductId
+    shopifyProductVariantId
+  }
+`)
+})
+
+test('bug 44', () => {
   const fragments = buildFragments(`
   type Query {
     browserqlQuery: ID
