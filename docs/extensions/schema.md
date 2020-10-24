@@ -1,168 +1,51 @@
-# Schema
+# FPQL
 
-API on top of GraphQL for easier access
+Functional Programming wrapper around GraphQL
 
 ## Usage
 
 ```js
-import enhanceSchema from '@browserql/schema'
+import fp from '@browserql/fp'
+import { getDirective, getQuery, getDirectiveValues } from '@browserql/fpql'
 
-const schema = enhanceSchema(gql`
-  type Todo {
-    name: String!
-  }
+const schema = `
+  directive @options on FIELD_DEFINITIONS
   type Query {
-    getTodo: Todo
+    hello: String ! @options(greetings: "Hi")
   }
-`)
+`
 
-const queries = schema.getQueries()
-```
-
-## Static API
-
-### getKind
-
-Return a kind as a string
-
-```js
-import enhanceSchema, { getKind } from '@browserql/schema'
-
-const schema = enhanceSchema(gql`
-  type Todo {
-    name: String!
-  }
-  type Query {
-    getTodo: Todo!
-  }
-`)
-
-const getTodo = schema.getQueryByName('getTodo')
-console.log(getKind(getTodo)) // Todo!
-```
-
-### getName
-
-Return the name of a GraphQL definition node
-
-```js
-import enhanceSchema, { getName } from '@browserql/schema'
-
-const schema = enhanceSchema(gql`
-  type Todo {
-    name: String!
-  }
-  type Query {
-    getTodo: Todo
-  }
-`)
-
-const queries = schema.getQueries()
-
-queries.find((query) => getName(query) === 'getTodo')
-```
-
-### hasDirective
-
-Check if a definition has a given directive
-
-```js
-import enhanceSchema, { hasDirective } from '@browserql/schema'
-
-const schema = enhanceSchema(gql`
-  directive @foo on FIELD_DEFINITION
-
-  type Query {
-    getTodo: Todo @foo
-  }
-`)
-
-const queries = schema.getQueries()
-
-const getTodo = queries.find((query) => hasDirective(query, 'foo'))
-```
-
-### parseKind
-
-Return kind's info
-
-```js
-import enhanceSchema, { getKind, parseKind } from '@browserql/schema'
-
-const schema = enhanceSchema(gql`
-  type Todo {
-    name: String!
-  }
-  type Query {
-    getTodo: [Todo!]!
-  }
-`)
-
-const getTodo = schema.getQueryByName('getTodo')
-const kind = getKind(getTodo) // [Todo!]!
-console.log(parseKind(kind))
-
-// {
-//   type: 'Todo',
-//   depth: 1,
-//   required: true,
-//   nestedRequired: [true]
-// }
+fp(schema)(getQuery('hello'), getDirective('options'), getValues) // { greetings: 'Hi' }
 ```
 
 ## API
 
-### extend
+### getArgument
 
-Extend a schema
+Return argument
 
 ```js
-const schema1 = gql`
-  type Todo {
-    id: ID!
-    name: String!
-  }
-
+const schema = `
   type Query {
-    getTodo: Todo
+    foo(bar: Int, barz: Int): Int
   }
 `
 
-const schema2 = gql`
-  type Customer {
-    id: ID!
-    name: String!
-  }
-
-  type Query {
-    getCustomer: Customer
-  }
-`
-
-const schema = enhanceSchema(schema1)
-
-schema.extend(schema2)
-
-schema.getQuery('getCustomer')
+fp(schema)(getQuery('foo'), getArgument('bar')) // Arg bar
 ```
-
-### get
-
-Returns the document node
 
 ### getArguments
 
 Return array of arguments
 
 ```js
-const schema = enhanceSchema(gql`
+const schema = `
   type Query {
     foo(bar: Int, barz: Int): Int
   }
-`)
+`
 
-const foo = schema.getQueryByName('foo')
-schema.getArguments(foo) // [bar, barz]
+fp(schema)(getQuery('foo'), getArguments) // [Arg bar, Arg barz]
 ```
 
 ### getByName
@@ -170,7 +53,7 @@ schema.getArguments(foo) // [bar, barz]
 Get a definition by name
 
 ```js
-const schema = enhanceSchema(gql`
+const schema = `
   type A {
     id: ID
   }
@@ -186,9 +69,45 @@ const schema = enhanceSchema(gql`
   type Query {
     a: A
   }
-`)
+`
 
-schema.getByName('C')
+getByName('C')(schema)
+```
+
+### getDirective
+
+### getDirectives
+
+### getKind
+
+Return a kind as a string
+
+```js
+const schema = `
+  type Todo {
+    name: String!
+  }
+  type Query {
+    getTodo: Todo!
+  }
+`
+
+fp(schema)(getType('Todo'), getField('name'), getKind) // "String!"
+
+fp(schema)(getQuery('getTodo'), getKind) // "Todo!"
+```
+
+### getName
+
+Return the name of a GraphQL definition node
+
+```js
+const schema = `
+  type Todo {
+    name: String!
+  }
+`
+fp(schema)(getQuery('Todo'), getFields, first, getName)
 ```
 
 ### getQueries
@@ -207,41 +126,13 @@ const schema = enhanceSchema(gql`
   }
 `)
 
-const queries = schema.getQueries() // foo, bar, barz, lambda
-```
+const queries = getQueries()(schema) // foo, bar, barz, lambda
 
-You can exclude extended queries like this:
+// Do not include extended queries
+getQueries({ includeExtended: false }) // foo, bar, barz
 
-```js
-const schema = enhanceSchema(gql`
-  type Query {
-    foo: String
-    bar: Int
-    barz: [Boolean]
-  }
-  extend type Query {
-    lambda: Float
-  }
-`)
-
-const queries = schema.getQueries({ includeExtended: false }) // foo, bar, barz
-```
-
-Only get extended queries
-
-```js
-const schema = enhanceSchema(gql`
-  type Query {
-    foo: String
-    bar: Int
-    barz: [Boolean]
-  }
-  extend type Query {
-    lambda: Float
-  }
-`)
-
-const queries = schema.getQueries({ extendedOnly: true }) // lambda
+// Return only extended queries
+getQueries({ extendedOnly: true }) // lambda
 ```
 
 ### getQuery
@@ -258,8 +149,7 @@ const schema = enhanceSchema(gql`
   }
 `)
 
-const getTodo = schema.getQuery('getTodo')
-console.log(getKind(getTodo)) // Todo
+getQuery('getTodo')(schema)
 ```
 
 ### getMutations
@@ -381,12 +271,60 @@ const schema = enhanceSchema(gql`
 const types = schema.getTypes() // [A, B]
 ```
 
-### print
+### getValues
 
-Print schema
+### merge
+
+Merge different schemas
 
 ```js
-const schema = enhanceSchema('type Query { hello: String }')
-schema.extend('type Query { bye: String }')
-schema.print()
+const schema1 = gql`
+  type Todo {
+    id: ID!
+    name: String!
+  }
+
+  type Query {
+    getTodo: Todo
+  }
+`
+
+const schema2 = gql`
+  type Customer {
+    id: ID!
+    name: String!
+  }
+
+  type Query {
+    getCustomer: Customer
+  }
+`
+
+fp(merge(schema1, schema2))(getQuery('getCustomer'))
+```
+
+### parseKind
+
+Return kind's info
+
+```js
+const schema = `
+  type Todo {
+    name: String!
+  }
+  type Query {
+    getTodo: [Todo!]!
+  }
+`
+
+const getTodo = getQuery('getTodo')(schema)
+const kind = getKind(getTodo) // [Todo!]!
+parseKind(kind)
+
+// {
+//   type: 'Todo',
+//   depth: 1,
+//   required: true,
+//   nestedRequired: [true]
+// }
 ```

@@ -5,6 +5,7 @@
 - Utilities
 
   - [Contracts](extensions/contracts)
+  - [FP](extensions/fp)
   - [Fragments](extensions/fragments)
   - [Resolved](extensions/resolved)
   - [Schema](extensions/schema)
