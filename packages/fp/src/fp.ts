@@ -1,27 +1,24 @@
 type FP = (input: any) => any
 type FPE = (error: Error, input: any) => any
 
-type LP<A extends FP[]> = ReturnType<A[-1]>
-
-export default function fp(value?: any): (
-  (...fns: Array<FP|[FP, FPE]>) => any
-) {
-  return function(...fns) {
-    let io = value
-    fns.forEach(fn => {
+export default function fp<D = any, V = any>(value?: V): (F1: ((v: V) => any) | [(v: V) => any, FPE], ...F: (FP|[FP, FPE])[]) => D {
+  // @ts-ignore
+  return (...fns) => fns.reduce(
+    (io, fn) => {
       if (typeof fn === 'function') {
-        io = fn(io)
-      } else if (Array.isArray(fn)) {
-        const [fn1, catcher] = fn
-        try {
-          io = fn1(io)
-        } catch (error) {
-          io = catcher(error, io)
-        }
+        // @ts-ignore
+        return fn(io)
       }
-    })
-    return io
-  }
+      const [tryer, catcher] = fn
+      try {
+        // @ts-ignore
+        return tryer(io)
+      } catch (error) {
+        return catcher(error, io)
+      }
+    },
+    value
+  ) as D
 }
 
 fp.promise = (value?: any) => {

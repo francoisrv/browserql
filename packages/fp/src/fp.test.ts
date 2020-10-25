@@ -1,7 +1,7 @@
 import fp from './fp'
 
 test('it should work', () => {
-  const res = fp('HELLO WORLD')(
+  const res = fp<[string, string]>('HELLO WORLD')(
     (string) => string.toLowerCase(),
     (string) => string.split(' '),
     (strings: string[]) => strings.map((word) => `(${word})`)
