@@ -1,6 +1,7 @@
 import { DocumentNode, FieldDefinitionNode, ObjectTypeDefinitionNode, ObjectTypeExtensionNode } from 'graphql'
 import getName from './getName'
 import getTypes from './getTypes'
+import getFields from './getFields'
 import toDocument from './toDocument'
 
 interface Options {
@@ -34,7 +35,7 @@ export default function getType(
         fields: matches.reduce<FieldDefinitionNode[]>(
           (all, match) => [
             ...all,
-            ...match.fields,
+            ...getFields(match),
           ],
           []
         ),

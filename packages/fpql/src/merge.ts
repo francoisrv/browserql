@@ -28,7 +28,7 @@ export default function merge(...args: Mergeable[]) {
         return def
       })
     }))
-    .map(document => print(document))
+    .map(document => print(document as DocumentNode))
   const source = documents.join('\n')
   // console.log(source)
   const document = gql(source)

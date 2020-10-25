@@ -1,6 +1,6 @@
-import { FieldDefinitionNode } from 'graphql';
+import { DirectiveNode, FieldDefinitionNode } from 'graphql';
 
-export default function getArguments(query: FieldDefinitionNode) {
+export default function getArguments(query: FieldDefinitionNode | DirectiveNode) {
   const { arguments: args = [] } = query;
   return args;
 }

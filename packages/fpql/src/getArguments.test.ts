@@ -3,12 +3,12 @@ import gql from 'graphql-tag'
 
 import getType from './getType'
 import getField from './getField'
-import getArgument from './getArgument'
+import getArguments from './getArguments'
 import getName from './getName'
 import getQuery from './getQuery'
 
-test('it should get field argument', () => {
-  const arg = fp(
+test('it should get field arguments', () => {
+  const args = fp(
     gql`
       type Foo {
         bar(lambda: ID): Boolean
@@ -17,14 +17,15 @@ test('it should get field argument', () => {
   )(
     getType('Foo'),
     getField('bar'),
-    getArgument('lambda')
+    getArguments,
   )
 
-  expect(getName(arg)).toEqual('lambda')
+  expect(args).toHaveLength(1)
+  expect(getName(args[0])).toEqual('lambda')
 })
 
 test('it should get query argument', () => {
-  const arg = fp(
+  const args = fp(
     gql`
       type Query {
         bar(lambda: ID): Boolean
@@ -32,8 +33,9 @@ test('it should get query argument', () => {
     `
   )(
     getQuery('bar'),
-    getArgument('lambda')
+    getArguments
   )
 
-  expect(getName(arg)).toEqual('lambda')
+  expect(args).toHaveLength(1)
+  expect(getName(args[0])).toEqual('lambda')
 })
