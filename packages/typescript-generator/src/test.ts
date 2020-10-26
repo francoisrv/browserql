@@ -37,6 +37,11 @@ test('it should write typescript', () => {
     input MyInput {
       id: ID
     }
+
+    enum Cool {
+      up
+      down
+    }
   `
   console.log(generatets(schema))
 })

@@ -2,7 +2,7 @@ import { TSGeneratorOptions } from './types'
 
 export default function generateTSDeclaration(
   name: string,
-  type: 'interface',
+  type: 'interface' | 'enum',
   options: TSGeneratorOptions
 ) {
   return `${options.useExport ? 'export ' : ''}${

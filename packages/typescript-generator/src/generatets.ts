@@ -1,10 +1,17 @@
 import type { DocumentNode } from 'graphql'
-import { getInputs, getMutations, getQueries, getTypes } from '@browserql/fpql'
+import {
+  getInputs,
+  getMutations,
+  getQueries,
+  getTypes,
+  getEnumerations,
+} from '@browserql/fpql'
 
 import { TSGeneratorOptions } from './types'
 import generateType from './generateType'
 import generateTSDeclaration from './generateTSDeclaration'
 import generateField from './generateField'
+import generateEnumeration from './generateEnumeration'
 
 export default function generatets(
   schema: DocumentNode,
@@ -18,9 +25,13 @@ export default function generatets(
   const inputs = getInputs(schema)
     .map((type) => generateType(type, schema, options))
     .join('\n')
+  const enums = getEnumerations(schema).map((enumeration) =>
+    generateEnumeration(enumeration, options)
+  )
   return [
     types,
     inputs,
+    enums,
     queries.length > 0 &&
       `
 ${generateTSDeclaration('Query', 'interface', options)} {
@@ -35,5 +46,5 @@ ${mutations.map(generateField(schema, options)).join('\n')}
 `,
   ]
     .filter(Boolean)
-    .join('\n')
+    .join('\n\n')
 }

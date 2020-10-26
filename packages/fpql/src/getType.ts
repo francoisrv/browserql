@@ -1,4 +1,9 @@
-import { DocumentNode, FieldDefinitionNode, ObjectTypeDefinitionNode, ObjectTypeExtensionNode } from 'graphql'
+import {
+  DocumentNode,
+  FieldDefinitionNode,
+  ObjectTypeDefinitionNode,
+  ObjectTypeExtensionNode,
+} from 'graphql'
 import getName from './getName'
 import getTypes from './getTypes'
 import getFields from './getFields'
@@ -8,19 +13,17 @@ interface Options {
   includesExtended?: boolean
 }
 
-export default function getType(
-  name: string,
-  options: Options = {}
-) {
-  return (doc: DocumentNode | string): ObjectTypeDefinitionNode | ObjectTypeExtensionNode | undefined => {
+export default function getType(name: string, options: Options = {}) {
+  return (
+    doc: DocumentNode | string
+  ): ObjectTypeDefinitionNode | ObjectTypeExtensionNode | undefined => {
     const document = toDocument(doc)
     const types = getTypes(document)
     const matches = types.filter(
       (type): type is ObjectTypeDefinitionNode =>
-        getName(type) === name && (
-          type.kind === 'ObjectTypeDefinition' ||
-          type.kind === 'ObjectTypeExtension'
-        )
+        getName(type) === name &&
+        (type.kind === 'ObjectTypeDefinition' ||
+          type.kind === 'ObjectTypeExtension')
     )
     if (!matches.length) {
       return undefined
@@ -32,11 +35,10 @@ export default function getType(
     if (includesExtended) {
       return {
         ...matches[0],
-        fields: matches.reduce<FieldDefinitionNode[]>(
-          (all, match) => [
-            ...all,
-            ...getFields(match),
-          ],
+        // @ts-ignore
+        fields: matches.reduce(
+          // @ts-ignore
+          (all, match) => [...all, ...getFields(match)],
           []
         ),
       }
