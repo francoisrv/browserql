@@ -1,5 +1,5 @@
 import type { DocumentNode } from 'graphql'
-import { getMutations, getQueries, getTypes } from '@browserql/fpql'
+import { getInputs, getMutations, getQueries, getTypes } from '@browserql/fpql'
 
 import { TSGeneratorOptions } from './types'
 import generateType from './generateType'
@@ -15,8 +15,12 @@ export default function generatets(
     .join('\n')
   const queries = getQueries(schema)
   const mutations = getMutations(schema)
+  const inputs = getInputs(schema)
+    .map((type) => generateType(type, schema, options))
+    .join('\n')
   return [
     types,
+    inputs,
     queries.length > 0 &&
       `
 ${generateTSDeclaration('Query', 'interface', options)} {

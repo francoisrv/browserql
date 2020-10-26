@@ -1,7 +1,14 @@
-import { ObjectTypeDefinitionNode, ObjectTypeExtensionNode } from 'graphql'
+import {
+  ObjectTypeDefinitionNode,
+  ObjectTypeExtensionNode,
+  InputObjectTypeDefinitionNode,
+} from 'graphql'
 
 export default function getFields(
-  type: ObjectTypeDefinitionNode | ObjectTypeExtensionNode
+  type:
+    | ObjectTypeDefinitionNode
+    | ObjectTypeExtensionNode
+    | InputObjectTypeDefinitionNode
 ) {
   const { fields = [] } = type
   return fields

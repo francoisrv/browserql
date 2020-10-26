@@ -33,6 +33,10 @@ test('it should write typescript', () => {
       foo: ID!
       bar(g: String, f: [Int]!): Foo
     }
+
+    input MyInput {
+      id: ID
+    }
   `
   console.log(generatets(schema))
 })
