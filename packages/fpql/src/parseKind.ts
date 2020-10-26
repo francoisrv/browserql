@@ -1,4 +1,4 @@
-import { GraphQLType, parse, parseType, TypeNode } from 'graphql';
+import { parseType, TypeNode } from 'graphql';
 import getName from './getName';
 
 interface LoopResult {

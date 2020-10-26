@@ -1,20 +1,24 @@
-import { ArgumentNode, DirectiveNode, ObjectFieldNode } from 'graphql'
+import { ArgumentNode, DirectiveNode, ObjectFieldNode, VariableNode } from 'graphql'
 
 import getArguments from './getArguments'
 import getName from './getName'
 
-function getValue(arg: ArgumentNode | ObjectFieldNode): any {
-  if ('value' in arg.value) {
-    return arg.value.value
+function getValue(arg: ArgumentNode | ObjectFieldNode | VariableNode): any {
+  const x = 'value' in arg ? arg.value : arg
+  if ('value' in x) {
+    return x.value
   }
-  if ('fields' in arg.value) {
-    return arg.value.fields.reduce(
+  if ('fields' in x) {
+    return x.fields.reduce(
       (object, field) => ({
         ...object,
         [getName(field)]: getValue(field)
       }),
       {}
     )
+  }
+  if ('values' in x) {
+    return (x.values as VariableNode[]).map(getValue)
   }
 }
 

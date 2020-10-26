@@ -1,7 +1,7 @@
 type FP = (input: any) => any
 type FPE = (error: Error, input: any) => any
 
-export default function fp<D = any, V = any>(value?: V): (F1: ((v: V) => any) | [(v: V) => any, FPE], ...F: (FP|[FP, FPE])[]) => D {
+export default function fp<D = any, V = any>(value?: V, c?: (e: Error) => D): (F1: ((v: V) => any) | [(v: V) => any, FPE], ...F: (FP|[FP, FPE])[]) => D {
   // @ts-ignore
   return (...fns) => fns.reduce(
     (io, fn) => {

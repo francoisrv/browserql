@@ -11,7 +11,6 @@ import { mergeTypeDefs } from '@graphql-tools/merge'
 import makeCache from './cache'
 import makeSchema from './schema'
 import makeApolloClient from './apollo'
-import enhanceSchema from '@browserql/schema'
 
 export default function connect(...args: Array<Schemaql|SchemaqlFactory>): BrowserqlClient {
   const cache = makeCache()

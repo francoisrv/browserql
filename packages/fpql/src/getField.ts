@@ -1,9 +1,9 @@
-import { ObjectTypeDefinitionNode } from 'graphql';
+import { ObjectTypeDefinitionNode, ObjectTypeExtensionNode } from 'graphql'
 
 import getFields from './getFields'
 import getName from './getName'
 
 export default function getField(name: string) {
-  return (type: ObjectTypeDefinitionNode) => getFields(type)
-    .find(field => getName(field) === name)
+  return (type: ObjectTypeDefinitionNode | ObjectTypeExtensionNode) =>
+    getFields(type).find((field) => getName(field) === name)
 }
