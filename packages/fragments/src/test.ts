@@ -1,10 +1,10 @@
-import buildFragments from '.';
+import buildFragments from '.'
 
 function toMacthLines(a: string, b: string) {
   const as = a.split('\n')
   const bs = b.split('\n')
   as.forEach((aa, index) => {
-    expect(aa.trim()).toEqual(bs[index].trim());
+    expect(aa.trim()).toEqual(bs[index].trim())
   })
 }
 
@@ -36,47 +36,61 @@ type Query {
 type Mutation {
   getPosts: Post
 }
-`;
+`
+
+function verifySource(a: string, b: string) {
+  const A = a.split('\n').filter(Boolean)
+  const B = b.split('\n').filter(Boolean)
+  expect(A).toHaveLength(B.length)
+  A.forEach((l, i) => expect(l.trim()).toEqual(B[i].trim()))
+}
 
 test('[query] it should print fragment', () => {
-  const fragments = buildFragments(schema);
-  const category = fragments.get('Category');
-  expect(category).toEqual(`fragment CategoryFragment on Category {
-  id
-  name
-}`);
-});
+  const fragments = buildFragments(schema)
+  const category = fragments.get('Category')
+  verifySource(
+    category as string,
+    `fragment CategoryFragment on Category {
+    id
+    name
+  }`
+  )
+})
 
 test('[query] it should print nested fragments', () => {
-  const fragments = buildFragments(schema);
-  const todo = fragments.get('Todo');
-  expect(todo?.split('\n')).toEqual(
+  const fragments = buildFragments(schema)
+  const todo = fragments.get('Todo')
+  verifySource(
+    todo as string,
     `fragment TodoFragment on Todo {
-  id
-  name
-  done
-  category {
-    ...CategoryFragment 
-  }
-}
-fragment CategoryFragment on Category {
-  id
-  name
-}`.split('\n')
-  );
-});
+      id
+      name
+      done
+      category {
+        ...CategoryFragment 
+      }
+    }
+    fragment CategoryFragment on Category {
+      id
+      name
+    }`
+  )
+})
 
 test('[mutation] it should print fragment', () => {
-  const fragments = buildFragments(schema);
-  const user = fragments.get('User');
-  expect(user).toEqual(`fragment UserFragment on User {
-  id
-}`);
-});
+  const fragments = buildFragments(schema)
+  const user = fragments.get('User')
+  verifySource(
+    user as string,
+    `fragment UserFragment on User {
+    id
+  }`
+  )
+})
 
 test('[mutation] it should print nested fragments', () => {
-  const fragments = buildFragments(schema);
-  const todo = fragments.get('Post');
+  const fragments = buildFragments(schema)
+  const todo = fragments.get('Post')
   expect(todo?.split('\n')).toEqual(
     `fragment PostFragment on Post {
   users {
@@ -86,8 +100,8 @@ test('[mutation] it should print nested fragments', () => {
 fragment UserFragment on User {
   id
 }`.split('\n')
-  );
-});
+  )
+})
 
 test('bug 233', () => {
   const fragments = buildFragments(`
@@ -231,7 +245,9 @@ test('bug 233', () => {
     subscription: Subscription
   }
   `)
-  toMacthLines(fragments.get('QueueResponse') as string, `fragment QueueResponseFragment on QueueResponse {
+  toMacthLines(
+    fragments.get('QueueResponse') as string,
+    `fragment QueueResponseFragment on QueueResponse {
     queue {
       ...OrderFragment 
     }
@@ -247,7 +263,8 @@ test('bug 233', () => {
     shopifyProductId
     shopifyProductVariantId
   }
-`)
+`
+  )
 })
 
 test('bug 44', () => {
@@ -343,4 +360,4 @@ test('bug 44', () => {
     mutation: Mutation
   }
   `)
-});
+})

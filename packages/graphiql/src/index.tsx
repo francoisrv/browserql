@@ -1,5 +1,4 @@
 import { BrowserqlContext } from '@browserql/react'
-import enhanceSchema from '@browserql/schema'
 import NativeGraphiQL from 'graphiql'
 import type {
   FetcherParams,
@@ -27,7 +26,6 @@ interface Props {
 export default function GraphiQL(props: Props) {
   const { buttonStyle, rootStyle, graphiqlProps } = props
   const ctx = React.useContext(BrowserqlContext)
-  const schema = enhanceSchema(ctx.schema as string)
   const [open, setOpen] = useState(false)
   const [introspection, setIntrospection] = useState()
 

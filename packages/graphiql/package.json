@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@browserql/react": "^2.31.0",
-    "@browserql/schema": "^1.22.0",
     "graphiql": "^1.0.6",
     "react-error-boundary": "^3.0.2",
     "typescript": "^4.0.3"
