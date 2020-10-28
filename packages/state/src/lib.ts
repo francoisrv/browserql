@@ -1,7 +1,7 @@
+import { getKind, getName, ParsedType, parseKind } from '@browserql/fpql'
 import resolve from '@browserql/resolved'
-import { getKind, getName, ParsedType, parseKind } from '@browserql/schema'
 import { BrowserqlClient } from '@browserql/types'
-import type { FieldDefinitionNode } from 'graphql' 
+import type { FieldDefinitionNode } from 'graphql'
 
 export function encapsulate(kind: ParsedType, value: any) {
   if (kind.depth) {
@@ -16,10 +16,14 @@ export function encapsulate(kind: ParsedType, value: any) {
 
 export function getDefault(kind: ParsedType) {
   switch (kind.type) {
-    case 'Int': return encapsulate(kind, 0)
-    case 'Float': return encapsulate(kind, 0)
-    case 'String': return encapsulate(kind, '')
-    case 'Boolean': return encapsulate(kind, false)
+    case 'Int':
+      return encapsulate(kind, 0)
+    case 'Float':
+      return encapsulate(kind, 0)
+    case 'String':
+      return encapsulate(kind, '')
+    case 'Boolean':
+      return encapsulate(kind, false)
   }
 }
 
@@ -41,7 +45,12 @@ export function get(
   }
 }
 
-export function set(client: BrowserqlClient, type: string, field: string, data: any) {
+export function set(
+  client: BrowserqlClient,
+  type: string,
+  field: string,
+  data: any
+) {
   const resolved = resolve(client.schema)
   const name = `state_${type}_${field}_set`
   client.cache.write({
@@ -78,7 +87,7 @@ export function decrement(
 export function toggle(
   client: BrowserqlClient,
   type: string,
-  field: FieldDefinitionNode,
+  field: FieldDefinitionNode
 ) {
   const value = get(client, type, field)
   const nextValue = !value

@@ -4,6 +4,7 @@ import type {
   SchemaqlFactory,
 } from '@browserql/types'
 import type { DocumentNode } from 'graphql'
+import { ErrorBoundary } from 'react-error-boundary'
 
 import {
   ApolloProvider,
@@ -48,12 +49,23 @@ export function BrowserqlProvider(props: React.PropsWithChildren<Props>) {
   }
 
   return (
-    // @ts-ignore
-    <ApolloProvider client={client.apollo}>
-      <BrowserqlContext.Provider value={client}>
-        {props.children}
-      </BrowserqlContext.Provider>
-    </ApolloProvider>
+    <ErrorBoundary
+      FallbackComponent={({ error }) => {
+        return (
+          <div>
+            <h1>BrowerqlProvider Error: {error?.message}</h1>
+            <pre>{error?.stack}</pre>
+            <pre>{JSON.stringify(client, null, 2)}</pre>
+          </div>
+        )
+      }}
+    >
+      <ApolloProvider client={client.apollo}>
+        <BrowserqlContext.Provider value={client}>
+          {props.children}
+        </BrowserqlContext.Provider>
+      </ApolloProvider>
+    </ErrorBoundary>
   )
 }
 

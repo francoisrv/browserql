@@ -13,6 +13,7 @@ import {
   print,
 } from 'graphql'
 import gql from 'graphql-tag'
+import { ErrorBoundary } from 'react-error-boundary'
 
 import 'graphiql/graphiql.min.css'
 import React, { CSSProperties, useState } from 'react'
@@ -93,12 +94,24 @@ export default function GraphiQL(props: Props) {
           ...rootStyle,
         }}
       >
-        <NativeGraphiQL
-          // @ts-ignore
-          fetcher={graphQLFetcher}
-          schema={introspection}
-          {...graphiqlProps}
-        />
+        <ErrorBoundary
+          FallbackComponent={({ error }) => {
+            return (
+              <div>
+                <h1>Error: {error?.message}</h1>
+                <pre>{error?.stack}</pre>
+                <pre>{JSON.stringify(introspection, null, 2)}</pre>
+              </div>
+            )
+          }}
+        >
+          <NativeGraphiQL
+            // @ts-ignore
+            fetcher={graphQLFetcher}
+            schema={introspection}
+            {...graphiqlProps}
+          />
+        </ErrorBoundary>
       </div>
     </>
   )
