@@ -1,53 +1,37 @@
 # Cache
 
-## Abstract
-
-With cache, you deal directly with the apollo cache.
-
-Queries are synchronous getters of the cache.
-
-Mutations can update the cache and run asynchronous side effects.
+Helpers for apollo cache query
 
 ## Usage
 
 ```js
-import gql from 'graphql-tag'
-import connect from '@browserql/client'
-import { connectCache, exposeCache } from '@browserql/cache'
+import connectCache from '@browserql/cache'
 
 const schema = gql`
-  type Todo {
-    name: String!
-  }
-
   type Query {
-    getTodos: [Todo] @cache
-  }
-
-  type Mutation {
-    addTodo(name: String!): void
+    isLoggedIn(user: ID): Boolean!
   }
 `
 
-const mutations = {
-  async addTodo({ name }, { cache }) {
-    cache.push({
-      query: 'getTodo',
-      data: { name },
-    })
-  },
-}
+const client = new ApolloClient({
+  typeDefs: schema,
+})
 
-const client = connect(connectCache({ schema }))
-const cache = exposeCache(client)
+const cached = connectCache(client.cache, schema)
 
-//
+state.get('isLoggedIn', { user: '1234' }) // false
+state.toggle('isLoggedIn', { user: '1234' })
+state.get('isLoggedIn', { user: '1234' }) // true
 
-cache.query.getTodos() // []
+state.set('isLoggedIn', { user: '1234' }, false)
+```
 
-await cache.mutate.addTodo({ name: 'Buy milk' })
+## API
 
-cache.query.getTodos() // [{ name: 'Buy milk' }]
+### get
+
+```js
+state.get('isLoggedIn')
 ```
 
 ## With React
@@ -58,38 +42,32 @@ import { render } from 'react-dom'
 import { BrowserqlProvider } from '@browserql/react'
 import { useCache } from '@browserql/cache-react'
 
-function Todos() {
-  const todos = useCache.query('getTodos')
+function IsUserLoggedIn(props) {
+  const { user } = props
 
   return (
-    <ul>
-      {todos.map((todo) => (
-        <li key={todo.name}>{todo.name}</li>
-      ))}
-    </ul>
-  )
-}
-
-function AddTodo() {
-  const [value, setValue] = React.useState(value)
-  const [addTodo, { loading, error, data }] = useCache.mutate('addTodo')
-
-  const handleSubmit = () => {
-    addTodo({ name: value })
-  }
-
-  return (
-    <>
-      <input value={value} onChange={(e) => setValue(e.target.value)} />
-      <input type="submit" onClick={handleSubmit} disabled={loading} />
-    </>
+    <Cacheql get="isLoggedIn" variables={{ user }}>
+      {(isLoggedIn) => (
+        <>
+          <Cacheql toggle="isLoggedIn">
+            {(toggleIsLoggedIn) => (
+              <input
+                type="checkbox"
+                checked={isLoggedIn}
+                onChange={toggleIsLoggedIn}
+              />
+            )}
+          </Cacheql>
+          <label>Is user {user} logged in?</label>
+        </>
+      )}
+    </Cacheql>
   )
 }
 
 render(
-  <BrowserqlProvider client={client}>
-    <AddTodo />
-    <Todos />
+  <BrowserqlProvider schema={schema}>
+    <IsloggedIn user="1234" />
   </BrowserqlProvider>
 )
 ```

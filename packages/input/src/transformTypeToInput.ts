@@ -1,17 +1,42 @@
-import type { ObjectTypeExtensionNode, FieldDefinitionNode, DocumentNode } from 'graphql'
-import { getFields, getKind, getName, parseKind } from '@browserql/fpql'
+import type {
+  ObjectTypeExtensionNode,
+  FieldDefinitionNode,
+  DocumentNode,
+  ObjectTypeDefinitionNode,
+} from 'graphql'
+import {
+  getFields,
+  getKind,
+  getName,
+  getType,
+  parseKind,
+  printParsedKind,
+} from '@browserql/fpql'
 import gql from 'graphql-tag'
 
-function parseField(field: FieldDefinitionNode) {
-  const { type } = parseKind(getKind(field))
-  const exists = 
+function parseField(field: FieldDefinitionNode, schema: DocumentNode) {
+  const kind = getKind(field)
+  const parsed = parseKind(kind)
+  const exists = getType(parsed.type)(schema)
+  if (exists) {
+    return printParsedKind({ ...parsed, type: parsed.type.concat('Input') })
+  }
+  return kind
 }
 
-export default function transformTypeToInput(type: ObjectTypeExtensionNode) {
+export default function transformTypeToInput(
+  type: ObjectTypeExtensionNode | ObjectTypeDefinitionNode,
+  schema: DocumentNode
+) {
   const fields = getFields(type)
-  return `
-    input ${getName(type)}Input {
-      ${fields.map((field) => `${getName(field)}: ID`).join('\n')}
-    }
-  `
+  return gql`
+input ${getName(type)}Input {
+  ${fields
+    .map(
+      (field) =>
+        `${getName(field)}: ${parseField(field as FieldDefinitionNode, schema)}`
+    )
+    .join('\n  ')}
+}
+`
 }
