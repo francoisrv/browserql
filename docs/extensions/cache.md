@@ -19,11 +19,11 @@ const client = new ApolloClient({
 
 const cached = connectCache(client.cache, schema)
 
-state.get('isLoggedIn', { user: '1234' }) // false
-state.toggle('isLoggedIn', { user: '1234' })
-state.get('isLoggedIn', { user: '1234' }) // true
+const isLoggedIn = cached('isLoggedIn')
 
-state.set('isLoggedIn', { user: '1234' }, false)
+isLoggedIn.get({ user: '1234' }) // false
+isLoggedIn.toggle({ user: '1234' })
+isLoggedIn.get({ user: '1234' }) // true
 ```
 
 ## API

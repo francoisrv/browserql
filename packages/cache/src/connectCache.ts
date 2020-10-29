@@ -38,13 +38,15 @@ export default function connectCache(
     }
     `
     try {
-      return cache.read({
+      const data = cache.readQuery({
         query,
         variables,
       })
+      // @ts-ignore
+      return data[queryName]
     } catch (error) {
-      const query = getQuery(queryName)
-      const kind = parseKind(getKind(query))
+      const query = getQuery(queryName)(schema)
+      const kind = parseKind(getKind(query as FieldDefinitionNode))
       if (kind.required) {
         return getDefault(kind)
       }
@@ -52,11 +54,36 @@ export default function connectCache(
     }
   }
 
-  function set(queryName: string): void
-  function set(queryName: string, variables: any): void
-  function set(queryName: string): void
+  function set(queryName: string, variables: any, data: any) {
+    const source = `
+      query {
+        ${queryName}
+      }
+    `
+    const query = gql(source)
+    cache.writeQuery({
+      query,
+      variables,
+      data: {
+        [queryName]: data,
+      },
+    })
+  }
 
-  return {
-    get,
+  return (entry: string) => {
+    const api = {
+      get(variables?: any) {
+        return get(entry, variables)
+      },
+      set(variablesOrData: any, data?: any) {
+        if (typeof data === 'undefined') {
+          set(entry, {}, variablesOrData)
+        } else {
+          set(entry, variablesOrData, data)
+        }
+      },
+    }
+
+    return api
   }
 }
