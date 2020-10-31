@@ -2,8 +2,8 @@ import { ApolloProvider } from '@apollo/client'
 import connect from '@browserql/client'
 import { Schemaql, SchemaqlFactory } from '@browserql/types'
 import { DocumentNode } from 'graphql'
-import React from 'react'
-import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
+import React, { ReactElement } from 'react'
+import { FallbackProps } from 'react-error-boundary'
 import BrowserqlContext from '../contexts/BrowserqlContext'
 
 interface Props {
@@ -14,13 +14,14 @@ interface Props {
   mutations?: Schemaql['mutations']
   directives?: Schemaql['directives']
   scalars?: Schemaql['scalars']
+  renderError?: ReactElement | ((props: { error: Error }) => ReactElement)
 }
 
 function BrowserqlProviderError(props: FallbackProps) {
   const { error } = props
   return (
     <div>
-      <h1>BrowerqlProvider Error: {error?.message}</h1>
+      <h1>BrowerqlProvider Error</h1>
       <pre>{error?.stack}</pre>
     </div>
   )
@@ -29,7 +30,7 @@ function BrowserqlProviderError(props: FallbackProps) {
 export default function BrowserqlProvider(
   props: React.PropsWithChildren<Props>
 ) {
-  let { client } = props
+  let { client, renderError } = props
   try {
     if (!client) {
       const connectors: Array<Schemaql | SchemaqlFactory> = []
@@ -47,18 +48,22 @@ export default function BrowserqlProvider(
       })
     }
   } catch (error) {
+    if (renderError) {
+      if (typeof renderError === 'function') {
+        return renderError({ error })
+      }
+      return renderError
+    }
     return (
       <BrowserqlProviderError error={error} resetErrorBoundary={() => {}} />
     )
   }
 
   return (
-    <ErrorBoundary FallbackComponent={BrowserqlProviderError}>
-      <ApolloProvider client={client.apollo}>
-        <BrowserqlContext.Provider value={client}>
-          {props.children}
-        </BrowserqlContext.Provider>
-      </ApolloProvider>
-    </ErrorBoundary>
+    <ApolloProvider client={client.apollo}>
+      <BrowserqlContext.Provider value={client}>
+        {props.children}
+      </BrowserqlContext.Provider>
+    </ApolloProvider>
   )
 }
