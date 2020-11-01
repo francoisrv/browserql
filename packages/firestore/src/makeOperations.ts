@@ -1,31 +1,37 @@
-import { getName } from "@browserql/schema";
-import type { ObjectTypeDefinitionNode } from "graphql";
-import gql from "graphql-tag";
-import makeName, { makeNames } from "./makeName";
+import { getName } from '@browserql/fpql'
+import type { ObjectTypeDefinitionNode, ObjectTypeExtensionNode } from 'graphql'
+import gql from 'graphql-tag'
+import makeName, { makeNames } from './makeName'
 
-export default function makeOperations(type: ObjectTypeDefinitionNode) {
+export default function makeOperations(
+  type: ObjectTypeDefinitionNode | ObjectTypeExtensionNode
+) {
   const name = getName(type)
   const names = makeNames(name)
-  
+
   return gql`
     extend type ${name} {
       id: ID!
     }
 
     extend type Query {
-      ${ names.paginate }(
+      ${names.paginate}(
         where: [FirestoreWhere]
         filters: FirestoreFilters
-      ): [ ${ name } ! ] !
+      ): [ ${name} ! ] !
 
-      ${ names.getOne }(
+      ${names.getOne}(
         where: [ FirestoreWhere ]
         filters: FirestoreFilters
-      ): ${ name }
+      ): ${name}
       
-      ${ names.getById }(
+      ${names.getById}(
         id: ID !
-      ): ${ name }
+      ): ${name}
+    }
+
+    extend type Mutation {
+      ${names.addOne}: ${name}
     }
   `
 }

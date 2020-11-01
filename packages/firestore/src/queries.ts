@@ -1,74 +1,11 @@
-import type { BrowserqlContext, BrowserqlClient } from '@browserql/types'
+// import firebase from 'firebase/app'
+// import 'firebase/firestore'
 
-import firebase from 'firebase/app'
-import 'firebase/firestore'
-import { ObjectTypeDefinitionNode } from 'graphql'
-import gql from 'graphql-tag'
-import { isNumber } from 'lodash'
-import buildFragments from '../../fragments/dist'
-
+import { firestore } from 'firebase'
 import type { Query, QueryFilters } from './types'
-import { getCollectionName } from './utils'
+import { getDocuments, makeFirestoreQuery } from './utils/firestore'
 
-const db = firebase.firestore()
-
-const operators = {
-  equals: '=='
-}
-
-function makeQuery(collection: string, where?: Query | Query[], filters?: QueryFilters) {
-
-  let query = db.collection(collection)
-  if (where) {
-    if (Array.isArray(where)) {
-      for (const q of where) {
-        // @ts-ignore
-        query = query.where(q.field, operators[q.operator] || '==', q.value)
-      }
-    } else {
-      // @ts-ignore
-      query = query.where(where.field, operators[where.operator] || '==', where.value)
-    }
-  }
-  if (filters) {
-    if (isNumber(filters.size)) {
-      // @ts-ignore
-      query = query.limit(filters.size as number)
-    }
-    if (filters.orderBy) {
-      // @ts-ignore
-      query = query.orderBy(filters.orderBy, 'asc')
-    }
-  }
-  return query
-}
-
-async function getDocument<A = any>(doc: firebase.firestore.QueryDocumentSnapshot<A>) {
-  const pretty: any = {
-    id: doc.id || 'xxxxxxxxxxxxxxxxxx',
-    ...doc.data()
-  }
-  for (const a in pretty) {
-    if (
-      (pretty[a].constructor.name === 'n' || pretty[a].constructor.name === 'r') && (
-        typeof pretty[a] === 'object' &&
-        pretty[a] !== null &&
-        'get' in pretty[a]
-      )) {
-      const res = await pretty[a].get()
-      pretty[a] = await getDocument(res)
-    }
-  }
-  return pretty
-}
-
-async function getDocuments<A = unknown>(snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) {
-  const docs: A[] = []
-  snapshot.forEach(async doc => {
-    docs.push(await getDocument(doc))
-  })
-  return docs
-}
+// const db = firebase.firestore()
 
 export interface PaginateProps {
   collection: string
@@ -77,31 +14,40 @@ export interface PaginateProps {
 }
 
 export async function paginate<D = unknown>(
+  db: firestore.Firestore,
   props: PaginateProps,
-  onSnapshot?: (documents: D[]) => void,
+  onSnapshot?: (documents: D[]) => void
 ): Promise<D[]> {
-  const query = makeQuery(props.collection, props.where, props.filters)
+  const query = makeFirestoreQuery(
+    props.collection,
+    props.where,
+    props.filters
+  )(db)
 
   if (onSnapshot) {
     let resolved = false
-    return new Promise(resolve => {
-      query.onSnapshot(async snapshot => {
-        const documents = await getDocuments<D>(snapshot);
+    return new Promise((resolve) => {
+      query.onSnapshot(async (snapshot) => {
+        const documents = await getDocuments<D>(snapshot)
         if (!resolved) {
           resolved = true
           resolve(documents)
         } else {
-          onSnapshot(documents);
+          onSnapshot(documents)
         }
       })
     })
   } else {
-    const snapshot = await query.get();
-    return await getDocuments<D>(snapshot);
+    const snapshot = await query.get()
+    return await getDocuments<D>(snapshot)
   }
 }
 
-export async function getOne(collection: string, where?: Query | Query[], filters?: QueryFilters) {
+export async function getOne(
+  collection: string,
+  where?: Query | Query[],
+  filters?: QueryFilters
+) {
   const query = makeQuery(collection, where, filters)
   query.limit(1)
   const querySnapshot = await query.get()
@@ -114,7 +60,7 @@ export async function getOne(collection: string, where?: Query | Query[], filter
   return await getDocument(doc)
 }
 
-export async function getById(collectionName: string, id: string){
+export async function getById(collectionName: string, id: string) {
   const collection = db.collection(collectionName)
   const doc = await collection.doc(id).get()
   return await getDocument(doc)

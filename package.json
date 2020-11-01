@@ -12,7 +12,8 @@
     "W": "yarn workspaces",
     "docsify": "docsify serve ./docs",
     "docsify:update": "cp docs/README.md . && cp docs/ROADMAP.md .",
-    "add:pkg": "bash add-package.sh"
+    "add:pkg": "bash add-package.sh",
+    "storybook": "cd storybook && yarn storybook"
   },
   "dependencies": {
     "husky": "^4.3.0",

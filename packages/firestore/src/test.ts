@@ -2,10 +2,9 @@
 
 import './firebaseConfig'
 
-import connect from "@browserql/client"
-import gql from "graphql-tag"
+import connect from '@browserql/client'
+import gql from 'graphql-tag'
 import resolve from '@browserql/resolved'
-import enhanceSchema from "@browserql/schema"
 import connectFirestore from './connectFirestore'
 
 const schema = gql`
@@ -15,16 +14,13 @@ const schema = gql`
   }
 `
 
-const { client, schema: finalSchema } = connect(
-  connectFirestore({ schema })
-)
+const { client, schema: finalSchema } = connect(connectFirestore({ schema }))
 
 const resolved = resolve<any>(finalSchema)
 
 test('it should have a query resolver for getTest', async () => {
   const response = await client.query(
-    resolved.Query.firestore_paginate_Test({
-    })
+    resolved.Query.firestore_paginate_Test({})
   )
   expect(response.data).toHaveProperty('firestore_paginate_Test')
   console.log(response.data.firestore_paginate_Test)
