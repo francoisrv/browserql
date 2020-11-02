@@ -5,8 +5,9 @@ import gql from 'graphql-tag'
 import { getName } from '@browserql/fpql'
 
 import { makeNames } from './makeName'
-import { getById, getOne, paginate } from './queries'
+import { addOne, getById, getOne, paginate } from './queries'
 import { getCollectionName } from './utils'
+import { firestore } from 'firebase'
 
 /**
  *
@@ -16,7 +17,8 @@ import { getCollectionName } from './utils'
  * queries and mutations for that type
  */
 export default function makeResolvers(
-  type: ObjectTypeDefinitionNode | ObjectTypeExtensionNode
+  type: ObjectTypeDefinitionNode | ObjectTypeExtensionNode,
+  db: firestore.Firestore
 ) {
   const name = getName(type)
   const collection = getCollectionName(type)
@@ -30,6 +32,7 @@ export default function makeResolvers(
       switch (queryName) {
         case 'paginate':
           return await paginate(
+            db,
             {
               collection,
               where: variables.where,
@@ -46,10 +49,18 @@ export default function makeResolvers(
             }
           )
         case 'getOne':
-          return await getOne(collection, variables.where, variables.filters)
+          return await getOne(
+            db,
+            collection,
+            variables.where,
+            variables.filters
+          )
 
         case 'getById':
-          return await getById(collection, variables.id)
+          return await getById(db, collection, variables.id)
+
+        case 'addOne':
+          return await addOne(db, collection, variables.input)
       }
     }
   })

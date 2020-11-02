@@ -23,8 +23,8 @@ export default function connectFirestore(
     const targetTypes = getTypes(theirSchema).filter(getDirective('firestore'))
     const queries: Schemaql['queries'] = {}
     targetTypes.forEach((type) => {
-      Object.assign(queries, makeResolvers(type))
-      ourSchema.push(makeOperations(type))
+      Object.assign(queries, makeResolvers(type, db))
+      ourSchema.push(makeOperations(type, theirSchema))
     })
     const scalars = {
       JSON: GraphQLJSON,

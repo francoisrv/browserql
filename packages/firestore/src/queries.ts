@@ -3,7 +3,11 @@
 
 import { firestore } from 'firebase'
 import type { Query, QueryFilters } from './types'
-import { getDocuments, makeFirestoreQuery } from './utils/firestore'
+import {
+  getDocument,
+  getDocuments,
+  makeFirestoreQuery,
+} from './utils/firestore'
 
 // const db = firebase.firestore()
 
@@ -44,11 +48,12 @@ export async function paginate<D = unknown>(
 }
 
 export async function getOne(
+  db: firestore.Firestore,
   collection: string,
   where?: Query | Query[],
   filters?: QueryFilters
 ) {
-  const query = makeQuery(collection, where, filters)
+  const query = makeFirestoreQuery(collection, where, filters)(db)
   query.limit(1)
   const querySnapshot = await query.get()
   let doc: any
@@ -60,13 +65,23 @@ export async function getOne(
   return await getDocument(doc)
 }
 
-export async function getById(collectionName: string, id: string) {
+export async function getById(
+  db: firestore.Firestore,
+  collectionName: string,
+  id: string
+) {
   const collection = db.collection(collectionName)
   const doc = await collection.doc(id).get()
   return await getDocument(doc)
 }
 
-export async function addOne() {}
+export async function addOne(
+  db: firestore.Firestore,
+  collectionName: string,
+  input: any
+) {
+  return await db.collection(collectionName).add(input)
+}
 
 export async function addMany() {}
 
