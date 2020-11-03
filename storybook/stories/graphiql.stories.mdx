@@ -1,10 +1,11 @@
 import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks'
 import { BrowserqlProvider, BrowserqlQuery } from '../../packages/react/src'
+import GraphiQL from '../../packages/graphiql/src'
 import gql from 'graphql-tag'
 
 <Meta
-  title="react/Query"
-  component={BrowserqlQuery}
+  title="react/GraphiQL"
+  component={GraphiQL}
   argTypes={{
     schema: {
       name: 'GraphQL schema',
@@ -42,13 +43,11 @@ export const Template = (args) => (
   </BrowserqlProvider>
 )
 
-# Browserql Query
+# GraphiQL
 
-React component that encapsulates apollo hooks
+Use GraphiQL with browserql
 
 ## Usage
-
-### With apollo hooks
 
 ```jsx
 import React from 'react'
@@ -75,30 +74,6 @@ export default function App() {
 }
 ```
 
-### With browserql query
-
-```jsx
-import React from 'react'
-import { BrowserqlQuery } from '@apollo/client'
-import gql from 'graphql-tag'
-
-export default function App() {
-  return (
-    <BrowserqlQuery
-      query={gql`
-        query Q($id: ID!) {
-          getUserById(id: $id): User
-        }
-      `}
-      variables={{ id: '1234' }}
-      renderError={({ error }) => <div>{error.message}</div>}
-      renderLoading={<div>Loading</div>}
-      render={(user) => <div>{user.name}</div>}
-    />
-  )
-}
-```
-
 [Sandbox code](https://codesandbox.io/s/browserql-react-provider-znovb)
 
 <Canvas withToolbar className="code-in-ss">
@@ -118,4 +93,4 @@ export default function App() {
 
 ## Props
 
-<ArgsTable of={BrowserqlQuery} />
+<ArgsTable of={GraphiQL} />
