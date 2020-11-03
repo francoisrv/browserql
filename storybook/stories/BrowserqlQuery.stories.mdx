@@ -1,0 +1,107 @@
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks'
+import { BrowserqlProvider, BrowserqlQuery } from '../../packages/react/src'
+import gql from 'graphql-tag'
+
+<Meta
+  title="react/Query"
+  component={BrowserqlQuery}
+  argTypes={{
+    schema: {
+      name: 'GraphQL schema',
+      description: 'A valid GraphQL schema',
+      control: 'text',
+    },
+  }}
+/>
+
+export const Template = (args) => (
+  <BrowserqlProvider
+    schema={gql`
+      extend type Query {
+        sayHello: String
+      }
+    `}
+    queries={{
+      sayHello() {
+        return 'Browserql Provider is working!'
+      },
+    }}
+    extensions={[{ schema: args.schema }]}
+    renderError={args.renderError}
+  >
+    <BrowserqlQuery
+      query={gql`
+        query {
+          sayHello
+        }
+      `}
+      renderError="ERROR"
+      renderLoading={<div>LOADING</div>}
+      render={(res) => <b>{res}</b>}
+    />
+  </BrowserqlProvider>
+)
+
+# Browserql Provider
+
+Use this provider to use browserql in React
+
+## Usage
+
+```jsx
+import React from 'react'
+import { BrowserqlProvider, BrowserqlQuery } from '@browserql/react'
+import gql from 'graphql-tag'
+
+export default function App() {
+  return (
+    <BrowserqlProvider
+      // Your schema here
+      schema={gql`
+        extend type Query {
+          check: String
+        }
+      `}
+      // Your queries here
+      queries={{
+        check() {
+          return 'Browserql Provider is working!'
+        },
+      }}
+    >
+      // You can now use Query
+      <BrowserqlQuery
+        query={gql`
+          query {
+            check
+          }
+        `}
+        renderError={(error) => <div>{error.message}</div>}
+        renderLoading={<div>LOADING</div>}
+        render={(res) => <b>{res}</b>}
+      />
+    </BrowserqlProvider>
+  )
+}
+```
+
+[Sandbox code](https://codesandbox.io/s/browserql-react-provider-znovb)
+
+<Canvas withToolbar className="code-in-ss">
+  <Story
+    name="Example"
+    args={{
+      schema: `
+        type Foo {
+          id: ID!
+        }
+      `,
+    }}
+  >
+    {Template.bind({})}
+  </Story>
+</Canvas>
+
+## Props
+
+<ArgsTable of={BrowserqlQuery} />

@@ -1,5 +1,4 @@
 import { Story } from '@storybook/react/types-6-0'
-import gql from 'graphql-tag'
 import React from 'react'
 import { pick } from 'lodash'
 
@@ -11,7 +10,7 @@ import makeFirebaseApp from '../firebase'
 import FirebaseLoginSB from './Firebase'
 
 export default {
-  title: 'browserql/Firestore',
+  title: 'extensions/Firestore',
 }
 
 const Template: Story<any> = (args) => {
