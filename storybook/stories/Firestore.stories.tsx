@@ -8,8 +8,7 @@ import GraphiQL from '../../packages/graphiql'
 import { BrowserqlProvider } from '../../packages/react'
 
 import makeFirebaseApp from '../firebase'
-
-console.log(1234, { connectFirestore })
+import FirebaseLoginSB from './Firebase'
 
 export default {
   title: 'browserql/Firestore',
@@ -36,22 +35,25 @@ const Template: Story<any> = (args) => {
 
   return (
     <BrowserqlProvider extensions={[fql]}>
+      <FirebaseLoginSB />
       <GraphiQL />
     </BrowserqlProvider>
   )
 }
+
+console.log(process.env)
 
 export const Firestore = Template.bind({})
 Firestore.args = {
   schema: `type Test @firestore {
   foo: String!
 }`,
-  API_KEY: '',
-  AUTHDOMAIN: '',
-  BASEURL: '',
-  PROJECT_ID: '',
-  STORAGEBUCKET: '',
-  MESSAGING_SENDER_ID: '',
-  APP_ID: '',
-  MEASUREMENT_ID: '',
+  API_KEY: process.env.STORYBOOK_FIREBASE_API_KEY,
+  AUTHDOMAIN: process.env.STORYBOOK_FIREBASE_AUTHDOMAIN,
+  BASEURL: process.env.STORYBOOK_FIREBASE_BASEURL,
+  PROJECT_ID: process.env.STORYBOOK_FIREBASE_PROJECT_ID,
+  STORAGEBUCKET: process.env.STORYBOOK_FIREBASE_STORAGEBUCKET,
+  MESSAGING_SENDER_ID: process.env.STORYBOOK_FIREBASE_MESSAGING_SENDER_ID,
+  APP_ID: process.env.STORYBOOK_FIREBASE_APP_ID,
+  MEASUREMENT_ID: process.env.STORYBOOK_FIREBASE_MEASUREMENT_ID,
 }

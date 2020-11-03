@@ -18,6 +18,7 @@
     ]
   },
   "dependencies": {
+    "@react-firebase/auth": "^0.2.10",
     "@types/jest": "^26.0.9",
     "@types/lodash": "^4.14.159",
     "@types/node": "^14.0.27",
