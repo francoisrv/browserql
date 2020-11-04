@@ -1,3 +1,4 @@
+import { firestore } from 'firebase'
 import { isNumber } from 'lodash'
 import type { Query, QueryFilters } from '../types'
 
@@ -10,7 +11,7 @@ export function makeFirestoreQuery(
   where?: Query | Query[],
   filters?: QueryFilters
 ) {
-  return (db: any) => {
+  return (db: firestore.Firestore) => {
     let query = db.collection(collection)
     if (where) {
       if (Array.isArray(where)) {

@@ -1,10 +1,14 @@
 import { getType } from '@browserql/fpql'
+import { firestore } from 'firebase'
 import type { DocumentNode } from 'graphql'
 import { getById, getOne, paginate } from './queries'
 import { Query, QueryFilters } from './types'
 import { convertName, getCollectionName } from './utils'
 
-export default function makeContext(schema: DocumentNode) {
+export default function makeContext(
+  schema: DocumentNode,
+  db: firestore.Firestore
+) {
   return {
     firestore: {
       exec: {
@@ -18,7 +22,7 @@ export default function makeContext(schema: DocumentNode) {
             throw new Error(`firestoreql.exec: Type not in schema: ${typeName}`)
           }
           const collectionName = getCollectionName(type)
-          return await paginate({
+          return await paginate(db, {
             collection: collectionName,
             where,
             filters,
@@ -31,12 +35,12 @@ export default function makeContext(schema: DocumentNode) {
           filters?: QueryFilters
         ) {
           const collectionName = convertName(collection)
-          return await getOne(collectionName, where, filters)
+          return await getOne(db, collectionName, where, filters)
         },
 
         async getById(collection: string, id: string) {
           const collectionName = convertName(collection)
-          return await getById(collectionName, id)
+          return await getById(db, collectionName, id)
         },
       },
       model(collection: string) {},

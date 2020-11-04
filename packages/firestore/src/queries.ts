@@ -81,10 +81,7 @@ export async function addOne(
   input: any
 ) {
   const doc = await db.collection(collectionName).add(input)
-  console.log(123, doc.id)
-  // const document = await getDocument(doc)
-  // console.log({ doc, document })
-  return {}
+  return await getById(db, collectionName, doc.id)
 }
 
 export async function addMany() {}

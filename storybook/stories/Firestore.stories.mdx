@@ -1,0 +1,188 @@
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks'
+import { pick } from 'lodash'
+import gql from 'graphql-tag'
+
+import { connectFirestore } from '../../packages/firestore'
+import GraphiQL from '../../packages/graphiql'
+import { BrowserqlProvider } from '../../packages/react'
+
+import makeFirebaseApp from '../firebase'
+import FirebaseLoginSB from './Firebase'
+
+<Meta
+  title="extensions/Firestore"
+  component={BrowserqlProvider}
+  argTypes={{
+    schema: {
+      name: 'GraphQL schema',
+      description: 'A valid GraphQL schema',
+      control: 'text',
+    },
+  }}
+/>
+
+export const Template = (args) => (
+  <BrowserqlProvider
+    extensions={[
+      connectFirestore(
+        makeFirebaseApp(
+          pick(args, [
+            'API_KEY',
+            'AUTHDOMAIN',
+            'BASEURL',
+            'PROJECT_ID',
+            'STORAGEBUCKET',
+            'MESSAGING_SENDER_ID',
+            'APP_ID',
+            'MEASUREMENT_ID',
+          ])
+        ),
+        args.schema
+      ),
+    ]}
+  >
+    <FirebaseLoginSB />
+    <GraphiQL />
+  </BrowserqlProvider>
+)
+
+# Firestore with browserql
+
+This module enables you to use graphql in your front-end app to connect to Firestore
+
+## Usage
+
+Let's make a simple todo apps
+
+First create your schema with graphql:
+
+```graphql
+// schema.graphql
+
+type Todo @firestore {
+  name: String!
+  done: Boolean @default(value: false)
+}
+```
+
+Not the use of the `@firestore` directive. That's all you need to do to connect your model to `firestore`.
+
+Now connect everything to browserql:
+
+```js
+// client.js
+import connect from '@browserql/client'
+import { connectFirestore, exposeFirestore } from '@browserql/firestore'
+
+import schema from './schema.graphql'
+
+const client = connect(connectFirestore(db, schema))
+
+const firestoreql = exposeFirestore(db, client)
+
+const todos = await firestoreql.paginate('Todo', { limit: 5 })
+await firestore.addOne('Todo', { name: 'Buy milk' })
+```
+
+Now all you have to do is to implement it in your front end. Here's an example for React:
+
+```jsx
+import React, { useState } from 'react'
+import { render } from 'react-dom'
+import { BrowserqlProvider } from '@browserql/react'
+import { Firestoreql } from '@browserql/firestore-react'
+import Foreach from '@browserql/foreach'
+
+import client from './client'
+
+render(
+  <BrowserqlProvider client={client}>
+    <Todos />
+  </BrowserqlProvider>
+)
+
+// Show the list of todos
+function Todos() {
+  return (
+    <Firestoreql paginate="Todo" orderBy="name" limit={10}>
+      {(todos) => (
+        <ul>
+          <AddTodo />
+          <Foreach map={todos}>
+            {(todo) => <Todo key={todo.id} todo={todo} />}
+          </Foreach>
+        </ul>
+      )}
+    </Firestoreql>
+  )
+}
+
+// Component to mark a todo as done
+function MarkAsDone(props) {
+  const { todo } = props
+
+  return (
+    <Firestoreql updateOne="Todo" id={todo.id}>
+      {(updateTodo, { loading }) => (
+        <input
+          type="checkbox"
+          checked={todo.done}
+          disabled={loading}
+          onChange={() => updateTodo({ field: 'done', value: !todo.done })}
+        />
+      )}
+    </Firestoreql>
+  )
+}
+
+// Display a todo
+function Todo(props) {
+  const { todo } = props
+
+  return (
+    <li>
+      <ToggleDone todo={todo} />
+      <b>{todo.name}</b>
+    </li>
+  )
+}
+
+// Add a new todo
+function AddTodo() {
+  const { name, setName } = useState('')
+
+  return (
+    <li>
+      <input value={name} onChange={(e) => setName(e.target.value)} />
+      <Firestoreql add="Todo">
+        {(addTodo, { loading }) => (
+          <button disabled={loading} onClick={() => addTodo({ name })}>
+            Add todo
+          </button>
+        )}
+      </Firestoreql>
+    </li>
+  )
+}
+```
+
+<Canvas withToolbar className="code-in-ss">
+  <Story
+    name="Example"
+    args={{
+      schema: `type Test @firestore {
+        foo: String!
+      }`,
+      API_KEY: process.env.STORYBOOK_FIREBASE_API_KEY,
+      AUTHDOMAIN: process.env.STORYBOOK_FIREBASE_AUTHDOMAIN,
+      BASEURL: process.env.STORYBOOK_FIREBASE_BASEURL,
+      PROJECT_ID: process.env.STORYBOOK_FIREBASE_PROJECT_ID,
+      STORAGEBUCKET: process.env.STORYBOOK_FIREBASE_STORAGEBUCKET,
+      MESSAGING_SENDER_ID: process.env.STORYBOOK_FIREBASE_MESSAGING_SENDER_ID,
+      APP_ID: process.env.STORYBOOK_FIREBASE_APP_ID,
+      MEASUREMENT_ID: process.env.STORYBOOK_FIREBASE_MEASUREMENT_ID,
+    }}
+  >
+    {Template.bind({})}
+  </Story>
+</Canvas>

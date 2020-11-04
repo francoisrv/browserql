@@ -29,7 +29,7 @@ export default function connectFirestore(
     const scalars = {
       JSON: GraphQLJSON,
     }
-    const context = makeContext(merge(...ourSchema))
+    const context = makeContext(merge(...ourSchema), db)
     return {
       schema: merge(...ourSchema),
       scalars,
