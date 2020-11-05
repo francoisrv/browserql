@@ -1,6 +1,6 @@
 // YourTheme.js
 
-import { create } from '@storybook/theming/create';
+import { create } from '@storybook/theming/create'
 
 export default create({
   base: 'dark',
@@ -10,7 +10,7 @@ export default create({
 
   // UI
   appBg: 'white',
-  appContentBg: '#444',
+  appContentBg: '#333',
   appBorderColor: 'grey',
   appBorderRadius: 4,
 
@@ -36,4 +36,4 @@ export default create({
   brandTitle: 'My custom storybook',
   brandUrl: 'https://example.com',
   brandImage: 'https://placehold.it/350x150',
-});
+})

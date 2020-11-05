@@ -5,12 +5,14 @@ import gql from 'graphql-tag'
 import { connectFirestore } from '../../packages/firestore'
 import GraphiQL from '../../packages/graphiql'
 import { BrowserqlProvider } from '../../packages/react'
+import { Firestoreql } from '../../packages/firestore-react'
 
 import makeFirebaseApp from '../firebase'
 import FirebaseLoginSB from './Firebase'
+import { ExampleCode } from './Firestore-react.tsx'
 
 <Meta
-  title="extensions/Firestore"
+  title="extensions/Firestore React"
   component={BrowserqlProvider}
   argTypes={{
     schema: {
@@ -43,53 +45,42 @@ export const Template = (args) => (
   >
     <FirebaseLoginSB />
     <GraphiQL />
+    {args.render}
   </BrowserqlProvider>
 )
 
-# Firestore with browserql
+# Firestore with browserql and react
 
-This module enables you to use graphql in your front-end app to connect to Firestore
+React integration for [firestore with GraphQL](?path=/docs/extensions-firestore--example)
 
 ## Usage
 
-Let's make a simple todo apps
+```jsx
+import { Firestoreql } from '@browserql/firestore-react'
 
-First create your schema with graphql:
-
-```graphql
-// schema.graphql
-
-type Todo @firestore {
-  name: String!
-  done: Boolean @default(value: false)
+// Show the list of todos
+function Todos() {
+  return (
+    <Firestoreql paginate="Todo" orderBy="name" limit={10}>
+      {(todos) => (
+        <ul>
+          {todos.map((todo) => (
+            <li key={todo.id}>{todo.name}</li>
+          ))}
+        </ul>
+      )}
+    </Firestoreql>
+  )
 }
-```
-
-Not the use of the `@firestore` directive. That's all you need to do to connect your model to `firestore`.
-
-Now connect everything to browserql:
-
-```js
-// client.js
-import connect from '@browserql/client'
-import { connectFirestore, exposeFirestore } from '@browserql/firestore'
-
-import schema from './schema.graphql'
-
-const client = connect(connectFirestore(db, schema))
-
-const firestoreql = exposeFirestore(db, client)
-
-const todos = await firestoreql.paginate('Todo', { limit: 5 })
-await firestore.addOne('Todo', { name: 'Buy milk' })
 ```
 
 <Canvas withToolbar className="code-in-ss">
   <Story
     name="Example"
     args={{
-      schema: `type Test @firestore {
-        foo: String!
+      schema: `type Todo @firestore(collection: "todos438538483") {
+        name: String!
+        done: Boolean!
       }`,
       API_KEY: process.env.STORYBOOK_FIREBASE_API_KEY,
       AUTHDOMAIN: process.env.STORYBOOK_FIREBASE_AUTHDOMAIN,
@@ -99,6 +90,7 @@ await firestore.addOne('Todo', { name: 'Buy milk' })
       MESSAGING_SENDER_ID: process.env.STORYBOOK_FIREBASE_MESSAGING_SENDER_ID,
       APP_ID: process.env.STORYBOOK_FIREBASE_APP_ID,
       MEASUREMENT_ID: process.env.STORYBOOK_FIREBASE_MEASUREMENT_ID,
+      render: <ExampleCode />,
     }}
   >
     {Template.bind({})}

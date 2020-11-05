@@ -29,6 +29,7 @@
     "@browserql/firestore": "^1.29.0",
     "@browserql/react": "^2.22.0",
     "@browserql/resolved": "^1.4.0",
+    "react-error-boundary": "^3.0.2",
     "typescript": "^4.0.3"
   },
   "devDependencies": {

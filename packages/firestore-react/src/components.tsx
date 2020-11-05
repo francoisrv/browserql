@@ -1,17 +1,20 @@
-import { BrowserqlContext, BrowserqlMutation, BrowserqlQuery } from '@browserql/react';
-import React, { ReactNode } from 'react';
+import {
+  BrowserqlContext,
+  BrowserqlMutation,
+  BrowserqlQuery,
+} from '@browserql/react'
+import React, { ReactNode } from 'react'
 import makeContracts from '@browserql/contracts'
-import { Query } from '@browserql/firestore';
+import { Query } from '@browserql/firestore'
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
 
-type QueryAction =
-| { paginate: string }
-| { get: string }
+type QueryAction = { paginate: string } | { get: string }
 
 type MutationAction =
-| { add: string }
-| { delete: string }
-| { update: string }
-| { updateOne: string }
+  | { addOne: string }
+  | { delete: string }
+  | { update: string }
+  | { updateOne: string }
 
 interface Option {
   where?: Query[]
@@ -23,7 +26,7 @@ interface Option {
 
 type Renders = {
   renderLoading?: ReactNode
-  renderError?: ReactNode | ((e: Error) => ReactNode)
+  renderError?: ReactNode | ((props: { error: Error }) => ReactNode)
   renderNull?: ReactNode
   renderEmpty?: ReactNode
 }
@@ -33,30 +36,18 @@ interface Extra {
   error?: Error
 }
 
-type FirestoreqlPropsQuery<A = any> =
-& QueryAction
-& Option
-& Renders
-& ({
-  render: (data: A, extra: Extra) => ReactNode
-} | {
-  renderEach?: (
-    item: A,
-    index: number,
-    data: A[],
-    loading: boolean,
-    error: Error | undefined
-  ) => ReactNode
-})
+type FirestoreqlPropsQuery<A = any> = QueryAction &
+  Option &
+  Renders & { children: (data: A, extra: Extra) => ReactNode }
 
-type FirestoreqlPropsMutation<A = any> =
-& MutationAction
-& Renders
-& {
-  render: (action: any, extra: Extra) => ReactNode
-}
+type FirestoreqlPropsMutation<A = any> = MutationAction &
+  Renders & {
+    children: (action: any, extra: Extra) => ReactNode
+  }
 
-export type FirestoreqlProps<A = any> = FirestoreqlPropsQuery<A> | FirestoreqlPropsMutation
+export type FirestoreqlProps<A = any> =
+  | FirestoreqlPropsQuery<A>
+  | FirestoreqlPropsMutation
 
 function makeVariables<A = any>(props: FirestoreqlProps<A>) {
   let collection
@@ -65,8 +56,8 @@ function makeVariables<A = any>(props: FirestoreqlProps<A>) {
     collection = props.paginate
   } else if ('get' in props) {
     collection = props.get
-  } else if ('add' in props) {
-    collection = props.add
+  } else if ('addOne' in props) {
+    collection = props.addOne
   } else if ('delete' in props) {
     collection = props.delete
   } else if ('update' in props) {
@@ -88,7 +79,7 @@ function makeVariables<A = any>(props: FirestoreqlProps<A>) {
     filters: {
       orderBy: 'orderBy' in props ? props.orderBy : null,
       size: 'size' in props ? props.size : null,
-    }
+    },
   }
 }
 
@@ -100,8 +91,8 @@ function getAction<A = any>(props: FirestoreqlProps<A>) {
       return 'getById'
     }
     return 'getOne'
-  } else if ('add' in props) {
-    return 'add'
+  } else if ('addOne' in props) {
+    return 'addOne'
   } else if ('delete' in props) {
     return 'delete'
   } else if ('update' in props) {
@@ -111,6 +102,16 @@ function getAction<A = any>(props: FirestoreqlProps<A>) {
   }
 }
 
+function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+      <button onClick={resetErrorBoundary}>Try again</button>
+    </div>
+  )
+}
+
 export function Firestoreql<A = any>(props: FirestoreqlProps<A>) {
   const ctx = React.useContext(BrowserqlContext)
   const contracts = makeContracts(ctx.schema as string)
@@ -118,19 +119,21 @@ export function Firestoreql<A = any>(props: FirestoreqlProps<A>) {
 
   const name = `firestore_${getAction<A>(props)}_${variables.collection}`
 
-  const contract = contracts.Query[name]
+  if ('paginate' in props || 'get' in props) {
+    const contract = contracts.Query[name]
 
-  if (!contract) {
-    if (props.renderError) {
-      if (typeof props.renderError === 'function') {
-        return props.renderError(new Error(`Query not found: ${ name }`))
-      } else {
-        return props.renderError
+    if (!contract) {
+      if (props.renderError) {
+        if (typeof props.renderError === 'function') {
+          return props.renderError({
+            error: new Error(`Query not found: ${name}`),
+          })
+        } else {
+          return props.renderError
+        }
       }
     }
-  }
 
-  if ('paginate' in props || 'get' in props) {
     return (
       <BrowserqlQuery<A>
         query={contracts.Query[name]}
@@ -138,7 +141,7 @@ export function Firestoreql<A = any>(props: FirestoreqlProps<A>) {
         renderLoading={props.renderLoading}
         renderError={props.renderError}
         // @ts-ignore
-        render={props.render}
+        render={props.children}
         // @ts-ignore
         renderEach={props.renderEach}
         // @ts-ignore
@@ -149,12 +152,35 @@ export function Firestoreql<A = any>(props: FirestoreqlProps<A>) {
     )
   }
 
+  const contract = contracts.Mutation[name]
+
+  if (!contract) {
+    if (props.renderError) {
+      if (typeof props.renderError === 'function') {
+        return props.renderError({
+          error: new Error(`Mutation not found: ${name}`),
+        })
+      } else {
+        return props.renderError
+      }
+    }
+  }
+
   return (
-    <BrowserqlMutation
-      mutation={contracts.Query.OK}
-      renderLoading={props.renderLoading}
-      renderError={props.renderError}
-      render={props.render}
-    />
+    <ErrorBoundary FallbackComponent={props.renderError || ErrorFallback}>
+      <BrowserqlMutation
+        mutation={contracts.Mutation[name]}
+        renderLoading={props.renderLoading}
+        renderError={(error) => {
+          if (typeof props.renderError === 'function') {
+            return props.renderError({ error })
+          }
+          if (props.renderError) {
+            return props.renderError
+          }
+        }}
+        render={props.children}
+      />
+    </ErrorBoundary>
   )
 }
