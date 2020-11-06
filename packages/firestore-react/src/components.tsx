@@ -22,6 +22,7 @@ interface Option {
   size?: number
   page?: number
   orderBy?: string
+  desc?: boolean
 }
 
 type Renders = {
@@ -79,6 +80,7 @@ function makeVariables<A = any>(props: FirestoreqlProps<A>) {
     filters: {
       orderBy: 'orderBy' in props ? props.orderBy : null,
       size: 'size' in props ? props.size : null,
+      asc: Boolean('desc' in props && props.desc === true),
     },
   }
 }

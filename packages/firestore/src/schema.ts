@@ -14,6 +14,7 @@ export default gql`
     page: Int
     size: Int
     orderBy: String
+    asc: Boolean
   }
 
   input FirestoreWhere {

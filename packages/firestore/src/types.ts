@@ -14,5 +14,6 @@ export interface QueryFilters {
   page?: number
   size?: number
   orderBy?: string
+  asc?: boolean
   populate?: string | string[]
 }
