@@ -1,25 +1,23 @@
-import gql from 'graphql-tag';
+import gql from 'graphql-tag'
 
 export default gql`
-scalar JSON
+  directive @firestore(collection: String) on OBJECT
 
-directive @firestore(collection: String) on OBJECT
+  directive @firestore_ref on FIELD_DEFINITION
 
-directive @firestore_ref on FIELD_DEFINITION
+  enum FirestoreWhereOperator {
+    equals
+  }
 
-enum FirestoreWhereOperator {
-  equals
-}
+  input FirestoreFilters {
+    page: Int
+    size: Int
+    orderBy: String
+  }
 
-input FirestoreFilters {
-  page: Int
-  size: Int
-  orderBy: String
-}
-
-input FirestoreWhere {
-  field: String!
-  operator: FirestoreWhereOperator!
-  value: JSON!
-}
+  input FirestoreWhere {
+    field: String!
+    operator: FirestoreWhereOperator!
+    value: JSON!
+  }
 `

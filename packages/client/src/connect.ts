@@ -12,14 +12,16 @@ import makeCache from './cache'
 import makeSchema from './schema'
 import makeApolloClient from './apollo'
 
-export default function connect(...args: Array<Schemaql|SchemaqlFactory>): BrowserqlClient {
+export default function connect(
+  ...args: Array<Schemaql | SchemaqlFactory>
+): BrowserqlClient {
   const cache = makeCache()
 
-  const schemas: Array<string|DocumentNode> = [
+  const schemas: Array<string | DocumentNode> = [
     `
     type Query { _: ID }
     type Mutation { _: ID }
-    `
+    `,
   ]
 
   const rootValue: any = {}
@@ -69,14 +71,16 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>): Brows
     if (typeof arg == 'object') {
       applyArg(arg)
     } else {
-      applyArg(arg({
-        schema: mergeTypeDefs(schemas),
-        queries,
-        mutations,
-        scalars,
-        directives,
-        context,
-      }))
+      applyArg(
+        arg({
+          schema: mergeTypeDefs(schemas),
+          queries,
+          mutations,
+          scalars,
+          directives,
+          context,
+        })
+      )
     }
   }
 
@@ -113,10 +117,12 @@ export default function connect(...args: Array<Schemaql|SchemaqlFactory>): Brows
     mutations,
     queries,
     scalars,
-    context
+    context,
   }
 
   browserqlClient.context.browserqlClient = browserqlClient
+
+  console.log('Client is connected')
 
   return browserqlClient
 }

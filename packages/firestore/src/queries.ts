@@ -8,6 +8,7 @@ import {
   getDocuments,
   makeFirestoreQuery,
 } from './utils/firestore'
+import { parseInput } from './utils/graphql'
 
 // const db = firebase.firestore()
 

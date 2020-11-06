@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@react-firebase/auth": "^0.2.10",
+    "@saeris/graphql-directives": "^0.5.0",
     "@types/jest": "^26.0.9",
     "@types/lodash": "^4.14.159",
     "@types/node": "^14.0.27",

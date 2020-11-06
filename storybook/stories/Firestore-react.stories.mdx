@@ -6,13 +6,15 @@ import { connectFirestore } from '../../packages/firestore'
 import GraphiQL from '../../packages/graphiql'
 import { BrowserqlProvider } from '../../packages/react'
 import { Firestoreql } from '../../packages/firestore-react'
+import connectScalars from '../../packages/scalars'
+import connectDirectives from '../../packages/directives'
 
 import makeFirebaseApp from '../firebase'
 import FirebaseLoginSB from './Firebase'
 import { ExampleCode } from './Firestore-react.tsx'
 
 <Meta
-  title="extensions/Firestore React"
+  title="extensions/Firestore/React"
   component={BrowserqlProvider}
   argTypes={{
     schema: {
@@ -26,6 +28,8 @@ import { ExampleCode } from './Firestore-react.tsx'
 export const Template = (args) => (
   <BrowserqlProvider
     extensions={[
+      connectScalars(),
+      connectDirectives(),
       connectFirestore(
         makeFirebaseApp(
           pick(args, [
@@ -80,7 +84,7 @@ function Todos() {
     args={{
       schema: `type Todo @firestore(collection: "todos438538483") {
         name: String!
-        done: Boolean!
+        done: Boolean! @default(value: false)
       }`,
       API_KEY: process.env.STORYBOOK_FIREBASE_API_KEY,
       AUTHDOMAIN: process.env.STORYBOOK_FIREBASE_AUTHDOMAIN,

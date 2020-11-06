@@ -24,7 +24,6 @@ interface Props {
 }
 
 export default function GraphiQL(props: Props) {
-  console.log(77)
   const { buttonStyle, rootStyle, graphiqlProps } = props
   const ctx = React.useContext(BrowserqlContext)
   const [open, setOpen] = useState(false)

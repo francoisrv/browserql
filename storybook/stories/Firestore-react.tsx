@@ -13,7 +13,10 @@ function ExampleCodeAdd() {
         renderError={({ error }) => <div>{error.message}</div>}
       >
         {(addTodo, { loading }) => (
-          <button disabled={loading} onClick={() => addTodo({ name })}>
+          <button
+            disabled={loading}
+            onClick={() => addTodo({ name, done: false })}
+          >
             Add todo
           </button>
         )}
@@ -29,6 +32,14 @@ export function ExampleCode() {
         <>
           <h1>{todos.length} todo(s)</h1>
           <ExampleCodeAdd />
+          <ul>
+            {todos.map((todo) => (
+              <li key={todo.id}>
+                <input type="checkbox" checked={todo.done} />
+                {todo.name}
+              </li>
+            ))}
+          </ul>
         </>
       )}
     </Firestoreql>

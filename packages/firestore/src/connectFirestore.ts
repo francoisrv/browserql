@@ -1,12 +1,7 @@
-// import type { DocumentNode } from 'graphql'
 import { getDirective, getTypes, merge } from '@browserql/fpql'
 import type { Schemaql, SchemaqlFactory } from '@browserql/types'
 import { firestore } from 'firebase'
-import { DocumentNode, print } from 'graphql'
-
-import GraphQLJSON from 'graphql-type-json'
-// import { mergeTypeDefs } from '@graphql-tools/merge'
-// import { getDirective, getTypes } from '@browserql/fpql'
+import { DocumentNode } from 'graphql'
 
 import SCHEMA from './schema'
 import makeContext from './makeContext'
@@ -26,13 +21,9 @@ export default function connectFirestore(
       Object.assign(queries, makeResolvers(type, db))
       ourSchema.push(makeOperations(type, theirSchema))
     })
-    const scalars = {
-      JSON: GraphQLJSON,
-    }
     const context = makeContext(merge(...ourSchema), db)
     return {
       schema: merge(...ourSchema),
-      scalars,
       queries,
       context,
     }

@@ -106,7 +106,7 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
     <div role="alert">
       <p>Something went wrong:</p>
-      <pre>{error.message}</pre>
+      <pre>{error && error.message}</pre>
       <button onClick={resetErrorBoundary}>Try again</button>
     </div>
   )
@@ -167,7 +167,10 @@ export function Firestoreql<A = any>(props: FirestoreqlProps<A>) {
   }
 
   return (
-    <ErrorBoundary FallbackComponent={props.renderError || ErrorFallback}>
+    <ErrorBoundary
+      // @ts-ignore
+      FallbackComponent={props.renderError || ErrorFallback}
+    >
       <BrowserqlMutation
         mutation={contracts.Mutation[name]}
         renderLoading={props.renderLoading}
@@ -179,7 +182,21 @@ export function Firestoreql<A = any>(props: FirestoreqlProps<A>) {
             return props.renderError
           }
         }}
-        render={props.children}
+        render={(fn, extra) => {
+          return props.children(async (input: any) => {
+            try {
+              await fn({ input })
+            } catch (error) {
+              if (typeof props.renderError === 'function') {
+                return props.renderError({ error })
+              }
+              if (props.renderError) {
+                return props.renderError
+              }
+              throw error
+            }
+          }, extra)
+        }}
       />
     </ErrorBoundary>
   )
