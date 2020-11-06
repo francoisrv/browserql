@@ -7,6 +7,7 @@ export default gql`
 
   enum FirestoreWhereOperator {
     equals
+    isIn
   }
 
   input FirestoreFilters {

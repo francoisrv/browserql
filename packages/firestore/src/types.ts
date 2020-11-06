@@ -1,6 +1,7 @@
 export enum QueryOperator {
-  equals = "equals",
-  references = "references",
+  equals = 'equals',
+  references = 'references',
+  isIn = 'isIn',
 }
 
 export interface Query {

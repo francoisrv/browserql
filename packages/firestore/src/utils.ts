@@ -25,6 +25,14 @@ export function where(field: string) {
         operator: QueryOperator.references,
       }
     },
+
+    isIn(array: any[]) {
+      return {
+        field,
+        value: array,
+        operator: QueryOperator.isIn,
+      }
+    },
   }
 }
 

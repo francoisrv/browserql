@@ -1,9 +1,22 @@
 import { firestore } from 'firebase'
-import { isNumber } from 'lodash'
+import { isNumber, pick } from 'lodash'
 import type { Query, QueryFilters } from '../types'
 
 const operators = {
   equals: '==',
+  isIn: 'in',
+}
+
+function formatWhere(
+  field: string,
+  options: { operator?: string; value?: any } = {}
+) {
+  let Field: any = field
+  const { operator = 'equals', value } = options
+  if (field === 'id' && operator === 'isIn') {
+    Field = firestore.FieldPath.documentId()
+  }
+  return [Field, operators[operator as keyof typeof operators] || '==', value]
 }
 
 export function makeFirestoreQuery(
@@ -16,17 +29,20 @@ export function makeFirestoreQuery(
     if (where) {
       if (Array.isArray(where)) {
         for (const q of where) {
+          const [field, operator, value] = formatWhere(
+            q.field,
+            pick(q, ['operator', 'value'])
+          )
           // @ts-ignore
-          query = query.where(q.field, operators[q.operator] || '==', q.value)
+          query = query.where(field, operator, value)
         }
       } else {
-        // @ts-ignore
-        query = query.where(
+        const [field, operator, value] = formatWhere(
           where.field,
-          // @ts-ignore
-          operators[where.operator] || '==',
-          where.value
+          pick(where, ['operator', 'value'])
         )
+        // @ts-ignore
+        query = query.where(field, operator, value)
       }
     }
     if (filters) {
