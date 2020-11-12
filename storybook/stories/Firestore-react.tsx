@@ -15,7 +15,7 @@ function ExampleCodeAdd() {
         {(addTodo, { loading }) => (
           <button
             disabled={loading}
-            onClick={() => addTodo({ name, done: false })}
+            onClick={() => addTodo({ name, done: false, date: new Date() })}
           >
             Add todo
           </button>
@@ -35,7 +35,17 @@ export function ExampleCode() {
           <ul>
             {todos.map((todo) => (
               <li key={todo.id}>
-                <input type="checkbox" checked={todo.done} />
+                <Firestoreql updateById="Todo">
+                  {(updateTodoById) => (
+                    <input
+                      type="checkbox"
+                      checked={todo.done}
+                      onChange={() =>
+                        updateTodoById(todo.id, { done: !todo.done })
+                      }
+                    />
+                  )}
+                </Firestoreql>
                 {todo.name}
               </li>
             ))}

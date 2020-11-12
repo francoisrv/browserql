@@ -40,6 +40,7 @@ function makeFragment(
       }
     }
   }
+  fragment += `\n  __typename`
   fragment += '\n}'
   fragments[name] = { source: fragment, dependencies }
 }

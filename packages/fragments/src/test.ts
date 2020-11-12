@@ -53,6 +53,7 @@ test('[query] it should print fragment', () => {
     `fragment CategoryFragment on Category {
     id
     name
+    __typename
   }`
   )
 })
@@ -69,10 +70,12 @@ test('[query] it should print nested fragments', () => {
       category {
         ...CategoryFragment 
       }
+      __typename
     }
     fragment CategoryFragment on Category {
       id
       name
+      __typename
     }`
   )
 })
@@ -84,6 +87,7 @@ test('[mutation] it should print fragment', () => {
     user as string,
     `fragment UserFragment on User {
     id
+    __typename
   }`
   )
 })
@@ -96,9 +100,11 @@ test('[mutation] it should print nested fragments', () => {
   users {
     ...UserFragment 
   }
+  __typename
 }
 fragment UserFragment on User {
   id
+  __typename
 }`.split('\n')
   )
 })
@@ -251,6 +257,7 @@ test('bug 233', () => {
     queue {
       ...OrderFragment 
     }
+    __typename
   }
   fragment OrderFragment on Order {
     cid
@@ -262,6 +269,7 @@ test('bug 233', () => {
     shopifyOrderId
     shopifyProductId
     shopifyProductVariantId
+    __typename
   }
 `
   )

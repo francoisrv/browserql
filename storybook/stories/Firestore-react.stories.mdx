@@ -8,6 +8,7 @@ import { BrowserqlProvider } from '../../packages/react'
 import { Firestoreql } from '../../packages/firestore-react'
 import connectScalars from '../../packages/scalars'
 import connectDirectives from '../../packages/directives'
+import connectCacheQueries from '../../packages/cache-queries'
 
 import makeFirebaseApp from '../firebase'
 import FirebaseLoginSB from './Firebase'
@@ -45,6 +46,7 @@ export const Template = (args) => (
         ),
         args.schema
       ),
+      connectCacheQueries(),
     ]}
   >
     <FirebaseLoginSB />
@@ -85,6 +87,7 @@ function Todos() {
       schema: `type Todo @firestore(collection: "todos438538483") {
         name: String!
         done: Boolean! @default(value: false)
+        date: DateTime!
       }`,
       API_KEY: process.env.STORYBOOK_FIREBASE_API_KEY,
       AUTHDOMAIN: process.env.STORYBOOK_FIREBASE_AUTHDOMAIN,
