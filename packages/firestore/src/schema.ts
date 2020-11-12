@@ -22,4 +22,13 @@ export default gql`
     operator: FirestoreWhereOperator!
     value: JSON!
   }
+
+  input FirestoreTransformer {
+    field: String!
+    value: JSON
+  }
+
+  type FirestoreMutationResponse {
+    ok: Boolean!
+  }
 `

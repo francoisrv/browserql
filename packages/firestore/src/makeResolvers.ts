@@ -5,7 +5,7 @@ import gql from 'graphql-tag'
 import { getName } from '@browserql/fpql'
 
 import { makeNames } from './makeName'
-import { addOne, getById, getOne, paginate } from './queries'
+import { addOne, getById, getOne, paginate, updateById } from './queries'
 import { getCollectionName } from './utils'
 import { firestore } from 'firebase'
 
@@ -61,6 +61,14 @@ export default function makeResolvers(
 
         case 'addOne':
           return await addOne(db, collection, variables.input)
+
+        case 'updateById':
+          return await updateById(
+            db,
+            collection,
+            variables.id,
+            variables.transformers
+          )
       }
     }
   })

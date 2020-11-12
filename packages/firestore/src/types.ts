@@ -17,3 +17,8 @@ export interface QueryFilters {
   asc?: boolean
   populate?: string | string[]
 }
+
+export interface Transformer {
+  field: string
+  value?: any
+}

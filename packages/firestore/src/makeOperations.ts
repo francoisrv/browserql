@@ -43,6 +43,17 @@ export default function makeOperations(
       ${names.addOne}(
         input: ${name}Input
       ): ${name}
+
+      ${names.updateOne}(
+        where: [FirestoreWhere]
+        filters: FirestoreFilters
+        transformers: [FirestoreTransformer]
+      ): ${name}
+
+      ${names.updateById}(
+        id: ID!
+        transformers: [FirestoreTransformer]
+      ): ${name}
     }
   `
 }
