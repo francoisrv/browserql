@@ -41,7 +41,10 @@ export function ExampleCode() {
                       type="checkbox"
                       checked={todo.done}
                       onChange={() =>
-                        updateTodoById(todo.id, { done: !todo.done })
+                        updateTodoById(todo.id, {
+                          done: !todo.done,
+                          date: new Date(),
+                        })
                       }
                     />
                   )}

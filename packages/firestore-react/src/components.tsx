@@ -200,7 +200,7 @@ export function Firestoreql<A = any>(props: FirestoreqlProps<A>) {
                         ...transformers,
                         {
                           field,
-                          value: 2,
+                          value: args[1][field],
                         },
                       ],
                       [] as Transformer[]
