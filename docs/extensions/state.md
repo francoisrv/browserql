@@ -41,20 +41,95 @@ const schema = gql`
 
 function Todos() {
   return (
-    <ModelQL model="Todo">
+    <Model model="Todo">
       {Todo => (
         <ul>
+          <UseState initial="">
+            {(name, setName) => (
+              <li>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                />
+                <input
+                  type="button"
+                  value="Add"
+                  onClick={() => Todo.addOne({ name })}
+                />
+              </li>
+            )}
+          </UseState>
           <ForEach map={Todo.get({ done: false })}>{todo => (
             <li key={todo.name}>
-              {todo.name}
-              <button onClick={() => Todo.pull(todo) }>
+              <input
+                type="text"
+                value={todo.name}
+                onChange={e => Todo.updateById(todo.id, { name: e.target.value })}
+              />
+              <button onClick={() => Todo.pull(todo.id) }>
                 Delete
               </button>
             </li>
           )}</ForEach>
         </ul>
       )}
-    </ModelQL>
+    </Model>
+  )
+  return (
+    <Stateql state="State.isLoggedIn">
+      {isLoggedIn => (
+        <input
+          type="checkbox"
+          checked={isLoggedIn.get()}
+          onChange={isLoggedIn.toggle}
+        />
+      )}
+    </Stateql>
+  )
+  return (
+    <Stateql state="State.counter">
+      {counter => (
+        <>
+          <input
+            type="button"
+            value="-"
+            onClick={counter.decrement}
+          />
+          <input
+            type="number"
+            value={counter.get()}
+          />
+          <input
+            type="button"
+            value="+"
+            onClick={counter.increment}
+          />
+        </>
+      )}
+    </Stateql>
+  )
+  return (
+    <Stateql state="State">
+      {state => (
+        <>
+          <input
+            type="button"
+            value="-"
+            onClick={state.counter.decrement}
+          />
+          <input
+            type="number"
+            value={state.counter.get()}
+          />
+          <input
+            type="button"
+            value="+"
+            onClick={state.counter.increment}
+          />
+        </>
+      )}
+    </Stateql>
   )
   return (
     <ModelQL get="Todo" where={{ done: false }}>
