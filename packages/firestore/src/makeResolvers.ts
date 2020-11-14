@@ -3,9 +3,10 @@ import type { Schemaql, BrowserqlContext } from '@browserql/types'
 import buildFragments from '@browserql/fragments'
 import gql from 'graphql-tag'
 import { getName } from '@browserql/fpql'
+import resolve from '@browserql/resolved'
 
 import { makeNames } from './makeName'
-import { addOne, getById, getOne, paginate } from './queries'
+import { addOne, getById, getOne, paginate, updateById } from './queries'
 import { getCollectionName } from './utils'
 import { firestore } from 'firebase'
 
@@ -29,6 +30,7 @@ export default function makeResolvers(
     queries[fullName] = async (variables: any, ctx: BrowserqlContext) => {
       const { apollo, schema } = ctx.browserqlClient
       const fragments = buildFragments(schema)
+      const resolved = resolve(schema)
       switch (queryName) {
         case 'paginate':
           return await paginate(
@@ -39,13 +41,16 @@ export default function makeResolvers(
               filters: variables.filters,
             },
             (documents: { id: string }[]) => {
-              documents.forEach((doc) => {
-                apollo.cache.writeFragment({
-                  id: doc.id,
-                  fragment: gql(fragments.get(name) as string),
-                  data: doc,
-                })
+              apollo.cache.writeQuery({
+                ...resolved.Query[fullName](variables),
+                data: {
+                  [fullName]: documents.map((doc) => ({
+                    ...doc,
+                    __typename: name,
+                  })),
+                },
               })
+              apollo.query(resolved.Query[fullName](variables))
             }
           )
         case 'getOne':
@@ -61,6 +66,14 @@ export default function makeResolvers(
 
         case 'addOne':
           return await addOne(db, collection, variables.input)
+
+        case 'updateById':
+          return await updateById(
+            db,
+            collection,
+            variables.id,
+            variables.transformers
+          )
       }
     }
   })

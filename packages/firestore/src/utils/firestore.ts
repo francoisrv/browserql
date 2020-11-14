@@ -52,7 +52,7 @@ export function makeFirestoreQuery(
       }
       if (filters.orderBy) {
         // @ts-ignore
-        query = query.orderBy(filters.orderBy, 'asc')
+        query = query.orderBy(filters.orderBy, filters.asc ? 'asc' : 'desc')
       }
     }
     return query

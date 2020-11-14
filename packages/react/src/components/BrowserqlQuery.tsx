@@ -2,28 +2,32 @@ import { useQuery } from '@apollo/client'
 import { DocumentNode } from 'graphql'
 import React from 'react'
 
+type BrowserqlQueryRenderer<D = any> = (
+  data: D,
+  loading: boolean,
+  error: Error | undefined
+) => React.ReactElement
+
+type BrowserqlQueryEachRenderer<D = any> = (
+  item: D,
+  index: number,
+  data: D[],
+  loading: boolean,
+  error: Error | undefined
+) => React.ReactNode
+
 type BrowserqlQueryProps<D = any> = {
-  query: DocumentNode
-  variables?: any
-  renderLoading?: React.ReactNode
-  renderError?: React.ReactNode | ((e: Error) => React.ReactNode)
-  renderNull?: React.ReactNode
-  renderEmpty?: React.ReactNode
-  render?: (
-    data: D,
-    loading: boolean,
-    error: Error | undefined
-  ) => React.ReactNode
-  renderEach?: (
-    item: D,
-    index: number,
-    data: D[],
-    loading: boolean,
-    error: Error | undefined
-  ) => React.ReactNode
-  dontRenderLoading?: boolean
+  children: BrowserqlQueryRenderer<D>
   dontRenderError?: boolean
+  dontRenderLoading?: boolean
+  query: DocumentNode
   queryProps?: Parameters<typeof useQuery>[1]
+  renderEach?: BrowserqlQueryEachRenderer<D>
+  renderEmpty?: React.ReactNode
+  renderError?: React.ReactNode | ((e: Error) => React.ReactNode)
+  renderLoading?: React.ReactNode
+  renderNull?: React.ReactNode
+  variables?: any
 }
 
 export default function BrowserqlQuery<D = any>(props: BrowserqlQueryProps<D>) {
@@ -71,8 +75,8 @@ export default function BrowserqlQuery<D = any>(props: BrowserqlQueryProps<D>) {
       }
     }
 
-    if ('render' in props && props.render && accessor) {
-      return props.render(accessor, loading, error)
+    if ('children' in props && props.children && accessor) {
+      return props.children(accessor, loading, error)
     }
 
     return <span />

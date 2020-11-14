@@ -2,7 +2,7 @@
 // import 'firebase/firestore'
 
 import { firestore } from 'firebase'
-import type { Query, QueryFilters } from './types'
+import type { Query, QueryFilters, Transformer } from './types'
 import {
   getDocument,
   getDocuments,
@@ -91,6 +91,25 @@ export async function deleteOne() {}
 
 export async function deleteMany() {}
 
-export async function updateOne() {}
+export async function updateById(
+  db: firestore.Firestore,
+  collectionName: string,
+  id: string,
+  transformers: Transformer[]
+) {
+  await db
+    .collection(collectionName)
+    .doc(id)
+    .update(
+      transformers.reduce(
+        (query, transformer) => ({
+          ...query,
+          [transformer.field]: transformer.value,
+        }),
+        {}
+      )
+    )
+  return await getById(db, collectionName, id)
+}
 
 export async function updateMany() {}

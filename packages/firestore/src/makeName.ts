@@ -1,6 +1,13 @@
 const patterns = ['firestore']
 const glue = '_'
-const names = ['paginate', 'getOne', 'getById', 'addOne']
+const names = [
+  'paginate',
+  'getOne',
+  'getById',
+  'addOne',
+  'updateOne',
+  'updateById',
+]
 
 export default function makeName(...names: string[]) {
   return [...patterns, ...names].join(glue)

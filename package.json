@@ -13,12 +13,25 @@
     "docsify": "docsify serve ./docs",
     "docsify:update": "cp docs/README.md . && cp docs/ROADMAP.md .",
     "add:pkg": "bash add-package.sh",
-    "storybook": "cd storybook && yarn storybook"
+    "stories": "rm -rf .cache dist && parcel index.html"
   },
   "dependencies": {
+    "@babel/standalone": "^7.12.6",
+    "@types/react": "^16.9.56",
+    "@types/react-dom": "^16.9.9",
+    "@types/react-syntax-highlighter": "^13.5.0",
+    "@types/refractor": "^3.0.0",
     "husky": "^4.3.0",
     "lodash": "^4.17.15",
+    "parcel-bundler": "^1.12.4",
     "prettier": "^2.1.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-markdown": "^5.0.2",
+    "react-syntax-highlighter": "^15.3.0",
+    "refractor": "^3.2.0",
+    "remark-gfm": "^1.0.0",
+    "remarkable": "^2.0.1",
     "typescript": "^4.0.3"
   },
   "resolutions": {

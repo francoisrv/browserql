@@ -14,11 +14,21 @@ export default gql`
     page: Int
     size: Int
     orderBy: String
+    asc: Boolean
   }
 
   input FirestoreWhere {
     field: String!
     operator: FirestoreWhereOperator!
     value: JSON!
+  }
+
+  input FirestoreTransformer {
+    field: String!
+    value: JSON
+  }
+
+  type FirestoreMutationResponse {
+    ok: Boolean!
   }
 `

@@ -5,8 +5,9 @@ import {
 } from '@browserql/react'
 import React, { ReactNode } from 'react'
 import makeContracts from '@browserql/contracts'
-import { Query } from '@browserql/firestore'
+import { Query, Transformer } from '@browserql/firestore'
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
+import { keys } from 'lodash'
 
 type QueryAction = { paginate: string } | { get: string }
 
@@ -14,7 +15,7 @@ type MutationAction =
   | { addOne: string }
   | { delete: string }
   | { update: string }
-  | { updateOne: string }
+  | { updateById: string }
 
 interface Option {
   where?: Query[]
@@ -22,6 +23,7 @@ interface Option {
   size?: number
   page?: number
   orderBy?: string
+  desc?: boolean
 }
 
 type Renders = {
@@ -62,8 +64,8 @@ function makeVariables<A = any>(props: FirestoreqlProps<A>) {
     collection = props.delete
   } else if ('update' in props) {
     collection = props.update
-  } else if ('updateOne' in props) {
-    collection = props.updateOne
+  } else if ('updateById' in props) {
+    collection = props.updateById
   }
 
   const where: Query[] = []
@@ -79,6 +81,7 @@ function makeVariables<A = any>(props: FirestoreqlProps<A>) {
     filters: {
       orderBy: 'orderBy' in props ? props.orderBy : null,
       size: 'size' in props ? props.size : null,
+      asc: Boolean('desc' in props && props.desc === true),
     },
   }
 }
@@ -97,8 +100,8 @@ function getAction<A = any>(props: FirestoreqlProps<A>) {
     return 'delete'
   } else if ('update' in props) {
     return 'update'
-  } else if ('updateOne' in props) {
-    return 'updateOne'
+  } else if ('updateById' in props) {
+    return 'updateById'
   }
 }
 
@@ -183,9 +186,28 @@ export function Firestoreql<A = any>(props: FirestoreqlProps<A>) {
           }
         }}
         render={(fn, extra) => {
-          return props.children(async (input: any) => {
+          return props.children(async (...args: any[]) => {
             try {
-              await fn({ input })
+              switch (getAction<A>(props)) {
+                case 'addOne':
+                  await fn({ input: args[0] })
+                  break
+                case 'updateById':
+                  await fn({
+                    id: args[0],
+                    transformers: keys(args[1]).reduce(
+                      (transformers, field) => [
+                        ...transformers,
+                        {
+                          field,
+                          value: args[1][field],
+                        },
+                      ],
+                      [] as Transformer[]
+                    ),
+                  })
+                  break
+              }
             } catch (error) {
               if (typeof props.renderError === 'function') {
                 return props.renderError({ error })
