@@ -3,7 +3,7 @@ import {
   BrowserqlMutation,
   BrowserqlQuery,
 } from '@browserql/react'
-import React, { ReactNode } from 'react'
+import React, { ReactElement, ReactNode } from 'react'
 import makeContracts from '@browserql/contracts'
 import { Query, Transformer } from '@browserql/firestore'
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
@@ -40,7 +40,7 @@ interface Extra {
 
 type FirestoreqlPropsQuery<A = any> = QueryAction &
   Option &
-  Renders & { children: (data: A, extra: Extra) => ReactNode }
+  Renders & { children: (data: A, extra: Extra) => ReactElement }
 
 type FirestoreqlPropsMutation<A = any> = MutationAction &
   Renders & {
@@ -144,14 +144,14 @@ export function Firestoreql<A = any>(props: FirestoreqlProps<A>) {
         renderLoading={props.renderLoading}
         renderError={props.renderError}
         // @ts-ignore
-        render={props.children}
-        // @ts-ignore
         renderEach={props.renderEach}
         // @ts-ignore
         renderEmpty={props.renderEmpty}
         // @ts-ignore
         renderNull={props.renderNull}
-      />
+      >
+        {props.children}
+      </BrowserqlQuery>
     )
   }
 

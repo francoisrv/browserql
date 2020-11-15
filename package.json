@@ -16,7 +16,13 @@
     "stories": "rm -rf .cache dist && parcel index.html"
   },
   "dependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-react": "^7.12.5",
     "@babel/standalone": "^7.12.6",
+    "@mdx-js/parcel-plugin-mdx": "^1.6.21",
+    "@mdx-js/react": "^1.6.21",
+    "@types/mdx-js__react": "^1.5.3",
     "@types/react": "^16.9.56",
     "@types/react-dom": "^16.9.9",
     "@types/react-syntax-highlighter": "^13.5.0",

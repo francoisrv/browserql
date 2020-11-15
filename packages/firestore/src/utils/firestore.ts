@@ -5,6 +5,10 @@ import type { Query, QueryFilters } from '../types'
 const operators = {
   equals: '==',
   isIn: 'in',
+  isLesserThan: '<',
+  isLesserTahnOrEqualTo: '<=',
+  isGreaterThan: '>',
+  isGreaterThanOrEqualTo: '>=',
 }
 
 function formatWhere(
