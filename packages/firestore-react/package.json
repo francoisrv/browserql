@@ -1,6 +1,6 @@
 {
   "name": "@browserql/firestore-react",
-  "version": "1.51.0",
+  "version": "1.53.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "ISC",
@@ -26,7 +26,7 @@
   "dependencies": {
     "@apollo/client": "^3.2.2",
     "@browserql/contracts": "^1.2.0",
-    "@browserql/firestore": "^1.48.0",
+    "@browserql/firestore": "^1.49.0",
     "@browserql/react": "^3.1.0",
     "@browserql/resolved": "^1.4.0",
     "react-error-boundary": "^3.0.2",
