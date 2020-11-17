@@ -16,6 +16,7 @@ import { ErrorBoundary } from 'react-error-boundary'
 
 import 'graphiql/graphiql.min.css'
 import React, { CSSProperties, useState } from 'react'
+import Draggable from 'react-draggable'
 
 interface Props {
   buttonStyle?: CSSProperties
@@ -66,51 +67,61 @@ export default function GraphiQL(props: Props) {
 
   return (
     <>
-      <button
-        style={{
-          position: 'fixed',
-          zIndex: 9999,
-          bottom: 20,
-          right: 20,
-          ...buttonStyle,
-        }}
-        onClick={() => setOpen(!open)}
-      >
-        {open ? 'Close' : 'Open'} GraphiQL
-      </button>
-      <div
-        style={{
-          position: 'fixed',
-          zIndex: 9998,
-          height: 'calc(100vh - 40px)',
-          right: 20,
-          left: 20,
-          top: open ? 20 : '-100vh',
-          transition: 'all 0.35s ease-out',
-          boxShadow: '0 0 5px 5px rgba(0, 0, 0, 0.3)',
-          opacity: 0.95,
-          ...rootStyle,
-        }}
-      >
-        <ErrorBoundary
-          FallbackComponent={({ error }) => {
-            return (
-              <div>
-                <h1>Error: {error?.message}</h1>
-                <pre>{error?.stack}</pre>
-                <pre>{JSON.stringify(introspection, null, 2)}</pre>
-              </div>
-            )
+      <Draggable>
+        <button
+          style={{
+            position: 'fixed',
+            zIndex: 9999,
+            bottom: 0,
+            right: 0,
+            padding: 16,
+            fontSize: '1.2em',
+            backgroundColor: '#222',
+            border: 'none',
+            color: '#fff',
+            ...buttonStyle,
+          }}
+          onClick={() => setOpen(!open)}
+        >
+          {open ? 'Hide' : 'Show'} GraphiQL
+        </button>
+      </Draggable>
+
+      <Draggable>
+        <div
+          style={{
+            position: 'fixed',
+            zIndex: 9998,
+            height: 'calc(100vh - 40px)',
+            right: 20,
+            left: 20,
+            top: open ? 20 : '-100vh',
+            transition: 'all 0.35s ease-out',
+            boxShadow: '0 0 5px 5px rgba(0, 0, 0, 0.3)',
+            opacity: 0.95,
+            ...rootStyle,
           }}
         >
-          <NativeGraphiQL
-            // @ts-ignore
-            fetcher={graphQLFetcher}
-            schema={introspection}
-            {...graphiqlProps}
-          />
-        </ErrorBoundary>
-      </div>
+          <ErrorBoundary
+            FallbackComponent={({ error }) => {
+              return (
+                <div>
+                  <h1>Error: {error?.message}</h1>
+                  <pre>{error?.stack}</pre>
+                  <pre>{JSON.stringify(introspection, null, 2)}</pre>
+                </div>
+              )
+            }}
+          >
+            <NativeGraphiQL
+              // @ts-ignore
+              fetcher={graphQLFetcher}
+              schema={introspection}
+              {...graphiqlProps}
+            />
+          </ErrorBoundary>
+        </div>
+      </Draggable>
     </>
   )
 }

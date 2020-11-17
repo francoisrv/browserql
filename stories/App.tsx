@@ -1,6 +1,7 @@
 import * as React from 'react'
 import BrowserqlQuery from './react/test.mdx'
 import FirestoreReact from './epics/firestore-react.mdx'
+import GraphiQL from './epics/graphiql.mdx'
 
 const epics = [
   {
@@ -10,6 +11,10 @@ const epics = [
   {
     title: 'Firestore React',
     mdx: FirestoreReact,
+  },
+  {
+    title: 'GraphiQL',
+    mdx: GraphiQL,
   },
 ]
 
@@ -59,7 +64,7 @@ function AppBar() {
 }
 
 export default function App() {
-  const [epic, setEpic] = React.useState(epics[1])
+  const [epic, setEpic] = React.useState(epics[2])
 
   return (
     <div>

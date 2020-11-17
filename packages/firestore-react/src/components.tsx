@@ -99,7 +99,10 @@ function getAction<A = any>(props: FirestoreqlProps<A>) {
   } else if ('delete' in props) {
     return 'delete'
   } else if ('update' in props) {
-    return 'update'
+    if ('id' in props) {
+      return 'updateById'
+    }
+    return 'updateOne'
   } else if ('updateById' in props) {
     return 'updateById'
   }
@@ -116,110 +119,108 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
 }
 
 export function Firestoreql<A = any>(props: FirestoreqlProps<A>) {
-  const ctx = React.useContext(BrowserqlContext)
-  const contracts = makeContracts(ctx.schema as string)
-  const variables = makeVariables<A>(props)
+  const debug: any = {}
 
-  const name = `firestore_${getAction<A>(props)}_${variables.collection}`
+  const renderError = (error: Error) => {
+    if (typeof props.renderError === 'function') {
+      // @ts-ignore
+      error.debug = { debug, props }
+      return props.renderError(
+        // @ts-ignore
+        new Error(error)
+      )
+    } else {
+      return props.renderError
+    }
+  }
 
-  if ('paginate' in props || 'get' in props) {
-    const contract = contracts.Query[name]
+  try {
+    const ctx = React.useContext(BrowserqlContext)
+    const contracts = makeContracts(ctx.schema as string)
+    const variables = makeVariables<A>(props)
+
+    const name = `firestore_${getAction<A>(props)}_${variables.collection}`
+
+    debug.name = name
+
+    if ('paginate' in props || 'get' in props) {
+      const contract = contracts.Query[name]
+
+      if (!contract) {
+        return renderError(new Error(`Query not found: ${name}`))
+      }
+
+      return (
+        <BrowserqlQuery<A>
+          query={contracts.Query[name]}
+          variables={variables}
+          renderLoading={props.renderLoading}
+          renderError={renderError}
+          // @ts-ignore
+          renderEach={props.renderEach}
+          // @ts-ignore
+          renderEmpty={props.renderEmpty}
+          // @ts-ignore
+          renderNull={props.renderNull}
+        >
+          {props.children}
+        </BrowserqlQuery>
+      )
+    }
+
+    const contract = contracts.Mutation[name]
 
     if (!contract) {
-      if (props.renderError) {
-        if (typeof props.renderError === 'function') {
-          return props.renderError({
-            error: new Error(`Query not found: ${name}`),
-          })
-        } else {
-          return props.renderError
-        }
-      }
+      return renderError(new Error(`Mutation not found: ${name}`))
     }
 
     return (
-      <BrowserqlQuery<A>
-        query={contracts.Query[name]}
-        variables={variables}
-        renderLoading={props.renderLoading}
-        renderError={props.renderError}
+      <ErrorBoundary
         // @ts-ignore
-        renderEach={props.renderEach}
-        // @ts-ignore
-        renderEmpty={props.renderEmpty}
-        // @ts-ignore
-        renderNull={props.renderNull}
+        FallbackComponent={props.renderError || ErrorFallback}
       >
-        {props.children}
-      </BrowserqlQuery>
+        <BrowserqlMutation
+          mutation={contracts.Mutation[name]}
+          renderLoading={props.renderLoading}
+          renderError={renderError}
+          render={(fn, extra) => {
+            return props.children(async (...args: any[]) => {
+              try {
+                switch (getAction<A>(props)) {
+                  case 'addOne':
+                    await fn({ input: args[0] })
+                    break
+                  case 'updateById':
+                    await fn({
+                      id: args[0],
+                      transformers: keys(args[1]).reduce(
+                        (transformers, field) => [
+                          ...transformers,
+                          {
+                            field,
+                            value: args[1][field],
+                          },
+                        ],
+                        [] as Transformer[]
+                      ),
+                    })
+                    break
+                }
+              } catch (error) {
+                if (typeof props.renderError === 'function') {
+                  return props.renderError({ error })
+                }
+                if (props.renderError) {
+                  return props.renderError
+                }
+                throw error
+              }
+            }, extra)
+          }}
+        />
+      </ErrorBoundary>
     )
+  } catch (error) {
+    return renderError(error)
   }
-
-  const contract = contracts.Mutation[name]
-
-  if (!contract) {
-    if (props.renderError) {
-      if (typeof props.renderError === 'function') {
-        return props.renderError({
-          error: new Error(`Mutation not found: ${name}`),
-        })
-      } else {
-        return props.renderError
-      }
-    }
-  }
-
-  return (
-    <ErrorBoundary
-      // @ts-ignore
-      FallbackComponent={props.renderError || ErrorFallback}
-    >
-      <BrowserqlMutation
-        mutation={contracts.Mutation[name]}
-        renderLoading={props.renderLoading}
-        renderError={(error) => {
-          if (typeof props.renderError === 'function') {
-            return props.renderError({ error })
-          }
-          if (props.renderError) {
-            return props.renderError
-          }
-        }}
-        render={(fn, extra) => {
-          return props.children(async (...args: any[]) => {
-            try {
-              switch (getAction<A>(props)) {
-                case 'addOne':
-                  await fn({ input: args[0] })
-                  break
-                case 'updateById':
-                  await fn({
-                    id: args[0],
-                    transformers: keys(args[1]).reduce(
-                      (transformers, field) => [
-                        ...transformers,
-                        {
-                          field,
-                          value: args[1][field],
-                        },
-                      ],
-                      [] as Transformer[]
-                    ),
-                  })
-                  break
-              }
-            } catch (error) {
-              if (typeof props.renderError === 'function') {
-                return props.renderError({ error })
-              }
-              if (props.renderError) {
-                return props.renderError
-              }
-              throw error
-            }
-          }, extra)
-        }}
-      />
-    </ErrorBoundary>
-  )
 }
