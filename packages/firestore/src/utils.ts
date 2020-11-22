@@ -33,6 +33,38 @@ export function where(field: string) {
         operator: QueryOperator.isIn,
       }
     },
+
+    isLesserThan(date: Date) {
+      return {
+        field,
+        value: date,
+        operator: QueryOperator.isLesserThan,
+      }
+    },
+
+    isLesserThanOrEqualTo(date: Date) {
+      return {
+        field,
+        value: date,
+        operator: QueryOperator.isLesserThanOrEqualTo,
+      }
+    },
+
+    isGreaterThan(date: Date) {
+      return {
+        field,
+        value: date,
+        operator: QueryOperator.isGreaterThan,
+      }
+    },
+
+    isGreaterThanOrEqualTo(date: Date) {
+      return {
+        field,
+        value: date,
+        operator: QueryOperator.isGreaterThanOrEqualTo,
+      }
+    },
   }
 }
 

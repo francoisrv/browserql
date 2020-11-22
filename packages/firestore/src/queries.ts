@@ -63,6 +63,9 @@ export async function getOne(
       doc = d
     }
   })
+  if (!doc) {
+    return null
+  }
   return await getDocument(doc)
 }
 
@@ -73,6 +76,9 @@ export async function getById(
 ) {
   const collection = db.collection(collectionName)
   const doc = await collection.doc(id).get()
+  if (!doc) {
+    return null
+  }
   return await getDocument(doc)
 }
 

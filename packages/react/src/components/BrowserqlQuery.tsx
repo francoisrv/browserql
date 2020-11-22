@@ -4,8 +4,10 @@ import React from 'react'
 
 type BrowserqlQueryRenderer<D = any> = (
   data: D,
-  loading: boolean,
-  error: Error | undefined
+  extra: {
+    loading: boolean
+    error: Error | undefined
+  }
 ) => React.ReactElement
 
 type BrowserqlQueryEachRenderer<D = any> = (
@@ -76,7 +78,7 @@ export default function BrowserqlQuery<D = any>(props: BrowserqlQueryProps<D>) {
     }
 
     if ('children' in props && props.children && accessor) {
-      return props.children(accessor, loading, error)
+      return props.children(accessor, { loading, error })
     }
 
     return <span />

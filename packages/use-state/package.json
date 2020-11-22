@@ -1,5 +1,5 @@
 {
-  "name": "@browserql/stories",
+  "name": "@browserql/use-state",
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,17 +20,10 @@
   "scripts": {
     "build": "rm -rf dist && yarn tsc",
     "watch": "yarn build -w",
-    "test": "jest dist",
+    "test": "echo jest dist",
     "prepublishOnly": "git tag | xargs git tag -d && yarn build && yarn test"
   },
   "dependencies": {
-    "@types/lodash.set": "^4.3.6",
-    "docs": "^0.3.2-canary.0",
-    "faker": "^5.1.0",
-    "lodash.set": "^4.3.2",
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0",
-    "semantic-ui-react": "^2.0.1",
     "typescript": "^4.0.5"
   },
   "devDependencies": {

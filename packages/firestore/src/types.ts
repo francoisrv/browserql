@@ -2,10 +2,10 @@ export enum QueryOperator {
   equals = 'equals',
   references = 'references',
   isIn = 'isIn',
-  greaterThan = 'greaterThan',
-  greaterThanOrEqualTo = 'greaterThanOrEqualTo',
-  lesserThan = 'lesserThan',
-  lesserThanOrEqualTo = 'lesserThanOrEqualTo',
+  isGreaterThan = 'isGreaterThan',
+  isGreaterThanOrEqualTo = 'isGreaterThanOrEqualTo',
+  isLesserThan = 'isLesserThan',
+  isLesserThanOrEqualTo = 'isLesserThanOrEqualTo',
 }
 
 export interface Query {

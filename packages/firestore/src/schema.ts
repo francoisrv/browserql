@@ -7,7 +7,11 @@ export default gql`
 
   enum FirestoreWhereOperator {
     equals
+    isGreaterThan
+    isGreaterThanOrEqualTo
     isIn
+    isLesserThan
+    isLesserThanOrEqualTo
   }
 
   input FirestoreFilters {
