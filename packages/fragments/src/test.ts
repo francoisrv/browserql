@@ -61,6 +61,7 @@ test('[query] it should print fragment', () => {
 test('[query] it should print nested fragments', () => {
   const fragments = buildFragments(schema)
   const todo = fragments.get('Todo')
+  console.log(todo)
   verifySource(
     todo as string,
     `fragment TodoFragment on Todo {

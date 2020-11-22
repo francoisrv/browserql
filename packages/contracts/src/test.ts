@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { print } from 'graphql'
 import makeContracts from '.'
 
 const schema = `
@@ -37,9 +38,11 @@ fragment TodoFragment on Todo {
   categories {
     ...CategoryFragment 
   }
+  __typename
 }
 fragment CategoryFragment on Category {
   id
+  __typename
 }`
 
 const mutation = `mutation setTodoMutation(
@@ -58,9 +61,11 @@ fragment TodoFragment on Todo {
   categories {
     ...CategoryFragment 
   }
+  __typename
 }
 fragment CategoryFragment on Category {
   id
+  __typename
 }`
 
 const primitive = `query {

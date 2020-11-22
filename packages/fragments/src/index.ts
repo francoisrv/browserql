@@ -45,6 +45,22 @@ function makeFragment(
   fragments[name] = { source: fragment, dependencies }
 }
 
+function getNetwork(
+  fragment: Fragment,
+  fragments: Dictionary<Fragment>,
+  mem: string[]
+) {
+  const results: string[] = [fragment.source]
+  for (const depName of fragment.dependencies) {
+    if (mem.indexOf(depName) === -1) {
+      mem.push(depName)
+      const dep = fragments[depName]
+      results.push(getNetwork(dep, fragments, mem))
+    }
+  }
+  return results.join('\n')
+}
+
 export default function buildFragments(document: string | DocumentNode) {
   const queries = getQueries(document)
   const mutations = getMutations(document)
@@ -67,11 +83,7 @@ export default function buildFragments(document: string | DocumentNode) {
       if (!fragment) {
         return null
       }
-      const results: string[] = [fragment.source]
-      for (const dep of fragment.dependencies) {
-        results.push(fragments[dep].source)
-      }
-      return results.join('\n')
+      return getNetwork(fragment, fragments, [name])
     },
     printAll(): string {
       const lines = Object.keys(fragments).map(f.get)
