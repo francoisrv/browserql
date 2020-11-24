@@ -37,7 +37,6 @@ function Query() {
 ### With BrowserqlQuery
 
 ```jsx
-// stuff
 import { BrowserqlQuery } from '@browserql/react'
 
 function Query() {
@@ -52,51 +51,3 @@ function Query() {
   )
 }
 ```
-
-## Renderers
-
-### Basic renderer
-
-<Story codesandbox="jolly-https-zfjuw">
-  <Usage
-    schema={gql`
-      extend type Query {
-        print: String!
-      }
-    `}
-    queries={{
-      print() {
-        return 'Render a query without variables'
-      },
-    }}
-    query={gql`
-      query {
-        print
-      }
-    `}
-    renderer={(hello) => <div>{hello}</div>}
-  />
-</Story>
-
-### Render loading
-
-<Story>
-  <Usage
-    schema={gql`
-      extend type Query {
-        print: String!
-      }
-    `}
-    queries={{
-      print() {
-        return 'Render a query without variables'
-      },
-    }}
-    query={gql`
-      query {
-        print
-      }
-    `}
-    renderer={(hello) => <div>{hello}</div>}
-  />
-</Story>
