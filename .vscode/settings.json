@@ -1,5 +1,5 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.arrowParens": "avoid",
-  "editor.formatOnSave": false
+  "editor.formatOnSave": true
 }

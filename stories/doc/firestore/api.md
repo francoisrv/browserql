@@ -78,11 +78,11 @@ export enum FirestoreGetOperator {
 As you can see, an example would be:
 
 ```javascript
-import { FirestoreGetOperator } from '@browserql/firestore'
+import { FirestoreGetOperator as Operator } from '@browserql/firestore'
 
 const fieldQuery = {
   field: 'name',
-  operator: FirestoreGetOperator.equals,
+  operator: Operator.equals,
   value: 'buy milk',
 }
 ```
@@ -92,8 +92,7 @@ You can use the `where` function as a vanilla syntax:
 ```javascript
 import { where } from '@browserql/firestore'
 
-const fieldQuery = where('name')
-  .equals('buy milk')
+const fieldQuery = where('name').equals('buy milk')
 ```
 
 ## Ordering
@@ -115,6 +114,19 @@ firestoreql.get(
 )
 ```
 
+### Get where
+
+```javascript
+await client.query(
+  firestoreql.get('Todo', {
+    where: [
+      where('name').equals('Buy milk'),
+      where('priority').isLesserThanOrEqualTo(5),
+    ],
+  })
+)
+```
+
 ### Get By id
 
 ```javascript
@@ -123,6 +135,16 @@ await client.query(firestoreql.get('Todo', '1234'))
 
 ```javascript
 await client.query(firestoreql.get('Todo', { id: '1234' }))
+```
+
+### Get By ids
+
+```javascript
+await client.query(firestoreql.get('Todo', ['1234', '4567']))
+```
+
+```javascript
+await client.query(firestoreql.get('Todo', { ids: ['1234', '4567'] }))
 ```
 
 ## Add
