@@ -15,27 +15,69 @@ import {
   ListSubheader,
 } from '@material-ui/core'
 import SyntaxHighlighter from 'react-syntax-highlighter'
-import { nnfxDark as style } from 'react-syntax-highlighter/dist/esm/styles/hljs'
+import { atomOneDark as style } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { readFileSync } from 'fs'
 import Markdown from 'react-markdown'
 import gfm from 'remark-gfm'
 
-const renderers = {
-  code: ({ language, value }) => (
-    <SyntaxHighlighter style={style} language={language} children={value} />
-  ),
-  p: (...args: any[]) => {
-    console.log({ args })
-    return <div>OK</div>
-  },
+interface Menu {
+  name: string
+  doc: string
+  children?: Omit<Menu, 'children'>[]
 }
 
-const menu = [
+const renderers = {
+  code: ({ language, value }) => (
+    <SyntaxHighlighter
+      showLineNumbers={false}
+      style={style}
+      language={language}
+      children={value}
+    />
+  ),
+  // p: (...args: any[]) => {
+  //   console.log({ args })
+  //   return <div>OK</div>
+  // },
+}
+
+const menu: Menu[] = [
   {
-    name: 'React',
+    name: 'Firestore',
+    doc: readFileSync(__dirname + '/doc/firestore/index.md', 'utf-8'),
     children: [
       {
+        name: 'API',
+        doc: readFileSync(__dirname + '/doc/firestore/api.md', 'utf-8'),
+      },
+      {
+        name: 'React',
+        doc: readFileSync(__dirname + '/doc/firestore/react.md', 'utf-8'),
+      },
+    ],
+  },
+  {
+    name: 'React',
+    doc: readFileSync(__dirname + '/doc/react/index.md', 'utf-8'),
+    children: [
+      {
+        name: 'Provider',
+        doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+      },
+      {
         name: 'Query',
+        doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+      },
+      {
+        name: 'Mutation',
+        doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+      },
+      {
+        name: 'withQuery',
+        doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+      },
+      {
+        name: 'withMutation',
         doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
       },
     ],
@@ -44,12 +86,10 @@ const menu = [
 
 export default function App() {
   const [selectedMenu, setSelectedMenu] = React.useState(menu[0])
-  const [selectedChild, setSelectedChild] = React.useState(
-    menu[0].children ? menu[0].children[0] : null
-  )
+  const [selectedChild, setSelectedChild] = React.useState<
+    Omit<Menu, 'children'>
+  >()
   const doc = selectedChild ? selectedChild.doc : selectedMenu.doc
-
-  console.log({ doc })
 
   return (
     <div>
@@ -61,7 +101,10 @@ export default function App() {
                 <ListItem
                   button
                   selected={item.name === selectedMenu.name}
-                  onClick={() => setSelectedMenu(item)}
+                  onClick={() => {
+                    setSelectedChild(undefined)
+                    setSelectedMenu(item)
+                  }}
                 >
                   <ListItemText primary={item.name} />
                 </ListItem>
