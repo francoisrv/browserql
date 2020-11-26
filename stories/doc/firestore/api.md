@@ -7,6 +7,16 @@
 - [Update](/paginate)
 - [Delete](/paginate)
 
+For the documentation and unless told otherwise, we'll use this schema as a reference:
+
+```graphql
+type Todo @firestore {
+  name: String!
+  done: Date @default(date: "now")
+  priority: Int!
+}
+```
+
 ## Paginate
 
 ```ts
@@ -17,53 +27,42 @@ firestoreql.paginate(
   limit?:     number
   orderBy?:   string
   page?:      number
-  where?:     Where | Where[]
+  where?:     FirestoreWhere[]
 )
 ```
 
-### Examples
-
-With firestoreql
+### Example
 
 ```js
 import { firestoreql, where } from '@browserql/firestore'
+```
 
-await client.query(
+```js
+const data = await client.query(
   firestoreql.paginate('Todo', {
-    where: [where('name').equals('buy milk')],
-    limit: 100,
-    orderBy: 'name',
-    asc: false,
-    page: 10,
+    where: [
+      where('name').equals('buy milk'),
+      where('priority').isLesserThan(5),
+    ],
+    limit: 10,
   })
 )
 ```
 
-With react components
-
-```jsx
-<Firestoreql
-  paginate="Todo"
-  asc={false}
-  limit={100}
-  orderBy="name"
-  page={10}
-  where={[where('name').equals('buy milk')]}
->
-  {(todos) => <div />}
-</Firestoreql>
-```
-
 ## Where
 
-```ts
-export interface Where {
-  field:    string
-  operator: Operator
-  value:    any
-}
+Where is an array to apply conditions to the search
 
-export enum Operator {
+```ts
+export interface FirestoreWhere {
+  field: string
+  operator: FirestoreGetOperator
+  value: any
+}
+```
+
+```ts
+export enum FirestoreGetOperator {
   contains                = 'contains',
   doesNotContain          = 'doesNotContain'
   doesNotEqual            = '!=',
@@ -76,6 +75,29 @@ export enum Operator {
   isNotIn                 = 'nin',
   references              = 'references',
 }
+```
+
+As you can see, an example would be:
+
+```js
+import { FirestoreGetOperator } from '@browserql/firestore'
+```
+
+```js
+const fieldQuery = {
+  field: 'name',
+  operator: FirestoreGetOperator.equals,
+  value: 'buy milk',
+}
+```
+
+You can use the `where` function as a vanilla syntax:
+
+```js
+import { where } from '@browserql/firestore'
+
+const fieldQuery = where('name')
+  .equals('buy milk')
 ```
 
 ## Ordering
@@ -97,7 +119,21 @@ firestoreql.get(
 )
 ```
 
+### Get By id
+
+```js
+await client.query(firestoreql.get('Todo', '1234'))
+```
+
+```js
+await client.query(firestoreql.get('Todo', { id: '1234' }))
+```
+
 ## Add
+
+```js
+await client.mutate(firestoreql.addOne('Todo', { name: 'buy milk' }))
+```
 
 ## Udpate one
 
