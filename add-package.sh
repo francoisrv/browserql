@@ -7,6 +7,7 @@ cat <<JSON > packages/$1/package.json
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "source": "src/index.ts",
   "license": "ISC",
   "keywords": [
     "browserql",

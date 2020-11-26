@@ -33,11 +33,9 @@ firestoreql.paginate(
 
 ### Example
 
-```js
+```javascript
 import { firestoreql, where } from '@browserql/firestore'
-```
 
-```js
 const data = await client.query(
   firestoreql.paginate('Todo', {
     where: [
@@ -53,7 +51,7 @@ const data = await client.query(
 
 Where is an array to apply conditions to the search
 
-```ts
+```typescript
 export interface FirestoreWhere {
   field: string
   operator: FirestoreGetOperator
@@ -61,7 +59,7 @@ export interface FirestoreWhere {
 }
 ```
 
-```ts
+```typescript
 export enum FirestoreGetOperator {
   contains                = 'contains',
   doesNotContain          = 'doesNotContain'
@@ -79,11 +77,9 @@ export enum FirestoreGetOperator {
 
 As you can see, an example would be:
 
-```js
+```javascript
 import { FirestoreGetOperator } from '@browserql/firestore'
-```
 
-```js
 const fieldQuery = {
   field: 'name',
   operator: FirestoreGetOperator.equals,
@@ -93,7 +89,7 @@ const fieldQuery = {
 
 You can use the `where` function as a vanilla syntax:
 
-```js
+```javascript
 import { where } from '@browserql/firestore'
 
 const fieldQuery = where('name')
@@ -106,7 +102,7 @@ const fieldQuery = where('name')
 
 ## Get
 
-```ts
+```typescript
 firestoreql.get(
   typeName:   string
 
@@ -121,17 +117,17 @@ firestoreql.get(
 
 ### Get By id
 
-```js
+```javascript
 await client.query(firestoreql.get('Todo', '1234'))
 ```
 
-```js
+```javascript
 await client.query(firestoreql.get('Todo', { id: '1234' }))
 ```
 
 ## Add
 
-```js
+```javascript
 await client.mutate(firestoreql.addOne('Todo', { name: 'buy milk' }))
 ```
 
