@@ -13,28 +13,30 @@ import {
   ListItem,
   ListItemText,
   ListSubheader,
+  Tab,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
+  Tabs,
 } from '@material-ui/core'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { atomOneDark as style } from 'react-syntax-highlighter/dist/esm/styles/hljs'
-import { readFileSync } from 'fs'
 import Markdown from 'react-markdown'
 import gfm from 'remark-gfm'
-
-interface Menu {
-  name: string
-  doc: string
-  children?: Omit<Menu, 'children'>[]
-}
-
-console.log({ gfm })
+import {
+  Route,
+  RouteComponentProps,
+  Switch,
+  withRouter,
+} from 'react-router-dom'
+import { kebabCase } from 'lodash'
+import { Fragment } from 'react'
+import menu, { Menu } from './menu'
 
 const renderers = {
-  code: ({ language, value }) => (
+  code: ({ language, value }: { language: string; value: any }) => (
     <SyntaxHighlighter
       showLineNumbers={false}
       style={style}
@@ -57,58 +59,11 @@ const renderers = {
   tableCell: TableCell,
 }
 
-const menu: Menu[] = [
-  {
-    name: 'Firestore',
-    doc: readFileSync(__dirname + '/doc/firestore/index.md', 'utf-8'),
-    children: [
-      {
-        name: 'API',
-        doc: readFileSync(__dirname + '/doc/firestore/api.md', 'utf-8'),
-      },
-      {
-        name: 'React',
-        doc: readFileSync(__dirname + '/doc/firestore/react.md', 'utf-8'),
-      },
-      {
-        name: 'Schema builder',
-        doc: readFileSync(__dirname + '/doc/firestore/react.md', 'utf-8'),
-      },
-    ],
-  },
-  {
-    name: 'React',
-    doc: readFileSync(__dirname + '/doc/react/index.md', 'utf-8'),
-    children: [
-      {
-        name: 'Provider',
-        doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
-      },
-      {
-        name: 'Query',
-        doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
-      },
-      {
-        name: 'Mutation',
-        doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
-      },
-      {
-        name: 'withQuery',
-        doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
-      },
-      {
-        name: 'withMutation',
-        doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
-      },
-    ],
-  },
-  {
-    name: 'Router',
-    doc: readFileSync(__dirname + '/doc/router/index.md', 'utf-8'),
-  },
-]
-
-export default function App() {
+function App(props: RouteComponentProps) {
+  const {
+    history,
+    location: { pathname },
+  } = props
   const [selectedMenu, setSelectedMenu] = React.useState(menu[0])
   const [selectedChild, setSelectedChild] = React.useState<
     Omit<Menu, 'children'>
@@ -124,10 +79,11 @@ export default function App() {
               <React.Fragment key={item.name}>
                 <ListItem
                   button
-                  selected={item.name === selectedMenu.name}
+                  selected={pathname === `/${kebabCase(item.name)}`}
                   onClick={() => {
                     setSelectedChild(undefined)
                     setSelectedMenu(item)
+                    history.push(`/${kebabCase(item.name)}`)
                   }}
                 >
                   <ListItemText primary={item.name} />
@@ -140,14 +96,18 @@ export default function App() {
                           button
                           style={{ paddingLeft: 44 }}
                           key={child.name}
-                          selected={Boolean(
-                            selectedChild &&
-                              selectedChild.name === child.name &&
-                              item.name === selectedMenu.name
-                          )}
+                          selected={
+                            pathname ===
+                            `/${kebabCase(item.name)}/${kebabCase(child.name)}`
+                          }
                           onClick={() => {
                             setSelectedMenu(item)
                             setSelectedChild(child)
+                            history.push(
+                              `/${kebabCase(item.name)}/${kebabCase(
+                                child.name
+                              )}`
+                            )
                           }}
                         >
                           <ListItemText primary={child.name} />
@@ -176,11 +136,38 @@ export default function App() {
         <div
           style={{ padding: 32, flexGrow: 1, paddingLeft: 'calc(22vw + 32px)' }}
         >
-          <Markdown plugins={[gfm]} renderers={renderers}>
-            {doc}
-          </Markdown>
+          <Switch>
+            {menu.map((item) => (
+              <Fragment key={item.name}>
+                <Route
+                  path={`/${kebabCase(item.name)}`}
+                  exact
+                  component={() => (
+                    <Markdown plugins={[gfm]} renderers={renderers}>
+                      {item.doc}
+                    </Markdown>
+                  )}
+                />
+                {item.children &&
+                  item.children.map((child) => (
+                    <Route
+                      key={child.name}
+                      exact
+                      path={`/${kebabCase(item.name)}/${kebabCase(child.name)}`}
+                      component={() => (
+                        <Markdown plugins={[gfm]} renderers={renderers}>
+                          {child.doc}
+                        </Markdown>
+                      )}
+                    />
+                  ))}
+              </Fragment>
+            ))}
+          </Switch>
         </div>
       </div>
     </div>
   )
 }
+
+export default withRouter(App)
