@@ -13,6 +13,11 @@ import {
   ListItem,
   ListItemText,
   ListSubheader,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
 } from '@material-ui/core'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { atomOneDark as style } from 'react-syntax-highlighter/dist/esm/styles/hljs'
@@ -26,6 +31,8 @@ interface Menu {
   children?: Omit<Menu, 'children'>[]
 }
 
+console.log({ gfm })
+
 const renderers = {
   code: ({ language, value }) => (
     <SyntaxHighlighter
@@ -35,10 +42,19 @@ const renderers = {
       children={value}
     />
   ),
-  // p: (...args: any[]) => {
-  //   console.log({ args })
-  //   return <div>OK</div>
-  // },
+  list: List,
+  listItem: ({ checked, children, index, node, ordered, spread }: any) => {
+    return (
+      <ListItem button>
+        <ListItemText primary={children[0].props.children[0].props.children} />
+      </ListItem>
+    )
+  },
+  table: Table,
+  tableHead: TableHead,
+  tableBody: TableBody,
+  tableRow: TableRow,
+  tableCell: TableCell,
 }
 
 const menu: Menu[] = [
@@ -52,6 +68,10 @@ const menu: Menu[] = [
       },
       {
         name: 'React',
+        doc: readFileSync(__dirname + '/doc/firestore/react.md', 'utf-8'),
+      },
+      {
+        name: 'Schema builder',
         doc: readFileSync(__dirname + '/doc/firestore/react.md', 'utf-8'),
       },
     ],
@@ -81,6 +101,10 @@ const menu: Menu[] = [
         doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
       },
     ],
+  },
+  {
+    name: 'Router',
+    doc: readFileSync(__dirname + '/doc/router/index.md', 'utf-8'),
   },
 ]
 
