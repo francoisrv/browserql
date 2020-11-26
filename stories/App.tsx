@@ -1,7 +1,5 @@
 import * as React from 'react'
-import BrowserqlQuery from './react/query.mdx'
-import FirestoreReact from './epics/firestore-react.mdx'
-import GraphiQL from './epics/graphiql.mdx'
+import 'refractor'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
@@ -16,98 +14,83 @@ import {
   ListItemText,
   ListSubheader,
 } from '@material-ui/core'
+import SyntaxHighlighter from 'react-syntax-highlighter'
+import { nnfxDark as style } from 'react-syntax-highlighter/dist/esm/styles/hljs'
+import { readFileSync } from 'fs'
+import Markdown from 'react-markdown'
+import gfm from 'remark-gfm'
 
-const components = {
-  h1: (props) => <h1>PROPS</h1>,
-  h2: (props) => <h2>PROPS</h2>,
-  h3: (props) => <h3>PROPS</h3>,
-  h4: (props) => <h4>PROPS</h4>,
-  h5: (props) => <h5>PROPS</h5>,
-  h6: (props) => <h6>PROPS</h6>,
-  p: (props) => <p>PROPS</p>,
-  code: (props) => <code>PROPS</code>,
+const renderers = {
+  code: ({ language, value }) => (
+    <SyntaxHighlighter style={style} language={language} children={value} />
+  ),
+  p: (...args: any[]) => {
+    console.log({ args })
+    return <div>OK</div>
+  },
 }
 
-const epics = [
+const menu = [
   {
-    title: 'React',
-    mdx: () =>
-      BrowserqlQuery({
-        h1: (props) => <h1>PROPS</h1>,
-        h2: (props) => <h2>PROPS</h2>,
-        h3: (props) => <h3>PROPS</h3>,
-        h4: (props) => <h4>PROPS</h4>,
-        h5: (props) => <h5>PROPS</h5>,
-        h6: (props) => <h6>PROPS</h6>,
-        p: (props) => <p>PROPS</p>,
-        code: (props) => <code>PROPS</code>,
-      }),
-  },
-  {
-    title: 'Firestore React',
-    mdx: FirestoreReact,
-  },
-  {
-    title: 'GraphiQL',
-    mdx: GraphiQL,
+    name: 'React',
+    children: [
+      {
+        name: 'Query',
+        doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+      },
+    ],
   },
 ]
 
-function NavLi(props: { title: React.ReactNode; onClick: () => void }) {
-  return (
-    <li style={{ display: 'inline', textTransform: 'uppercase' }}>
-      <button
-        style={{
-          fontSize: 16,
-          padding: 12,
-          textTransform: 'uppercase',
-          border: '2px solid #aaa',
-          borderBottom: '4px dotted #777',
-          borderRadius: '6px 6px 0 0',
-          fontWeight: 'bold',
-        }}
-        onClick={props.onClick}
-      >
-        {props.title}
-      </button>
-    </li>
-  )
-}
-
-function Nav(props: { setEpic: (epic: any) => void }) {
-  return (
-    <nav>
-      <ul style={{ listStyleType: 'none' }}>
-        {epics.map((epic) => (
-          <NavLi
-            key={epic.title}
-            title={epic.title}
-            onClick={() => props.setEpic(epic)}
-          />
-        ))}
-      </ul>
-    </nav>
-  )
-}
-
 export default function App() {
-  const [epic, setEpic] = React.useState(epics[2])
+  const [selectedMenu, setSelectedMenu] = React.useState(menu[0])
+  const [selectedChild, setSelectedChild] = React.useState(
+    menu[0].children ? menu[0].children[0] : null
+  )
+  const doc = selectedChild ? selectedChild.doc : selectedMenu.doc
+
+  console.log({ doc })
 
   return (
     <div>
       <Drawer variant="permanent" anchor="left" open>
-        <div style={{ width: '22vw' }}>
+        <div style={{ width: '18vw' }}>
           <List component="nav">
-            <ListItem button>
-              <ListItemText primary="React" />
-            </ListItem>
-            <Collapse in>
-              <List component="div" disablePadding>
-                <ListItem button style={{ paddingLeft: 44 }}>
-                  <ListItemText primary="Query" />
+            {menu.map((item) => (
+              <React.Fragment key={item.name}>
+                <ListItem
+                  button
+                  selected={item.name === selectedMenu.name}
+                  onClick={() => setSelectedMenu(item)}
+                >
+                  <ListItemText primary={item.name} />
                 </ListItem>
-              </List>
-            </Collapse>
+                {item.children && (
+                  <Collapse in>
+                    <List component="div" disablePadding>
+                      {item.children.map((child) => (
+                        <ListItem
+                          button
+                          style={{ paddingLeft: 44 }}
+                          key={child.name}
+                          selected={Boolean(
+                            selectedChild &&
+                              selectedChild.name === child.name &&
+                              item.name === selectedMenu.name
+                          )}
+                          onClick={() => {
+                            setSelectedMenu(item)
+                            setSelectedChild(child)
+                          }}
+                        >
+                          <ListItemText primary={child.name} />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Collapse>
+                )}
+              </React.Fragment>
+            ))}
           </List>
         </div>
       </Drawer>
@@ -126,7 +109,9 @@ export default function App() {
         <div
           style={{ padding: 32, flexGrow: 1, paddingLeft: 'calc(22vw + 32px)' }}
         >
-          <BrowserqlQuery components={components} />
+          <Markdown plugins={[gfm]} renderers={renderers}>
+            {doc}
+          </Markdown>
         </div>
       </div>
     </div>
