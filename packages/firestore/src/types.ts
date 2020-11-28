@@ -1,3 +1,23 @@
+export enum FirestoreqlType {
+  getter = 'getter',
+}
+
+export type FirestoreqlModifier = {
+  type: FirestoreqlType.getter
+} & (
+  | {
+      name: 'asc'
+      value: boolean
+    }
+  | {
+      name: 'first' | 'last'
+    }
+  | {
+      name: 'increment' | 'multiply' | 'limit'
+      value: number
+    }
+)
+
 export enum QueryOperator {
   equals = 'equals',
   references = 'references',

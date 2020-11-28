@@ -1,158 +1,109 @@
-# Firestoreql API
+# API
 
-- [Paginate](/paginate)
-- [Where](/paginate)
-- [Get](/paginate)
-- [Add](/paginate)
-- [Update](/paginate)
-- [Delete](/paginate)
+## add
 
-For the documentation and unless told otherwise, we'll use this schema as a reference:
+## asc
 
-```graphql
-type Todo @firestore {
-  name: String!
-  done: Date @default(date: "now")
-  priority: Int!
-}
-```
+Tell a query to sort results by ascending order.
+Expect `true` or `false` as argument.
 
-## Paginate
-
-```ts
-firestoreql.paginate(
-  typeName:   string
-
-  asc?:       boolean
-  limit?:     number
-  orderBy?:   string
-  page?:      number
-  where?:     FirestoreWhere[]
-)
-```
-
-### Example
+By default, asc is `true`
 
 ```javascript
-import { firestoreql, where } from '@browserql/firestore'
+import { asc } from '@browserql/firestore'
 
-const data = await client.query(
-  firestoreql.paginate('Todo', {
-    where: [
-      where('name').equals('buy milk'),
-      where('priority').isLesserThan(5),
-    ],
-    limit: 10,
-  })
-)
-```
-
-## Where
-
-Where is an array to apply conditions to the search
-
-```typescript
-export interface FirestoreWhere {
-  field: string
-  operator: FirestoreGetOperator
-  value: any
-}
+firestoreql.get('Todo', asc(false))
 ```
 
 ```typescript
-export enum FirestoreGetOperator {
-  contains                = 'contains',
-  doesNotContain          = 'doesNotContain'
-  doesNotEqual            = '!=',
-  equals                  = '=',
-  isGreaterThan           = '>',
-  isGreaterThanOrEqualTo  = '>=',
-  isIn                    = 'in',
-  isLesserThan            = '<',
-  isLesserThanOrEqualTo   = '<=',
-  isNotIn                 = 'nin',
-  references              = 'references',
+asc(value: boolean): {
+  type: FirestoreqlType.getter
+  name: 'asc'
+  value: boolean
 }
 ```
 
-As you can see, an example would be:
+## build
 
 ```javascript
-import { FirestoreGetOperator as Operator } from '@browserql/firestore'
+import { build } from '@browserql/firestore'
 
-const fieldQuery = {
-  field: 'name',
-  operator: Operator.equals,
-  value: 'buy milk',
+build(
+  firestore(),
+  gql`
+    type Todo @firestore {
+      name: String!
+    }
+  `
+)
+```
+
+```typescript
+buildFirestoreql(
+  db: firestore.Firestore.Database
+  schema: string | DocumentNode
+): {
+  type: FirestoreqlType.asc
+  value: boolean
 }
 ```
 
-You can use the `where` function as a vanilla syntax:
+## connect
+
+```javascript
+import { connect } from '@browserql/firestore'
+```
+
+## first
+
+```javascript
+import { first } from '@browserql/firestore'
+```
+
+## increment
+
+```javascript
+import { increment } from '@browserql/firestore'
+```
+
+## last
+
+```javascript
+import { last } from '@browserql/firestore'
+```
+
+## limit
+
+```javascript
+import { limit } from '@browserql/firestore'
+```
+
+## multiply
+
+```javascript
+import { multiply } from '@browserql/firestore'
+```
+
+## orderBy
+
+```javascript
+import { orderBy } from '@browserql/firestore'
+```
+
+## page
+
+```javascript
+import { page } from '@browserql/firestore'
+```
+
+## set
+
+```javascript
+import { page } from '@browserql/firestore'
+```
+
+## where
 
 ```javascript
 import { where } from '@browserql/firestore'
-
-const fieldQuery = where('name').equals('buy milk')
 ```
-
-## Ordering
-
-## Pagination
-
-## Get
-
-```typescript
-firestoreql.get(
-  typeName:   string
-
-  asc?:       boolean
-  id?:        string
-  ids?:       string[]
-  orderBy?:   string
-  where?:     Where | Where[]
-  page?:      number
-)
-```
-
-### Get where
-
-```javascript
-await client.query(
-  firestoreql.get('Todo', {
-    where: [
-      where('name').equals('Buy milk'),
-      where('priority').isLesserThanOrEqualTo(5),
-    ],
-  })
-)
-```
-
-### Get By id
-
-```javascript
-await client.query(firestoreql.get('Todo', '1234'))
-```
-
-```javascript
-await client.query(firestoreql.get('Todo', { id: '1234' }))
-```
-
-### Get By ids
-
-```javascript
-await client.query(firestoreql.get('Todo', ['1234', '4567']))
-```
-
-```javascript
-await client.query(firestoreql.get('Todo', { ids: ['1234', '4567'] }))
-```
-
-## Add
-
-```javascript
-await client.mutate(firestoreql.addOne('Todo', { name: 'buy milk' }))
-```
-
-## Udpate one
-
-## Delete

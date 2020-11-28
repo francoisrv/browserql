@@ -20,8 +20,8 @@ const menu: Menu[] = [
         doc: readFileSync(__dirname + '/doc/firestore/react.md', 'utf-8'),
       },
       {
-        name: 'Schema builder',
-        doc: readFileSync(__dirname + '/doc/firestore/react.md', 'utf-8'),
+        name: 'Schema',
+        doc: readFileSync(__dirname + '/doc/firestore/schema.md', 'utf-8'),
       },
     ],
   },
