@@ -1,60 +1,104 @@
 import { readFileSync } from 'fs'
 
-export interface Menu {
+export interface MenuItem {
   name: string
   doc: string
-  children?: Omit<Menu, 'children'>[]
 }
 
-const menu: Menu[] = [
-  {
-    name: 'Firestore',
-    doc: readFileSync(__dirname + '/doc/firestore/index.md', 'utf-8'),
-    children: [
-      {
-        name: 'API',
-        doc: readFileSync(__dirname + '/doc/firestore/api.md', 'utf-8'),
-      },
-      {
-        name: 'React',
-        doc: readFileSync(__dirname + '/doc/firestore/react.md', 'utf-8'),
-      },
-      {
-        name: 'Schema',
-        doc: readFileSync(__dirname + '/doc/firestore/schema.md', 'utf-8'),
-      },
-    ],
-  },
-  {
-    name: 'React',
-    doc: readFileSync(__dirname + '/doc/react/index.md', 'utf-8'),
-    children: [
-      {
-        name: 'Provider',
-        doc: readFileSync(__dirname + '/doc/react/provider.md', 'utf-8'),
-      },
-      {
-        name: 'Query',
-        doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
-      },
-      {
-        name: 'Mutation',
-        doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
-      },
-      {
-        name: 'withQuery',
-        doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
-      },
-      {
-        name: 'withMutation',
-        doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
-      },
-    ],
-  },
-  {
-    name: 'Router',
-    doc: readFileSync(__dirname + '/doc/router/index.md', 'utf-8'),
-  },
-]
+export interface Menu {
+  [name: string]: MenuItem[]
+}
+
+const menu: Menu = {
+  browserql: [
+    {
+      name: 'About',
+      doc: readFileSync(__dirname + '/doc/browserql/about.md', 'utf-8'),
+    },
+  ],
+  Client: [
+    {
+      name: 'About',
+      doc: readFileSync(__dirname + '/doc/client/about.md', 'utf-8'),
+    },
+    {
+      name: 'Usage',
+      doc: readFileSync(__dirname + '/doc/client/usage.md', 'utf-8'),
+    },
+  ],
+  HTTP: [],
+  Rest: [],
+  State: [],
+  React: [
+    {
+      name: 'Provider',
+      doc: readFileSync(__dirname + '/doc/react/provider.md', 'utf-8'),
+    },
+    {
+      name: 'Query',
+      doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+    },
+    {
+      name: 'Mutation',
+      doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+    },
+    {
+      name: 'withQuery',
+      doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+    },
+    {
+      name: 'withMutation',
+      doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+    },
+  ],
+  Firestore: [
+    {
+      name: 'Quick start',
+      doc: readFileSync(__dirname + '/doc/firestore/usage.md', 'utf-8'),
+    },
+    {
+      name: 'Schema',
+      doc: readFileSync(__dirname + '/doc/firestore/schema.md', 'utf-8'),
+    },
+    {
+      name: 'API',
+      doc: readFileSync(__dirname + '/doc/firestore/api.md', 'utf-8'),
+    },
+    {
+      name: 'React',
+      doc: readFileSync(__dirname + '/doc/firestore/react.md', 'utf-8'),
+    },
+  ],
+  Utils: [
+    {
+      name: 'Fragments',
+      doc: readFileSync(__dirname + '/doc/utils/fragments.md', 'utf-8'),
+    },
+    {
+      name: 'Scalars',
+      doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+    },
+    {
+      name: 'Directives',
+      doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+    },
+    {
+      name: 'Contracts',
+      doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+    },
+    {
+      name: 'Resolved',
+      doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+    },
+    {
+      name: 'FP',
+      doc: readFileSync(__dirname + '/doc/utils/fp.md', 'utf-8'),
+    },
+    {
+      name: 'FPQL',
+      doc: readFileSync(__dirname + '/doc/utils/fpql.md', 'utf-8'),
+    },
+  ],
+}
 
 export default menu

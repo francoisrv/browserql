@@ -21,6 +21,17 @@ Create your firebase app:
 // db.js
 import firebase from 'firebase/app'
 import 'firebase/firestore'
+
+const config = {
+  apiKey: 'xxx',
+  projectId: 'xxx',
+  appId: 'xxx',
+  authDomain: 'xxx',
+}
+
+firebase.initializeApp(config)
+
+export default firebase.firestore()
 ```
 
 You can now generate your executable GraphQL schema
@@ -75,27 +86,24 @@ await client.mutate(add('Todo', { name: 'Buy milk' }))
 You can also use it with react:
 
 ```javascript
-import { BrowserqlProvider } from '@browserql/react'
 import { Firestoreql } from '@browserql/firestore-react'
 ```
 
 ```jsx
-<BrowserqlProvider schema={schema} queries={queries} mutations={mutations}>
-  <Firestoreql paginate="Todo">
-    {(todos) => (
-      <>
-        <ul>
-          {todos.map((todo) => (
-            <li key={todo.id}>{todo.name}</li>
-          ))}
-        </ul>
-        <Firestoreql addOne="Todo">
-          {(addOne) => (
-            <button onClick={() => addOne({ name: 'buy milk' })}>Add</button>
-          )}
-        </Firestoreql>
-      </>
-    )}
-  </Firestoreql>
-</BrowserqlProvider>
+<Firestoreql paginate="Todo">
+  {(todos) => (
+    <>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>{todo.name}</li>
+        ))}
+      </ul>
+      <Firestoreql addOne="Todo">
+        {(addOne) => (
+          <button onClick={() => addOne({ name: 'buy milk' })}>Add</button>
+        )}
+      </Firestoreql>
+    </>
+  )}
+</Firestoreql>
 ```

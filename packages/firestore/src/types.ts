@@ -2,11 +2,15 @@ export enum FirestoreqlType {
   getter = 'getter',
 }
 
+export enum FirestoreqlGetter {
+  asc = 'asc',
+}
+
 export type FirestoreqlModifier = {
   type: FirestoreqlType.getter
 } & (
   | {
-      name: 'asc'
+      name: FirestoreqlGetter.asc
       value: boolean
     }
   | {

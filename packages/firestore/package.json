@@ -21,7 +21,7 @@
   "scripts": {
     "build": "rm -rf dist && yarn tsc",
     "watch": "yarn build -w",
-    "test": "echo jest dist --env=node --forceExit",
+    "test": "jest dist --env=node --forceExit",
     "prepublishOnly": "git tag | xargs git tag -d && yarn build && yarn test"
   },
   "dependencies": {

@@ -60,6 +60,16 @@ render(
 )
 ```
 
+### Properties
+
+| Prop                                           | Description                                                                      | Type                                                                              | Example                                                                        |
+| ---------------------------------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| **get** \| **add** \| **update** \| **remove** | Put here the name of a type that has been tagged with the directive `@firestore` | `string`                                                                          | `<Firestoreql get="User" />`                                                   |
+| **children**                                   | View below                                                                       | `<D = unknown>(data: D, info: { loading: boolean, error?: Error }): ReactElement` | `<Firestoreql get="User" first>{user => <div>{user.name}</div>}</Firestoreql>` |
+| **where**                                      | View below                                                                       | `Where[]`                                                                         | `<Firestoreql get="User" where={[where('email').equals(email)]} />`            |
+| **orderBy**                                    | View below                                                                       | `string`                                                                          | `<Firestoreql get="User" orderBy="createdAt" />`                               |
+| **asc**                                        | View below                                                                       | `boolean`                                                                         | `<Firestoreql get="User" asc={false} />`                                       |
+
 ## With HOC
 
 ```javascript
