@@ -80,33 +80,37 @@ import { build, set } from '@browserql/firestore'
 import { BrowserqlProvider } from '@browserql/react'
 import { withFirestoreql } from '@browserql/firestore-react'
 
-function TodosView({ todos, updateTodo, addTodo }) {
+function TodosView({ getTodo, updateTodo, addTodo }) {
   const [name, setName] = React.useState('')
+
+  if (getTodo.loading) {
+    return <div>Loading</div>
+  }
 
   return (
     <>
       <ul>
-        {todos.map((todo) => (
+        {getTodo.data.map((todo) => (
           <li key={todo.id}>
             <input
               type="checkbox"
               checked={false}
-              onChange={() => updateTodo(set('done').to(true))}
+              onChange={() => updateTodo.exec(set('done').to(true))}
             />
             {todo.name}
           </li>
         ))}
       </ul>
       <input value={name} onChange={(e) => setName(e.target.value)} />
-      <button onClick={() => addTodo({ name })}>Add</button>
+      <button onClick={() => addTodo.exec({ name })}>Add</button>
     </>
   )
 }
 
 const Todos = flow(
-  withFirestore.get('Todo').as('todos'),
-  withFirestore.update('Todo').as('updateTodo'),
-  withFirestore.add('Todo').as('addTodo')
+  withFirestore.get('Todo'),
+  withFirestore.update('Todo'),
+  withFirestore.add('Todo')
 )(TodosView)
 
 render(
