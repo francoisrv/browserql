@@ -42,14 +42,14 @@ const renderers = {
       children={value}
     />
   ),
-  list: List,
-  listItem: ({ children }: any) => {
-    return (
-      <ListItem button>
-        <ListItemText primary={children[0].props.children[0].props.children} />
-      </ListItem>
-    )
-  },
+  // list: List,
+  // listItem: ({ children }: any) => {
+  //   return (
+  //     <ListItem button>
+  //       <ListItemText primary={children[0].props.children[0].props.children} />
+  //     </ListItem>
+  //   )
+  // },
   table: ({ children }) => {
     return (
       <Paper>
