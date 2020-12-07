@@ -1,6 +1,6 @@
-# Client
+# browserql Client
 
-The browserql client is a wrapper around apollo server running in local memory of the browser.
+The browserql client is a wrapper around apollo server, running in local memory of the browser.
 
 To use it, just pass it a schema and some resolvers.
 
@@ -29,6 +29,12 @@ const {
     }
   `
 )
+```
+
+## Playground
+
+```browserqlPlayground
+
 ```
 
 ## Schema

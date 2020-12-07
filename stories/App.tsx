@@ -32,16 +32,22 @@ import {
 import { kebabCase, keys } from 'lodash'
 import { Fragment } from 'react'
 import menu, { MenuItem } from './menu'
+import BrowserqlPlayground from './components/BrowserqlPlayground'
 
 const renderers = {
-  code: ({ language, value }: { language: string; value: any }) => (
-    <SyntaxHighlighter
-      showLineNumbers={false}
-      style={style}
-      language={language}
-      children={value}
-    />
-  ),
+  code: ({ language, value }: { language: string; value: any }) => {
+    if (language === 'browserqlPlayground') {
+      return <BrowserqlPlayground />
+    }
+    return (
+      <SyntaxHighlighter
+        showLineNumbers={false}
+        style={style}
+        language={language}
+        children={value}
+      />
+    )
+  },
   // list: List,
   // listItem: ({ children }: any) => {
   //   return (

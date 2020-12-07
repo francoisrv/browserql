@@ -21,11 +21,19 @@ import Draggable from 'react-draggable'
 interface Props {
   buttonStyle?: CSSProperties
   rootStyle?: CSSProperties
-  graphiqlProps?: GraphiQLProps
+  graphiqlProps?: Partial<GraphiQLProps>
+  disableDragRoot?: boolean
+  disableDragButton?: boolean
 }
 
 export default function GraphiQL(props: Props) {
-  const { buttonStyle, rootStyle, graphiqlProps } = props
+  const {
+    buttonStyle,
+    rootStyle,
+    graphiqlProps,
+    disableDragRoot,
+    disableDragButton,
+  } = props
   const ctx = React.useContext(BrowserqlContext)
   const [open, setOpen] = useState(false)
   const [introspection, setIntrospection] = useState()
@@ -67,7 +75,7 @@ export default function GraphiQL(props: Props) {
 
   return (
     <>
-      <Draggable>
+      <Draggable disabled={disableDragButton}>
         <button
           style={{
             position: 'fixed',
@@ -87,7 +95,7 @@ export default function GraphiQL(props: Props) {
         </button>
       </Draggable>
 
-      <Draggable>
+      <Draggable disabled={disableDragRoot}>
         <div
           style={{
             position: 'fixed',

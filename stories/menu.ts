@@ -21,10 +21,6 @@ const menu: Menu = {
       name: 'About',
       doc: readFileSync(__dirname + '/doc/client/about.md', 'utf-8'),
     },
-    {
-      name: 'Usage',
-      doc: readFileSync(__dirname + '/doc/client/usage.md', 'utf-8'),
-    },
   ],
   HTTP: [],
   Rest: [],
