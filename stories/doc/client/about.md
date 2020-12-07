@@ -5,30 +5,36 @@ The browserql client is a wrapper around apollo server, running in local memory 
 To use it, just pass it a schema and some resolvers.
 
 ```js
-import connect from ' @browserql/client'
+import connect from '@browserql/client'
+import gql from 'graphql-tag'
 
 const { client } = connect({
   schema: gql`
-    type Query {
+    extend type Query {
       isMorning: Boolean
     }
   `,
   queries: {
     async isMorning() {
-      return new Date().geHours() < 12
+      return new Date().getHours() < 12
     },
   },
 })
 
-const {
-  data: { isMorning },
-} = await client.query(
-  gql`
+await client.query({
+  query: gql`
     query {
       isMorning
     }
-  `
-)
+  `,
+  fetchPolicy: 'no-cache',
+})
+```
+
+## Sandbox
+
+```sandbox
+mystifying-frost-qwhsj
 ```
 
 ## Playground

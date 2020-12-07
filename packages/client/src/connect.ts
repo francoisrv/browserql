@@ -122,7 +122,5 @@ export default function connect(
 
   browserqlClient.context.browserqlClient = browserqlClient
 
-  console.log('Client is connected')
-
   return browserqlClient
 }
