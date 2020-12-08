@@ -15,7 +15,9 @@ type Todo @firestore {
 }
 ```
 
-Create your firebase app:
+_Note the use of the `@firestore` directive: it means this type represents a firestore collection._
+
+Then create your firebase app:
 
 ```javascript
 // db.js

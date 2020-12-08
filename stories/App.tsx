@@ -29,10 +29,11 @@ import {
   Switch,
   withRouter,
 } from 'react-router-dom'
-import { kebabCase, keys } from 'lodash'
+import { kebabCase, keys, trim } from 'lodash'
 import { Fragment } from 'react'
 import menu, { MenuItem } from './menu'
 import BrowserqlPlayground from './components/BrowserqlPlayground'
+import * as snapshots from './snapshots'
 
 const renderers = {
   code: ({ language, value }: { language: string; value: any }) => {
@@ -55,6 +56,10 @@ const renderers = {
           sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
         ></iframe>
       )
+    }
+    if (language === 'snapshot') {
+      const Snapshot = snapshots[value.trim() as keyof typeof snapshots]
+      return <Snapshot />
     }
     return (
       <SyntaxHighlighter

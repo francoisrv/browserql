@@ -39,8 +39,8 @@ mystifying-frost-qwhsj
 
 ## Playground
 
-```browserqlPlayground
-
+```snapshot
+ClientExample1
 ```
 
 ## Schema
