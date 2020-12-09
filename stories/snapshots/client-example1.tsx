@@ -57,7 +57,7 @@ const mutation = gql`
 `
 
 function Counter() {
-  const { data, loading } = useQuery(query, { fetchPolicy: 'network-only' })
+  const { data, loading } = useQuery(query)
   const [incrementCounter] = useMutation(mutation)
   return (
     <Button
