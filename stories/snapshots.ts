@@ -1,2 +1,7 @@
 export { default as ClientExample1 } from './snapshots/client-example1'
 export { default as FirestoreExample1 } from './snapshots/firestore-example'
+export { default as FirestoreSchemaShowCollections } from './snapshots/firestore-schema-show-collections'
+export { default as FPQLGetNameGetTypes } from './snapshots/fpql-get-name-get-types'
+export { default as FPQLGetTypes } from './snapshots/fpql-get-types'
+export { default as FPQLGetDirectiveArgument } from './snapshots/fpql-get-directive-argument'
+export { default as FPQLExample } from './snapshots/fpql-example'

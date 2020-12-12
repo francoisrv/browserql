@@ -11,96 +11,17 @@ import {
   List,
   ListItem,
   ListItemText,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
 } from '@material-ui/core'
-import SyntaxHighlighter from 'react-syntax-highlighter'
-import { atomOneDark as style } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 // import { a11yDark as style } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import Markdown from 'react-markdown'
-import gfm from 'remark-gfm'
 import {
   Route,
   RouteComponentProps,
   Switch,
   withRouter,
 } from 'react-router-dom'
-import { kebabCase, keys, trim } from 'lodash'
-import { Fragment } from 'react'
+import { kebabCase, keys } from 'lodash'
 import menu, { MenuItem } from './menu'
-import BrowserqlPlayground from './components/BrowserqlPlayground'
-import * as snapshots from './snapshots'
-
-const renderers = {
-  code: ({ language, value }: { language: string; value: any }) => {
-    if (language === 'browserqlPlayground') {
-      return <BrowserqlPlayground />
-    }
-    if (language === 'sandbox') {
-      return (
-        <iframe
-          src={`https://codesandbox.io/embed/${value.trim()}?fontsize=14&hidenavigation=1&theme=dark&hidenavigation=0&previewwindow=console`}
-          style={{
-            width: '100%',
-            height: 500,
-            border: 0,
-            borderRadius: 4,
-            overflow: 'hidden',
-          }}
-          title="browserql client"
-          allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-          sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-        ></iframe>
-      )
-    }
-    if (language === 'snapshot') {
-      const Snapshot = snapshots[value.trim() as keyof typeof snapshots]
-      return <Snapshot />
-    }
-    return (
-      <SyntaxHighlighter
-        showLineNumbers={false}
-        style={style}
-        language={language}
-        children={value}
-      />
-    )
-  },
-  // list: List,
-  // listItem: ({ children }: any) => {
-  //   return (
-  //     <ListItem button>
-  //       <ListItemText primary={children[0].props.children[0].props.children} />
-  //     </ListItem>
-  //   )
-  // },
-  table: ({ children }) => {
-    return (
-      <Paper>
-        <Table>{children}</Table>
-      </Paper>
-    )
-  },
-  tableHead: TableHead,
-  tableBody: TableBody,
-  tableRow: TableRow,
-  tableCell: ({ children }) => {
-    return <TableCell>{children}</TableCell>
-  },
-}
-
-function Renderer({ doc }: { doc: string }) {
-  console.log('RENDERING', { doc })
-  return (
-    <Markdown plugins={[gfm]} renderers={renderers}>
-      {doc}
-    </Markdown>
-  )
-}
+import MD from './components/MD'
 
 function Router() {
   const routes = keys(menu).reduce(
@@ -118,14 +39,13 @@ function Router() {
     <Switch>
       {routes.map(({ menu: menuName, name, doc }) => {
         const path = `/${kebabCase(menuName)}/${kebabCase(name)}`
-        console.log({ path })
         return (
           <Route
             key={name}
             exact
             path={path}
             component={() => {
-              return <Renderer doc={doc} />
+              return <MD doc={doc} />
             }}
           />
         )
