@@ -2,6 +2,10 @@
 
 Use GraphQL with Firestore directly in your front-end apps
 
+```snapshot
+FirestoreExample1
+```
+
 # Usage
 
 First define your model:

@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export default gql`
+const BASE_SCHEMA = gql`
   directive @firestore(collection: String) on OBJECT
 
   directive @firestore_ref on FIELD_DEFINITION
@@ -36,3 +36,5 @@ export default gql`
     ok: Boolean!
   }
 `
+
+export default BASE_SCHEMA
