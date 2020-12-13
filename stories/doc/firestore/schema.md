@@ -40,28 +40,10 @@ const collections = showCollections(gql`
 ```
 
 ```snapshot
-FirestoreSchemaShowCollections
+Firestore.ShowCollections
 ```
 
 You need to pass `showCollections` a `GraphQL` schema as first argument.
-
-This schema can be a document node (like hereinabove), or a string:
-
-```javascript
-const collections = showCollections(`
-  type A @firestore {
-    name: String!
-  }
-
-  type B @firestore(collection: "collection-b") {
-    name: String!
-  }
-`)
-```
-
-```snapshot
-FirestoreSchemaShowCollectionsString
-```
 
 ### Collection naming
 
@@ -88,7 +70,7 @@ showCollections(schema, {
 ```
 
 ```snapshot
-FirestorePluralize
+Firestore.Pluralize
 ```
 
 ## Scalars
@@ -100,7 +82,7 @@ We need the JSON scalar, you can add it using [graphql-scalars](https://github.c
 This is the schema used by firestoreql:
 
 ```snapshot
-FirestoreGeneratedSchema
+Firestore.GeneratedSchema
 ```
 
 ## Queries
@@ -112,7 +94,7 @@ We generate queries based on the types marked as collections.
 Used to perform `firestore` count documents
 
 ```snapshot
-FirestoreSchemaQueriesCount
+Firestore.Count
 ```
 
 ## getMany
@@ -120,7 +102,7 @@ FirestoreSchemaQueriesCount
 Used to perform `firestore` get queries to return a batch of documents
 
 ```snapshot
-FirestoreSchemaQueriesGetMany
+Firestore.GetMany
 ```
 
 ## getOne
@@ -128,5 +110,5 @@ FirestoreSchemaQueriesGetMany
 Used to perform `firestore` get queries to return one document
 
 ```snapshot
-FirestoreSchemaQueriesGetOne
+Firestore.GetOne
 ```

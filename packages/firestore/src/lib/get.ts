@@ -1,17 +1,9 @@
-import gql from 'graphql-tag'
+import type { DocumentNode } from 'graphql'
+import resolve from '@browserql/resolved'
 
-export default function get(collection: string) {
-  return {
-    query: gql`
-    query {
-      firestore_get_${collection}(
-        where: [FirestoreWhere]
-        filters: FirestoreFilters
-      ) {
-        id
-        name
-      }
-    }
-    `,
-  }
+export default function get(schema: DocumentNode, collection: string) {
+  const name = `firestore_getMany_${collection}`
+  const { Query } = resolve(schema)
+  console.log({ name, Query })
+  return Query[name]()
 }

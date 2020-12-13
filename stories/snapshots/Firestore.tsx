@@ -1,6 +1,6 @@
 import * as React from 'react'
 import gql from 'graphql-tag'
-import { build, showCollections } from '@browserql/firestore'
+import { build, showCollections, get } from '@browserql/firestore'
 import { print, ASTNode, DocumentNode } from 'graphql'
 
 import Code from '../components/Code'
@@ -95,7 +95,7 @@ export function Count() {
   )
 }
 
-export default function Pluralize() {
+export function Pluralize() {
   const schema = gql`
     type User @firestore {
       name: String!
@@ -146,5 +146,13 @@ export function Example1() {
 }
 
 export function ApiGet() {
-  return <Code language="text" value="MISSING TEST" />
+  const { schema } = build(
+    firestore,
+    gql`
+      type Todo @firestore {
+        name: String!
+      }
+    `
+  )
+  return <Code language="graphql" value={print(get(schema, 'Todo').query)} />
 }
