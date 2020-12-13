@@ -15,12 +15,15 @@ const BASE_SCHEMA = gql`
   }
 
   input FirestoreFilters {
+    asc: Boolean
+    orderBy: String
     page: Int
     size: Int
-    orderBy: String
-    asc: Boolean
   }
 
+  """
+  Where operators for Firestore
+  """
   input FirestoreWhere {
     field: String!
     operator: FirestoreWhereOperator!
@@ -32,6 +35,9 @@ const BASE_SCHEMA = gql`
     value: JSON
   }
 
+  """
+  Where operators for Firestore
+  """
   type FirestoreMutationResponse {
     ok: Boolean!
   }

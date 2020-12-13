@@ -95,6 +95,38 @@ FirestorePluralize
 
 We need the JSON scalar, you can add it using [graphql-scalars](https://github.com/Urigo/graphql-scalars) or with [@browserql/scalars](/utils/scalars)
 
+## Firestore schema
+
+This is the schema used by firestoreql:
+
+```snapshot
+FirestoreGeneratedSchema
+```
+
 ## Queries
 
 We generate queries based on the types marked as collections.
+
+## count
+
+Used to perform `firestore` count documents
+
+```snapshot
+FirestoreSchemaQueriesGetOne
+```
+
+## getMany
+
+Used to perform `firestore` get queries to return a batch of documents
+
+```snapshot
+FirestoreSchemaQueriesGetMany
+```
+
+## getOne
+
+Used to perform `firestore` get queries to return one document
+
+```snapshot
+FirestoreSchemaQueriesGetOne
+```

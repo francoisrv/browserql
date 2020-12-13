@@ -1,10 +1,16 @@
 import gql from 'graphql-tag'
 
-export default function get(collectionName: string) {
+export default function get(collection: string) {
   return {
     query: gql`
-    extend type Query {
-      firestore_get_${collectionName}: String!
+    query {
+      firestore_get_${collection}(
+        where: [FirestoreWhere]
+        filters: FirestoreFilters
+      ) {
+        id
+        name
+      }
     }
     `,
   }

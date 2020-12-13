@@ -96,7 +96,7 @@ await client.query(get('Todo', first()))
 
 ## get
 
-Perform a `get` query
+Constructs a `GraphQL` query that can be passed to a client to be executed
 
 ```javascript
 import { get } from '@browserql/firestore'

@@ -17,6 +17,5 @@ function printValue(value: ArgumentNode['value']): any {
 }
 
 export default function getValue(arg: ArgumentNode): any {
-  console.log(arg.value.kind)
   return printValue(arg.value)
 }

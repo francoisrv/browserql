@@ -1,19 +1,21 @@
 import type { DocumentNode } from 'graphql'
 import type { Schemaql } from '@browserql/types'
 import type { firestore } from 'firebase'
+import { merge } from '@browserql/fpql'
 
 import BASE_SCHEMA from '../schema'
+import { makeSchema } from '../utils/graphql'
 
 /**
- *
+ * Build a new schema along with its resolvers
  * @param db {Firestore} a firestore db instance
- * @param schema {string|DoucmentNode} a GraphQL schema
+ * @param schema {DocumentNode} a GraphQL schema
  */
 export default function build(
   db: firestore.Firestore,
-  schema: DocumentNode | string
+  schema: DocumentNode
 ): Schemaql {
   return {
-    schema: BASE_SCHEMA,
+    schema: merge(BASE_SCHEMA, ...makeSchema(schema)),
   }
 }
