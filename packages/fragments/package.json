@@ -1,6 +1,6 @@
 {
   "name": "@browserql/fragments",
-  "version": "2.3.0",
+  "version": "2.5.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "source": "src/index.ts",
@@ -26,6 +26,8 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.14",
+    "@types/lodash.get": "^4.4.6",
+    "@types/lodash.set": "^4.3.6",
     "@types/node": "^14.11.2",
     "jest": "^26.4.2",
     "typescript": "^4.0.3"
@@ -33,6 +35,8 @@
   "dependencies": {
     "@browserql/fpql": "^1.13.0",
     "graphql": "^15.3.0",
-    "graphql-tag": "^2.11.0"
+    "graphql-tag": "^2.11.0",
+    "lodash.get": "^4.4.2",
+    "lodash.set": "^4.3.2"
   }
 }
