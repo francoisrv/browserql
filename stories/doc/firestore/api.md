@@ -94,6 +94,20 @@ import { first, get } from '@browserql/firestore'
 await client.query(get('Todo', first()))
 ```
 
+## get
+
+Perform a `get` query
+
+```javascript
+import { get } from '@browserql/firestore'
+
+await client.query(get('Todo'))
+```
+
+```snapshot
+FirestoreApiGet
+```
+
 ## increment
 
 ```javascript

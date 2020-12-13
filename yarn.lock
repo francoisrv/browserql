@@ -7396,7 +7396,7 @@ grapheme-breaker@^0.3.2:
     brfs "^1.2.0"
     unicode-trie "^0.3.1"
 
-graphiql@^1.0.6:
+graphiql@1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/graphiql/-/graphiql-1.0.6.tgz#b551c73a23a0cbf5e4f30a8c29367bad44b1a915"
   integrity sha512-PgKEfWkXxU4Lx92eSEcLF/2en5bjGplxNwwLCKEQ82xU7t8wfj4UL46Zwx40E9LcxJum6KRfGzMjcY+bNwHzpQ==
@@ -10248,6 +10248,11 @@ mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.1:
   integrity sha512-NKmAlESf6jMGym1++R0Ra7wvhV+wFW63FaSOFPwRahvea0gMUcGUhVeAg/0BC0wiv9ih5NYPB1Wn1UEI1/L+xQ==
   dependencies:
     minimist "^1.2.5"
+
+mock-cloud-firestore@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/mock-cloud-firestore/-/mock-cloud-firestore-0.12.0.tgz#eba9151ee904f2bbed0dc87177888bab8adc0d82"
+  integrity sha512-NCEtM49jZlDkDvlkX6aRxRAIyiM/ikc4tGtbQ3NzXhoUjyKH34xnnEuRj4tsVko69mrZeb2KmUED9WyuFjPDMA==
 
 modify-values@^1.0.0:
   version "1.0.1"

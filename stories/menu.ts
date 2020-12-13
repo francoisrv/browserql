@@ -72,7 +72,7 @@ const menu: Menu = {
     },
     {
       name: 'Scalars',
-      doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+      doc: readFileSync(__dirname + '/doc/utils/scalars.md', 'utf-8'),
     },
     {
       name: 'Directives',

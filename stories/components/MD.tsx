@@ -12,6 +12,7 @@ import TableHead from '@material-ui/core/TableHead'
 import TableBody from '@material-ui/core/TableBody'
 import TableRow from '@material-ui/core/TableRow'
 import TableCell from '@material-ui/core/TableCell'
+import Chip from '@material-ui/core/Chip'
 
 const renderers = {
   code: ({ language, value }: { language: string; value: any }) => {
@@ -69,6 +70,9 @@ const renderers = {
   tableCell: ({ children }) => {
     return <TableCell>{children}</TableCell>
   },
+  inlineCode: ({ children }) => (
+    <Chip color="primary" variant="outlined" label={children} />
+  ),
 }
 
 export default function MD({ doc }: { doc: string }) {

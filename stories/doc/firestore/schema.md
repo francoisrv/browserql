@@ -57,11 +57,10 @@ const collections = showCollections(`
     name: String!
   }
 `)
+```
 
-expect(collections).toEqual({
-  A: 'A',
-  B: 'collection-b',
-})
+```snapshot
+FirestoreSchemaShowCollectionsString
 ```
 
 ### Collection naming
@@ -72,73 +71,30 @@ As seen above, you can specify a different name via the `collection` attribute.
 
 You can also specify a naming strategy to be applied to all types, by specifying via the `namingStrategy` property;
 
+```graphql
+type User @firestore {
+  name: String!
+}
+
+type Team @firestore {
+  name: String!
+}
+```
+
 ```javascript
-const schema = gql`
-  type User @firestore {
-    name: String!
-  }
-
-  type Team @firestore {
-    name: String!
-  }
-`
-
-// A very shallow function to pluralize type names
-const pluralize = (name) => name.toLowerCase().concat('s')
-
-const collections = showCollections(schema, {
-  namingStrategy: pluralize,
+showCollections(schema, {
+  namingStrategy: (name) => name.toLowerCase().concat('s'),
 })
+```
 
-expect(collections).toEqual({
-  User: 'users',
-  Team: 'teams',
-})
+```snapshot
+FirestorePluralize
 ```
 
 ## Scalars
 
-We need the JSON scalar, you can add it like this:
+We need the JSON scalar, you can add it using [graphql-scalars](https://github.com/Urigo/graphql-scalars) or with [@browserql/scalars](/utils/scalars)
 
-With Apo
+## Queries
 
-## Generated schema
-
-This is the schema that we generate:
-
-```graphql
-directive @firestore(collection: String) on OBJECT
-
-directive @firestore_ref on FIELD_DEFINITION
-
-enum FirestoreWhereOperator {
-  equals
-  isGreaterThan
-  isGreaterThanOrEqualTo
-  isIn
-  isLesserThan
-  isLesserThanOrEqualTo
-}
-
-input FirestoreFilters {
-  asc: Boolean
-  limit: Int
-  orderBy: String
-  page: Int
-}
-
-input FirestoreWhere {
-  field: String!
-  operator: FirestoreWhereOperator!
-  value: JSON!
-}
-
-input FirestoreTransformer {
-  field: String!
-  value: JSON
-}
-
-type FirestoreMutationResponse {
-  ok: Boolean!
-}
-```
+We generate queries based on the types marked as collections.

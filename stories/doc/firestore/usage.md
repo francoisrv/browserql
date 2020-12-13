@@ -50,21 +50,7 @@ import db from './db'
 const { schema, queries, mutations } = build(db, defs)
 ```
 
-Connect it to Apollo
-
-```javascript
-import ApolloClient from '@apollo/client'
-
-const client = new ApolloClient({
-  typeDefs: [schema],
-  resolvers: {
-    Query: queries,
-    Mutation: mutations,
-  },
-})
-```
-
-Or to browserql
+Connect it to browserql
 
 ```javascript
 import connect from '@browserql/client'
