@@ -35,7 +35,37 @@ buildFragment(schema, 'Author')
 Which will generate the following string:
 
 ```snapshot
-FragmentsExample
+Fragments.Example
+```
+
+## Saving as
+
+By default, the name of the new fragment is the type's name suffixed by `Fragment`
+
+```graphql
+type Foo {
+  name: String
+}
+```
+
+```javascript
+buildFragment(schema, 'Foo')
+```
+
+```snapshot
+Fragments.DefaultName
+```
+
+Notice here the fragment is named `FooFragment` after the type `Foo`.
+
+You can override this using the `saveAs` property
+
+```javascript
+buildFragment(schema, 'Foo', { saveAs: 'MyFragment' })
+```
+
+```snapshot
+Fragments.SaveAs
 ```
 
 ## Nested fragments
@@ -49,7 +79,7 @@ buildFragment(schema, 'Post')
 Which will generate the following string:
 
 ```snapshot
-FragmentsExampleNested
+Fragments.Nested
 ```
 
 ## Field selection
@@ -63,7 +93,7 @@ buildFragment(schema, 'Post', {
 ```
 
 ```snapshot
-FragmentsExampleSelect
+Fragments.Select
 ```
 
 ## Nested field selection
@@ -82,6 +112,7 @@ type RecordingSettings {
 }
 
 type AudioConfiguration {
+  name: String
   encoder: Encoder
 }
 
@@ -98,5 +129,41 @@ buildFragment(schema, 'Recording', {
 ```
 
 ```snapshot
-FragmentsSelectDotNotation
+Fragments.InnerSelect
+```
+
+## Errors
+
+If the target type does not exist, it will throw an error
+
+```graphql
+type Foo {
+  id: ID
+}
+```
+
+```javascript
+buildFragment(schema, 'Bar')
+```
+
+```snapshot
+Fragments.NoSuchTypeError
+```
+
+### Nested type missing
+
+It will **NOT** throw if a nested type is missing. Instead, it would assume it is a scalar
+
+```graphql
+type Foo {
+  bar: Bar
+}
+```
+
+```javascript
+buildFragment(schema, 'Foo')
+```
+
+```snapshot
+Fragments.NoSuchNestedType
 ```

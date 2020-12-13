@@ -6,6 +6,7 @@ import BrowserqlPlayground from './BrowserqlPlayground'
 import * as snapshots from '../snapshots'
 import Typography from '@material-ui/core/Typography'
 import { startCase } from 'lodash'
+import Snapshot from './Snapshot'
 
 export default function Code({
   language,
@@ -35,37 +36,7 @@ export default function Code({
     )
   }
   if (language === 'snapshot') {
-    const Snapshot = snapshots[value.trim() as keyof typeof snapshots]
-    return (
-      <div
-        style={{
-          position: 'relative',
-          paddingTop: 34,
-          boxShadow: '0 5px 5px 5px rgba(0, 0, 0, 0.25)',
-          borderRadius: 10,
-        }}
-      >
-        <div>
-          <Snapshot />
-        </div>
-        <div
-          style={{
-            backgroundColor: '#111',
-            color: '#ccc',
-            padding: 16,
-            borderRadius: '8px 8px 0 0',
-            borderBottom: '5px solid #333',
-            paddingLeft: 33,
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-          }}
-        >
-          <Typography>{startCase(value.trim())}</Typography>
-        </div>
-      </div>
-    )
+    return <Snapshot value={value.trim()} />
   }
   return (
     <SyntaxHighlighter

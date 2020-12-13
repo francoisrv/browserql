@@ -1086,6 +1086,15 @@
     graphql "^14.0.0"
     graphql-tag "^2.11.0"
 
+"@browserql/fragments@^1.15.0", "@browserql/fragments@^1.17.0":
+  version "1.17.0"
+  resolved "https://registry.yarnpkg.com/@browserql/fragments/-/fragments-1.17.0.tgz#e4f585c92ef2c7b6a9690f90c96802f447603497"
+  integrity sha512-hJyHtT7Et53hupjE2VozZb6zzFQChEJUTHr0RwqfTuF3npRHRI0RXlKrY/PGUzBSz1VKZQ0VMj4S3kAVJ8nj3g==
+  dependencies:
+    "@browserql/fpql" "^1.13.0"
+    graphql "^15.3.0"
+    graphql-tag "^2.11.0"
+
 "@browserql/schemax@^1.10.5":
   version "1.14.0"
   resolved "https://registry.yarnpkg.com/@browserql/schemax/-/schemax-1.14.0.tgz#a5e002ae568af1240801f512395b6e1f9f2cab00"

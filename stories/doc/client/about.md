@@ -40,7 +40,7 @@ mystifying-frost-qwhsj
 ## Playground
 
 ```snapshot
-ClientExample1
+Client.Counter
 ```
 
 ## Schema
