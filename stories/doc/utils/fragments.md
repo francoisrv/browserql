@@ -4,6 +4,8 @@ Generate fragments from types (_GraphQL_)
 
 ## Example
 
+Let's take a `GraphQL` schema
+
 ```graphql
 # schema.graphql
 type Post {
@@ -17,42 +19,59 @@ type Author {
 }
 ```
 
+Now let's import it along with our fragment builder
+
 ```javascript
 import schema from './schema.graphql'
-import buildFragments from '@browserql/fragments'
-
-const fragments = buildFragments(schema)
-fragments.get('Post')
+import { buildFragment } from '@browserql/fragments'
 ```
 
-```graphql
-fragment PostFragment on Post {
-  name
-  author {
-    ...AuthorFragment
-  }
-}
+You can now build a fragment specifying the target type
 
-fragment AuthorFragment on Author {
-  name
-  email
-}
+```javascript
+buildFragment(schema, 'Author')
+```
+
+Which will generate the following string:
+
+```snapshot
+FragmentsExample
+```
+
+Note that if the type is using other types, it will also build fragments for these types:
+
+```javascript
+buildFragment(schema, 'Post')
+```
+
+Which will generate the following string:
+
+```snapshot
+FragmentsExampleNested
 ```
 
 You can also select the fields:
 
 ```javascript
-fragments.get('Post', 'author.name')
+buildFragment(schema, 'Post', {
+  select: ['title'],
+})
 ```
 
-```graphql
-fragment PostFragment on Post {
-  author {
-    ...AuthorFragment
-  }
-}
+```snapshot
+FragmentsExampleSelect
+```
 
-fragment AuthorFragment on Author {
-  name
-}
+You can use dot notation to reach nested fields
+
+```javascript
+buildFragment(schema, 'Post', {
+  select: ['author'],
+  showNetwork: false,
+})
+buildFragment(schema, 'Author', {})
+```
+
+```snapshot
+FragmentsSelectDotNotation
 ```

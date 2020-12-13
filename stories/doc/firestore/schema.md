@@ -112,7 +112,7 @@ We generate queries based on the types marked as collections.
 Used to perform `firestore` count documents
 
 ```snapshot
-FirestoreSchemaQueriesGetOne
+FirestoreSchemaQueriesCount
 ```
 
 ## getMany

@@ -11,3 +11,8 @@ export { default as FirestoreSchemaQueriesGetOne } from './snapshots/firestore-s
 export { default as FirestoreSchemaShowCollections } from './snapshots/firestore-schema-show-collections'
 export { default as FirestoreSchemaShowCollectionsString } from './snapshots/firestore-schema-show-collections-string'
 export { default as FirestoreGeneratedSchema } from './snapshots/firestore-generated-schema'
+export { default as FirestoreSchemaQueriesCount } from './snapshots/firestore-schema-queries-count'
+export { default as FragmentsExample } from './snapshots/fragments-example'
+export { default as FragmentsExampleNested } from './snapshots/fragments-example-nested'
+export { default as FragmentsExampleSelect } from './snapshots/fragments-select-example'
+export { default as FragmentsSelectDotNotation } from './snapshots/fragments-select-dot-notation'

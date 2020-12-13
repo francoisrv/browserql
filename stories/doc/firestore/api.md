@@ -86,6 +86,16 @@ import { connect as connectFirestore } from '@browserql/firestore'
 const browserql = connect(connectFirestore(db, defs))
 ```
 
+## count
+
+Count documents in a collection
+
+```javascript
+import { count } from '@browserql/firestore'
+
+await client.query(count('Todo'))
+```
+
 ## first
 
 ```javascript

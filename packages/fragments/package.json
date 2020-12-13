@@ -1,8 +1,9 @@
 {
   "name": "@browserql/fragments",
-  "version": "1.17.0",
+  "version": "2.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "source": "src/index.ts",
   "license": "ISC",
   "keywords": [
     "browserql",

@@ -13,6 +13,7 @@ import {
   getType,
   parseKind,
 } from '@browserql/fpql'
+export { default as buildFragment } from './lib/buildFragment'
 
 interface Fragment {
   source: string
@@ -62,33 +63,34 @@ function getNetwork(
 }
 
 export default function buildFragments(document: string | DocumentNode) {
-  const queries = getQueries(document)
-  const mutations = getMutations(document)
-  const fragments: Dictionary<Fragment> = {}
-  function buildFragment(query: FieldDefinitionNode) {
-    const { type: queryKind } = parseKind(getKind(query))
-    if (!fragments[queryKind]) {
-      const type = getType(queryKind)(document)
-      if (type) {
-        // @ts-ignore
-        makeFragment(type, fragments, document)
-      }
-    }
-  }
-  queries.forEach(buildFragment)
-  mutations.forEach(buildFragment)
-  const f = {
-    get(name: string): string | null {
-      const fragment = fragments[name]
-      if (!fragment) {
-        return null
-      }
-      return getNetwork(fragment, fragments, [name])
-    },
-    printAll(): string {
-      const lines = Object.keys(fragments).map(f.get)
-      return lines.join('\n\n')
-    },
-  }
-  return f
+  // const queries = getQueries(document)
+  // const mutations = getMutations(document)
+  // const fragments: Dictionary<Fragment> = {}
+  // function buildFragment(query: FieldDefinitionNode) {
+  //   const { type: queryKind } = parseKind(getKind(query))
+  //   if (!fragments[queryKind]) {
+  //     const type = getType(queryKind)(document)
+  //     if (type) {
+  //       // @ts-ignore
+  //       makeFragment(type, fragments, document)
+  //     }
+  //   }
+  // }
+  // queries.forEach(buildFragment)
+  // mutations.forEach(buildFragment)
+  // const f = {
+  //   get(name: string): string | null {
+  //     const fragment = fragments[name]
+  //     if (!fragment) {
+  //       return null
+  //     }
+  //     return getNetwork(fragment, fragments, [name])
+  //   },
+  //   printAll(): string {
+  //     console.log({ fragments })
+  //     const lines = Object.keys(fragments).map(f.get)
+  //     return lines.join('\n\n')
+  //   },
+  // }
+  // return f
 }
