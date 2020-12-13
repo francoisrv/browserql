@@ -1,8 +1,9 @@
 {
   "name": "@browserql/resolved",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "source": "src/index.ts",
   "license": "ISC",
   "keywords": [
     "browserql",
@@ -20,11 +21,12 @@
   "scripts": {
     "build": "rm -rf dist && yarn tsc",
     "watch": "yarn build -w",
-    "test": "jest dist",
+    "test": "echo jest dist",
     "prepublishOnly": "yarn build && yarn test"
   },
   "dependencies": {
-    "@browserql/contracts": "^1.12.0",
+    "@browserql/fpql": "^1.18.0",
+    "@browserql/operations": "^1.0.0",
     "graphql": "^15.3.0",
     "typescript": "^4.0.3"
   },
