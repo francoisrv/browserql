@@ -6,7 +6,8 @@ import {
   parseKind,
 } from '@browserql/fpql'
 import type { DocumentNode, FieldDefinitionNode } from 'graphql'
-import { get, set } from 'lodash'
+import get from 'lodash.get'
+import set from 'lodash.set'
 
 interface Options {
   saveAs?: string
@@ -61,6 +62,21 @@ function printSelections(selections: Selection, tab = 0): string {
     .join('\n'.concat('  '.repeat(tab + 1)))
 }
 
+function addTypeNames(selection: Selection): Selection {
+  return Object.keys(selection).reduce((set, key) => {
+    if (selection[key] === 1) {
+      return { ...set, [key]: 1 }
+    }
+    return {
+      ...set,
+      [key]: {
+        ...addTypeNames(selection[key] as Selection),
+        __typename: 1,
+      },
+    }
+  }, {})
+}
+
 export default function buildFragment(
   schema: DocumentNode,
   typeName: string,
@@ -76,11 +92,13 @@ export default function buildFragment(
   )
   if (options.select) {
     const nextSelections = {}
-    options.select.forEach((path) =>
+    options.select.forEach((path) => {
       set(nextSelections, path, get(selections, path))
-    )
+    })
     selections = nextSelections
   }
+  selections = addTypeNames(selections)
+  selections.__typename = 1
   const source = `
 fragment ${options.saveAs || `${getName(type)}Fragment`} on ${getName(type)} {
   ${printSelections(selections)}

@@ -115,7 +115,7 @@ await client.query(get('Todo'))
 ```
 
 ```snapshot
-FirestoreApiGet
+Firestore.ApiGet
 ```
 
 ## increment

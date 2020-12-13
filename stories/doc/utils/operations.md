@@ -16,10 +16,32 @@ extend type Query {
 ```javascript
 import { buildQuery } from '@browserql/operations'
 
-await client.query({
-  query: buildQuery(schema, 'getUser'),
-  variables: {
-    userID: 1234,
-  },
-})
+buildQuery(schema, 'getUser')
+```
+
+```snapshot
+Operations.BuildQueryExample
+```
+
+## Mutations
+
+```graphql
+type User {
+  id: ID!
+  email: String!
+}
+
+extend type Mutation {
+  addUser(email: String!): User
+}
+```
+
+```javascript
+import { buildMutation } from '@browserql/operations'
+
+buildMutation(schema, 'addUser')
+```
+
+```snapshot
+Operations.BuildMutationExample
 ```
