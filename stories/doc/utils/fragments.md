@@ -38,6 +38,12 @@ Which will generate the following string:
 Fragments.Example
 ```
 
+## Code sandbox
+
+```sandbox
+fragments-cnwol
+```
+
 ## Saving as
 
 By default, the name of the new fragment is the type's name suffixed by `Fragment`

@@ -19,9 +19,10 @@ export default function Code({
     return <BrowserqlPlayground />
   }
   if (language === 'sandbox') {
+    // &previewwindow=console
     return (
       <iframe
-        src={`https://codesandbox.io/embed/${value.trim()}?fontsize=14&hidenavigation=1&theme=dark&hidenavigation=0&previewwindow=console`}
+        src={`https://codesandbox.io/embed/${value.trim()}?fontsize=14&hidenavigation=1&theme=dark&hidenavigation=0`}
         style={{
           width: '100%',
           height: 500,
