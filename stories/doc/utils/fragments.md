@@ -1,4 +1,13 @@
-# Fragments
+# Fragments _v2.3.1_
+
+```component
+{
+  "component": "NPMBadge",
+  "props": {
+    "pkg": "fragments"
+  }
+}
+```
 
 Generate fragments from types (_GraphQL_)
 
@@ -42,6 +51,21 @@ Fragments.Example
 
 ```sandbox
 fragments-cnwol
+```
+
+## API
+
+This is the `Typescript` signature of the `buildFragment` function:
+
+```typescript
+buildFragment(
+  schema: graphql.DocumentNode
+  type: string
+  options?: {
+    saveAs?: string
+    select?: string[]
+  }
+): string
 ```
 
 ## Saving as

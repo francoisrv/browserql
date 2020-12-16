@@ -3,10 +3,8 @@ import { atomOneDark as style } from 'react-syntax-highlighter/dist/esm/styles/h
 import SyntaxHighlighter from 'react-syntax-highlighter'
 
 import BrowserqlPlayground from './BrowserqlPlayground'
-import * as snapshots from '../snapshots'
-import Typography from '@material-ui/core/Typography'
-import { startCase } from 'lodash'
 import Snapshot from './Snapshot'
+import * as components from '../components'
 
 export default function Code({
   language,
@@ -18,6 +16,7 @@ export default function Code({
   if (language === 'browserqlPlayground') {
     return <BrowserqlPlayground />
   }
+
   if (language === 'sandbox') {
     // &previewwindow=console
     return (
@@ -36,9 +35,32 @@ export default function Code({
       ></iframe>
     )
   }
+
   if (language === 'snapshot') {
     return <Snapshot value={value.trim()} />
   }
+
+  if (language === 'component') {
+    const raw = value.trim()
+    let data
+    try {
+      data = JSON.parse(raw)
+    } catch (error) {
+      return <div>Could not parse component data: invalid JSON</div>
+    }
+    if (typeof data !== 'object' || !data) {
+      return <div>Could not parse component data: was expecting object</div>
+    }
+    if (!data.component) {
+      return <div>Missing component's name</div>
+    }
+    const Component = components[data.component as keyof typeof components]
+    if (!Component) {
+      return <div>No such component: {value.trim()}</div>
+    }
+    return <Component {...data.props} />
+  }
+
   return (
     <SyntaxHighlighter
       showLineNumbers={false}
