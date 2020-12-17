@@ -22,7 +22,12 @@ const menu: Menu = {
       doc: readFileSync(__dirname + '/doc/client/about.md', 'utf-8'),
     },
   ],
-  HTTP: [],
+  HTTP: [
+    {
+      name: 'About',
+      doc: readFileSync(__dirname + '/doc/http/about.md', 'utf-8'),
+    },
+  ],
   Rest: [],
   State: [],
   React: [

@@ -12,3 +12,7 @@
 ```sandbox
 react-provider-ruh7c
 ```
+
+```snapshot
+React.SandboxMainExample
+```

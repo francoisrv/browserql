@@ -21,7 +21,7 @@ export default function Code({
     // &previewwindow=console
     return (
       <iframe
-        src={`https://codesandbox.io/embed/${value.trim()}?fontsize=14&hidenavigation=1&theme=dark&hidenavigation=0`}
+        src={`https://codesandbox.io/embed/${value.trim()}?fontsize=14&hidenavigation=1&theme=dark&hidenavigation=0&view=preview`}
         style={{
           width: '100%',
           height: 500,

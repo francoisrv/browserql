@@ -15,12 +15,14 @@ export default function Snapshot({ value }: Props) {
     <div
       style={{
         position: 'relative',
-        paddingTop: 34,
+        paddingTop: 84,
         boxShadow: '0 5px 5px 5px rgba(0, 0, 0, 0.25)',
         borderRadius: 10,
+        marginTop: 16,
+        marginBottom: 16,
       }}
     >
-      <div>
+      <div style={{ padding: 16, paddingLeft: 33 }}>
         <View />
       </div>
       <div
