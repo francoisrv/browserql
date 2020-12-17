@@ -67,16 +67,24 @@ const menu: Menu = {
   ],
   Utils: [
     {
-      name: 'Fragments',
-      doc: readFileSync(__dirname + '/doc/utils/fragments.md', 'utf-8'),
-    },
-    {
-      name: 'Scalars',
-      doc: readFileSync(__dirname + '/doc/utils/scalars.md', 'utf-8'),
+      name: 'Cache',
+      doc: readFileSync(__dirname + '/doc/utils/cache.md', 'utf-8'),
     },
     {
       name: 'Directives',
       doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+    },
+    {
+      name: 'FP',
+      doc: readFileSync(__dirname + '/doc/utils/fp.md', 'utf-8'),
+    },
+    {
+      name: 'FPQL',
+      doc: readFileSync(__dirname + '/doc/utils/fpql.md', 'utf-8'),
+    },
+    {
+      name: 'Fragments',
+      doc: readFileSync(__dirname + '/doc/utils/fragments.md', 'utf-8'),
     },
     {
       name: 'Operations',
@@ -87,12 +95,8 @@ const menu: Menu = {
       doc: readFileSync(__dirname + '/doc/utils/resolved.md', 'utf-8'),
     },
     {
-      name: 'FP',
-      doc: readFileSync(__dirname + '/doc/utils/fp.md', 'utf-8'),
-    },
-    {
-      name: 'FPQL',
-      doc: readFileSync(__dirname + '/doc/utils/fpql.md', 'utf-8'),
+      name: 'Scalars',
+      doc: readFileSync(__dirname + '/doc/utils/scalars.md', 'utf-8'),
     },
   ],
 }

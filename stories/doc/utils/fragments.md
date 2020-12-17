@@ -1,4 +1,4 @@
-# Fragments _v2.3.1_
+# Fragments
 
 ```component
 {

@@ -1,11 +1,6 @@
 import * as React from 'react'
-import SyntaxHighlighter from 'react-syntax-highlighter'
-import { atomOneDark as style } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import Markdown from 'react-markdown'
 import gfm from 'remark-gfm'
-
-import BrowserqlPlayground from './BrowserqlPlayground'
-import * as snapshots from '../snapshots'
 import Paper from '@material-ui/core/Paper'
 import Table from '@material-ui/core/Table'
 import TableHead from '@material-ui/core/TableHead'
@@ -13,6 +8,7 @@ import TableBody from '@material-ui/core/TableBody'
 import TableRow from '@material-ui/core/TableRow'
 import TableCell from '@material-ui/core/TableCell'
 import Chip from '@material-ui/core/Chip'
+
 import Code from './Code'
 
 const renderers = {
