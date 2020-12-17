@@ -1,40 +1,48 @@
-# HTTP
+# REST
 
 ```component
 {
   "component": "NPMBadge",
   "props": {
-    "pkg": "http"
+    "pkg": "rest"
   }
 }
 ```
 
 ```graphql
-extend type Query {
-  getTodo(id: ID!): Todo
-    @httpGet(url: "https://jsonplaceholder.typicode.com/todos/:id")
+type Todo @rest(path: "/todos") {
+  title: String
+  done: Boolean @default(value: false)
 }
 ```
 
 ```javascript
-import { buildHttp } from '@browserql/http'
+import { buildRest, restql } from '@browserql/rest'
 
-const { schema, queries, mutations } = buildHttp(schema)
-
-await client.query({
-  query: gql`
-    query GetTodo($id: ID!) {
-      getTodo(id: $id) {
-        user
-        id
-        title
-        completed
-      }
-    }
-  `,
-  // https://jsonplaceholder.typicode.com/todos/2
-  variables: { id: 2 },
+const { schema, queries, mutations, context } = buildRest(schema, {
+  baseUrl: 'http://api.com/v1',
+  headers: {
+    Access: 'Bearer TOKEN',
+  },
 })
+
+// GET http://api.com/v1/todos
+await client.query(context.get('Todo'))
+
+// GET http://api.com/v1/todos/1234
+await client.query(context.get('Todo', 1234))
+
+// GET http://api.com/v1/todos?done=1
+await client.query(context.get('Todo', { done: true }))
+
+// POST http://api.com/v1/todos { "title": "Buy milk", "done": false }
+await client.query(context.post('Todo', { title: 'Buy milk' }))
+
+// PUT http://api.com/v1/todos/1234 { "done": true }
+await client.query(context.put('Todo', 1234, { done: true }))
+
+// DELETE http://api.com/v1/todos/1234
+await client.query(context.delete('Todo', 1234))
 ```
 
 ```json

@@ -27,9 +27,17 @@ const menu: Menu = {
       name: 'About',
       doc: readFileSync(__dirname + '/doc/http/about.md', 'utf-8'),
     },
+    {
+      name: 'Rest',
+      doc: readFileSync(__dirname + '/doc/http/rest.md', 'utf-8'),
+    },
   ],
-  Rest: [],
-  State: [],
+  State: [
+    {
+      name: 'About',
+      doc: readFileSync(__dirname + '/doc/state/about.md', 'utf-8'),
+    },
+  ],
   React: [
     {
       name: 'Provider',
