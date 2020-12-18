@@ -49,7 +49,7 @@ const menu: Menu = {
     },
     {
       name: 'Mutation',
-      doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+      doc: readFileSync(__dirname + '/doc/react/mutation.md', 'utf-8'),
     },
     {
       name: 'withQuery',

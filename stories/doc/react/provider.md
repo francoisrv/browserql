@@ -4,7 +4,7 @@
 {
   "component": "NPMBadge",
   "props": {
-    "pkg": "fragments"
+    "pkg": "react"
   }
 }
 ```

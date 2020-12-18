@@ -14,6 +14,12 @@ type State @state {
   counter: Int!
   darkMode: Boolean!
   message: String!
+  selectedUser: User!
+  userNetwork: [User!]
+}
+
+type User {
+  id: ID!
 }
 ```
 

@@ -1,4 +1,4 @@
-# BrowserqlQuery
+# With Mutation
 
 ```component
 {
@@ -12,18 +12,18 @@
 A React component that wraps the apollo hooks. They do the same thing as hooks -- you would use them for cosmetic preferences only.
 
 ```graphql
-extend type Query {
-  sayHello(to: String!): String!
+extend type Mutation {
+  doSomething(id: ID!): ID!
 }
 ```
 
 ## With apollo hooks
 
 ```jsx
-import { useQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 
 function sayHello({ to }) {
-  const { data, loading, error } = useQuery(SAY_HELLO, {
+  const { data, loading, error } = useMutation(DO_SOMETHING, {
     variables: {
       to: 'everybody',
     },
@@ -39,19 +39,18 @@ function sayHello({ to }) {
 
 ## With components
 
-```jsx
-import { WithQuery } from '@browserql/react'
+```javascript
+import { WithMutation } from '@browserql/react'
 
-function sayHello({ to }) {
+function DoSomething({ id }) {
   return (
-    <WithQuery
-      query={SAY_HELLO}
-      variables={{ to: 'everybody' }}
-      renderError={({ error }) => <div>{error.message}</div>}
-      renderLoading={<div>Loading...</div>}
-    >
-      {(response) => <p>{response}</p>}
-    </WithQuery>
+    <WithMutation mutation={DO_SOMETHING}>
+      {(doSomething, { loading, error }) => (
+        <button onClick={() => doSomething({ id })} disabled={loading}>
+          Do something
+        </button>
+      )}
+    </WithMutation>
   )
 }
 ```
