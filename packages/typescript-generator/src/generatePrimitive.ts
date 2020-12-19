@@ -1,5 +1,5 @@
 export default function generatePrimitive(type: string) {
-  if (type === 'ID' || type === 'String') {
+  if (type === 'String') {
     return 'string'
   }
   if (type === 'Int' || type === 'Float') {
@@ -7,5 +7,8 @@ export default function generatePrimitive(type: string) {
   }
   if (type === 'Boolean') {
     return 'boolean'
+  }
+  if (type === 'ID') {
+    return 'string|number'
   }
 }

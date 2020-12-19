@@ -111,6 +111,13 @@ const menu: Menu = {
       name: 'Scalars',
       doc: readFileSync(__dirname + '/doc/utils/scalars.md', 'utf-8'),
     },
+    {
+      name: 'Typescript generator',
+      doc: readFileSync(
+        __dirname + '/doc/utils/typescript-generator.md',
+        'utf-8'
+      ),
+    },
   ],
 }
 
