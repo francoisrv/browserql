@@ -1,9 +1,16 @@
 import * as React from 'react'
 import gql from 'graphql-tag'
-import { BrowserqlProvider } from '@browserql/react'
+import { BrowserqlContext, BrowserqlProvider } from '@browserql/react'
 import { useQuery, useMutation } from '@apollo/client'
 import { Button } from '@material-ui/core'
-import { BrowserqlContext } from '@browserql/types'
+import { BrowserqlContext as BrowserqlClientContext } from '@browserql/types'
+import { print } from 'graphql'
+import Code from '../components/Code'
+
+function ShowSchema() {
+  const ctx = React.useContext(BrowserqlContext)
+  return <Code language="graphql" value={print(ctx.schema)} />
+}
 
 export function Counter() {
   const schema = gql`
@@ -23,7 +30,7 @@ export function Counter() {
   }
 
   const mutations = {
-    incrementCounter(_variables: null, ctx: BrowserqlContext) {
+    incrementCounter(_variables: null, ctx: BrowserqlClientContext) {
       const { cache } = ctx.browserqlClient
       try {
         const response = cache.readQuery<{ getCounter: number }>({
@@ -75,6 +82,20 @@ export function Counter() {
   return (
     <BrowserqlProvider schema={schema} queries={queries} mutations={mutations}>
       <CounterView />
+    </BrowserqlProvider>
+  )
+}
+
+export function SchemaExample() {
+  const schema = gql`
+    extend type Query {
+      isMorning: Boolean
+    }
+  `
+
+  return (
+    <BrowserqlProvider schema={schema}>
+      <ShowSchema />
     </BrowserqlProvider>
   )
 }

@@ -4,7 +4,7 @@ import type { Schemaql } from '@browserql/types'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 
 export default function makeSchema(
-  typeDefs: Array<string | DocumentNode>,
+  typeDefs: DocumentNode[],
   directives: Schemaql['directives']
 ) {
   try {

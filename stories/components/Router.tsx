@@ -25,9 +25,7 @@ export default function Router() {
             key={name}
             exact
             path={path}
-            component={() => {
-              return <MD doc={doc} />
-            }}
+            component={() => <MD doc={doc} />}
           />
         )
       })}

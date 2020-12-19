@@ -9,7 +9,7 @@ export default function Topbar() {
   return (
     <AppBar position="sticky">
       <Toolbar>
-        <div style={{ width: '22vw' }} />
+        <div />
         <IconButton edge="start" color="inherit">
           <MenuIcon />
         </IconButton>

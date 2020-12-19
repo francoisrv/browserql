@@ -16,47 +16,43 @@ function Nav(props: RouteComponentProps) {
   } = props
 
   return (
-    <Drawer variant="permanent" anchor="left" open>
-      <div style={{ width: '18vw' }}>
-        <List component="nav">
-          {keys(menu).map((menuName) => (
-            <React.Fragment key={menuName}>
-              <ListItem
-                selected={new RegExp(`^\/${kebabCase(menuName)}`).test(
-                  pathname
-                )}
-              >
-                <ListItemText primary={menuName} />
-              </ListItem>
-              {menu[menuName] && (
-                <Collapse in>
-                  <List component="div" disablePadding>
-                    {menu[menuName].map((child) => (
-                      <ListItem
-                        button
-                        style={{ paddingLeft: 44 }}
-                        key={child.name}
-                        selected={
-                          pathname ===
+    <div style={{ width: '18vw', height: '100vh', overflow: 'auto' }}>
+      <List component="nav">
+        {keys(menu).map((menuName) => (
+          <React.Fragment key={menuName}>
+            <ListItem
+              selected={new RegExp(`^\/${kebabCase(menuName)}`).test(pathname)}
+            >
+              <ListItemText primary={menuName} />
+            </ListItem>
+            {menu[menuName] && (
+              <Collapse in>
+                <List component="div" disablePadding>
+                  {menu[menuName].map((child) => (
+                    <ListItem
+                      button
+                      style={{ paddingLeft: 44 }}
+                      key={child.name}
+                      selected={
+                        pathname ===
+                        `/${kebabCase(menuName)}/${kebabCase(child.name)}`
+                      }
+                      onClick={() => {
+                        history.push(
                           `/${kebabCase(menuName)}/${kebabCase(child.name)}`
-                        }
-                        onClick={() => {
-                          history.push(
-                            `/${kebabCase(menuName)}/${kebabCase(child.name)}`
-                          )
-                        }}
-                      >
-                        <ListItemText primary={child.name} />
-                      </ListItem>
-                    ))}
-                  </List>
-                </Collapse>
-              )}
-            </React.Fragment>
-          ))}
-        </List>
-      </div>
-    </Drawer>
+                        )
+                      }}
+                    >
+                      <ListItemText primary={child.name} />
+                    </ListItem>
+                  ))}
+                </List>
+              </Collapse>
+            )}
+          </React.Fragment>
+        ))}
+      </List>
+    </div>
   )
 }
 

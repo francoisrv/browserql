@@ -6,7 +6,7 @@ import type {
   SchemaqlFactory,
 } from '@browserql/types'
 
-import { mergeTypeDefs } from '@graphql-tools/merge'
+import { merge } from '@browserql/fpql'
 
 import makeCache from './cache'
 import makeSchema from './schema'
@@ -17,12 +17,7 @@ export default function connect(
 ): BrowserqlClient {
   const cache = makeCache()
 
-  const schemas: Array<string | DocumentNode> = [
-    `
-    type Query { _: ID }
-    type Mutation { _: ID }
-    `,
-  ]
+  const schemas: DocumentNode[] = []
 
   const rootValue: any = {}
   const directives: any = {}
@@ -73,7 +68,7 @@ export default function connect(
     } else {
       applyArg(
         arg({
-          schema: mergeTypeDefs(schemas),
+          schema: merge(...schemas),
           queries,
           mutations,
           scalars,
@@ -102,11 +97,11 @@ export default function connect(
     }
   }
 
-  const schema = makeSchema(schemas, directives)
+  const finalSchema = merge(...schemas)
+
+  const schema = makeSchema([finalSchema], directives)
 
   const apollo = makeApolloClient(rootValue, schema, cache, context)
-
-  const finalSchema = mergeTypeDefs(schemas)
 
   const browserqlClient = {
     apollo,

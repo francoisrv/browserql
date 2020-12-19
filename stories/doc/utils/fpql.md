@@ -1,5 +1,14 @@
 # fpql
 
+```component
+{
+  "component": "NPMBadge",
+  "props": {
+    "pkg": "fpql"
+  }
+}
+```
+
 Suite of utilities to traverse a GraphQL schema. Use functional programming.
 
 ```javascript
@@ -37,7 +46,7 @@ fp(schema)(
 )
 ```
 
-```snapshot
+```snapshot3
 FPQLExample
 ```
 
@@ -67,7 +76,7 @@ fp(schema)(getType('A'), getDirective('foo'), getArgument('bar'), getValue)
 ```
 
 ```snapshot
-FPQLGetDirectiveArgument
+FPQL.GetDirectiveArgument
 ```
 
 ### getDirective
@@ -113,7 +122,7 @@ getTypes(schema).map(getName)
 ```
 
 ```snapshot
-FPQLGetNameGetTypes
+FPQL.GetTypesNames
 ```
 
 ### getTypes
@@ -139,5 +148,61 @@ getTypes(schema).map(getName)
 ```
 
 ```snapshot
-FPQLGetTypes
+FPQL.GetTypes
+```
+
+### merge
+
+Merge different schemas together
+
+### Identical types
+
+Identical types will be extended
+
+```javascript
+import { merge } from '@browserql/fpql'
+```
+
+```graphql
+# A.graphql
+type Query {
+  id: ID
+}
+```
+
+```graphql
+# B.graphql
+type Query {
+  foo: ID
+}
+```
+
+```javascript
+merge(A, B)
+```
+
+```snapshot
+FPQL.MergeExtendExistingTypes
+```
+
+### Extending unknown type
+
+Extending an unknown type will cause the extension to be removed
+
+```javascript
+import { merge } from '@browserql/fpql'
+```
+
+```graphql
+extend type Query {
+  id: ID
+}
+```
+
+```javascript
+merge(schema)
+```
+
+```snapshot
+FPQL.MergeRemoveExtension
 ```

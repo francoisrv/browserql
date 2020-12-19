@@ -1,4 +1,5 @@
 export * as Client from './snapshots/Client'
+export * as FPQL from './snapshots/FPQL'
 export * as Firestore from './snapshots/Firestore'
 export * as Fragments from './snapshots/Fragments'
 export * as Operations from './snapshots/Operations'

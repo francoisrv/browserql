@@ -1,38 +1,58 @@
-import { DocumentNode, print } from 'graphql';
-import gql from 'graphql-tag';
-import getName from './getName';
-import toDocument from './toDocument';
+import { DocumentNode, print } from 'graphql'
+import gql from 'graphql-tag'
+import getName from './getName'
 
-type Mergeable =
-| string
-| DocumentNode
-| undefined
-
-export default function merge(...args: Mergeable[]) {
+/**
+ * Merge different document nodes together
+ * @param {DocumentNode[]} documents The documents to merge
+ */
+export default function merge(...documents: DocumentNode[]): DocumentNode {
   const types: string[] = []
-  const documents = (args as Array<string | DocumentNode>)
-    .filter(Boolean)
-    .map(toDocument)
-    .map(document => ({
-      ...document,
-      definitions: document.definitions.map(def => {
-        if (def.kind === 'ObjectTypeExtension' || def.kind === 'ObjectTypeDefinition') {
-          const name = getName(def)
-          if (types.indexOf(name) > -1) {
-            return {
-              ...def,
-              kind: 'ObjectTypeExtension'
+
+  const nextDocuments = documents.map((document) => ({
+    ...document,
+    definitions: document.definitions.map((definition) => {
+      const name = getName(definition)
+
+      switch (definition.kind) {
+        case 'ObjectTypeDefinition':
+          {
+            if (types.indexOf(name) > -1) {
+              return {
+                ...definition,
+                kind: 'ObjectTypeExtension',
+              }
             }
-          } else {
-            types.push(name)
           }
+          break
+        case 'ObjectTypeExtension':
+          {
+            if (types.indexOf(name) === -1) {
+              return {
+                ...definition,
+                kind: 'ObjectTypeDefinition',
+              }
+            }
+          }
+          break
+      }
+
+      if (
+        definition.kind === 'ObjectTypeExtension' ||
+        definition.kind === 'ObjectTypeDefinition'
+      ) {
+        if (types.indexOf(name) === -1) {
+          types.push(name)
         }
-        return def
-      })
-    }))
-    .map(document => print(document as DocumentNode))
-  const source = documents.join('\n')
-  // console.log(source)
+      }
+
+      return definition
+    }),
+  }))
+
+  const source = nextDocuments
+    .map((document) => print(document as DocumentNode))
+    .join('\n')
   const document = gql(source)
   return document
 }

@@ -20,7 +20,7 @@ type Todo {
 }
 
 type Query {
-  getTodos: [Todo!]! @get(url: "http://api.com/v1/todos")
+  getTodos: [Todo!]! @httpGet(url: "http://api.com/v1/todos")
 }
 ```
 

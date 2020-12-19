@@ -7,12 +7,25 @@ import Nav from './components/Nav'
 
 function App() {
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        height: '100vh',
+        width: '100vw',
+        overflow: 'hidden',
+      }}
+    >
       <Nav />
-      <div>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Topbar />
         <div
-          style={{ padding: 32, flexGrow: 1, paddingLeft: 'calc(22vw + 32px)' }}
+          style={{
+            height: 'calc(100vh - 64px)',
+            overflow: 'auto',
+            boxSizing: 'border-box',
+            padding: 43,
+            paddingTop: 22,
+          }}
         >
           <Router />
         </div>

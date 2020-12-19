@@ -107,20 +107,22 @@ mystifying-frost-qwhsj
 
 ## Schema
 
-Pass a schema. It can be either a string or a GraphQL `DocumentNode`
+Pass a schema. It has to be a GraphQL `DocumentNode`. You can use a tool like [graphql-tag](https://www.npmjs.com/package/graphql-tag) to parse a string into a `GraphQL` node -- or using a bundle loader.
 
 ```javascript
+import gql from `graphql-tag`
+
 const schema = `
-  type Query {
+  extend type Query {
     isMorning: Boolean
   }
 `
 
-// Connect schema as a string
-connect({ schema })
-
-// Connect schema as a document node
 connect({ schema: gql(schema) })
+```
+
+```snapshot
+Client.SchemaExample
 ```
 
 ## Resolvers
