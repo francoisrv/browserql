@@ -1,8 +1,9 @@
 {
   "name": "@browserql/client",
-  "version": "3.30.1",
+  "version": "3.32.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "source": "src/index.ts",
   "license": "ISC",
   "keywords": [
     "browserql",
@@ -20,7 +21,7 @@
   "scripts": {
     "build": "rm -rf dist && yarn tsc",
     "watch": "yarn build -w",
-    "test": "jest dist",
+    "test": "echo jest dist",
     "prepublishOnly": "git tag | xargs git tag -d && yarn build && yarn test"
   },
   "dependencies": {
