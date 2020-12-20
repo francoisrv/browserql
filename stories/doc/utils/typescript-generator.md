@@ -112,12 +112,21 @@ extend type User {
 }
 ```
 
-```typescript
-interface User {
-  name: string
-}
+```snapshot
+TypescriptGenerator.ExtendedTypes
+```
 
-interface User {
-  email: string
+## Enumerations
+
+```graphql
+enum HttpMethod {
+  GET
+  POST
+  PUT
+  DELETE
 }
+```
+
+```snapshot
+TypescriptGenerator.Enums
 ```

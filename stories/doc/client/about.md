@@ -113,7 +113,7 @@ Pass a schema. It has to be a GraphQL `DocumentNode`. You can use a tool like [g
 import gql from `graphql-tag`
 
 const schema = `
-  extend type Query {
+  type Query {
     isMorning: Boolean
   }
 `

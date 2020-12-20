@@ -1073,19 +1073,6 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@browserql/client@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@browserql/client/-/client-2.0.0.tgz#8df5c29f31d14b6d54d7083bb0236d6941cb3e12"
-  integrity sha512-xr9Onv7vHs5kNTU6DMdl3l6ILwJdVXsdZJg/NDYezBUlWRAVqlaApt2WPHO8WYdLCjXiXrj4Ijc5NdA0D+b1+w==
-  dependencies:
-    "@browserql/schemax" "^1.10.5"
-    "@graphql-tools/schema" "^6.2.3"
-    apollo-cache-inmemory "^1.6.6"
-    apollo-client "^2.6.10"
-    apollo-link-schema "^1.2.5"
-    graphql "^14.0.0"
-    graphql-tag "^2.11.0"
-
 "@browserql/fragments@^1.15.0", "@browserql/fragments@^1.17.0":
   version "1.17.0"
   resolved "https://registry.yarnpkg.com/@browserql/fragments/-/fragments-1.17.0.tgz#e4f585c92ef2c7b6a9690f90c96802f447603497"
@@ -1094,16 +1081,6 @@
     "@browserql/fpql" "^1.13.0"
     graphql "^15.3.0"
     graphql-tag "^2.11.0"
-
-"@browserql/schemax@^1.10.5":
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/@browserql/schemax/-/schemax-1.14.0.tgz#a5e002ae568af1240801f512395b6e1f9f2cab00"
-  integrity sha512-hd26sn9PGB4VVB2sVlOHEuvUtnWgqWQth5mNRMGkAk6rvb8aDuygvSAbqC+RKMteKB3iUjXlha+ANDtojfxIEw==
-  dependencies:
-    graphql "^15.3.0"
-    graphql-tag "^2.11.0"
-    lodash.find "^4.6.0"
-    typescript "^4.0.3"
 
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
@@ -11025,6 +11002,11 @@ parallel-transform@^1.1.0:
     cyclist "^1.0.1"
     inherits "^2.0.3"
     readable-stream "^2.1.5"
+
+paramizer@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/paramizer/-/paramizer-0.0.0.tgz#029b7cf40cac99cbbf570cb3abac091285d714f2"
+  integrity sha512-Dm1eBda1LOoYOu6Z2keEIzJjAyciexZtzFSpDPqc1trZQKh86spZ1ro+dbOyjQ58NajEzeJl9nvvhlq3Mc+wpQ==
 
 parcel-bundler@^1.12.4:
   version "1.12.4"

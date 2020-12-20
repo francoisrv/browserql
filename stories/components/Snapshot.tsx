@@ -3,8 +3,6 @@ import { get, startCase } from 'lodash'
 import * as React from 'react'
 import * as snapshots from '../snapshots'
 
-console.log({ snapshots })
-
 interface Props {
   value: string
 }

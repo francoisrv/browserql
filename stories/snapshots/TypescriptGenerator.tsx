@@ -57,3 +57,30 @@ export function Functions() {
 
   return <Code language="typescript" value={gents(schema).trim()} />
 }
+
+export function ExtendedTypes() {
+  const schema = gql`
+    type User {
+      name: String!
+    }
+
+    extend type User {
+      email: String!
+    }
+  `
+
+  return <Code language="typescript" value={gents(schema).trim()} />
+}
+
+export function Enums() {
+  const schema = gql`
+    enum HttpMethod {
+      GET
+      POST
+      PUT
+      DELETE
+    }
+  `
+
+  return <Code language="typescript" value={gents(schema).trim()} />
+}

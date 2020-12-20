@@ -1,7 +1,15 @@
-import { ConnectMiddleware } from '@browserql/client'
-import enhanceSchema, { getName, hasDirective } from '@browserql/schema'
-import { DocumentNode } from 'graphql'
+import type { SchemaqlFactory } from '@browserql/types'
+import {
+  getArgument,
+  getArguments,
+  getDirective,
+  getName,
+  getQueries,
+  getValue,
+} from '@browserql/fpql'
 import gql from 'graphql-tag'
+import { DocumentNode } from 'graphql'
+import { applyParameters } from 'paramizer'
 
 interface ConnectHttpOptions {
   directives?: {
@@ -16,45 +24,80 @@ interface HttpRequestOptions {}
 
 function httpRequest() {}
 
-export default function connectHttp(
-  options: ConnectHttpOptions = {}
-): ConnectMiddleware {
-  return function (document: DocumentNode) {
+export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
+  return function ({ schema }) {
     const ourSchema = gql`
-      directive @httpGet(url: String) on FIELD_DEFINITION
+      input HttpHeader {
+        name: String!
+        value: String!
+      }
 
-      directive @httpPost(url: String) on FIELD_DEFINITION
+      directive @httpGet(
+        url: String
+        pathname: String
+        headers: [HttpHeader!]
+        useVariablesAsPathParameters: Boolean = false
+        useVariablesAsSearchParameters: Boolean = false
+      ) on FIELD_DEFINITION
 
-      directive @httpPut(url: String) on FIELD_DEFINITION
+      directive @httpHead(
+        url: String
+        pathname: String
+        useVariablesAsPathParameters: Boolean = false
+        useVariablesAsSearchParameters: Boolean = false
+      ) on FIELD_DEFINITION
 
-      directive @httpDelete(url: String) on FIELD_DEFINITION
+      directive @httpOptions(
+        url: String
+        pathname: String
+        useVariablesAsPathParameters: Boolean = false
+        useVariablesAsSearchParameters: Boolean = false
+      ) on FIELD_DEFINITION
 
-      directive @httpHead(url: String) on FIELD_DEFINITION
+      directive @httpDelete(
+        url: String
+        pathname: String
+        useVariablesAsPathParameters: Boolean = false
+        useVariablesAsSearchParameters: Boolean = false
+      ) on FIELD_DEFINITION
+
+      directive @httpPost(
+        url: String
+        pathname: String
+        useVariablesAsPathParameters: Boolean = false
+        useVariablesAsSearchParameters: Boolean = false
+        useVariablesAsPayload: Boolean = false
+      ) on FIELD_DEFINITION
     `
-    const schema = enhanceSchema(document)
-    const targetQueries = schema
-      .getQueries()
+    const targetQueries = getQueries(schema as DocumentNode)
       .filter(
         (query) =>
-          hasDirective(query, 'httpGet') ||
-          hasDirective(query, 'httpPut') ||
-          hasDirective(query, 'httpPost') ||
-          hasDirective(query, 'httpDelete') ||
-          hasDirective(query, 'httpHead')
+          getDirective('httpGet')(query) ||
+          getDirective('httpPut')(query) ||
+          getDirective('httpPost')(query) ||
+          getDirective('httpDelete')(query) ||
+          getDirective('httpHead')(query)
       )
       .reduce((queries, query) => {
-        if (hasDirective(query, 'httpGet')) {
+        const httpGet = getDirective('httpGet')(query)
+
+        if (httpGet) {
           return {
             ...queries,
-            [getName(query)]: async () => {
-              const response = await fetch('/foo')
+            [getName(query)]: async (variables: any) => {
+              const url = getArgument('url')(httpGet)
+              const urlValue = getValue(url)
+              const finalUrl = applyParameters(urlValue, variables)
+              const response = await fetch(finalUrl)
               const json = await response.json()
               return json
             },
           }
         }
+
         return queries
       }, {})
+
     return {
       schema: ourSchema,
       queries: targetQueries,

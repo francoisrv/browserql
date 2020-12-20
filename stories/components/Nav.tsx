@@ -16,7 +16,14 @@ function Nav(props: RouteComponentProps) {
   } = props
 
   return (
-    <div style={{ width: '18vw', height: '100vh', overflow: 'auto' }}>
+    <div
+      style={{
+        width: '18vw',
+        height: '100vh',
+        overflow: 'auto',
+        minWidth: 180,
+      }}
+    >
       <List component="nav">
         {keys(menu).map((menuName) => (
           <React.Fragment key={menuName}>

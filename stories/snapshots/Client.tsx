@@ -88,7 +88,7 @@ export function Counter() {
 
 export function SchemaExample() {
   const schema = gql`
-    extend type Query {
+    type Query {
       isMorning: Boolean
     }
   `
