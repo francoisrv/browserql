@@ -40,3 +40,13 @@ await client.query({
 ```snapshot
 HTTP.Example
 ```
+
+### Http Methods supported
+
+- DELETE `httpDelete`
+- GET `httpGet`
+- HEAD `httpHead`
+- OPTIONS `httpOptions`
+- PATCH `httpPatch`
+- POST `httpPost`
+- PUT `httpPut`

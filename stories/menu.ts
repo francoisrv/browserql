@@ -53,11 +53,11 @@ const menu: Menu = {
     },
     {
       name: 'withQuery',
-      doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+      doc: readFileSync(__dirname + '/doc/react/withquery.md', 'utf-8'),
     },
     {
       name: 'withMutation',
-      doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
+      doc: readFileSync(__dirname + '/doc/react/withmutation.md', 'utf-8'),
     },
   ],
   Firestore: [

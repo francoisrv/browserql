@@ -3,7 +3,7 @@
 Use GraphQL with Firestore directly in your front-end apps
 
 ```snapshot
-FirestoreExample1
+Firestore.Example1
 ```
 
 # Usage
@@ -81,21 +81,25 @@ You can also use it with react:
 import { Firestoreql } from '@browserql/firestore-react'
 ```
 
-```jsx
-<Firestoreql paginate="Todo">
-  {(todos) => (
-    <>
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>{todo.name}</li>
-        ))}
-      </ul>
-      <Firestoreql addOne="Todo">
-        {(addOne) => (
-          <button onClick={() => addOne({ name: 'buy milk' })}>Add</button>
-        )}
-      </Firestoreql>
-    </>
-  )}
-</Firestoreql>
+```javascript
+function Todos() {
+  return (
+    <Firestoreql get="Todo">
+      {(todos) => (
+        <>
+          <ul>
+            {todos.map((todo) => (
+              <li key={todo.id}>{todo.name}</li>
+            ))}
+          </ul>
+          <Firestoreql addOne="Todo">
+            {(addOne) => (
+              <button onClick={() => addOne({ name: 'buy milk' })}>Add</button>
+            )}
+          </Firestoreql>
+        </>
+      )}
+    </Firestoreql>
+  )
+}
 ```
