@@ -58,9 +58,9 @@ type Foo {
 TypescriptGenerator.Kinds
 ```
 
-## Non-null values
+## Nullable values
 
-If a value is null, the `?` symbol will be used:
+If a value can be null, the `?` symbol will be used along with `null`:
 
 ```graphql
 type Foo {

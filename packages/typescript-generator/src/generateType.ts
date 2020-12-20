@@ -29,7 +29,7 @@ export default function generateType(
         parsedType,
         schema,
         options
-      )}`
+      )}${parsedType.required ? '' : ' | null'}`
     )
   }
   lines.push('}')

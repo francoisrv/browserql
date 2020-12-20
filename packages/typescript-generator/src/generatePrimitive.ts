@@ -9,6 +9,6 @@ export default function generatePrimitive(type: string) {
     return 'boolean'
   }
   if (type === 'ID') {
-    return 'string|number'
+    return 'string | number'
   }
 }
