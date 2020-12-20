@@ -1,6 +1,6 @@
 {
   "name": "@browserql/fpql",
-  "version": "1.20.0",
+  "version": "1.21.0",
   "main": "dist/index.js",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
