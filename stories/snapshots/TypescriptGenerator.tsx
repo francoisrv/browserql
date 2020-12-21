@@ -152,3 +152,13 @@ export function Enums() {
 
   return <Code language="typescript" value={gents(schema).trim()} />
 }
+
+export function Untouched() {
+  const schema = gql`
+    type User {
+      subscription: Subscription!
+    }
+  `
+
+  return <Code language="typescript" value={gents(schema).trim()} />
+}

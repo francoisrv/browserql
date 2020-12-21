@@ -34,7 +34,7 @@ Which will return the following **string**:
 TypescriptGenerator.Usage
 ```
 
-## Scalar conversions
+## Built-in scalar conversions
 
 | GraphQL   | TypeScript         |
 | --------- | ------------------ |
@@ -58,6 +58,20 @@ type Foo {
 TypescriptGenerator.Kinds
 ```
 
+## Handle missing entities
+
+If it is not a built-in scalar, it will be left unchanged, assuming it is present in the schema
+
+```graphql
+type User {
+  subscription: Subscription!
+}
+```
+
+```snapshot
+TypescriptGenerator.Untouched
+```
+
 ## Nullable values
 
 You can choose which strategy to use to represent values that might be `null`.
@@ -68,10 +82,10 @@ You can sppecify the strategy like this:
 gents(schema, { null: NULL_STRATEGY })
 ```
 
-You can use more than one strategy. In the example below, we'll use all:
+You can use more than one strategy
 
 ```javascript
-gents(schema, { null: [null, undefined, -1] })
+gents(schema, { null: ['missng', 'null'] })
 ```
 
 In `Typescript`, use the `NULL_STRATEGY` `enum`:
