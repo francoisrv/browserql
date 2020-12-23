@@ -5,6 +5,8 @@ import {
   getDirective,
   getField,
   getName,
+  getScalar,
+  getScalars,
   getType,
   getTypes,
   merge,
@@ -115,6 +117,35 @@ export function Example() {
         null,
         2
       )}
+    />
+  )
+}
+
+export function GetScalars() {
+  const schema = gql`
+    scalar EmailAddress
+
+    type User {
+      email: EmailAddress
+    }
+  `
+  return (
+    <Code language="json" value={JSON.stringify(getScalars(schema), null, 2)} />
+  )
+}
+
+export function GetScalar() {
+  const schema = gql`
+    scalar EmailAddress
+
+    type User {
+      email: EmailAddress
+    }
+  `
+  return (
+    <Code
+      language="json"
+      value={JSON.stringify(getScalar('EmailAddress')(schema), null, 2)}
     />
   )
 }
