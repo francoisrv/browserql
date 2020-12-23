@@ -38,6 +38,74 @@ export function NonNull() {
   return <Code language="typescript" value={gents(schema).trim()} />
 }
 
+export function NullableWithNull() {
+  const schema = gql`
+    type Foo {
+      bar: String
+    }
+  `
+
+  return (
+    <Code
+      language="typescript"
+      value={`
+${gents(schema, { null: 'null' }).trim()}
+  `}
+    />
+  )
+}
+
+export function NullableWithUndefined() {
+  const schema = gql`
+    type Foo {
+      bar: String
+    }
+  `
+
+  return (
+    <Code
+      language="typescript"
+      value={`
+${gents(schema, { null: 'undefined' }).trim()}
+  `}
+    />
+  )
+}
+
+export function NullableWithMissing() {
+  const schema = gql`
+    type Foo {
+      bar: String
+    }
+  `
+
+  return (
+    <Code
+      language="typescript"
+      value={`
+${gents(schema, { null: 'missing' }).trim()}
+  `}
+    />
+  )
+}
+
+export function NullableWithMixed() {
+  const schema = gql`
+    type Foo {
+      bar: String
+    }
+  `
+
+  return (
+    <Code
+      language="typescript"
+      value={`
+${gents(schema, { null: ['missing', 'null'] }).trim()}
+  `}
+    />
+  )
+}
+
 export function Lists() {
   const schema = gql`
     type Foo {
@@ -79,6 +147,16 @@ export function Enums() {
       POST
       PUT
       DELETE
+    }
+  `
+
+  return <Code language="typescript" value={gents(schema).trim()} />
+}
+
+export function Untouched() {
+  const schema = gql`
+    type User {
+      subscription: Subscription!
     }
   `
 

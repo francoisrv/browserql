@@ -15,7 +15,7 @@ export default function generateEnumeration(
         .map(
           (value) => `${getName(value as never)} = '${getName(value as never)}'`
         )
-        .join('\n  ')
+        .join(',\n  ')
     )
     .concat('\n}')
 }
