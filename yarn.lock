@@ -1073,6 +1073,15 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@browserql/fpql@^1.22.0":
+  version "1.22.0"
+  resolved "https://registry.yarnpkg.com/@browserql/fpql/-/fpql-1.22.0.tgz#1e1a892a40031d8c753e8670862f8abb5e96b852"
+  integrity sha512-RHz5bT+cHvG4KPsHYszAxNkczpumX2WPraoz/mQ9OB5YgIWfaqJ9sjwL1lfWUJ9w+v4a5LiZNPnCeG4vgkHN1A==
+  dependencies:
+    graphql "14.6.0"
+    graphql-tag "^2.11.0"
+    typescript "^4.0.3"
+
 "@browserql/fragments@^1.15.0", "@browserql/fragments@^1.17.0":
   version "1.17.0"
   resolved "https://registry.yarnpkg.com/@browserql/fragments/-/fragments-1.17.0.tgz#e4f585c92ef2c7b6a9690f90c96802f447603497"
@@ -12172,7 +12181,15 @@ react-transition-group@^4.4.0:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@^16.13.1, react@^16.8.0:
+"react@^16.13.1 || ^17.0.1", react@^17.0.1:
+  version "17.0.1"
+  resolved "https://registry.yarnpkg.com/react/-/react-17.0.1.tgz#6e0600416bd57574e3f86d92edba3d9008726127"
+  integrity sha512-lG9c9UuMHdcAexXtigOZLX8exLWkW0Ku29qPRU8uhF2R9BN96dLCt0psvzPLlHc5OWkgymP3qwTRgbnw5BKx3w==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+
+react@^16.8.0:
   version "16.14.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.14.0.tgz#94d776ddd0aaa37da3eda8fc5b6b18a4c9a3114d"
   integrity sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==
@@ -12180,14 +12197,6 @@ react@^16.13.1, react@^16.8.0:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.2"
-
-react@^17.0.1:
-  version "17.0.1"
-  resolved "https://registry.yarnpkg.com/react/-/react-17.0.1.tgz#6e0600416bd57574e3f86d92edba3d9008726127"
-  integrity sha512-lG9c9UuMHdcAexXtigOZLX8exLWkW0Ku29qPRU8uhF2R9BN96dLCt0psvzPLlHc5OWkgymP3qwTRgbnw5BKx3w==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
 
 read-cmd-shim@^1.0.1:
   version "1.0.5"

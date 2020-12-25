@@ -40,12 +40,18 @@ export default function GraphiQL(props: Props) {
 
   async function makeSchema() {
     const source = getIntrospectionQuery()
+
+    const schema = buildSchema(print(ctx.schema))
+
     const { data } = await graphql({
       source,
-      // @ts-ignore
-      schema: buildSchema(print(ctx.schema)),
+      schema,
     })
-    // @ts-ignore
+    console.log(0, buildSchema(print(ctx.schema)))
+    if (!data) {
+      throw new Error('Could not read introspection query')
+    }
+    console.log(123, { data })
     return buildClientSchema(data)
   }
 
@@ -67,11 +73,14 @@ export default function GraphiQL(props: Props) {
   if (!introspection) {
     setTimeout(async () => {
       const x = await makeSchema()
+      console.log({ x })
       // @ts-ignore
       setIntrospection(x)
     })
     return <div />
   }
+
+  console.log({ introspection })
 
   return (
     <>

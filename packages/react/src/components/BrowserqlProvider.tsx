@@ -8,7 +8,7 @@ import BrowserqlContext from '../contexts/BrowserqlContext'
 
 interface Props {
   client?: any
-  schema?: DocumentNode | string
+  schema?: DocumentNode
   extensions?: Array<Schemaql | SchemaqlFactory>
   queries?: Schemaql['queries']
   mutations?: Schemaql['mutations']

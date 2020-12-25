@@ -2,10 +2,34 @@ import * as React from 'react'
 import gql from 'graphql-tag'
 import { build, showCollections, get } from '@browserql/firestore'
 import { print, ASTNode, DocumentNode } from 'graphql'
+import MockFirebase from 'mock-cloud-firestore'
+import connect from '@browserql/client'
+import { connect as connectFirestoreql } from '@browserql/firestore'
 
 import Code from '../components/Code'
 import { firestore } from '../utils'
-import { getQuery } from '@browserql/fpql'
+import { getQuery, merge } from '@browserql/fpql'
+
+const fixtureData = {
+  __collection__: {
+    users: {
+      __doc__: {
+        user_a: {
+          age: 15,
+          username: 'user_a',
+        },
+      },
+    },
+  },
+}
+
+const firebase = new MockFirebase(fixtureData)
+
+function TemplateRunQuery({ schema }: { schema: DocumentNode }) {
+  console.log({ schema })
+  const { client } = connect(connectFirestoreql(firebase, schema))
+  return <div>LIFGE AGAIN</div>
+}
 
 export function ShowCollections() {
   const schema = gql`
@@ -74,24 +98,31 @@ export function GetMany() {
 }
 
 export function Count() {
-  const { schema } = build(
-    firestore,
-    gql`
-      type MyCollection @firestore {
-        name: String!
-      }
-    `
-  )
+  const defs = gql`
+    type MyCollection @firestore {
+      name: String!
+    }
+  `
+
+  const { schema } = build(firestore, defs)
   const query = getQuery('firestore_count_MyCollection')(schema as DocumentNode)
   return (
-    <Code
-      language="graphql"
-      value={`
-  extend type Query {
-    ${print(query as ASTNode)}
-  }
-  `}
-    />
+    <>
+      <Code language="graphql" value={print(defs).trim()} />
+      <Code
+        language="graphql"
+        value={`
+type Query {
+  ${print(query as ASTNode)}
+}
+`.trim()}
+      />
+      <Code
+        language="javascript"
+        value={`await client.query(count(defs, 'MyCollection'))`}
+      />
+      <TemplateRunQuery schema={merge(defs, schema)} />
+    </>
   )
 }
 

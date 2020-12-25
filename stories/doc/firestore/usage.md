@@ -62,13 +62,15 @@ const { client } = connect(connectFirestoreql(db, defs))
 That's it! You can now use our helpers to construct your queries and mutations
 
 ```javascript
-import { add, get, where } from '@browserql/firestore'
+import { add, get, where, orderBy } from '@browserql/firestore'
 
 await client.query(
   get(
+    defs,
     'Todo',
     where('done').equals(true),
-    where('doneTime').isLesserThan(new Date())
+    where('doneTime').isLesserThan(new Date()),
+    orderBy('doneTime')
   )
 )
 

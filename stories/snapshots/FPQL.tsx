@@ -7,6 +7,7 @@ import {
   getName,
   getType,
   getTypes,
+  group,
   merge,
 } from '@browserql/fpql'
 import { print } from 'graphql'
@@ -117,4 +118,18 @@ export function Example() {
       )}
     />
   )
+}
+
+export function Group() {
+  const schema = gql`
+    type Query {
+      a: Int
+    }
+
+    extend type Query {
+      b: Int
+    }
+  `
+
+  return <Code language="graphql" value={print(group(schema))} />
 }

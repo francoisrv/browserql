@@ -59,6 +59,10 @@ const menu: Menu = {
       name: 'withMutation',
       doc: readFileSync(__dirname + '/doc/react/withmutation.md', 'utf-8'),
     },
+    {
+      name: 'GraphiQL',
+      doc: readFileSync(__dirname + '/doc/react/graphiql.md', 'utf-8'),
+    },
   ],
   Firestore: [
     {
