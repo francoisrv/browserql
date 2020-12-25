@@ -3,6 +3,7 @@ export interface TSGeneratorOptions {
   useDeclare?: boolean
   typeSuffix?: string
   null?: NULL_STRATEGY | NULL_STRATEGY[]
+  ID?: string
 }
 
 export enum NULL_STRATEGY {

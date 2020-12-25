@@ -1,4 +1,9 @@
-export default function generatePrimitive(type: string) {
+import { TSGeneratorOptions } from './types'
+
+export default function generatePrimitive(
+  type: string,
+  options: TSGeneratorOptions = {}
+) {
   if (type === 'String') {
     return 'string'
   }
@@ -9,6 +14,6 @@ export default function generatePrimitive(type: string) {
     return 'boolean'
   }
   if (type === 'ID') {
-    return 'string | number'
+    return options.ID || 'string | number'
   }
 }

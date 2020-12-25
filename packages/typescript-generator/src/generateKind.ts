@@ -8,7 +8,7 @@ export default function generateKind(
   schema: DocumentNode,
   options: TSGeneratorOptions
 ) {
-  let parsed = generatePrimitive(type.type)
+  let parsed = generatePrimitive(type.type, options)
   if (!parsed) {
     const t = getType(type.type)(schema)
     if (t) {
