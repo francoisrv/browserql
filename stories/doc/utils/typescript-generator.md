@@ -58,6 +58,22 @@ type Foo {
 TypescriptGenerator.Kinds
 ```
 
+`ID` is viewed as a `string` or a `number`. You can overwrite that
+
+```javascript
+gents(schema, { ID: 'string' })
+```
+
+```graphql
+type User {
+  id: ID!
+}
+```
+
+```snapshot
+TypescriptGenerator.ID
+```
+
 ## Handle missing entities
 
 If it is not a built-in scalar, it will be left unchanged, assuming it is present in the schema

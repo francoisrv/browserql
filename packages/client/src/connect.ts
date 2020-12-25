@@ -28,7 +28,7 @@ export default function connect(
 
   function applyArg(arg: Schemaql) {
     if (arg.schema) {
-      schemas.push(arg.schema)
+      schemas.push(arg.schema as DocumentNode)
     }
 
     if (arg.queries) {

@@ -125,6 +125,54 @@ getTypes(schema).map(getName)
 FPQL.GetTypesNames
 ```
 
+### getScalar
+
+Get schema's scalar by name
+
+```javascript
+import { getScalars } from '@browserql/fpql'
+```
+
+```graphql
+scalar EmailAddress
+
+type User {
+  email: EmailAddress
+}
+```
+
+```javascript
+getScalar('EmailAddress')(schema)
+```
+
+```snapshot
+FPQL.GetScalar
+```
+
+### getScalars
+
+Get schema's scalars
+
+```javascript
+import { getScalars } from '@browserql/fpql'
+```
+
+```graphql
+scalar EmailAddress
+
+type User {
+  email: EmailAddress
+}
+```
+
+```javascript
+getScalars(schema)
+```
+
+```snapshot
+FPQL.GetScalars
+```
+
 ### getTypes
 
 Get all types from a schema

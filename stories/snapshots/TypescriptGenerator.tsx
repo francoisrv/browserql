@@ -162,3 +162,18 @@ export function Untouched() {
 
   return <Code language="typescript" value={gents(schema).trim()} />
 }
+
+export function ID() {
+  const schema = gql`
+    type User {
+      id: ID!
+    }
+  `
+
+  return (
+    <Code
+      language="typescript"
+      value={gents(schema, { ID: 'string' }).trim()}
+    />
+  )
+}

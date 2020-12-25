@@ -5,9 +5,10 @@ import {
   getDirective,
   getField,
   getName,
+  getScalar,
+  getScalars,
   getType,
   getTypes,
-  group,
   merge,
 } from '@browserql/fpql'
 import { print } from 'graphql'
@@ -120,16 +121,31 @@ export function Example() {
   )
 }
 
-export function Group() {
+export function GetScalars() {
   const schema = gql`
-    type Query {
-      a: Int
-    }
+    scalar EmailAddress
 
-    extend type Query {
-      b: Int
+    type User {
+      email: EmailAddress
     }
   `
+  return (
+    <Code language="json" value={JSON.stringify(getScalars(schema), null, 2)} />
+  )
+}
 
-  return <Code language="graphql" value={print(group(schema))} />
+export function GetScalar() {
+  const schema = gql`
+    scalar EmailAddress
+
+    type User {
+      email: EmailAddress
+    }
+  `
+  return (
+    <Code
+      language="json"
+      value={JSON.stringify(getScalar('EmailAddress')(schema), null, 2)}
+    />
+  )
 }
