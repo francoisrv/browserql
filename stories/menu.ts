@@ -128,6 +128,71 @@ const menu: Menu = {
 export default menu
 
 export const mds = {
+  'firestore/api/add': readFileSync(
+    __dirname + '/doc/firestore/api/add.md',
+    'utf-8'
+  ),
+  'firestore/api/asc': readFileSync(
+    __dirname + '/doc/firestore/api/asc.md',
+    'utf-8'
+  ),
+  'firestore/api/build': readFileSync(
+    __dirname + '/doc/firestore/api/build.md',
+    'utf-8'
+  ),
+  'firestore/api/count': readFileSync(
+    __dirname + '/doc/firestore/api/count.md',
+    'utf-8'
+  ),
+  'firestore/api/connect': readFileSync(
+    __dirname + '/doc/firestore/api/connect.md',
+    'utf-8'
+  ),
+  'firestore/api/first': readFileSync(
+    __dirname + '/doc/firestore/api/first.md',
+    'utf-8'
+  ),
+  'firestore/api/get': readFileSync(
+    __dirname + '/doc/firestore/api/get.md',
+    'utf-8'
+  ),
+  'firestore/api/increment': readFileSync(
+    __dirname + '/doc/firestore/api/increment.md',
+    'utf-8'
+  ),
+  'firestore/api/last': readFileSync(
+    __dirname + '/doc/firestore/api/last.md',
+    'utf-8'
+  ),
+  'firestore/api/limit': readFileSync(
+    __dirname + '/doc/firestore/api/limit.md',
+    'utf-8'
+  ),
+  'firestore/api/multiply': readFileSync(
+    __dirname + '/doc/firestore/api/multiply.md',
+    'utf-8'
+  ),
+  'firestore/api/orderBy': readFileSync(
+    __dirname + '/doc/firestore/api/orderBy.md',
+    'utf-8'
+  ),
+  'firestore/api/page': readFileSync(
+    __dirname + '/doc/firestore/api/page.md',
+    'utf-8'
+  ),
+  'firestore/api/remove': readFileSync(
+    __dirname + '/doc/firestore/api/remove.md',
+    'utf-8'
+  ),
+  'firestore/api/set': readFileSync(
+    __dirname + '/doc/firestore/api/set.md',
+    'utf-8'
+  ),
+  'firestore/api/where': readFileSync(
+    __dirname + '/doc/firestore/api/where.md',
+    'utf-8'
+  ),
+
   'utils/fpql/getArgument': readFileSync(
     __dirname + '/doc/utils/fpql/getArgument.md',
     'utf-8'

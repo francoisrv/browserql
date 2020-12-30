@@ -1,206 +1,65 @@
 # API
 
-## add
-
-Construct a `GraphQL` query to add a new document in a firestore collection.
-
-### Usage
-
-```javascript
-import { add } from '@browserql/firestore'
-
-const { mutation, variables } = add(schema, 'Todo', {
-  name: 'buy milk',
-})
+```section-h3
+firestore/api/add
 ```
 
-### Typescript signature
-
-```typescript
-function add<Model = any>(
-  value: boolean,
-  variables: Model
-): {
-  mutation: DocumentNode
-  variables: Model
-}
+```section-h3
+firestore/api/asc
 ```
 
-You can pass more than one document to be added
-
-```javascript
-import { add } from '@browserql/firestore'
-
-const { mutation, variables } = add(
-  schema,
-  'Todo',
-  { name: 'buy milk' },
-  { name: 'fix drawer' }
-)
+```section-h3
+firestore/api/build
 ```
 
-## asc
-
-Tell a query to sort results by ascending order.
-Expect `true` or `false` as argument.
-
-By default, asc is `true`
-
-```javascript
-import { asc, get } from '@browserql/firestore'
-
-const { query, variables } = get(schema, 'Todo', asc(false))
+```section-h3
+firestore/api/connect
 ```
 
-```typescript
-asc(value: boolean): {
-  type: FirestoreqlType.getter
-  name: 'asc'
-  value: boolean
-}
+```section-h3
+firestore/api/count
 ```
 
-## build
-
-```javascript
-import { build } from '@browserql/firestore'
-
-build(
-  firestore(),
-  gql`
-    type Todo @firestore {
-      name: String!
-    }
-  `
-)
+```section-h3
+firestore/api/first
 ```
 
-```typescript
-build(
-  db: firestore.Firestore.Database
-  schema: string | DocumentNode
-): {
-  schema: DocumentNode
-  queries: any
-  mutations: any
-}
+```section-h3
+firestore/api/get
 ```
 
-## connect
-
-```javascript
-import { connect } from '@browserql/client'
-import { connect as connectFirestore } from '@browserql/firestore'
-
-const browserql = connect(connectFirestore(db, defs))
+```section-h3
+firestore/api/increment
 ```
 
-## count
-
-Count documents in a collection
-
-```javascript
-import { count } from '@browserql/firestore'
-
-await client.query(firestoreql(schema).count('Todo'))
+```section-h3
+firestore/api/last
 ```
 
-## first
-
-```javascript
-import { first, get } from '@browserql/firestore'
-
-await client.query(get('Todo', first()))
+```section-h3
+firestore/api/limit
 ```
 
-## get
-
-Constructs a `GraphQL` query that can be passed to a client to be executed
-
-```graphql
-type Todo @firestore {
-  name: String
-}
+```section-h3
+firestore/api/multiply
 ```
 
-```javascript
-import { get } from '@browserql/firestore'
-
-get(schema, 'Todo')
+```section-h3
+firestore/api/orderBy
 ```
 
-```snapshot
-Firestore.ApiGet
+```section-h3
+firestore/api/page
 ```
 
-## increment
-
-```javascript
-import { increment, update } from '@browserql/firestore'
-
-await client.query(update('Todo', increment()))
+```section-h3
+firestore/api/remove
 ```
 
-## last
-
-```javascript
-import { get, last } from '@browserql/firestore'
-
-await client.query(get('Todo', last()))
+```section-h3
+firestore/api/set
 ```
 
-## limit
-
-```javascript
-import { get, limit } from '@browserql/firestore'
-
-await client.query(get('Todo', limit(25)))
-```
-
-## multiply
-
-```javascript
-import { update, multiply } from '@browserql/firestore'
-
-await client.query(update('Todo', multiply(0.5)))
-```
-
-## orderBy
-
-```javascript
-import { get, orderBy } from '@browserql/firestore'
-
-await client.query(get('Todo', orderBy('priority')))
-```
-
-## page
-
-```javascript
-import { get, limit, page } from '@browserql/firestore'
-
-await client.query(get('Todo', limit(100), page(5)))
-```
-
-## remove
-
-```javascript
-import { remove, where } from '@browserql/firestore'
-
-await client.query(remove('Todo', where('done').equals(true)))
-```
-
-## set
-
-```javascript
-import { update, set } from '@browserql/firestore'
-
-await client.query(update('Todo', set('done').to(false)))
-```
-
-## where
-
-```javascript
-import { get, where } from '@browserql/firestore'
-
-await client.query(get('Todo', where('done').equals(true)))
+```section-h3
+firestore/api/where
 ```
