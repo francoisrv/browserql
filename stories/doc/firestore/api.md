@@ -2,14 +2,16 @@
 
 ## add
 
-Add a new document in a firestore collection.
+Construct a `GraphQL` query to add a new document in a firestore collection.
 
 ### Usage
 
 ```javascript
 import { add } from '@browserql/firestore'
 
-await client.query(add('Todo', { name: 'buy milk' }))
+const { mutation, variables } = add(schema, 'Todo', {
+  name: 'buy milk',
+})
 ```
 
 ### Typescript signature
@@ -27,7 +29,14 @@ function add<Model = any>(
 You can pass more than one document to be added
 
 ```javascript
-await client.query(add('Todo', { name: 'buy milk' }, { name: 'fix drawer' }))
+import { add } from '@browserql/firestore'
+
+const { mutation, variables } = add(
+  schema,
+  'Todo',
+  { name: 'buy milk' },
+  { name: 'fix drawer' }
+)
 ```
 
 ## asc
@@ -40,7 +49,7 @@ By default, asc is `true`
 ```javascript
 import { asc, get } from '@browserql/firestore'
 
-await client.query(get('Todo', asc(false)))
+const { query, variables } = get(schema, 'Todo', asc(false))
 ```
 
 ```typescript
@@ -93,7 +102,7 @@ Count documents in a collection
 ```javascript
 import { count } from '@browserql/firestore'
 
-await client.query(count('Todo'))
+await client.query(firestoreql(schema).count('Todo'))
 ```
 
 ## first

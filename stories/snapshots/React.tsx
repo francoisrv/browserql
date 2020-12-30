@@ -46,38 +46,18 @@ export function SandboxMainExample() {
     },
   }
 
-  const client = new ApolloClient({
-    link: new SchemaLink({
-      rootValue: {
-        ...queries,
-      },
-      schema: makeExecutableSchema({
-        typeDefs: [schema],
-      }),
-    }),
-    cache: new InMemoryCache({
-      addTypename: true,
-      fragmentMatcher: new IntrospectionFragmentMatcher({
-        introspectionQueryResultData: {
-          __schema: {
-            types: [],
-          },
-        },
-      }),
-    }),
-  })
-
-  console.log({ client })
+  function SayHello({ to }: { to: string }) {
+    const { data, loading, error } = useQuery(buildQuery(schema, 'sayHello'), {
+      variables: { to },
+    })
+    if (error) return <div>{error.message}</div>
+    if (loading) return <div>Loading...</div>
+    return <p>{data.sayHello}</p>
+  }
 
   return (
-    <ApolloProvider client={client}>
-      <Query to="everybody" />
-    </ApolloProvider>
+    <BrowserqlProvider schema={schema} queries={queries}>
+      <SayHello to="everybody" />
+    </BrowserqlProvider>
   )
-
-  // return (
-  //   <BrowserqlProvider schema={schema} queries={queries}>
-  //     <SayHello to="everybody" />
-  //   </BrowserqlProvider>
-  // )
 }

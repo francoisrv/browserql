@@ -3,6 +3,7 @@
   "version": "1.25.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "source": "src/index.tsx",
   "license": "ISC",
   "keywords": [
     "browserql",
@@ -24,7 +25,8 @@
     "prepublishOnly": "git tag | xargs git tag -d && yarn build && yarn test"
   },
   "dependencies": {
-    "@browserql/react": "^3.1.0",
+    "@browserql/fpql": "^1.22.0",
+    "@browserql/react": "^3.5.0",
     "graphiql": "1.0.6",
     "react-draggable": "^4.4.3",
     "react-error-boundary": "^3.0.2",

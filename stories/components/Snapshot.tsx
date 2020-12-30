@@ -16,31 +16,14 @@ export default function Snapshot({ value }: Props) {
       <div
         style={{
           position: 'relative',
-          paddingTop: 84,
           boxShadow: '0 5px 5px 5px rgba(0, 0, 0, 0.25)',
           borderRadius: 10,
-          marginTop: 16,
-          marginBottom: 16,
+          marginTop: 44,
+          marginBottom: 44,
         }}
       >
         <div style={{ padding: 16, paddingLeft: 33 }}>
           <View />
-        </div>
-        <div
-          style={{
-            backgroundColor: '#111',
-            color: '#ccc',
-            padding: 16,
-            borderRadius: '8px 8px 0 0',
-            borderBottom: '5px solid #333',
-            paddingLeft: 33,
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-          }}
-        >
-          <Typography>{startCase(value)}</Typography>
         </div>
       </div>
     )

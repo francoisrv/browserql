@@ -1,5 +1,4 @@
 import type { DocumentNode } from 'graphql'
-import type { Schemaql } from '@browserql/types'
 import type { firestore } from 'firebase'
 import { merge } from '@browserql/fpql'
 
@@ -14,7 +13,7 @@ import { makeSchema } from '../utils/graphql'
 export default function build(
   db: firestore.Firestore,
   schema: DocumentNode
-): Schemaql {
+): { schema: DocumentNode } {
   return {
     schema: merge(BASE_SCHEMA, ...makeSchema(schema)),
   }

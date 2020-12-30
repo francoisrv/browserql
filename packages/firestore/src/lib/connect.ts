@@ -5,7 +5,7 @@ import build from './build'
 
 export default function connect(
   db: firestore.Firestore,
-  schema: DocumentNode | string
+  schema: DocumentNode
 ): SchemaqlFactory {
   return () => build(db, schema)
 }
