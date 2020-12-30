@@ -3,8 +3,17 @@
 ## Side-to-side comparison with apollo hooks, components and HOCs
 
 ```graphql
-extend type Mutation {
-  doSomething(id: ID!): ID!
+type Mutation {
+  log(message: String!): ID!
+}
+```
+
+```javascript
+const mutations = {
+  log({ message }) {
+    console.log(message)
+    return Date.now()
+  },
 }
 ```
 
@@ -13,14 +22,12 @@ extend type Mutation {
 ```javascript
 import { useMutation } from '@apollo/client'
 
-function DoSomething({ id }) {
-  const [doSomething, { loading, error }] = useMutation(DO_SOMETHING, {
-    variables: { id },
-  })
+function Log({ message }) {
+  const [log, { loading, error }] = useMutation(LOG)
 
   return (
-    <button onClick={() => doSomething({ id })} disabled={loading}>
-      Do something
+    <button onClick={() => log({ message })} disabled={loading}>
+      Log: {message}
     </button>
   )
 }
@@ -29,17 +36,17 @@ function DoSomething({ id }) {
 ### With components
 
 ```javascript
-import { WithMutation } from '@browserql/react'
+import { UseMutation } from '@browserql/react'
 
-function DoSomething({ id }) {
+function Log({ message }) {
   return (
-    <WithMutation mutation={DO_SOMETHING}>
-      {(doSomething, { loading, error }) => (
-        <button onClick={() => doSomething({ id })} disabled={loading}>
-          Do something
+    <UseMutation mutation={LOG}>
+      {(log, { loading, error }) => (
+        <button onClick={() => log({ message })} disabled={loading}>
+          Log: {message}
         </button>
       )}
-    </WithMutation>
+    </UseMutation>
   )
 }
 ```
@@ -49,16 +56,13 @@ function DoSomething({ id }) {
 ```javascript
 import { withMutation } from '@browserql/react'
 
-function DoSomething({ doSomething, id }) {
+function Log({ log, message }) {
   return (
-    <button
-      onClick={() => doSomething.execute({ id })}
-      disabled={doSomething.loading}
-    >
-      Do something
+    <button onClick={() => log.exec({ message })} disabled={log.loading}>
+      Log: {message}
     </button>
   )
 }
 
-withMutation('doSomething')(DoSomething)
+withMutation(LOG)(DoSomething)
 ```
