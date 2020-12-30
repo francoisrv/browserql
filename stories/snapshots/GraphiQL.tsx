@@ -9,24 +9,48 @@ export function Example() {
       sayHello(to: String!): String!
     }
 
-    extend type Query {
+    type Mutation {
       sayByeTo(to: String!): String!
     }
   `
 
   const queries = {
-    sayHello({ to }: { to: string }) {},
+    sayHello({ to }: { to: string }) {
+      return `hello ${to}`
+    },
+  }
+
+  const mutations = {
+    sayByeTo({ to }: { to: string }) {
+      return `bye ${to}`
+    },
   }
 
   return (
-    <BrowserqlProvider schema={schema} queries={queries}>
+    <BrowserqlProvider schema={schema} queries={queries} mutations={mutations}>
       <div
         style={{
           position: 'relative',
-          height: 200,
+          height: 700,
+          lineHeight: '5px',
         }}
       >
-        <GraphiQL buttonStyle={{ position: 'absolute' }} />
+        <GraphiQL
+          graphiqlProps={{
+            defaultQuery: '{ sayHello(to: "everybody") }',
+            defaultSecondaryEditorOpen: true,
+            headerEditorEnabled: true,
+            response: `{
+  "data": {
+    "sayHello": "hello everybdoy"
+  },
+  "loading": false,
+  "networkStatus": 7,
+  "stale": false
+}
+            `,
+          }}
+        />
       </div>
     </BrowserqlProvider>
   )

@@ -10,32 +10,19 @@ import {
   graphql,
   buildSchema,
   print,
+  IntrospectionQuery,
 } from 'graphql'
 import gql from 'graphql-tag'
-import { ErrorBoundary } from 'react-error-boundary'
-
 import 'graphiql/graphiql.min.css'
-import React, { CSSProperties, useState } from 'react'
-import Draggable from 'react-draggable'
+import React, { useState } from 'react'
 
 interface Props {
-  buttonStyle?: CSSProperties
-  rootStyle?: CSSProperties
   graphiqlProps?: Partial<GraphiQLProps>
-  disableDragRoot?: boolean
-  disableDragButton?: boolean
 }
 
 export default function GraphiQL(props: Props) {
-  const {
-    buttonStyle,
-    rootStyle,
-    graphiqlProps,
-    disableDragRoot,
-    disableDragButton,
-  } = props
+  const { graphiqlProps } = props
   const ctx = React.useContext(BrowserqlContext)
-  const [open, setOpen] = useState(false)
   const [introspection, setIntrospection] = useState()
 
   async function makeSchema() {
@@ -51,8 +38,7 @@ export default function GraphiQL(props: Props) {
     if (!data) {
       throw new Error('Could not read introspection query')
     }
-    console.log(123, { data })
-    return buildClientSchema(data)
+    return buildClientSchema(data as IntrospectionQuery)
   }
 
   async function graphQLFetcher(graphQLParams: FetcherParams) {
@@ -80,65 +66,12 @@ export default function GraphiQL(props: Props) {
     return <div />
   }
 
-  console.log({ introspection })
-
   return (
-    <>
-      <Draggable disabled={disableDragButton}>
-        <button
-          style={{
-            position: 'fixed',
-            zIndex: 9999,
-            bottom: 0,
-            right: 0,
-            padding: 16,
-            fontSize: '1.2em',
-            backgroundColor: '#222',
-            border: 'none',
-            color: '#fff',
-            ...buttonStyle,
-          }}
-          onClick={() => setOpen(!open)}
-        >
-          {open ? 'Hide' : 'Show'} GraphiQL
-        </button>
-      </Draggable>
-
-      <Draggable disabled={disableDragRoot}>
-        <div
-          style={{
-            position: 'fixed',
-            zIndex: 9998,
-            height: 'calc(100vh - 40px)',
-            right: 20,
-            left: 20,
-            top: open ? 20 : '-100vh',
-            transition: 'all 0.35s ease-out',
-            boxShadow: '0 0 5px 5px rgba(0, 0, 0, 0.3)',
-            opacity: 0.95,
-            ...rootStyle,
-          }}
-        >
-          <ErrorBoundary
-            FallbackComponent={({ error }) => {
-              return (
-                <div>
-                  <h1>Error: {error?.message}</h1>
-                  <pre>{error?.stack}</pre>
-                  <pre>{JSON.stringify(introspection, null, 2)}</pre>
-                </div>
-              )
-            }}
-          >
-            <NativeGraphiQL
-              // @ts-ignore
-              fetcher={graphQLFetcher}
-              schema={introspection}
-              {...graphiqlProps}
-            />
-          </ErrorBoundary>
-        </div>
-      </Draggable>
-    </>
+    <NativeGraphiQL
+      // @ts-ignore
+      fetcher={graphQLFetcher}
+      schema={introspection}
+      {...graphiqlProps}
+    />
   )
 }
