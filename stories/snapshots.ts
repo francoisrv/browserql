@@ -1,3 +1,4 @@
+export * as Cache from './snapshots/Cache'
 export * as Client from './snapshots/Client'
 export * as FPQL from './snapshots/FPQL'
 export * as Firestore from './snapshots/Firestore'

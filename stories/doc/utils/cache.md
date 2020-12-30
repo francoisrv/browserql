@@ -42,8 +42,8 @@ type Query {
 }
 ```
 
-```javascript
-cache.get(query) // 0
+```snapshot
+Cache.Get
 ```
 
 #### Get empty cache

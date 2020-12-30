@@ -31,12 +31,7 @@ export default function connectCache(
   cache: BrowserqlClient['cache'],
   schema: DocumentNode
 ) {
-  function get(queryName: string, variables?: any) {
-    const query = gql`
-      query {
-        ${queryName}
-      }
-    `
+  function get(query: DocumentNode, variables?: any) {
     try {
       const data = cache.readQuery({
         query,
@@ -45,11 +40,10 @@ export default function connectCache(
       // @ts-ignore
       return data[queryName]
     } catch (error) {
-      const query = getQuery(queryName)(schema)
-      const kind = parseKind(getKind(query as FieldDefinitionNode))
-      if (kind.required) {
-        return getDefault(kind)
-      }
+      // const kind = parseKind(getKind(query))
+      // if (kind.required) {
+      //   return getDefault(kind)
+      // }
       return null
     }
   }
@@ -70,20 +64,8 @@ export default function connectCache(
     })
   }
 
-  return (entry: string) => {
-    const api = {
-      get(variables?: any) {
-        return get(entry, variables)
-      },
-      set(variablesOrData: any, data?: any) {
-        if (typeof data === 'undefined') {
-          set(entry, {}, variablesOrData)
-        } else {
-          set(entry, variablesOrData, data)
-        }
-      },
-    }
-
-    return api
+  return {
+    get,
+    set,
   }
 }
