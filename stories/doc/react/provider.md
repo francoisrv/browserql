@@ -1,4 +1,4 @@
-# Browserql React Provider
+# Browserql React Provider 200
 
 ```component
 {
@@ -52,3 +52,10 @@ export default function App() {
 ```snapshot
 React.SandboxMainExample
 ```
+
+| Prop          | About                              | Type                                                               | Required                                        | Default |
+| ------------- | ---------------------------------- | ------------------------------------------------------------------ | ----------------------------------------------- | ------- |
+| **client**    | A browserql client                 | `BrowserqlClient`                                                  | If you are using it, it has to be the only prop | N/A     |
+| **schema**    | GraphQL definitions                | `DocumentNode`                                                     | N                                               | N/A     |
+| **queries**   | A dictionary of query resolvers    | `Record<string, (variables: V, ctx: BrowserqlClientContext) => D>` | N                                               | N/A     |
+| **mutations** | A dictionary of mutation resolvers | `Record<string, (variables: V, ctx: BrowserqlClientContext) => D>` | N                                               | N/A     |

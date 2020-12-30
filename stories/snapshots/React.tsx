@@ -19,9 +19,10 @@ export function SandboxMainExample() {
   }
 
   function SayHello({ to }: { to: string }) {
-    const { data, loading } = useQuery(buildQuery(schema, 'sayHello'), {
+    const { data, loading, error } = useQuery(buildQuery(schema, 'sayHello'), {
       variables: { to },
     })
+    if (error) return <div>{error.message}</div>
     if (loading) return <div>Loading...</div>
     return <p>{data.sayHello}</p>
   }

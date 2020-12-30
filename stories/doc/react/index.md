@@ -1,1 +1,0 @@
-# Browserql with React

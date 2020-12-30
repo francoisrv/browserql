@@ -18,6 +18,9 @@ export default function Code({
   }
 
   if (language === 'sandbox') {
+    if (process.env.NODE_ENV === 'development') {
+      return <div>SANDBOX {value}</div>
+    }
     // &previewwindow=console
     return (
       <iframe

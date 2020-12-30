@@ -125,4 +125,6 @@ const menu: Menu = {
   ],
 }
 
+console.log({ menu, foo: 8 })
+
 export default menu
