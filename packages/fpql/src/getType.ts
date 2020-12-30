@@ -1,13 +1,11 @@
-import {
+import type {
   DocumentNode,
-  FieldDefinitionNode,
   ObjectTypeDefinitionNode,
   ObjectTypeExtensionNode,
 } from 'graphql'
 import getName from './getName'
 import getTypes from './getTypes'
 import getFields from './getFields'
-import toDocument from './toDocument'
 
 interface Options {
   includesExtended?: boolean
@@ -15,9 +13,8 @@ interface Options {
 
 export default function getType(name: string, options: Options = {}) {
   return (
-    doc: DocumentNode | string
+    document: DocumentNode
   ): ObjectTypeDefinitionNode | ObjectTypeExtensionNode | undefined => {
-    const document = toDocument(doc)
     const types = getTypes(document)
     const matches = types.filter(
       (type): type is ObjectTypeDefinitionNode =>

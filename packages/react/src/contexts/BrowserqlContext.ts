@@ -1,4 +1,4 @@
-import { BrowserqlClient } from '@browserql/types'
+import type { BrowserqlClient } from '@browserql/types'
 import { createContext } from 'react'
 
 const BrowserqlContext = createContext<BrowserqlClient>(

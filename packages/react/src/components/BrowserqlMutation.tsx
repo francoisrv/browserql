@@ -1,6 +1,8 @@
+import type { DocumentNode } from 'graphql'
+import type { ReactNode } from 'react'
+
 import { FetchResult, useMutation } from '@apollo/client'
-import { DocumentNode } from 'graphql'
-import { ReactNode, useState } from 'react'
+import { useState } from 'react'
 
 interface BrowserqlMutationProps<D = any> {
   mutation: DocumentNode

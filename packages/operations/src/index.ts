@@ -8,10 +8,13 @@ import {
   getType,
   parseKind,
 } from '@browserql/fpql'
-import gql from 'graphql-tag'
 import { buildFragment } from '@browserql/fragments'
+import gql from 'graphql-tag'
 
-export function buildQuery(schema: DocumentNode, queryName: string) {
+export function buildQuery(
+  schema: DocumentNode,
+  queryName: string
+): DocumentNode {
   const query = getQuery(queryName)(schema)
   if (!query) {
     throw new Error(`No such query: ${queryName}`)
@@ -41,7 +44,10 @@ export function buildQuery(schema: DocumentNode, queryName: string) {
   `
 }
 
-export function buildMutation(schema: DocumentNode, mutationName: string) {
+export function buildMutation(
+  schema: DocumentNode,
+  mutationName: string
+): DocumentNode {
   const mutation = getMutation(mutationName)(schema)
   if (!mutation) {
     throw new Error(`No such mutation: ${mutationName}`)

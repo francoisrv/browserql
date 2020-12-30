@@ -1,7 +1,6 @@
 import type { DocumentNode, FieldDefinitionNode } from 'graphql'
 import getExtendedQueries from './getExtendedQueries'
 import getRootQuery from './getRootQuery'
-import toDocument from './toDocument'
 
 export interface Options {
   includeExtended?: boolean
@@ -9,10 +8,9 @@ export interface Options {
 }
 
 export default function getQueries(
-  doc: string | DocumentNode,
+  document: DocumentNode,
   options: Options = {}
 ): FieldDefinitionNode[] {
-  const document = toDocument(doc)
   const queries: FieldDefinitionNode[] = []
   if (options.extendedOnly !== true) {
     const queryType = getRootQuery(document)

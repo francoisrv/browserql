@@ -1,7 +1,7 @@
 import type { InMemoryCache } from 'apollo-cache-inmemory'
 import type ApolloClient from 'apollo-client'
 import type { DocumentNode, GraphQLScalarType } from 'graphql'
-import type { SchemaDirectiveVisitor } from 'graphql-tools'
+import { SchemaDirectiveVisitorClass } from '@graphql-tools/utils'
 
 export type Dictionary<A = any> = {
   [name: string]: A
@@ -11,7 +11,7 @@ export interface Resolvers {
   queries?: Dictionary<(...args: any[]) => any>
   mutations?: Dictionary<(...args: any[]) => any>
   scalars?: Dictionary<GraphQLScalarType>
-  directives?: Record<string, typeof SchemaDirectiveVisitor>
+  directives?: Record<string, SchemaDirectiveVisitorClass>
 }
 
 export interface Schemaql extends Resolvers {
@@ -33,6 +33,6 @@ export interface BrowserqlClient {
   queries: Dictionary<(...args: any[]) => any>
   mutations: Dictionary<(...args: any[]) => any>
   scalars: Dictionary<GraphQLScalarType>
-  directives: Record<string, typeof SchemaDirectiveVisitor>
+  directives?: Record<string, SchemaDirectiveVisitorClass>
   context: BrowserqlContext
 }

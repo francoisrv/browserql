@@ -1,7 +1,6 @@
-import { DocumentNode, FieldDefinitionNode } from 'graphql'
+import type { DocumentNode, FieldDefinitionNode } from 'graphql'
 import getExtendedMutations from './getExtendedMutations'
 import getRootMutation from './getRootMutation'
-import toDocument from './toDocument'
 
 export interface Options {
   includeExtended?: boolean
@@ -9,10 +8,9 @@ export interface Options {
 }
 
 export default function getMutations(
-  doc: DocumentNode | string,
+  document: DocumentNode,
   options: Options = {}
 ): FieldDefinitionNode[] {
-  const document = toDocument(doc)
   const mutations: FieldDefinitionNode[] = []
   if (options.extendedOnly !== true) {
     const rootMutation = getRootMutation(document)

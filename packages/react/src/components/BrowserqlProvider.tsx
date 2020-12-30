@@ -1,14 +1,14 @@
-import { ApolloProvider } from '@apollo/client'
-import connect from '@browserql/client'
-import { Schemaql, SchemaqlFactory } from '@browserql/types'
-import { DocumentNode } from 'graphql'
-import React, { ReactElement } from 'react'
-import { FallbackProps } from 'react-error-boundary'
 import BrowserqlContext from '../contexts/BrowserqlContext'
+import React from 'react'
+import connect from '@browserql/client'
+import type { DocumentNode } from 'graphql'
+import type { ReactElement } from 'react'
+import type { Schemaql, SchemaqlFactory } from '@browserql/types'
+import { ApolloProvider } from '@apollo/client'
 
 interface Props {
   client?: any
-  schema?: DocumentNode | string
+  schema?: DocumentNode
   extensions?: Array<Schemaql | SchemaqlFactory>
   queries?: Schemaql['queries']
   mutations?: Schemaql['mutations']
@@ -17,8 +17,7 @@ interface Props {
   renderError?: ReactElement | ((props: { error: Error }) => ReactElement)
 }
 
-function BrowserqlProviderError(props: FallbackProps) {
-  const { error } = props
+function BrowserqlProviderError({ error }: { error: Error }) {
   return (
     <div>
       <h1>BrowerqlProvider Error</h1>
@@ -54,9 +53,7 @@ export default function BrowserqlProvider(
       }
       return renderError
     }
-    return (
-      <BrowserqlProviderError error={error} resetErrorBoundary={() => {}} />
-    )
+    return <BrowserqlProviderError error={error} />
   }
 
   return (

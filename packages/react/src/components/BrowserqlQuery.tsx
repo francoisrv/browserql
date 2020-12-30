@@ -1,6 +1,6 @@
-import { useQuery } from '@apollo/client'
-import { DocumentNode } from 'graphql'
 import React from 'react'
+import type { DocumentNode } from 'graphql'
+import { useQuery } from '@apollo/client'
 
 type BrowserqlQueryRenderer<D = any> = (
   data: D,

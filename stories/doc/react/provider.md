@@ -9,12 +9,12 @@
 }
 ```
 
-```sandbox
+```sandbox2
 react-provider-ruh7c
 ```
 
 ```graphql
-extend type Query {
+type Query {
   sayHello(to: String!): String!
 }
 ```

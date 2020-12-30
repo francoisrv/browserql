@@ -33,9 +33,9 @@ export default function connectCache(
 ) {
   function get(queryName: string, variables?: any) {
     const query = gql`
-    query {
-      ${queryName}
-    }
+      query {
+        ${queryName}
+      }
     `
     try {
       const data = cache.readQuery({
