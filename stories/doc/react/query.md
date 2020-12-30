@@ -12,7 +12,7 @@
 A React component that wraps the apollo hooks. They do the same thing as hooks -- you would use them for cosmetic preferences only.
 
 ```graphql
-extend type Query {
+type Query {
   sayHello(to: String!): String!
 }
 ```
@@ -24,7 +24,7 @@ extend type Query {
 ```jsx
 import { useQuery } from '@apollo/client'
 
-function sayHello({ to }) {
+function SayHello({ to }) {
   const { data, loading, error } = useQuery(SAY_HELLO, {
     variables: {
       to: 'everybody',
@@ -42,20 +42,24 @@ function sayHello({ to }) {
 ### With components
 
 ```jsx
-import { WithQuery } from '@browserql/react'
+import { UseQuery } from '@browserql/react'
 
-function sayHello({ to }) {
+function SayHello({ to }) {
   return (
-    <WithQuery
+    <UseQuery
       query={SAY_HELLO}
       variables={{ to: 'everybody' }}
       renderError={({ error }) => <div>{error.message}</div>}
       renderLoading={<div>Loading...</div>}
     >
       {(response) => <p>{response}</p>}
-    </WithQuery>
+    </UseQuery>
   )
 }
+```
+
+```snapshot
+React.QueryExample
 ```
 
 ## Usage
