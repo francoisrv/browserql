@@ -5,7 +5,7 @@ You can also use a HOC
 ## Side-to-side comparison with apollo hooks, components and HOCs
 
 ```graphql
-extend type Query {
+type Query {
   sayHello(to: String!): String!
 }
 ```
@@ -54,13 +54,15 @@ function SayHello({ to }) {
 ```jsx
 import { withQuery } from '@browserql/react'
 
-function SayHello({ sayHello }) {
+withQuery(SAY_HELLO, { to: 'everybody' })(function SayHello({ sayHello }) {
   if (sayHello.error) return <div>{sayHello.error.message}</div>
 
   if (sayHello.loading) return <div>Loading...</div>
 
   return <p>{sayHello.data}</p>
-}
+})
+```
 
-withQuery(SAY_HELLO, { to: 'everybody' })(SayHello)
+```snapshot
+React.WithQueryExample
 ```

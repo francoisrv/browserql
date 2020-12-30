@@ -1,7 +1,12 @@
 import * as React from 'react'
 import { gql, useQuery } from '@apollo/client'
 
-import { BrowserqlProvider, UseQuery, UseMutation } from '@browserql/react'
+import {
+  BrowserqlProvider,
+  UseQuery,
+  UseMutation,
+  withQuery,
+} from '@browserql/react'
 import { buildQuery, buildMutation } from '@browserql/operations'
 
 console.log({ UseMutation })
@@ -79,6 +84,38 @@ export function MutationExample() {
       <UseMutation mutation={SAY_HELLO} variables={{ to: 'everybody' }}>
         {(response) => <p>{response}</p>}
       </UseMutation>
+    </BrowserqlProvider>
+  )
+}
+
+export function WithQueryExample() {
+  const schema = gql`
+    type Query {
+      sayHello(to: String!): String!
+    }
+  `
+  function SayHello({ sayHello }) {
+    if (sayHello.error) return <div>{sayHello.error.message}</div>
+
+    if (sayHello.loading) return <div>Loading...</div>
+
+    return <p>{sayHello.data}</p>
+  }
+  const Wrapped = withQuery(buildQuery(schema, 'sayHello'), {
+    to: 'everybody',
+  })(SayHello)
+  return (
+    <BrowserqlProvider
+      schema={schema}
+      queries={{
+        sayHello({ to }) {
+          return `Hello ${to}`
+        },
+      }}
+    >
+      <div style={{ padding: 32 }}>
+        <Wrapped />
+      </div>
     </BrowserqlProvider>
   )
 }

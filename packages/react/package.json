@@ -27,6 +27,7 @@
   "dependencies": {
     "@apollo/client": "^3.2.2",
     "@browserql/client": "^3.38.0",
+    "@browserql/fpql": "^1.25.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
