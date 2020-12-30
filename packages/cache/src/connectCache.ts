@@ -1,4 +1,15 @@
-import { getKind, getQuery, ParsedType, parseKind } from '@browserql/fpql'
+import {
+  getArgument,
+  getDirective,
+  getExecutableQueries,
+  getKind,
+  getName,
+  getQueries,
+  getQuery,
+  getValue,
+  ParsedType,
+  parseKind,
+} from '@browserql/fpql'
 import { BrowserqlClient } from '@browserql/types'
 import gql from 'graphql-tag'
 import type { DocumentNode, FieldDefinitionNode } from 'graphql'
@@ -32,6 +43,8 @@ export default function connectCache(
   schema: DocumentNode
 ) {
   function get(query: DocumentNode, variables?: any) {
+    const [queryOperation] = getExecutableQueries(query)
+    const queryName = getName(queryOperation)
     try {
       const data = cache.readQuery({
         query,
@@ -40,11 +53,19 @@ export default function connectCache(
       // @ts-ignore
       return data[queryName]
     } catch (error) {
-      // const kind = parseKind(getKind(query))
-      // if (kind.required) {
-      //   return getDefault(kind)
-      // }
-      return null
+      const queryDefinition = getQuery(queryName)(schema)
+      if (!queryDefinition) {
+        throw new Error(`query not found in definitions: ${queryName}`)
+      }
+      const defaultDirective = getDirective('default')(queryDefinition)
+      if (defaultDirective) {
+        const defaultValueArgument = getArgument('value')(defaultDirective)
+        if (defaultValueArgument) {
+          return getValue(defaultValueArgument)
+        }
+      }
+      const kind = parseKind(getKind(queryDefinition))
+      return kind.required ? undefined : null
     }
   }
 

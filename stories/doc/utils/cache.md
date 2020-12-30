@@ -43,7 +43,7 @@ type Query {
 ```
 
 ```snapshot
-Cache.Get
+Cache.GetNonNullEmpty
 ```
 
 #### Get empty cache
@@ -60,8 +60,8 @@ type Query {
 }
 ```
 
-```javascript
-cache.get(query) // null
+```snapshot
+Cache.GetNullEmpty
 ```
 
 ##### Non-null values
@@ -74,57 +74,28 @@ type Query {
 }
 ```
 
-```javascript
-cache.get(query) // undefined
+```snapshot
+Cache.GetNonNullEmpty
 ```
 
 #### Set initial values
 
 You could also set initial values.
 
-##### Set initial values in function
-
 ```graphql
 type Query {
-  getCounter: Int!
+  getCounter: Int! @default(value: 100)
 }
 ```
 
-```javascript
-const cache = cacheql(apolloClient.cache, {
-  initialValues: [
-    {
-      query: Query,
-      value: 100,
-    },
-  ],
-})
-
-cache.get(query) // 100
+```snapshot
+Cache.GetDefault
 ```
 
-##### Set default values based on scalars
-
-VIEW `@browserql/auto-default`
-
-You could also choose to create default values based on their scalars
+**Note** You need to also inject the `@default` directive into the schema, such as:
 
 ```graphql
-type Query {
-  getCounter: Int!
-  isLoggedIn: Boolean!
-  getCredits: Float!
-  getTitle: String!
-}
-```
-
-```javascript
-const cache = cacheql(apolloClient.cache, { auto: true })
-
-cache.get(Query.getCounter()) // 0
-cache.get(Query.isLoggedIn()) // false
-cache.get(Query.getCredits()) // 0.00
-cache.get(Query.getTitle()) // ""
+directive @default(value: JSON!) on FIELD_DEFINITION
 ```
 
 ### Set
