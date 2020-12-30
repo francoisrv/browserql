@@ -10,7 +10,7 @@
 ```
 
 ```graphql
-extend type Query {
+type Query {
   getTodo(id: ID!): Todo
     @httpGet(url: "https://jsonplaceholder.typicode.com/todos/:id")
 }

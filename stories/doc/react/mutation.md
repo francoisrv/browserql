@@ -11,28 +11,69 @@
 
 A React component that wraps the apollo hooks. They do the same thing as hooks -- you would use them for cosmetic preferences only.
 
+## Side-to-side comparison with apollo hooks
+
+### GraphQL schema
+
 ```graphql
-extend type Mutation {
-  doSomething(id: ID!): ID!
+type Query {
+  getSelectedTab: Int! @default(value: 0)
+}
+
+type Mutation {
+  selectTab(index: Int!): Int!
 }
 ```
 
-## Side-to-side comparison with apollo hooks
+### Resolvers
+
+```javascript
+import cacheql from '@browserql/cache'
+import { buildQuery, buildMutation } from '@browserql/operations'
+
+const cached = cacheql(client.cache, schema)
+
+const GET_SELECTED_TAB = buildQuery(schema, 'getSelectedTab')
+const SELECT_TAB = buildMutation(schema, 'selectTab')
+
+const queries = {
+  getSelectedTab() {
+    return cached.get(GET_SELECTED_TAB)
+  },
+}
+
+const mutations = {
+  selectTab({ index }) {
+    cached.set(GET_SELECTED_TAB, index)
+    return index
+  },
+}
+```
 
 ### With apollo hooks
 
-```jsx
-import { useMutation } from '@apollo/client'
+```javascript
+import { useQuery, useMutation } from '@apollo/client'
 
-function DoSomething({ id }) {
-  const [doSomething, { loading, error }] = useMutation(DO_SOMETHING, {
-    variables: { id },
-  })
+function Tabs() {
+  const { data, error, loading } = useQuery(GET_SELECTED_TAB)
+  const [selectTab, selectTabState] = useMutation(SELECT_TAB)
+
+  if (error || selectTabState.error) {
+    return <div>Error</div>
+  }
+
+  if (loading) return <div>Loading</div>
 
   return (
-    <button onClick={() => doSomething({ id })} disabled={loading}>
-      Do something
-    </button>
+    <select
+      value={data.getSelectedTab}
+      onChange={(event) => selectTab(Number(event.target.value))}
+      disabled={selectTabState.loading}
+    >
+      <option value={0}>Tab 1</option>
+      <option value={1}>Tab 2</option>
+    </select>
   )
 }
 ```
@@ -40,17 +81,30 @@ function DoSomething({ id }) {
 ### With components
 
 ```javascript
-import { WithMutation } from '@browserql/react'
+import { UseMutation, UseQuery } from '@browserql/react'
 
-function DoSomething({ id }) {
+function Tabs() {
   return (
-    <WithMutation mutation={DO_SOMETHING}>
-      {(doSomething, { loading, error }) => (
-        <button onClick={() => doSomething({ id })} disabled={loading}>
-          Do something
-        </button>
+    <UseQuery
+      query={GET_SELECTED_TAB}
+      renderLoading={<div>Loading</div>}
+      renderError={() => <div>Error</div>}
+    >
+      {(selectedTab) => (
+        <UseMutation mutation={SELECT_TAB}>
+          {(selectTab, { loading, error }) => (
+            <select
+              disabled={loading}
+              value={selectedTab}
+              onChange={(event) => selectTab(Number(event.target.value))}
+            >
+              <option value={0}>Tab 1</option>
+              <option value={1}>Tab 2</option>
+            </select>
+          )}
+        </UseMutation>
       )}
-    </WithMutation>
+    </UseQuery>
   )
 }
 ```

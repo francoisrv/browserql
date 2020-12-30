@@ -66,6 +66,8 @@ React.QueryExample
 
 Just fill it with a `GraphQL` query and a renderer:
 
+### GraphQL Definitions
+
 ```graphql
 type Query {
   getUser: User!
@@ -76,6 +78,16 @@ type User {
   name: String!
 }
 ```
+
+### GraphQL executable query
+
+```graphql
+query {
+  getUser
+}
+```
+
+### Concile everything with React
 
 ```javascript
 function User {
