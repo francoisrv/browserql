@@ -17,5 +17,5 @@ getExecutableQueries(schema).map(getName)
 ```
 
 ```snapshot
-FPQL.GetTypesNames
+FPQL.WithQueryExample
 ```

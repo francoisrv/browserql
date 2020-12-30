@@ -8,7 +8,7 @@ interface UseMutationProps<D = any> {
   mutation: DocumentNode
   renderLoading?: ReactNode
   renderError?: ReactNode | ((e: Error) => ReactNode)
-  render: (
+  children: (
     mutation: (options: D) => Promise<FetchResult<D>>,
     args: {
       loading: boolean

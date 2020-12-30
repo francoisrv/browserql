@@ -10,6 +10,7 @@ import {
   getScalars,
   getType,
   getTypes,
+  getValue,
   merge,
 } from '@browserql/fpql'
 import { print } from 'graphql'
@@ -147,6 +148,22 @@ export function GetScalar() {
     <Code
       language="json"
       value={JSON.stringify(getScalar('EmailAddress')(schema), null, 2)}
+    />
+  )
+}
+
+export function WithQueryExample() {
+  const schema = gql`
+    query {
+      query1
+
+      query2
+    }
+  `
+  return (
+    <Code
+      language="json"
+      value={JSON.stringify(getExecutableQueries(schema).map(getName), null, 2)}
     />
   )
 }
