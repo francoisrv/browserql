@@ -62,5 +62,5 @@ function SayHello({ sayHello }) {
   return <p>{sayHello.data}</p>
 }
 
-withQuery('sayHello', { to: 'everybody' })(SayHello)
+withQuery(SAY_HELLO, { to: 'everybody' })(SayHello)
 ```

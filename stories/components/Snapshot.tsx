@@ -16,15 +16,13 @@ export default function Snapshot({ value }: Props) {
       <div
         style={{
           position: 'relative',
-          boxShadow: '0 5px 5px 5px rgba(0, 0, 0, 0.25)',
+          boxShadow: '0 9.5px 9.5px 9.5px rgba(0, 0, 0, 0.25)',
           borderRadius: 10,
           marginTop: 44,
           marginBottom: 44,
         }}
       >
-        <div style={{ padding: 16, paddingLeft: 33 }}>
-          <View />
-        </div>
+        <View />
       </div>
     )
   }

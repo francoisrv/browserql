@@ -5,6 +5,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter'
 import BrowserqlPlayground from './BrowserqlPlayground'
 import Snapshot from './Snapshot'
 import * as components from '../components'
+import Section from './Section'
 
 export default function Code({
   language,
@@ -62,6 +63,11 @@ export default function Code({
       return <div>No such component: {value.trim()}</div>
     }
     return <Component {...data.props} />
+  }
+
+  if (language === 'section-h3') {
+    const link = value.trim()
+    return <Section link={link} />
   }
 
   return (

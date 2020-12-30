@@ -52,231 +52,38 @@ FPQLExample
 
 ## API
 
-### getArgument
-
-Get node's argument by name
-
-```javascript
-import { getArgument } from '@browserql/fpql'
+```section-h3
+utils/fpql/getArgument
 ```
 
-```graphql
-type A @foo(bar: 24) {
-  id: ID!
-}
+```section-h3
+utils/fpql/getDirective
 ```
 
-```javascript
-const type = getType('A')(schema)
-const directive = getDirective('foo')(type)
-
-getArgument('bar')(directive)
-
-fp(schema)(getType('A'), getDirective('foo'), getArgument('bar'), getValue)
+```section-h3
+utils/fpql/getExecutableQueries
 ```
 
-```snapshot
-FPQL.GetDirectiveArgument
+```section-h3
+utils/fpql/getName
 ```
 
-### getDirective
-
-Get node's directive by name
-
-```javascript
-import { getDirective } from '@browserql/fpql'
+```section-h3
+utils/fpql/getScalar
 ```
 
-```graphql
-type A @foo {
-  id: ID! @foo
-}
+```section-h3
+utils/fpql/getScalars
 ```
 
-```javascript
-const type = getType('A')(schema)
-const directive = getDirective('foo')(type)
-getName(directive)
+```section-h3
+utils/fpql/getTypes
 ```
 
-```snapshot2
-MISSING SNAPSHOT TEST
+```section-h3
+utils/fpql/group
 ```
 
-### getName
-
-Get the name of any GraphQL node
-
-```javascript
-import { getName } from '@browserql/fpql'
-```
-
-```graphql
-type A {
-  id: ID!
-}
-```
-
-```javascript
-getTypes(schema).map(getName)
-```
-
-```snapshot
-FPQL.GetTypesNames
-```
-
-### getScalar
-
-Get schema's scalar by name
-
-```javascript
-import { getScalars } from '@browserql/fpql'
-```
-
-```graphql
-scalar EmailAddress
-
-type User {
-  email: EmailAddress
-}
-```
-
-```javascript
-getScalar('EmailAddress')(schema)
-```
-
-```snapshot
-FPQL.GetScalar
-```
-
-### getScalars
-
-Get schema's scalars
-
-```javascript
-import { getScalars } from '@browserql/fpql'
-```
-
-```graphql
-scalar EmailAddress
-
-type User {
-  email: EmailAddress
-}
-```
-
-```javascript
-getScalars(schema)
-```
-
-```snapshot
-FPQL.GetScalars
-```
-
-### getTypes
-
-Get all types from a schema
-
-```javascript
-import { getTypes } from '@browserql/fpql'
-```
-
-```graphql
-type A {
-  id: ID
-}
-
-type B {
-  id: ID
-}
-```
-
-```javascript
-getTypes(schema).map(getName)
-```
-
-```snapshot
-FPQL.GetTypes
-```
-
-### group
-
-Group extensions together
-
-```javascript
-import { group } from '@browserql/fpql'
-```
-
-```graphql
-type Query {
-  a: Int
-}
-
-extend type Query {
-  b: Int
-}
-```
-
-```javascript
-group(schema)
-```
-
-```snapshot
-FPQL.Group
-```
-
-### merge
-
-Merge different schemas together
-
-### Identical types
-
-Identical types will be extended
-
-```javascript
-import { merge } from '@browserql/fpql'
-```
-
-```graphql
-# A.graphql
-type Query {
-  id: ID
-}
-```
-
-```graphql
-# B.graphql
-type Query {
-  foo: ID
-}
-```
-
-```javascript
-merge(A, B)
-```
-
-```snapshot
-FPQL.MergeExtendExistingTypes
-```
-
-### Extending unknown type
-
-Extending an unknown type will cause the extension to be removed
-
-```javascript
-import { merge } from '@browserql/fpql'
-```
-
-```graphql
-extend type Query {
-  id: ID
-}
-```
-
-```javascript
-merge(schema)
-```
-
-```snapshot
-FPQL.MergeRemoveExtension
+```section-h3
+utils/fpql/merge
 ```

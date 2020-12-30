@@ -125,6 +125,43 @@ const menu: Menu = {
   ],
 }
 
-console.log({ menu, foo: 8 })
-
 export default menu
+
+export const mds = {
+  'utils/fpql/getArgument': readFileSync(
+    __dirname + '/doc/utils/fpql/getArgument.md',
+    'utf-8'
+  ),
+  'utils/fpql/getDirective': readFileSync(
+    __dirname + '/doc/utils/fpql/getDirective.md',
+    'utf-8'
+  ),
+  'utils/fpql/getExecutableQueries': readFileSync(
+    __dirname + '/doc/utils/fpql/getExecutableQueries.md',
+    'utf-8'
+  ),
+  'utils/fpql/getName': readFileSync(
+    __dirname + '/doc/utils/fpql/getName.md',
+    'utf-8'
+  ),
+  'utils/fpql/getScalar': readFileSync(
+    __dirname + '/doc/utils/fpql/getScalar.md',
+    'utf-8'
+  ),
+  'utils/fpql/getScalars': readFileSync(
+    __dirname + '/doc/utils/fpql/getScalars.md',
+    'utf-8'
+  ),
+  'utils/fpql/getTypes': readFileSync(
+    __dirname + '/doc/utils/fpql/getTypes.md',
+    'utf-8'
+  ),
+  'utils/fpql/group': readFileSync(
+    __dirname + '/doc/utils/fpql/group.md',
+    'utf-8'
+  ),
+  'utils/fpql/merge': readFileSync(
+    __dirname + '/doc/utils/fpql/merge.md',
+    'utf-8'
+  ),
+}

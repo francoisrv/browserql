@@ -3,6 +3,7 @@ import gql from 'graphql-tag'
 import {
   getArgument,
   getDirective,
+  getExecutableQueries,
   getField,
   getName,
   getScalar,
@@ -13,9 +14,9 @@ import {
 } from '@browserql/fpql'
 import { print } from 'graphql'
 import type { ObjectTypeDefinitionNode } from 'graphql'
+import fp from '@browserql/fp'
 
 import Code from '../components/Code'
-import fp from '@browserql/fp'
 
 export function GetTypes() {
   const schema = gql`
