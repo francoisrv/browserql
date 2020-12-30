@@ -221,6 +221,10 @@ export const mds = {
     __dirname + '/doc/utils/fpql/getTypes.md',
     'utf-8'
   ),
+  'utils/fpql/getValue': readFileSync(
+    __dirname + '/doc/utils/fpql/getValue.md',
+    'utf-8'
+  ),
   'utils/fpql/group': readFileSync(
     __dirname + '/doc/utils/fpql/group.md',
     'utf-8'

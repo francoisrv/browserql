@@ -81,6 +81,10 @@ utils/fpql/getTypes
 ```
 
 ```section-h3
+utils/fpql/getValue
+```
+
+```section-h3
 utils/fpql/group
 ```
 

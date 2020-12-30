@@ -4,13 +4,17 @@ import { connectHttp } from '@browserql/http'
 import gql from 'graphql-tag'
 import { buildQuery } from '@browserql/operations'
 import { useQuery } from '@apollo/client'
+import { JSONResolver } from 'graphql-scalars'
 import Code from '../components/Code'
 
 export function Example() {
   const schema = gql`
     type Query {
       getTodo(id: ID!): Todo
-        @httpGet(url: "https://jsonplaceholder.typicode.com/todos/:id")
+        @httpGet(
+          url: "https://jsonplaceholder.typicode.com/todos/:id"
+          query: false
+        )
     }
 
     type Todo {
@@ -39,7 +43,13 @@ export function Example() {
   }
 
   return (
-    <BrowserqlProvider schema={schema} extensions={[connectHttp()]}>
+    <BrowserqlProvider
+      schema={schema}
+      extensions={[connectHttp()]}
+      scalars={{
+        JSON: JSONResolver,
+      }}
+    >
       <Response />
     </BrowserqlProvider>
   )

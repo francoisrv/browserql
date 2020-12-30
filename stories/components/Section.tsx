@@ -33,6 +33,7 @@ export default function Section({ link }: Props) {
             borderBottomLeftRadius: 22,
             borderTopLeftRadius: 22,
             paddingTop: 16,
+            paddingBottom: 16,
           }}
         >
           <MD

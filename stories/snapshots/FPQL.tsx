@@ -6,6 +6,7 @@ import {
   getExecutableQueries,
   getField,
   getName,
+  getQuery,
   getScalar,
   getScalars,
   getType,
@@ -164,6 +165,52 @@ export function WithQueryExample() {
     <Code
       language="json"
       value={JSON.stringify(getExecutableQueries(schema).map(getName), null, 2)}
+    />
+  )
+}
+
+export function GetValue() {
+  const schema = gql`
+    type Query {
+      getUser: User! @variant(admin: true)
+    }
+  `
+  return (
+    <Code
+      language="json"
+      value={JSON.stringify(
+        fp(schema)(
+          getQuery('getUser'),
+          getDirective('variant'),
+          getArgument('admin'),
+          getValue
+        ),
+        null,
+        2
+      )}
+    />
+  )
+}
+
+export function GetObjectValue() {
+  const schema = gql`
+    type Query {
+      getUser: User! @variant(admin: { level: 2 })
+    }
+  `
+  return (
+    <Code
+      language="json"
+      value={JSON.stringify(
+        fp(schema)(
+          getQuery('getUser'),
+          getDirective('variant'),
+          getArgument('admin'),
+          getValue
+        ),
+        null,
+        2
+      )}
     />
   )
 }

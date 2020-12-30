@@ -1,7 +1,6 @@
 import type { SchemaqlFactory } from '@browserql/types'
 import {
   getArgument,
-  getArguments,
   getDirective,
   getName,
   getQueries,
@@ -20,13 +19,11 @@ interface ConnectHttpOptions {
   }
 }
 
-interface HttpRequestOptions {}
-
-function httpRequest() {}
-
 export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
   return function ({ schema }) {
     const ourSchema = gql`
+      scalar JSON
+
       input HttpHeader {
         name: String!
         value: String!
@@ -36,6 +33,7 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
         url: String
         pathname: String
         headers: [HttpHeader!]
+        query: JSON
         useVariablesAsPathParameters: Boolean = false
         useVariablesAsSearchParameters: Boolean = false
       ) on FIELD_DEFINITION
@@ -86,8 +84,17 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
             ...queries,
             [getName(query)]: async (variables: any) => {
               const url = getArgument('url')(httpGet)
+              const query = getArgument('query')(httpGet)
+
               const urlValue = getValue(url)
-              const finalUrl = applyParameters(urlValue, variables)
+              const queryValue = getValue(query)
+
+              const paramerizedUrl = applyParameters(urlValue, variables)
+              const searchParams = new URLSearchParams(variables).toString()
+              const finalUrl =
+                searchParams && queryValue !== false
+                  ? `${paramerizedUrl}?${searchParams}`
+                  : paramerizedUrl
               const response = await fetch(finalUrl)
               const json = await response.json()
               return json
