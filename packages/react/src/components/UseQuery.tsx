@@ -45,7 +45,7 @@ export default function UseQuery<D = any>(props: UseQueryProps<D>) {
       throw error
     }
 
-    let accessor: any = null
+    let accessor: any = undefined
 
     if (loading && props.renderLoading) {
       return props.renderLoading
@@ -76,12 +76,17 @@ export default function UseQuery<D = any>(props: UseQueryProps<D>) {
         )
       }
     }
+    const [queryName] = Object.keys(data)
 
-    if ('children' in props && props.children && accessor) {
+    if (
+      'children' in props &&
+      props.children &&
+      typeof accessor !== 'undefined'
+    ) {
       return props.children(accessor, { loading, error })
     }
 
-    return <span />
+    return null
   } catch (error) {
     if (typeof props.renderError === 'function') {
       return props.renderError(error)

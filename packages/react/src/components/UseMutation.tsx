@@ -35,7 +35,7 @@ export default function UseMutation<D = any>(props: UseMutationProps<D>) {
   if (loading && props.renderLoading) {
     return props.renderLoading
   }
-  return props.render(
+  return props.children(
     async (...args: any[]) => {
       setCalled(called + 1)
       const data = await mutation({ variables: args[0] })

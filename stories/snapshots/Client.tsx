@@ -1,6 +1,11 @@
 import * as React from 'react'
 import gql from 'graphql-tag'
-import { BrowserqlContext, BrowserqlProvider } from '@browserql/react'
+import {
+  BrowserqlContext,
+  BrowserqlProvider,
+  UseMutation,
+  UseQuery,
+} from '@browserql/react'
 import { useQuery, useMutation } from '@apollo/client'
 import { Button } from '@material-ui/core'
 import { BrowserqlContext as BrowserqlClientContext } from '@browserql/types'
@@ -126,19 +131,12 @@ export function ResolversExample() {
 
     type Mutation {
       login: Boolean
+      logout: Boolean
     }
   `
 
   const isLoggedIn = (_variables: null, context: BrowserqlClientContext) => {
-    const { cache, schema } = context.browserqlClient
-    const cached = cacheql(cache, schema)
-    return cached.get(
-      gql`
-        query {
-          isLoggedIn
-        }
-      `
-    )
+    return false // default value
   }
 
   const login = (_variables: null, context: BrowserqlClientContext) => {
@@ -154,13 +152,56 @@ export function ResolversExample() {
     )
   }
 
+  const logout = (_variables: null, context: BrowserqlClientContext) => {
+    const { cache, schema } = context.browserqlClient
+    const cached = cacheql(cache, schema)
+    cached.set(
+      gql`
+        query {
+          isLoggedIn
+        }
+      `,
+      false
+    )
+  }
+
   const client = connect(defs, {
     queries: { isLoggedIn },
-    mutations: { login },
+    mutations: { login, logout },
   })
 
   function Inner() {
-    return <div>OK</div>
+    return (
+      <UseQuery
+        query={gql`
+          {
+            isLoggedIn
+          }
+        `}
+      >
+        {(isLoggedIn) => (
+          <UseMutation
+            mutation={gql`
+              mutation {
+                login
+                logout
+              }
+            `}
+          >
+            {({ login, logout }) => (
+              <Button
+                fullWidth
+                onClick={isLoggedIn ? login : logout}
+                color={isLoggedIn ? 'secondary' : 'primary'}
+                variant="contained"
+              >
+                {isLoggedIn ? 'Log out' : 'Log in'}
+              </Button>
+            )}
+          </UseMutation>
+        )}
+      </UseQuery>
+    )
   }
 
   return (

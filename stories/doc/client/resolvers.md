@@ -29,32 +29,70 @@ const defs = gql`
 
   type Mutation {
     login: Boolean
+    logout: Boolean
   }
 `
 
-const isLoggedIn = (variables, context) => {
-  return false // default value
-}
+const IS_LOGGED_IN = gql`
+  query {
+    isLoggedIn
+  }
+`
+
+const isLoggedIn = () => false // default value
 
 const login = (variables, context) => {
   const { cache, schema } = context.browserqlClient
-  const cached = cacheql(cache, schema)
-  cached.set(
-    gql`
-      query {
-        isLoggedIn
-      }
-    `,
-    true
-  )
+  cacheql(cache, schema).set(IS_LOGGED_IN, true)
+}
+
+const logout = (variables, context) => {
+  const { cache, schema } = context.browserqlClient
+  cacheql(cache, schema).set(IS_LOGGED_IN, false)
 }
 
 // Now we connect everything
 const { client } = connect({
   schema: defs,
   queries: { isLoggedIn },
-  mutations: { login },
+  mutations: { login, logout },
 })
+```
+
+```javascript
+function Inner() {
+  return (
+    <UseQuery
+      query={gql`
+        {
+          isLoggedIn
+        }
+      `}
+    >
+      {(isLoggedIn) => (
+        <UseMutation
+          mutation={gql`
+            mutation {
+              login
+              logout
+            }
+          `}
+        >
+          {({ login, logout }) => (
+            <Button
+              fullWidth
+              onClick={isLoggedIn ? login : logout}
+              color={isLoggedIn ? 'secondary' : 'primary'}
+              variant="contained"
+            >
+              {isLoggedIn ? 'Log out' : 'Log in'}
+            </Button>
+          )}
+        </UseMutation>
+      )}
+    </UseQuery>
+  )
+}
 ```
 
 ```snapshot

@@ -34,8 +34,8 @@ type Todo @firestore {
 ```
 
 ```javascript
-await client.query(get('Todo', where('done').equals(false)))
-await client.mutate(add('Todo', { name: 'buy milk' }))
+await client.query(get(schema, 'Todo', where('done').equals(false)))
+await client.mutate(add(schema, 'Todo', { name: 'buy milk' }))
 ```
 
 ### Use it a state manager
