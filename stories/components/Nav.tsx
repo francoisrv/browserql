@@ -1,7 +1,7 @@
 import Accordion from '@material-ui/core/Accordion'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
-import Collapse from '@material-ui/core/Collapse'
+import GitHubIcon from '@material-ui/icons/GitHub'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -10,10 +10,13 @@ import Typography from '@material-ui/core/Typography'
 import { kebabCase, keys } from 'lodash'
 import * as React from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
+import BugReportIcon from '@material-ui/icons/BugReport'
 
 import menu, { MenuItem } from '../menu'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
+import IconButton from '@material-ui/core/IconButton'
+import TextField from '@material-ui/core/TextField'
 
 function Nav(props: RouteComponentProps) {
   const {
@@ -34,11 +37,23 @@ function Nav(props: RouteComponentProps) {
     >
       <AppBar position="sticky" color="default">
         <Toolbar>
-          <Typography variant="h6" style={{ flex: 1 }}>
-            docs
+          <Typography variant="h6" style={{ flex: 1 }} align="center">
+            {`{ viewDocs }`}
           </Typography>
         </Toolbar>
       </AppBar>
+      <Toolbar>
+        <IconButton>
+          <GitHubIcon />
+        </IconButton>
+        <IconButton>
+          <BugReportIcon />
+        </IconButton>
+      </Toolbar>
+      <Toolbar>
+        <TextField fullWidth placeholder="Search..." />
+      </Toolbar>
+      <div style={{ height: 16 }} />
       {keys(menu).map((menuName) => (
         <Accordion
           key={menuName}
@@ -47,14 +62,14 @@ function Nav(props: RouteComponentProps) {
             pathname
           )}
           style={{
-            backgroundColor: 'transparent',
             borderBottom: 'none',
             boxShadow: 'none',
+            backgroundColor: 'transparent',
           }}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
-            style={{ backgroundColor: 'rgba(255, 255, 255, 0.25)' }}
+            style={{ backgroundColor: '#fff' }}
           >
             <Typography>{menuName}</Typography>
           </AccordionSummary>

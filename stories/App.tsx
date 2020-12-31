@@ -18,7 +18,7 @@ function App() {
     >
       <Nav />
       <Paper
-        elevation={10}
+        elevation={0}
         style={{
           flex: 1,
           display: 'flex',
