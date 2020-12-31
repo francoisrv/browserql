@@ -13,6 +13,8 @@ import { buildQuery, buildMutation } from '@browserql/operations'
 import connect from '@browserql/client'
 import { JSONResolver } from 'graphql-scalars'
 
+console.log({ UseQuery })
+
 const sayHelloExample = {
   schema: gql`
     type Query {
