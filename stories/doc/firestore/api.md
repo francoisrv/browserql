@@ -1,4 +1,6 @@
-# API
+# Firestoreql API
+
+Below are all the functions from the API
 
 ```section-h3
 firestore/api/add

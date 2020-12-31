@@ -12,7 +12,7 @@ import {
 } from '@browserql/fpql'
 import { BrowserqlClient } from '@browserql/types'
 import gql from 'graphql-tag'
-import type { DocumentNode, FieldDefinitionNode } from 'graphql'
+import type { DocumentNode } from 'graphql'
 
 export function encapsulate(kind: ParsedType, value: any) {
   if (kind.depth) {

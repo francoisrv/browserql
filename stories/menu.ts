@@ -18,24 +18,26 @@ const menu: Menu = {
   ],
   Client: [
     {
-      name: 'About',
+      name: 'Usage',
       doc: readFileSync(__dirname + '/doc/client/about.md', 'utf-8'),
     },
   ],
-  HTTP: [
+  Recipes: [
     {
-      name: 'About',
+      name: 'HTTP',
       doc: readFileSync(__dirname + '/doc/http/about.md', 'utf-8'),
     },
     {
       name: 'Rest',
       doc: readFileSync(__dirname + '/doc/http/rest.md', 'utf-8'),
     },
-  ],
-  State: [
     {
-      name: 'About',
+      name: 'State',
       doc: readFileSync(__dirname + '/doc/state/about.md', 'utf-8'),
+    },
+    {
+      name: 'Firestore',
+      doc: readFileSync(__dirname + '/doc/firestore/usage.md', 'utf-8'),
     },
   ],
   React: [
@@ -65,10 +67,6 @@ const menu: Menu = {
     },
   ],
   Firestore: [
-    {
-      name: 'Quick start',
-      doc: readFileSync(__dirname + '/doc/firestore/usage.md', 'utf-8'),
-    },
     {
       name: 'Schema',
       doc: readFileSync(__dirname + '/doc/firestore/schema.md', 'utf-8'),
@@ -190,6 +188,27 @@ export const mds = {
   ),
   'firestore/api/where': readFileSync(
     __dirname + '/doc/firestore/api/where.md',
+    'utf-8'
+  ),
+
+  'utils/cache/get': readFileSync(
+    __dirname + '/doc/utils/cache/get.md',
+    'utf-8'
+  ),
+  'utils/cache/set': readFileSync(
+    __dirname + '/doc/utils/cache/set.md',
+    'utf-8'
+  ),
+  'utils/cache/increment': readFileSync(
+    __dirname + '/doc/utils/cache/increment.md',
+    'utf-8'
+  ),
+  'utils/cache/multiply': readFileSync(
+    __dirname + '/doc/utils/cache/multiply.md',
+    'utf-8'
+  ),
+  'utils/cache/toggle': readFileSync(
+    __dirname + '/doc/utils/cache/toggle.md',
     'utf-8'
   ),
 

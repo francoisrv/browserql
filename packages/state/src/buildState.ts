@@ -7,10 +7,10 @@ export default function buildState(schema: DocumentNode) {
 
   return {
     context: {
-      ql: {
+      state: {
         get(path: string) {
           const [typeName, fieldName] = path.split(/\./)
-          const type = types.find((type) => getName(type))
+          const type = typesWithState.find((type) => getName(type))
           if (!type) {
             return undefined
           }

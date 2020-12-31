@@ -5,18 +5,10 @@ import gql from 'graphql-tag'
 export function Example() {
   const schema = gql`
     type State @state {
-      counter: Int!
-      darkMode: Boolean!
-      message: String!
-      selectedUser: User!
-      userNetwork: [User!]
-    }
-
-    type User {
-      id: ID!
+      counter: Int! @default(value: 100)
     }
   `
   const { context } = buildState(schema)
-  console.log(context.ql.get('State.counter'))
+  console.log(context.state.get('State.counter'))
   return <div>Hello</div>
 }

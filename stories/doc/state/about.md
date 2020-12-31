@@ -16,27 +16,42 @@ type State @state {
 ```
 
 ```javascript
-import { buildState } from '@browserql/state'
+import { buildState, connectState, stateql } from '@browserql/state'
+import connect from '@browserql/client'
+import defs from './defs.graphql'
 
-const { schema, queries, mutations, context } = buildState(schema)
+const { client, cache, schema } = connect(defs, buildState(defs))
 
-await client.query(context.ql.get('State.counter')) // 0
-await client.mutate(context.ql.increment('State.counter'))
-await client.query(context.ql.get('State.counter')) // 1
-```
+const state = connectState(cache, schema)
 
-```graphql
-type Query {
-  state__State_counter__get: Int!
-}
+state.get('State.counter') // 0
 
-type Mutation {
-  state__State_counter__set(counter: Int!): Int!
-  state__State_counter__increment(step: Int = 1): Int!
-  state__State_counter__multiply(step: Int = 1): Int!
-}
+state.set('State.counter', 1)
+
+state.get('State.counter') // 1
+
+// You can also use Apollo client
+
+client.query(stateql.get('State.counter'))
+client.mutate(stateql.set('State.counter', 1))
 ```
 
 ```snapshot
 State.Example
+```
+
+## Toggle
+
+```graphql
+type State @state {
+  hypeTrainInProgress: Boolean! @default(value: false)
+}
+```
+
+```javascript
+state.get('State.hypeTrainInProgress') // false
+
+state.toggle('State.hypeTrainInProgress')
+
+state.get('State.hypeTrainInProgress') // true
 ```
