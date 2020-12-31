@@ -191,6 +191,17 @@ export const mds = {
     'utf-8'
   ),
 
+  'client/schema': readFileSync(__dirname + '/doc/client/schema.md', 'utf-8'),
+  'client/resolvers': readFileSync(
+    __dirname + '/doc/client/resolvers.md',
+    'utf-8'
+  ),
+  'client/quick-start': readFileSync(
+    __dirname + '/doc/client/quick-start.md',
+    'utf-8'
+  ),
+  'client/demo': readFileSync(__dirname + '/doc/client/demo.md', 'utf-8'),
+
   'utils/cache/get': readFileSync(
     __dirname + '/doc/utils/cache/get.md',
     'utf-8'

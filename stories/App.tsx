@@ -4,6 +4,7 @@ import 'refractor'
 import Topbar from './components/Topbar'
 import Router from './components/Router'
 import Nav from './components/Nav'
+import Paper from '@material-ui/core/Paper'
 
 function App() {
   return (
@@ -16,7 +17,14 @@ function App() {
       }}
     >
       <Nav />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <Paper
+        elevation={10}
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
         <Topbar />
         <div
           style={{
@@ -29,7 +37,7 @@ function App() {
         >
           <Router />
         </div>
-      </div>
+      </Paper>
     </div>
   )
 }

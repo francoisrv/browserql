@@ -10,7 +10,7 @@ import connect from '@browserql/client'
 
 function ShowSchema() {
   const ctx = React.useContext(BrowserqlContext)
-  return <Code language="graphql" value={print(ctx.schema)} />
+  return <Code language="graphql" value={print(ctx.schema).trim()} />
 }
 
 export function Counter() {
@@ -115,4 +115,17 @@ export function SchemaObject() {
       <ShowSchema />
     </BrowserqlProvider>
   )
+}
+
+export function ResolversExample() {
+  const defs = gql`
+    type Query {
+      isLoggedIn: Boolean
+    }
+
+    type Mutation {
+      login: Boolean
+    }
+  `
+  return <div>SALSA</div>
 }

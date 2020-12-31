@@ -6,6 +6,8 @@ import BrowserqlPlayground from './BrowserqlPlayground'
 import Snapshot from './Snapshot'
 import * as components from '../components'
 import Section from './Section'
+import Typography from '@material-ui/core/Typography'
+import Link from '@material-ui/core/Link'
 
 export default function Code({
   language,
@@ -20,7 +22,18 @@ export default function Code({
 
   if (language === 'sandbox') {
     if (process.env.NODE_ENV === 'development') {
-      return <div>SANDBOX {value}</div>
+      return (
+        <div style={{ padding: 24 }}>
+          <Typography>
+            <Link
+              href={`https://codesandbox.io/embed/${value.trim()}`}
+              target="_blank"
+            >
+              SANDBOX
+            </Link>
+          </Typography>
+        </div>
+      )
     }
     // &previewwindow=console
     return (
