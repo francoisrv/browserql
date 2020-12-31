@@ -1,5 +1,6 @@
 import { getDirective, getField, getName, getTypes } from '@browserql/fpql'
 import type { DocumentNode } from 'graphql'
+import cacheql from '@browserql/cache'
 
 export default function buildState(schema: DocumentNode) {
   const types = getTypes(schema)
