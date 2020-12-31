@@ -13,6 +13,7 @@ import {
 import { BrowserqlClient } from '@browserql/types'
 import gql from 'graphql-tag'
 import type { DocumentNode } from 'graphql'
+import type { ApolloClient } from '@apollo/client'
 
 export function encapsulate(kind: ParsedType, value: any) {
   if (kind.depth) {
@@ -40,32 +41,44 @@ export function getDefault(kind: ParsedType) {
 
 export default function connectCache(
   cache: BrowserqlClient['cache'],
-  schema: DocumentNode
+  schema: DocumentNode,
+  client?: ApolloClient<any>
 ) {
   function get(query: DocumentNode, variables?: any) {
     const [queryOperation] = getExecutableQueries(query)
     const queryName = getName(queryOperation)
+
+    // First, we'll try to get the value directly from the cache
     try {
-      const data = cache.readQuery({
+      const data = cache.readQuery<any>({
         query,
         variables,
       })
-      // @ts-ignore
       return data[queryName]
     } catch (error) {
-      const queryDefinition = getQuery(queryName)(schema)
-      if (!queryDefinition) {
-        throw new Error(`query not found in definitions: ${queryName}`)
-      }
-      const defaultDirective = getDirective('default')(queryDefinition)
-      if (defaultDirective) {
-        const defaultValueArgument = getArgument('value')(defaultDirective)
-        if (defaultValueArgument) {
-          return getValue(defaultValueArgument)
+      // If apollo cache found no matching entries, it will throw
+      // We catch that error and proceed in our search of a value to return
+
+      // Next step is calling the query directly
+      try {
+        if (!client) {
+          throw new Error('Warning: Skipping client')
         }
+      } catch (error) {
+        const queryDefinition = getQuery(queryName)(schema)
+        if (!queryDefinition) {
+          throw new Error(`query not found in definitions: ${queryName}`)
+        }
+        const defaultDirective = getDirective('default')(queryDefinition)
+        if (defaultDirective) {
+          const defaultValueArgument = getArgument('value')(defaultDirective)
+          if (defaultValueArgument) {
+            return getValue(defaultValueArgument)
+          }
+        }
+        const kind = parseKind(getKind(queryDefinition))
+        return kind.required ? undefined : null
       }
-      const kind = parseKind(getKind(queryDefinition))
-      return kind.required ? undefined : null
     }
   }
 

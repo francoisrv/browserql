@@ -222,6 +222,30 @@ export const mds = {
     __dirname + '/doc/utils/cache/toggle.md',
     'utf-8'
   ),
+  'utils/cache/filter': readFileSync(
+    __dirname + '/doc/utils/cache/filter.md',
+    'utf-8'
+  ),
+  'utils/cache/map': readFileSync(
+    __dirname + '/doc/utils/cache/map.md',
+    'utf-8'
+  ),
+  'utils/cache/pop': readFileSync(
+    __dirname + '/doc/utils/cache/pop.md',
+    'utf-8'
+  ),
+  'utils/cache/pull': readFileSync(
+    __dirname + '/doc/utils/cache/pull.md',
+    'utf-8'
+  ),
+  'utils/cache/push': readFileSync(
+    __dirname + '/doc/utils/cache/push.md',
+    'utf-8'
+  ),
+  'utils/cache/shift': readFileSync(
+    __dirname + '/doc/utils/cache/shift.md',
+    'utf-8'
+  ),
 
   'utils/fpql/getArgument': readFileSync(
     __dirname + '/doc/utils/fpql/getArgument.md',

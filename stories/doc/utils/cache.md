@@ -11,33 +11,35 @@
 
 Apollo cache accessor utility
 
+## Usage
+
 ```javascript
 import cacheql from '@browserql/cache'
-import resolve from '@browserql/resolved'
+import connect from '@browserql/connect'
+import gql from 'graphql-tag'
 
-const schema = 'type Query { getCounter: Int! }'
+const { cache, schema } = connect(
+  gql'type Query { getCounter: Int! @default(value: 100) }'
+)
 
-const cache = cacheql(apolloClient.cache)
+const cached = cacheql(cache, schema)
+const GET_COUNTER = gql`{ getCounter }`
 
-const resolved = resolve(schema)
+cached.get(GET_COUNTER) // 100
 
-const query = resolved.Query.getCounter()
+cached.set(GET_COUNTER, 0)
 
-cache.get(query) // undefined
-cache.set(query, 0)
-cache.get(query) // 0
-cache.increment(query)
-cache.get(query) // 1
+cached.get(GET_COUNTER) // 0
 ```
 
 ## API
 
 ```section-h3
-utils/cache/get
+utils/cache/filter
 ```
 
 ```section-h3
-utils/cache/set
+utils/cache/get
 ```
 
 ```section-h3
@@ -45,7 +47,31 @@ utils/cache/increment
 ```
 
 ```section-h3
+utils/cache/map
+```
+
+```section-h3
 utils/cache/multiply
+```
+
+```section-h3
+utils/cache/pop
+```
+
+```section-h3
+utils/cache/pull
+```
+
+```section-h3
+utils/cache/push
+```
+
+```section-h3
+utils/cache/set
+```
+
+```section-h3
+utils/cache/shift
 ```
 
 ```section-h3

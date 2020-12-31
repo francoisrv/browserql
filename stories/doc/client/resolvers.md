@@ -32,25 +32,29 @@ const defs = gql`
   }
 `
 
-const isLoggedIn = (variables, context) {
-  const { cache, schema } = context.browserqlClient
-  const cached = cacheql(cache, schema)
-  return cached.get(gql`query { isLoggedIn }`)
+const isLoggedIn = (variables, context) => {
+  return false // default value
 }
 
-const login = (variables, context) {
+const login = (variables, context) => {
   const { cache, schema } = context.browserqlClient
   const cached = cacheql(cache, schema)
-  cached.set(gql`query { isLoggedIn }`, true)
+  cached.set(
+    gql`
+      query {
+        isLoggedIn
+      }
+    `,
+    true
+  )
 }
 
 // Now we connect everything
 const { client } = connect({
   schema: defs,
   queries: { isLoggedIn },
-  mutations: { login }
+  mutations: { login },
 })
-
 ```
 
 ```snapshot

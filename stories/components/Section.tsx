@@ -18,22 +18,29 @@ export default function Section({ link }: Props) {
   return (
     <Accordion
       elevation={0}
-      style={{ backgroundColor: 'transparent', borderRadius: 8 }}
+      style={{ backgroundColor: '#eee', borderRadius: 8 }}
     >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        style={{ backgroundColor: 'white' }}
+      >
         <Typography variant="h5">{startCase(bit)}</Typography>
       </AccordionSummary>
-      <AccordionDetails>
+      <AccordionDetails style={{ borderRadius: 8 }}>
         <div
           style={{
             flex: 1,
-            borderLeft: '4px dashed #ccc',
-            borderBottom: '4px dashed #ccc',
-            paddingLeft: 32,
+            // borderLeft: '4px dashed #ccc',
+            // borderBottom: '4px dashed #ccc',
+            paddingLeft: 16,
+            paddingRight: 16,
             borderBottomLeftRadius: 22,
             borderTopLeftRadius: 22,
             paddingTop: 16,
             paddingBottom: 16,
+            borderRadius: 8,
+            // maxHeight: '75vh',
+            // overflow: 'auto',
           }}
         >
           <MD

@@ -5,6 +5,7 @@ import { useQuery, useMutation } from '@apollo/client'
 import { Button } from '@material-ui/core'
 import { BrowserqlContext as BrowserqlClientContext } from '@browserql/types'
 import { print } from 'graphql'
+import cacheql from '@browserql/cache'
 import Code from '../components/Code'
 import connect from '@browserql/client'
 
@@ -127,5 +128,44 @@ export function ResolversExample() {
       login: Boolean
     }
   `
-  return <div>SALSA</div>
+
+  const isLoggedIn = (_variables: null, context: BrowserqlClientContext) => {
+    const { cache, schema } = context.browserqlClient
+    const cached = cacheql(cache, schema)
+    return cached.get(
+      gql`
+        query {
+          isLoggedIn
+        }
+      `
+    )
+  }
+
+  const login = (_variables: null, context: BrowserqlClientContext) => {
+    const { cache, schema } = context.browserqlClient
+    const cached = cacheql(cache, schema)
+    cached.set(
+      gql`
+        query {
+          isLoggedIn
+        }
+      `,
+      true
+    )
+  }
+
+  const client = connect(defs, {
+    queries: { isLoggedIn },
+    mutations: { login },
+  })
+
+  function Inner() {
+    return <div>OK</div>
+  }
+
+  return (
+    <BrowserqlProvider client={client}>
+      <Inner />
+    </BrowserqlProvider>
+  )
 }
