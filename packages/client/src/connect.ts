@@ -13,7 +13,7 @@ import makeSchema from './schema'
 import makeApolloClient from './apollo'
 
 export default function connect(
-  ...args: Array<Schemaql | SchemaqlFactory>
+  ...args: Array<Schemaql | SchemaqlFactory | DocumentNode>
 ): BrowserqlClient {
   const cache = makeCache()
 
@@ -63,7 +63,9 @@ export default function connect(
   }
 
   for (const arg of args) {
-    if (typeof arg == 'object') {
+    if ('definitions' in arg) {
+      schemas.push(arg)
+    } else if (typeof arg == 'object') {
       applyArg(arg)
     } else {
       applyArg(

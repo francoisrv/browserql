@@ -21,7 +21,7 @@ export interface Schemaql extends Resolvers {
 
 export type SchemaqlFactory = (obj: Schemaql) => Schemaql
 
-export type BrowserqlContext = Dictionary<any> & {
+export type BrowserqlClientContext = Dictionary<any> & {
   browserqlClient: BrowserqlClient
 }
 
@@ -34,5 +34,5 @@ export interface BrowserqlClient {
   mutations: Dictionary<(...args: any[]) => any>
   scalars: Dictionary<GraphQLScalarType>
   directives?: Record<string, SchemaDirectiveVisitorClass>
-  context: BrowserqlContext
+  context: BrowserqlClientContext
 }

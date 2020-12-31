@@ -6,6 +6,7 @@ import { Button } from '@material-ui/core'
 import { BrowserqlContext as BrowserqlClientContext } from '@browserql/types'
 import { print } from 'graphql'
 import Code from '../components/Code'
+import connect from '@browserql/client'
 
 function ShowSchema() {
   const ctx = React.useContext(BrowserqlContext)
@@ -92,9 +93,25 @@ export function SchemaExample() {
       isMorning: Boolean
     }
   `
+  const client = connect(schema)
 
   return (
-    <BrowserqlProvider schema={schema}>
+    <BrowserqlProvider client={client}>
+      <ShowSchema />
+    </BrowserqlProvider>
+  )
+}
+
+export function SchemaObject() {
+  const schema = gql`
+    type Query {
+      isMorning: Boolean
+    }
+  `
+  const client = connect({ schema })
+
+  return (
+    <BrowserqlProvider client={client}>
       <ShowSchema />
     </BrowserqlProvider>
   )

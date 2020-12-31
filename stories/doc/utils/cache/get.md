@@ -12,7 +12,9 @@ Cache.GetNonNullEmpty
 
 #### Get empty cache
 
-If the cache is empty for that query, you can choose which substitute value to be presented with:
+If the cache is empty for that query, it will call the query
+
+Otherwise, you can choose which substitute value to be presented with:
 
 ##### Null values
 
@@ -61,3 +63,5 @@ Cache.GetDefault
 ```graphql
 directive @default(value: JSON!) on FIELD_DEFINITION
 ```
+
+### Set default value in query

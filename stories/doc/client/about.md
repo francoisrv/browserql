@@ -16,17 +16,21 @@ To use it, just pass it a schema and some resolvers.
 ```javascript
 import connect from '@browserql/client'
 import gql from 'graphql-tag'
+import cacheql from '@browserql/cache'
 
 // Define your GraphQL schema
 const schema = gql`
-  extend type Query {
+  type Query {
     getCounter: Int!
   }
 
-  extend type Mutation {
+  type Mutation {
     incrementCounter: Boolean!
   }
 `
+
+const GET_COUNTER = buildQuery(schema, 'getCounter')
+const INCREMENT_COUNTER = buildMutation(schema, 'incrementCounter')
 
 // Define your queries resolvers
 const queries = {
@@ -38,24 +42,12 @@ const queries = {
 // Define your mutations resolvers
 const mutations = {
   incrementCounter(_variables, ctx) {
-    const { cache } = ctx.browserqlClient
-    try {
-      const response = cache.readQuery({
-        query,
-      })
-      if (response) {
-        cache.writeQuery({
-          query,
-          data: {
-            getCounter: response.getCounter + 1,
-          },
-        })
-        return true
-      }
-      return false
-    } catch (error) {
-      return false
-    }
+    const {
+      context: { cache },
+      schema,
+    } = ctx.browserqlClient
+    cache.increment(GET_COUNTER)
+    return true
   },
 }
 
@@ -109,20 +101,30 @@ mystifying-frost-qwhsj
 
 Pass a schema. It has to be a GraphQL `DocumentNode`. You can use a tool like [graphql-tag](https://www.npmjs.com/package/graphql-tag) to parse a string into a `GraphQL` node -- or using a bundle loader.
 
+```graphql
+type Query {
+  isMorning: Boolean
+}
+```
+
+You can pass a schema alone
+
 ```javascript
-import gql from `graphql-tag`
-
-const schema = `
-  type Query {
-    isMorning: Boolean
-  }
-`
-
-connect({ schema: gql(schema) })
+connect(schema)
 ```
 
 ```snapshot
 Client.SchemaExample
+```
+
+Or inside an object
+
+```javascript
+connect({ schema })
+```
+
+```snapshot
+Client.SchemaObject
 ```
 
 ## Resolvers
