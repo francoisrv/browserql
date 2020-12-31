@@ -12,10 +12,7 @@
 ```graphql
 type Query {
   getTodo(id: ID!): Todo
-    @httpGet(
-      url: "https://jsonplaceholder.typicode.com/todos/:id"
-      query: false
-    )
+    @httpGet(url: "https://jsonplaceholder.typicode.com/todos/:id")
 }
 
 type Mutation {
