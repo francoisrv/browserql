@@ -6,37 +6,86 @@ import {
   UseQuery,
   UseMutation,
   withQuery,
+  BrowserqlContext,
+  BrowserqlProviderProps,
 } from '@browserql/react'
 import { buildQuery, buildMutation } from '@browserql/operations'
+import connect from '@browserql/client'
+import { JSONResolver } from 'graphql-scalars'
 
-console.log({ UseMutation })
-
-export function SandboxMainExample() {
-  const schema = gql`
+const sayHelloExample = {
+  schema: gql`
     type Query {
       sayHello(to: String!): String!
     }
-  `
-
-  const queries = {
+  `,
+  queries: {
     sayHello({ to }: { to: string }) {
       return `Hello ${to}`
     },
-  }
+  },
+}
 
+function ProviderTemplate(props: BrowserqlProviderProps) {
   function SayHello({ to }: { to: string }) {
-    const { data, loading, error } = useQuery(buildQuery(schema, 'sayHello'), {
-      variables: { to },
-    })
+    const ctx = React.useContext(BrowserqlContext)
+    const { data, loading, error } = useQuery(
+      buildQuery(ctx.schema, 'sayHello'),
+      {
+        variables: { to },
+      }
+    )
     if (error) return <div>{error.message}</div>
     if (loading) return <div>Loading...</div>
     return <p>{data.sayHello}</p>
   }
 
   return (
-    <BrowserqlProvider schema={schema} queries={queries}>
-      <SayHello to="everybody" />
+    <BrowserqlProvider {...props}>
+      <div style={{ padding: 24 }}>
+        <SayHello to="everybody" />
+      </div>
     </BrowserqlProvider>
+  )
+}
+
+export function SandboxMainExample() {
+  return (
+    <ProviderTemplate
+      schema={sayHelloExample.schema}
+      queries={sayHelloExample.queries}
+    />
+  )
+}
+
+export function ProviderClientProp() {
+  const client = connect(sayHelloExample)
+  return <ProviderTemplate client={client} />
+}
+
+export function ProviderBuildClientProp() {
+  return (
+    <ProviderTemplate
+      schema={gql`
+        scalar JSON
+
+        directive @variant(name: VARIANT) on FIELD_DEFINITION
+
+        enum VARIANT {
+          HIGH
+          LOW
+        }
+
+        type Query {
+          getHigh: JSON @variant(name: HIGH)
+        }
+
+        type Mutation {
+          changePitchLevel(level: Float!): JSON!
+        }
+      `}
+      scalars={{ JSON: JSONResolver }}
+    />
   )
 }
 

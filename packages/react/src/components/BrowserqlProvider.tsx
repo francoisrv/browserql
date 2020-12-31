@@ -6,7 +6,7 @@ import type { ReactElement } from 'react'
 import type { Schemaql, SchemaqlFactory } from '@browserql/types'
 import { ApolloProvider } from '@apollo/client'
 
-interface Props {
+export interface BrowserqlProviderProps {
   client?: any
   schema?: DocumentNode
   extensions?: Array<Schemaql | SchemaqlFactory>
@@ -27,7 +27,7 @@ function BrowserqlProviderError({ error }: { error: Error }) {
 }
 
 export default function BrowserqlProvider(
-  props: React.PropsWithChildren<Props>
+  props: React.PropsWithChildren<BrowserqlProviderProps>
 ) {
   let { client, renderError } = props
   try {
