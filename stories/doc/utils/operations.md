@@ -1,6 +1,6 @@
 # Operation builder
 
-Build a `GraphQL` query or mutation given a schema
+Build a `GraphQL` executable query or mutation from a definition schema.
 
 ```graphql
 type User {
@@ -8,7 +8,7 @@ type User {
   email: String!
 }
 
-extend type Query {
+type Query {
   getUser(userID: ID!): User
 }
 ```
@@ -31,7 +31,7 @@ type User {
   email: String!
 }
 
-extend type Mutation {
+type Mutation {
   addUser(email: String!): User
 }
 ```
@@ -48,7 +48,7 @@ Operations.BuildMutationExample
 
 ## Coumpound queries
 
-Sometimes you want to create a compound query. For this use `buildQueries`.
+Sometimes you want to create a compound query. For this use `buildCompoundQuery`.
 
 Take these queries for example:
 
@@ -60,20 +60,23 @@ type Query {
 }
 ```
 
-Let's say we want to create a coompound query like this one:
+Let's say we want to create a compound query like this one:
 
 ```graphql
 query GetUser($userId: ID!) {
   getUserById(id: $userId) {
-    ...UserFragment
+    id
+    email
   }
 
   getUserTags(userId: $userId) {
-    ...TagFragment
+    id
+    title
   }
 
   getUserBadges(userId: $userId) {
-    ...Badge
+    id
+    title
   }
 }
 ```
@@ -81,37 +84,17 @@ query GetUser($userId: ID!) {
 In this case you would do:
 
 ```javascript
-import { buildQueries } from '@browserql/operations'
+import { buildCompoundQuery } from '@browserql/operations'
 
-buildQueries(
+buildCompoundQuery(
   schema,
-  {
-    variables: {
-      userId: 'ID!',
-    },
-  },
-  [
-    {
-      getUserById: {
-        variables: {
-          id: 'userId',
-        },
-      },
-    },
-    {
-      getUserBadges: {
-        variables: {
-          userId: 'userId',
-        },
-      },
-    },
-    {
-      getUserById: {
-        variables: {
-          id: 'userId',
-        },
-      },
-    },
-  ]
+  { userId: 'ID!' },
+  ['getUserById', { id: 'userId' }],
+  'getUserTags',
+  'getUserBadges'
 )
+```
+
+```snapshot
+Operations.BuildCompoundQueryExample
 ```

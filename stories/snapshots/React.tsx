@@ -108,9 +108,11 @@ export function QueryExample() {
 
   return (
     <BrowserqlProvider schema={schema} queries={queries}>
-      <UseQuery query={SAY_HELLO} variables={{ to: 'everybody' }}>
-        {(response) => <p>{response}</p>}
-      </UseQuery>
+      <div style={{ padding: 24 }}>
+        <UseQuery query={SAY_HELLO} variables={{ to: 'everybody' }}>
+          {(response) => <p>{response}</p>}
+        </UseQuery>
+      </div>
     </BrowserqlProvider>
   )
 }

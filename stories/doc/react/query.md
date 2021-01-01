@@ -25,11 +25,18 @@ type Query {
 import { useQuery } from '@apollo/client'
 
 function SayHello({ to }) {
-  const { data, loading, error } = useQuery(SAY_HELLO, {
-    variables: {
-      to: 'everybody',
-    },
-  })
+  const { data, loading, error } = useQuery(
+    gql`
+      query SayHello($to: String!) {
+        sayHello(to: $to)
+      }
+    `,
+    {
+      variables: {
+        to: 'everybody',
+      },
+    }
+  )
 
   if (error) return <div>{error.message}</div>
 
@@ -41,18 +48,18 @@ function SayHello({ to }) {
 
 ### With components
 
-```jsx
+```javascript
 import { UseQuery } from '@browserql/react'
 
 function SayHello({ to }) {
   return (
     <UseQuery
-      query={SAY_HELLO}
+      query={buildQuery(schema, 'sayHello')}
       variables={{ to: 'everybody' }}
       renderError={({ error }) => <div>{error.message}</div>}
       renderLoading={<div>Loading...</div>}
     >
-      {(response) => <p>{response}</p>}
+      {({ sayHello }) => <p>{sayHello}</p>}
     </UseQuery>
   )
 }
@@ -93,7 +100,7 @@ query {
 function User {
   return (
     <WithQuery query={GET_USER}>
-      {user => <h4>{user.name}</h4>}
+      {({ getUser: user }) => <h4>{user.name}</h4>}
     </WithQuery>
   )
 }
@@ -118,7 +125,7 @@ type User {
 function User {
   return (
     <WithQuery query={GET_USER} variables={{ id: 1234 }}>
-      {user => <h4>{user.name}</h4>}
+      {({ getUser: user }) => <h4>{user.name}</h4>}
     </WithQuery>
   )
 }
@@ -134,7 +141,7 @@ You can specify a loading view via the `renderLoading` prop:
 function User {
   return (
     <WithQuery query={GET_USER} renderLoading={<div>Loading..</div>}>
-      {user => <h4>{user.name}</h4>}
+      {({ getUser: user }) => <h4>{user.name}</h4>}
     </WithQuery>
   )
 }
@@ -150,7 +157,7 @@ You can specify an error view via the `renderError` prop which accepts a functio
 function User {
   return (
     <WithQuery query={GET_USER} renderError={({ error }) => <div>{error.message}</div>}>
-      {user => <h4>{user.name}</h4>}
+      {({ getUser: user }) => <h4>{user.name}</h4>}
     </WithQuery>
   )
 }
