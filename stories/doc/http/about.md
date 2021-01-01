@@ -12,49 +12,28 @@
 ```graphql
 type Query {
   getTodo(id: ID!): Todo
-    @httpGet(url: "https://jsonplaceholder.typicode.com/todos/:id")
-}
-
-type Mutation {
-  addTodo(title: String!): Todo!
-    @httpPost(
-      url: "https://jsonplaceholder.typicode.com/todos"
-      payload: { title: { useVariable: "title" }, completed: { value: false } }
-    )
+    @http(url: "https://jsonplaceholder.typicode.com/todos/:id")
 }
 ```
 
 ```javascript
-import { buildHttp } from '@browserql/http'
+import { connectHttp } from '@browserql/http'
+import connect from '@browserql/client'
+import resolved from '@browserql/resolve'
+import schema from './schema.graphql'
 
-const { schema, queries, mutations } = buildHttp(schema)
+const { client, schema: finalSchema } = connect(schema, connectHttp())
+const { Query } = resolve(finalSchema)
 
-await client.query({
-  query: gql`
-    query GetTodo($id: ID!) {
-      getTodo(id: $id) {
-        user
-        id
-        title
-        completed
-      }
-    }
-  `,
-  // https://jsonplaceholder.typicode.com/todos/2
-  variables: { id: 2 },
-})
+await client.query(Query.getTodo({ id: 2 }))
 ```
 
 ```snapshot
 HTTP.Example
 ```
 
-### Http Methods supported
+## Arguments
 
-- DELETE `httpDelete`
-- GET `httpGet`
-- HEAD `httpHead`
-- OPTIONS `httpOptions`
-- PATCH `httpPatch`
-- POST `httpPost`
-- PUT `httpPut`
+```section-h3
+http/url
+```

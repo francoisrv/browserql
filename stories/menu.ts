@@ -287,4 +287,5 @@ export const mds = {
     __dirname + '/doc/utils/fpql/merge.md',
     'utf-8'
   ),
+  'http/url': readFileSync(__dirname + '/doc/http/url.md', 'utf-8'),
 }

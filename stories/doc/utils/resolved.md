@@ -2,6 +2,21 @@
 
 Create accessor to an executable `GraphQL` schema
 
+```javascript
+const { Query, composeQuery } = resolve(finalSchema)
+
+await client.query(Query.getTodo({ id: 2 }))
+
+await client.query(
+  composeQuery(
+    { userId: 2 },
+    Query.getUserById.renameVariables({ id: 'userId' }),
+    Query.getUserPreferences,
+    Query.getUserBadges
+  )
+)
+```
+
 ```graphql
 type User {
   id: ID!

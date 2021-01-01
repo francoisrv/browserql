@@ -11,10 +11,7 @@ export function Example() {
   const schema = gql`
     type Query {
       getTodo(id: ID!): Todo
-        @httpGet(
-          url: "https://jsonplaceholder.typicode.com/todos/:id"
-          query: false
-        )
+        @http(url: "https://jsonplaceholder.typicode.com/todos/:id")
     }
 
     type Todo {
@@ -37,9 +34,7 @@ export function Example() {
 
     if (loading) return <div>Loading...</div>
 
-    return (
-      <Code language="json" value={JSON.stringify(data.getTodo, null, 2)} />
-    )
+    return <Code language="json" value={JSON.stringify(data, null, 2)} />
   }
 
   return (
