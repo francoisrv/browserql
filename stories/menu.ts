@@ -103,7 +103,7 @@ const menu: Menu = {
     },
     {
       name: 'Graphql Class',
-      doc: readFileSync(__dirname + '/doc/utils/model.md', 'utf-8'),
+      doc: readFileSync(__dirname + '/doc/utils/graphql-class.md', 'utf-8'),
     },
     {
       name: 'Operations',

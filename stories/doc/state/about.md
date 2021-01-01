@@ -16,24 +16,8 @@ type State @state {
 ```
 
 ```javascript
-import { buildState, connectState, stateql } from '@browserql/state'
-import connect from '@browserql/client'
-import defs from './defs.graphql'
-
-const { client, cache, schema } = connect(defs, buildState(defs))
-
-const state = connectState(cache, schema)
-
-state.get('State.counter') // 0
-
-state.set('State.counter', 1)
-
-state.get('State.counter') // 1
-
-// You can also use Apollo client
-
-client.query(stateql.get('State.counter'))
-client.mutate(stateql.set('State.counter', 1))
+const state = stateql(client, cache, schema)
+await client.query(state.get('State.counter'))
 ```
 
 ```snapshot

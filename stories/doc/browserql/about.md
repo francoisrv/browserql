@@ -24,6 +24,8 @@ type Query {
 }
 ```
 
+[View more](/recipes/http)
+
 ### Connect to Firebase Firestore
 
 ```graphql
