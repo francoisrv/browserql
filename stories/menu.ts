@@ -9,6 +9,13 @@ export interface Menu {
   [name: string]: MenuItem[]
 }
 
+const Todo = graphql`
+  type Todo {
+    title: String!
+    done: Boolean = false
+  }
+`
+
 const menu: Menu = {
   browserql: [
     {
