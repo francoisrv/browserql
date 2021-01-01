@@ -102,6 +102,10 @@ const menu: Menu = {
       doc: readFileSync(__dirname + '/doc/utils/fragments.md', 'utf-8'),
     },
     {
+      name: 'Graphql Class',
+      doc: readFileSync(__dirname + '/doc/utils/model.md', 'utf-8'),
+    },
+    {
       name: 'Operations',
       doc: readFileSync(__dirname + '/doc/utils/operations.md', 'utf-8'),
     },
