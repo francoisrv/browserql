@@ -44,78 +44,62 @@ todo.toJSON()
 ## Example with MongoDB
 
 ```javascript
-abstract class MongoModel {
-  static async find(query) {
-    const documents = await db.collection(MongoModel.collection).find(document)
-    return documents.map(document => new MongoModel(document))
-  }
+async function find(Model, query) {
+  const documents = await db.collection(Model.collection).find(query)
+  return documents.map((document) => new Model(document))
+}
 
-  document
+async function save(Model, document) {
+  const _id = document.get('_id')
+  const collection = db.collection(Model.collection)
+  const doc = document.data()
 
-  constructor(document) {
-    this.document = document
-  }
-
-  async save() {
-    const collection = db.collection(MongoModel.collection)
-    if (this.document._id) {
-      await collection.updateOne(
-        { _id: this.document._id },
-        this.document,
-      )
-    } else {
-      const { _id } = await collection.insertOne(this.document)
-      this.document._id = _id
-    }
+  if (_id) {
+    await collection.updateOne({ _id }, doc)
+  } else {
+    const { insertedId } = await collection.insertOne(doc)
+    document.set('_id', insertedId)
   }
 }
 
-const Author = graphql`
-  scalar MongoModel
-
-  type Author @schema(extends: MongoModel) {
-    id: ObjectID!
-    name: String!
+class Post extends (graphql`
+  type Post {
+    _id: ObjectId
+    author: ObjectID!
     createdAt: Date! @default(function: "now")
-  }
-`
-
-const Document = graphql`
-  type Document {
-    _id: ObjectID!
-    name: String!
-    createdAt: Date! @default(function: "now")
-  }
-`
-
-function mongolify(fn) {
-  fn.define('collection', (ctx, { schema }) => db.collection(schema.getDirectiveArgumentValue('schema.collection')))
-
-  fn.extend('save', ctx => function save() {
-    if (ctx.get('_id')) {
-      ctx.getDefininition('collection').updateOne({
-        { _id: ctx.get('_id') } ,
-        ctx.json()
-      })
-    }
-  })
-}
-
-
-const Post = graphql`
-  type Post @schema(collection: "posts") {
-    id: ObjectID!
     title: String!
-    createdAt: Date! @default(function: "now")
-    author: ObjectID! @rel(type: "Author")
   }
-`
+`) {
+  static collection = 'posts'
 
-class Post extends PostSchema implements MongoModel {
-  static collection = "posts"
+  static async find(query) {
+    return find(Post, query)
+  }
+
+  save() {
+    save(Post, this)
+  }
 }
 
-const author = new Author({ 'name': 'doe' }) // Missing _id
+class Author extends (graphql`
+  type Author {
+    _id: ObjectId
+    createdAt: Date! @default(function: "now")
+    name: String!
+  }
+`) {
+  static collection = 'authors'
+
+  static async find(query) {
+    return find(Author, query)
+  }
+
+  save() {
+    save(Author, this)
+  }
+}
+
+const author = new Author({ name: 'doe' })
 
 author.toJSON()
 
@@ -123,8 +107,10 @@ await author.save()
 
 const post = new Post({
   title: 'My new post',
-  author: author.get('_id')
+  author: author.get('_id'),
 })
+
+await post.save()
 ```
 
 ```javascript
