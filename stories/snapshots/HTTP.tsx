@@ -2,7 +2,7 @@ import { BrowserqlProvider } from '@browserql/react'
 import * as React from 'react'
 import { connectHttp } from '@browserql/http'
 import gql from 'graphql-tag'
-import { buildQuery } from '@browserql/operations'
+import { buildQuery, buildQueryString } from '@browserql/operations'
 import { useQuery } from '@apollo/client'
 import { JSONResolver } from 'graphql-scalars'
 import Code from '../components/Code'
@@ -68,6 +68,8 @@ export function Url() {
   `
   const query = buildQuery(schema, 'getTodos')
 
+  console.log(buildQueryString(schema, 'getTodos'))
+
   function Response() {
     const { data, loading, error } = useQuery(query, {
       variables: {
@@ -75,7 +77,10 @@ export function Url() {
       },
     })
 
-    if (error) return <div>{error.message}</div>
+    if (error) {
+      console.log(error)
+      return <div style={{ padding: 24 }}>{error.message}</div>
+    }
 
     if (loading) return <div>Loading...</div>
 

@@ -26,17 +26,24 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
           return {
             ...queries,
             [getName(query)]: async (variables: any) => {
+              let endpoint = ''
+
               const url = getArgument('url')(http)
 
-              const urlValue = getValue(url)
+              if (url) {
+                endpoint = getValue(url)
+              }
 
-              const finalUrl = applyParameters(urlValue, variables)
-              // const searchParams = new URLSearchParams(variables).toString()
-              // const finalUrl = searchParams
-              //   ? `${paramerizedUrl}?${searchParams}`
-              //   : paramerizedUrl
-              console.log({ finalUrl })
-              const response = await fetch(finalUrl)
+              for (const key in variables) {
+                endpoint = endpoint.replace(
+                  new RegExp(`:${key}(\\W|$)`, 'g'),
+                  `${variables[key]}$1`
+                )
+              }
+
+              console.log({ endpoint, variables })
+
+              const response = await fetch(endpoint)
               const json = await response.json()
               return json
             },

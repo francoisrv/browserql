@@ -1,6 +1,7 @@
 import type { DocumentNode, InputValueDefinitionNode } from 'graphql'
 import {
   getArguments,
+  getDefaultValue,
   getKind,
   getMutation,
   getName,
@@ -32,15 +33,19 @@ export function buildQueryString(
   if (Array.isArray(args) && args.length > 0) {
     definitions = `Query (${args
       .map((arg) => {
-        console.log({ arg })
         let string = `$${getName(arg)}: ${getKind(arg)}`
-        if (typeof arg.defaultValue !== 'undefined') {
+        const val = getDefaultValue(arg)
+        if (typeof val !== 'undefined') {
+          string += ` = ${JSON.stringify(val, null, 2)}`
         }
         return string
       })
       .join('\n')})`
     variables = `(${args
-      .map((arg) => `${getName(arg)}: $${getName(arg)}`)
+      .map((arg) => {
+        let string = `${getName(arg)}: $${getName(arg)}`
+        return string
+      })
       .join('\n')})`
   }
   return `
