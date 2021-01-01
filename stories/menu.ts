@@ -33,7 +33,7 @@ const menu: Menu = {
     },
     {
       name: 'State',
-      doc: readFileSync(__dirname + '/doc/state/about.md', 'utf-8'),
+      doc: readFileSync(__dirname + '/doc/state/state.md', 'utf-8'),
     },
     {
       name: 'Firestore',

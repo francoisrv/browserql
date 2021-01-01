@@ -12,6 +12,14 @@ import {
 import { buildFragment } from '@browserql/fragments'
 import gql from 'graphql-tag'
 
+export default function buildOperationString(
+  schema: DocumentNode,
+  path: string
+) {
+  const [typeName, fieldName] = path.split(/\./)
+  const type = getType(typeName)(schema)
+}
+
 export function buildQueryString(
   schema: DocumentNode,
   queryName: string

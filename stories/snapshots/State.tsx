@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { buildState } from '@browserql/state'
+import { stateql } from '@browserql/state'
 import gql from 'graphql-tag'
 
 export function Example() {
@@ -8,7 +8,7 @@ export function Example() {
       counter: Int! @default(value: 100)
     }
   `
-  const { context } = buildState(schema)
-  console.log(context.state.get('State.counter'))
+  const { get } = stateql(schema)
+  console.log(get('State.counter'))
   return <div>Hello</div>
 }

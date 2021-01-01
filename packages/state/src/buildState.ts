@@ -1,10 +1,7 @@
 import { getDirective, getField, getName, getTypes } from '@browserql/fpql'
 import type { DocumentNode } from 'graphql'
+import { buildQuery } from '@browserql/operations'
 import cacheql from '@browserql/cache'
-
-class A {}
-class B {}
-class C extends A implements B {}
 
 export default function buildState(schema: DocumentNode) {
   const types = getTypes(schema)
@@ -23,6 +20,8 @@ export default function buildState(schema: DocumentNode) {
           if (!field) {
             return undefined
           }
+          const query = buildQuery(schema, getName(field))
+          const { get } = cacheql(cache, schema)
           return 0
         },
       },

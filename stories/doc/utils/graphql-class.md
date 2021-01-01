@@ -22,25 +22,6 @@ new Todo({ title: 'Buy milk' }).toJSON()
 }
 ```
 
-```javascript
-import graphql from '@browserql/graphql-fp'
-
-const Todo = graphql`
-  type Todo {
-    title: String!
-    done: Boolean = false
-  }
-`
-
-const todo = Todo({ title: 'Buy milk' })
-
-todo.toJSON()
-
-todo.set({ done: true })
-
-todo.toJSON()
-```
-
 ## Example with MongoDB
 
 ```javascript
@@ -116,12 +97,30 @@ await post.save()
 ```javascript
 import graphql from '@browserql/graphql-class'
 
+const scalars = ['scalar JSON', 'scalar EmailAddress']
+
 const Todo = graphql`
   type Todo {
     title: String!
     done: Boolean = false
+    email: EmailAddress!
   }
 `
+
+Todo.inject(
+  gql`
+    scalar JSON
+    directive @foo on OBJECT
+  `,
+  {
+    JSON: JSONResolver,
+    '@foo': FooResolver,
+  }
+)
+
+Todo.schema.addScalar('JSON', JSONResolver)
+
+Todo.schema.addDirective('directive @foo on FIELD_DEFINITION')
 
 Todo.resolve('scalar', MyScalar)
 
