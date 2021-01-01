@@ -4,6 +4,7 @@ import {
   buildQuery,
   buildMutation,
   buildCompoundQuery,
+  buildOperationString,
 } from '@browserql/operations'
 import { print } from 'graphql'
 
@@ -79,6 +80,28 @@ export function BuildCompoundQueryExample() {
           'getUserBadges'
         )
       )}
+    />
+  )
+}
+
+export function BuildOperationString() {
+  const schema = gql`
+    type User {
+      id: ID!
+      email: String!
+      isVerified: Boolean!
+      getUser(userID: ID!, isVerified: Boolean = false): Settings
+    }
+
+    type Settings {
+      id: ID!
+      userID: ID!
+    }
+  `
+  return (
+    <Code
+      language="graphql"
+      value={buildOperationString(schema, 'User.getUser')}
     />
   )
 }

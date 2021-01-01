@@ -99,3 +99,48 @@ buildCompoundQuery(
 ```snapshot
 Operations.BuildCompoundQueryExample
 ```
+
+## Build operation
+
+Bothe `buildQuery` and `buildMutation` are actually built on top of the `buildOperation` function
+
+````graphql
+
+```javascript
+import { buildOperation } from '@browserql/operations'
+
+buildOperation(
+  schema,
+  { userId: 'ID!' },
+  ['getUserById', { id: 'userId' }],
+  'getUserTags',
+  'getUserBadges'
+)
+````
+
+## Accessories
+
+### `buildOperationString`
+
+Returns a string with an operation in it
+
+```javascript
+import { buildOperationString } from '@browserql/operations'
+
+buildOperationString(schema, 'Query.getUser')
+```
+
+```graphql
+($userID: ID!, $isVerified: Boolean = false) {
+  getUser(userID: $userID, isVerified: $isVerified) {
+    __typename
+    id
+    email
+    isVerified
+  }
+}
+```
+
+```snapshot
+Operations.BuildOperationString
+```

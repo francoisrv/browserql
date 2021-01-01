@@ -1,7 +1,12 @@
-import type { DocumentNode, InputValueDefinitionNode } from 'graphql'
+import type {
+  DocumentNode,
+  FieldDefinitionNode,
+  InputValueDefinitionNode,
+} from 'graphql'
 import {
   getArguments,
   getDefaultValue,
+  getField,
   getKind,
   getMutation,
   getName,
@@ -12,12 +17,58 @@ import {
 import { buildFragment } from '@browserql/fragments'
 import gql from 'graphql-tag'
 
-export default function buildOperationString(
+export function buildOperationString(
   schema: DocumentNode,
   path: string
-) {
+): string | undefined {
   const [typeName, fieldName] = path.split(/\./)
   const type = getType(typeName)(schema)
+  if (!type) {
+    console.warn(`Type not found in schema: ${typeName}`)
+    return undefined
+  }
+  const field = getField(fieldName)(type) as FieldDefinitionNode
+  if (!field) {
+    console.warn(`Field not found in schema: ${path}`)
+    return undefined
+  }
+  const parsedType = parseKind(getKind(field))
+  const isType = getType(parsedType.type)(schema)
+  let selection = ''
+  if (isType) {
+    const fragment = buildFragment(schema, parsedType.type).trim()
+    selection = fragment
+      .replace(/^fragment .+ \{/, '{')
+      .split('\n')
+      .map((line) => `      ${line}`)
+      .join('\n')
+      .trim()
+  }
+
+  let definitions = ''
+  let variables = ''
+  const args = getArguments(field) as InputValueDefinitionNode[]
+  if (Array.isArray(args) && args.length > 0) {
+    definitions = `(\n${args
+      .map((arg) => {
+        let string = `  $${getName(arg)}: ${getKind(arg)}`
+        const val = getDefaultValue(arg)
+        if (typeof val !== 'undefined') {
+          string += ` = ${JSON.stringify(val, null, 2)}`
+        }
+        return string
+      })
+      .join('\n')}\n)`
+    variables = `(\n${args
+      .map((arg) => {
+        let string = `    ${getName(arg)}: $${getName(arg)}`
+        return string
+      })
+      .join('\n')}\n  )`
+  }
+  return `${definitions}  {
+  ${fieldName}${variables} ${selection}
+}`
 }
 
 export function buildQueryString(
