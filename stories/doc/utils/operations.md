@@ -6,10 +6,11 @@ Build a `GraphQL` executable query or mutation from a definition schema.
 type User {
   id: ID!
   email: String!
+  isVerified: Boolean!
 }
 
 type Query {
-  getUser(userID: ID!): User
+  getUser(userID: ID!, isVerified: Boolean = false): User
 }
 ```
 

@@ -9,6 +9,8 @@
 }
 ```
 
+Fire HTTP queries from your front end using GraphQL!
+
 ```graphql
 type Query {
   getTodo(id: ID!): Todo

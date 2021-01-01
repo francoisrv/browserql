@@ -288,4 +288,8 @@ export const mds = {
     'utf-8'
   ),
   'http/url': readFileSync(__dirname + '/doc/http/url.md', 'utf-8'),
+  'utils/fpql/getDefaultValue': readFileSync(
+    __dirname + '/doc/utils/fpql/getDefaultValue.md',
+    'utf-8'
+  ),
 }

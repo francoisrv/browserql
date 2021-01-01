@@ -1,6 +1,7 @@
 export { default as getArgument } from './getArgument'
 export { default as getArguments } from './getArguments'
 export { default as getByName } from './getByName'
+export { default as getDefaultValue } from './getDefaultValue'
 export { default as getDirective } from './getDirective'
 export { default as getDirectives } from './getDirectives'
 export { default as getEnumeration } from './getEnumeration'

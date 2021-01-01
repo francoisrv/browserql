@@ -18,3 +18,7 @@ type Query {
 ```javascript
 await client.query(Query.getTodos({ completed: true }))
 ```
+
+```snapshot
+HTTP.Url
+```

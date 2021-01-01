@@ -30,11 +30,12 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
 
               const urlValue = getValue(url)
 
-              const paramerizedUrl = applyParameters(urlValue, variables)
-              const searchParams = new URLSearchParams(variables).toString()
-              const finalUrl = searchParams
-                ? `${paramerizedUrl}?${searchParams}`
-                : paramerizedUrl
+              const finalUrl = applyParameters(urlValue, variables)
+              // const searchParams = new URLSearchParams(variables).toString()
+              // const finalUrl = searchParams
+              //   ? `${paramerizedUrl}?${searchParams}`
+              //   : paramerizedUrl
+              console.log({ finalUrl })
               const response = await fetch(finalUrl)
               const json = await response.json()
               return json

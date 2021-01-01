@@ -14,10 +14,11 @@ export function BuildQueryExample() {
     type User {
       id: ID!
       email: String!
+      isVerified: Boolean!
     }
 
-    extend type Query {
-      getUser(userID: ID!): User
+    type Query {
+      getUser(userID: ID!, isVerified: Boolean = false): User
     }
   `
   return (

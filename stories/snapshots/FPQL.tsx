@@ -2,6 +2,7 @@ import * as React from 'react'
 import gql from 'graphql-tag'
 import {
   getArgument,
+  getDefaultValue,
   getDirective,
   getExecutableQueries,
   getField,
@@ -208,6 +209,24 @@ export function GetObjectValue() {
           getArgument('admin'),
           getValue
         ),
+        null,
+        2
+      )}
+    />
+  )
+}
+
+export function GetDefaultValue() {
+  const schema = gql`
+    type Query {
+      get(flag: Boolean = false): Boolean
+    }
+  `
+  return (
+    <Code
+      language="json"
+      value={JSON.stringify(
+        fp(schema)(getQuery('get'), getArgument('flag'), getDefaultValue),
         null,
         2
       )}

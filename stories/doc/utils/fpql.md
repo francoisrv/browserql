@@ -57,6 +57,10 @@ utils/fpql/getArgument
 ```
 
 ```section-h3
+utils/fpql/getDefaultValue
+```
+
+```section-h3
 utils/fpql/getDirective
 ```
 

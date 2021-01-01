@@ -31,7 +31,13 @@ export function buildQueryString(
   const args = getArguments(query) as InputValueDefinitionNode[]
   if (Array.isArray(args) && args.length > 0) {
     definitions = `Query (${args
-      .map((arg) => `$${getName(arg)}: ${getKind(arg)}`)
+      .map((arg) => {
+        console.log({ arg })
+        let string = `$${getName(arg)}: ${getKind(arg)}`
+        if (typeof arg.defaultValue !== 'undefined') {
+        }
+        return string
+      })
       .join('\n')})`
     variables = `(${args
       .map((arg) => `${getName(arg)}: $${getName(arg)}`)
