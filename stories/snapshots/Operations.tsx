@@ -4,7 +4,7 @@ import {
   buildQuery,
   buildMutation,
   buildCompoundQuery,
-  buildOperationString,
+  printOperation,
   buildArguments,
   printArguments,
 } from '@browserql/operations'
@@ -51,6 +51,7 @@ export function BuildCompoundQueryExample() {
       getUserById(id: ID!): User!
       getUserTags(userId: ID!): [Tag]!
       getUserBadges(userId: ID!): [Badge]!
+      getUser: String
     }
 
     type User {
@@ -79,7 +80,8 @@ export function BuildCompoundQueryExample() {
           { userId: 'ID!' },
           ['getUserById', { id: 'userId' }],
           'getUserTags',
-          'getUserBadges'
+          'getUserBadges',
+          'getUser'
         )
       )}
     />
@@ -101,10 +103,7 @@ export function BuildOperationString() {
     }
   `
   return (
-    <Code
-      language="graphql"
-      value={buildOperationString(schema, 'User.getUser')}
-    />
+    <Code language="graphql" value={printOperation(schema, 'User.getUser')} />
   )
 }
 
@@ -164,6 +163,53 @@ export function PrintArgumentsWithTab() {
     <Code
       language="graphql"
       value={printArguments(buildArguments(schema, 'Query.getUsers'), 8)}
+    />
+  )
+}
+
+export function PrintArgumentsWithDefineVariant() {
+  const schema = gql`
+    type User {
+      id: ID!
+      email: String!
+      isVerified: Boolean!
+    }
+
+    type Query {
+      getUsers(isVerified: Boolean = false, limit: Int = 100): [Users!]!
+    }
+  `
+  return (
+    <Code
+      language="graphql"
+      value={printArguments(buildArguments(schema, 'Query.getUsers'), 0, {
+        variant: 'define',
+      })}
+    />
+  )
+}
+
+export function PrintArgumentsWithAssignVariant() {
+  const schema = gql`
+    type User {
+      id: ID!
+      email: String!
+      isVerified: Boolean!
+    }
+
+    type Query {
+      getUsers(isVerified: Boolean = false, limit: Int = 100): [Users!]!
+    }
+  `
+  return (
+    <Code
+      language="graphql"
+      value={printArguments(buildArguments(schema, 'Query.getUsers'), 0, {
+        variant: 'assign',
+        assignments: {
+          limit: '$size',
+        },
+      })}
     />
   )
 }

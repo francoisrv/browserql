@@ -2,6 +2,8 @@
 
 Build a `GraphQL` executable query or mutation from a definition schema.
 
+## Build executable query
+
 ```graphql
 type User {
   id: ID!
@@ -24,7 +26,7 @@ buildQuery(schema, 'getUser')
 Operations.BuildQueryExample
 ```
 
-## Mutations
+## Build executable mutation
 
 ```graphql
 type User {
@@ -61,38 +63,21 @@ type Query {
 }
 ```
 
-Let's say we want to create a compound query like this one:
-
-```graphql
-query GetUser($userId: ID!) {
-  getUserById(id: $userId) {
-    id
-    email
-  }
-
-  getUserTags(userId: $userId) {
-    id
-    title
-  }
-
-  getUserBadges(userId: $userId) {
-    id
-    title
-  }
-}
-```
-
-In this case you would do:
+You could group them like this
 
 ```javascript
 import { buildCompoundQuery } from '@browserql/operations'
 
 buildCompoundQuery(
   schema,
+  // Define your top variables here
   { userId: 'ID!' },
-  ['getUserById', { id: 'userId' }],
+  // Then put a list of queries to include by name
   'getUserTags',
-  'getUserBadges'
+  'getUserBadges',
+    // You can assign a query field to a variable like this:
+    ('getUserById', { id: 'userId' })
+  ]
 )
 ```
 
@@ -104,19 +89,17 @@ Operations.BuildCompoundQueryExample
 
 Bothe `buildQuery` and `buildMutation` are actually built on top of the `buildOperation` function
 
-````graphql
+```graphql
+type Foo {
+  get(id: ID!): String!
+}
+```
 
 ```javascript
 import { buildOperation } from '@browserql/operations'
 
-buildOperation(
-  schema,
-  { userId: 'ID!' },
-  ['getUserById', { id: 'userId' }],
-  'getUserTags',
-  'getUserBadges'
-)
-````
+buildOperation(schema, 'Foo.get')
+```
 
 ## Accessories
 
@@ -156,4 +139,40 @@ printArguments(buildArguments(schema, 'Query.getUser'), 8)
 
 ```snapshot
 Operations.PrintArgumentsWithTab
+```
+
+You can also use variants, such as:
+
+- define
+- assign
+
+### define variant
+
+If you use this variant to denote variables with `$`
+
+```javascript
+printArguments(buildArguments(schema, 'Query.getUser'), 0, {
+  variant: 'define',
+})
+```
+
+```snapshot
+Operations.PrintArgumentsWithDefineVariant
+```
+
+### assign variant
+
+In this case, you will assign the name of the field as a variable. You can overwrite the variable name usign `assignments`
+
+```javascript
+printArguments(buildArguments(schema, 'Query.getUser'), 0, {
+  variant: 'assign',
+  assignments: {
+    id: '$userId',
+  },
+})
+```
+
+```snapshot
+Operations.PrintArgumentsWithAssignVariant
 ```
