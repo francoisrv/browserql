@@ -19,7 +19,7 @@ export default function stateql(schema: DocumentNode, cache: InMemoryCache) {
       if (!field) {
         return undefined
       }
-      const query = buildQuery(schema, getName(field))
+      const query = buildOperation(schema, path)
       const { get } = cacheql(cache, schema)
       return get(query)
     },
