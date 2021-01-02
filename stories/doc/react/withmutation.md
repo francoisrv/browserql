@@ -64,5 +64,5 @@ function Log({ log, message }) {
   )
 }
 
-withMutation(LOG)(DoSomething)
+withMutation`log`(LOG)(DoSomething)
 ```

@@ -54,7 +54,9 @@ function SayHello({ to }) {
 ```jsx
 import { withQuery } from '@browserql/react'
 
-withQuery(SAY_HELLO, { to: 'everybody' })(function SayHello({ sayHello }) {
+withQuery`sayHello`(SAY_HELLO, { to: 'everybody' })(function SayHello({
+  sayHello,
+}) {
   if (sayHello.error) return <div>{sayHello.error.message}</div>
 
   if (sayHello.loading) return <div>Loading...</div>

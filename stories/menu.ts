@@ -46,11 +46,11 @@ const menu: Menu = {
       doc: readFileSync(__dirname + '/doc/react/provider.md', 'utf-8'),
     },
     {
-      name: 'Query',
+      name: 'UseQuery',
       doc: readFileSync(__dirname + '/doc/react/query.md', 'utf-8'),
     },
     {
-      name: 'Mutation',
+      name: 'UseMutation',
       doc: readFileSync(__dirname + '/doc/react/mutation.md', 'utf-8'),
     },
     {

@@ -205,7 +205,7 @@ export function ResolversExample() {
           }
         `}
       >
-        {(isLoggedIn) => (
+        {({ isLoggedIn }) => (
           <UseMutation
             mutation={gql`
               mutation {

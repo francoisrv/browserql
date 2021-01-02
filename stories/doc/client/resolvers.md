@@ -59,40 +59,40 @@ const { client } = connect({
 })
 ```
 
+```graphql
+query IS_LOGGED_IN {
+  isLoggedIn
+}
+
+mutation LOGIN {
+  login
+}
+
+mutation LOGOUT {
+  logout
+}
+```
+
 ```javascript
-function Inner() {
+compose(
+  withMutation`login`(LOGIN),
+  withMutation`logout`(LOGOUT)
+)(function Inner({ login, logout }) {
   return (
-    <UseQuery
-      query={gql`
-        {
-          isLoggedIn
-        }
-      `}
-    >
-      {(isLoggedIn) => (
-        <UseMutation
-          mutation={gql`
-            mutation {
-              login
-              logout
-            }
-          `}
+    <UseQuery query={IS_LOGGED_IN}>
+      {({ isLoggedIn }) => (
+        <Button
+          fullWidth
+          onClick={isLoggedIn ? login.execute : logout.execute}
+          color={isLoggedIn ? 'secondary' : 'primary'}
+          variant="contained"
         >
-          {({ login, logout }) => (
-            <Button
-              fullWidth
-              onClick={isLoggedIn ? login : logout}
-              color={isLoggedIn ? 'secondary' : 'primary'}
-              variant="contained"
-            >
-              {isLoggedIn ? 'Log out' : 'Log in'}
-            </Button>
-          )}
-        </UseMutation>
+          {isLoggedIn ? 'Log out' : 'Log in'}
+        </Button>
       )}
     </UseQuery>
   )
-}
+})
 ```
 
 ```snapshot
