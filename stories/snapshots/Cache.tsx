@@ -5,6 +5,12 @@ import { BrowserqlContext, BrowserqlProvider } from '@browserql/react'
 import { buildQuery } from '@browserql/operations'
 import Code from '../components/Code'
 
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
 export function GetExample() {
   const schema = gql`
     directive @default(value: Int!) on FIELD_DEFINITION
@@ -25,6 +31,12 @@ export function GetExample() {
     </BrowserqlProvider>
   )
 }
+
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
 
 export function GetQueryExample() {
   const schema = gql`
@@ -49,6 +61,12 @@ export function GetQueryExample() {
   )
 }
 
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
 export function GetNonNullEmpty() {
   const schema = gql`
     type Query {
@@ -68,6 +86,12 @@ export function GetNonNullEmpty() {
     </BrowserqlProvider>
   )
 }
+
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
 
 export function GetNullEmpty() {
   const schema = gql`
@@ -89,6 +113,12 @@ export function GetNullEmpty() {
   )
 }
 
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
 export function GetDefault() {
   const schema = gql`
     directive @default(value: Int!) on FIELD_DEFINITION
@@ -99,6 +129,102 @@ export function GetDefault() {
   function Inner() {
     const { cache, schema } = React.useContext(BrowserqlContext)
     const cached = cacheql(cache, schema)
+    const value = cached.get(buildQuery(schema, 'getCounter'))
+    const source = `cached.get(GET_COUNTER) // ${value}`
+    return <Code language="javascript" value={source} />
+  }
+  return (
+    <BrowserqlProvider schema={schema}>
+      <Inner />
+    </BrowserqlProvider>
+  )
+}
+
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+export function SetExampleGet() {
+  const schema = gql`
+    type Query {
+      getCounter: Int
+    }
+  `
+  function Inner() {
+    const { cache, schema } = React.useContext(BrowserqlContext)
+    const cached = cacheql(cache, schema)
+    const value = cached.get(buildQuery(schema, 'getCounter'))
+    const source = `cached.get(GET_COUNTER) // ${value}`
+    return <Code language="javascript" value={source} />
+  }
+  return (
+    <BrowserqlProvider schema={schema}>
+      <Inner />
+    </BrowserqlProvider>
+  )
+}
+
+export function SetExampleSet() {
+  const schema = gql`
+    type Query {
+      getCounter: Int
+    }
+  `
+  function Inner() {
+    const { cache, schema } = React.useContext(BrowserqlContext)
+    const cached = cacheql(cache, schema)
+    const query = buildQuery(schema, 'getCounter')
+    cached.set(query, 100)
+    const value = cached.get(buildQuery(schema, 'getCounter'))
+    const source = `cached.get(GET_COUNTER) // ${value}`
+    return <Code language="javascript" value={source} />
+  }
+  return (
+    <BrowserqlProvider schema={schema}>
+      <Inner />
+    </BrowserqlProvider>
+  )
+}
+
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+export function SetExampleWithVariablesGet() {
+  const schema = gql`
+    type Query {
+      getCounter(user: ID!): Int
+    }
+  `
+  function Inner() {
+    const { cache, schema } = React.useContext(BrowserqlContext)
+    const cached = cacheql(cache, schema)
+    const value = cached.get(buildQuery(schema, 'getCounter'))
+    const source = `cached.get(GET_COUNTER) // ${value}`
+    return <Code language="javascript" value={source} />
+  }
+  return (
+    <BrowserqlProvider schema={schema}>
+      <Inner />
+    </BrowserqlProvider>
+  )
+}
+
+export function SetExampleWithVariablesSet() {
+  const schema = gql`
+    type Query {
+      getCounter(user: ID!): Int
+    }
+  `
+  function Inner() {
+    const { cache, schema } = React.useContext(BrowserqlContext)
+    const cached = cacheql(cache, schema)
+    const query = buildQuery(schema, 'getCounter')
+    cached.set(query, 100)
     const value = cached.get(buildQuery(schema, 'getCounter'))
     const source = `cached.get(GET_COUNTER) // ${value}`
     return <Code language="javascript" value={source} />

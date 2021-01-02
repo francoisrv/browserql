@@ -12,30 +12,7 @@ import {
 import { BrowserqlClient } from '@browserql/types'
 import gql from 'graphql-tag'
 import type { DocumentNode } from 'graphql'
-
-export function encapsulate(kind: ParsedType, value: any) {
-  if (kind.depth) {
-    let next: any = value
-    for (let i = 0; i < kind.depth; i++) {
-      next = [next]
-    }
-    return next
-  }
-  return value
-}
-
-export function getDefault(kind: ParsedType) {
-  switch (kind.type) {
-    case 'Int':
-      return encapsulate(kind, 0)
-    case 'Float':
-      return encapsulate(kind, 0)
-    case 'String':
-      return encapsulate(kind, '')
-    case 'Boolean':
-      return encapsulate(kind, false)
-  }
-}
+import set from './set'
 
 export default function connectCache(
   cache: BrowserqlClient['cache'],
@@ -72,24 +49,10 @@ export default function connectCache(
     }
   }
 
-  function set(queryName: string, variables: any, data: any) {
-    const source = `
-      query {
-        ${queryName}
-      }
-    `
-    const query = gql(source)
-    cache.writeQuery({
-      query,
-      variables,
-      data: {
-        [queryName]: data,
-      },
-    })
-  }
-
   return {
     get,
-    set,
+    set(queryName: string, variables: any, data?: any) {
+      return set(queryName, variables, data)(cache, schema)
+    },
   }
 }

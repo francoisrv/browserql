@@ -25,7 +25,7 @@
     "prepublishOnly": "git tag | xargs git tag -d && yarn build && yarn test"
   },
   "dependencies": {
-    "@browserql/fpql": "^1.18.0",
+    "@browserql/fpql": "^1.25.0",
     "@browserql/types": "^1.2.0"
   },
   "devDependencies": {
