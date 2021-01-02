@@ -2,16 +2,19 @@ import * as React from 'react'
 import { gql, useQuery } from '@apollo/client'
 
 import {
-  BrowserqlProvider,
-  UseQuery,
-  UseMutation,
-  withQuery,
   BrowserqlContext,
+  BrowserqlProvider,
   BrowserqlProviderProps,
+  UseMutation,
+  UseQuery,
+  withMutation,
+  withQuery,
 } from '@browserql/react'
 import { buildQuery, buildMutation } from '@browserql/operations'
 import connect from '@browserql/client'
 import { JSONResolver } from 'graphql-scalars'
+import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -209,6 +212,79 @@ export function WithQueryExample() {
       queries={{
         sayHello({ to }) {
           return `Hello ${to}`
+        },
+      }}
+    >
+      <div style={{ padding: 32 }}>
+        <Wrapped />
+      </div>
+    </BrowserqlProvider>
+  )
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+export function WithMutationExample() {
+  const schema = gql`
+    type Query {
+      _: ID
+    }
+    type Mutation {
+      multiplyByItself(number: Int!): Int!
+    }
+  `
+
+  function MultiplyByItself({ multiplyByItself }) {
+    const number =
+      (multiplyByItself.data && multiplyByItself.data.multiplyByItself) || 2
+
+    return (
+      <>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <Button
+            onClick={() => multiplyByItself.execute({ number })}
+            disabled={multiplyByItself.loading}
+            color="primary"
+            variant="contained"
+            size="large"
+          >
+            {number}
+          </Button>
+          <Typography style={{ flex: 1, padding: 16 }}>
+            Click on the number to multiply it by itself
+          </Typography>
+        </div>
+        {multiplyByItself.error && (
+          <Typography style={{ color: '#900' }}>
+            {multiplyByItself.error.message}
+          </Typography>
+        )}
+      </>
+    )
+  }
+
+  const Wrapped = withMutation`multiplyByItself`(
+    buildMutation(schema, 'multiplyByItself'),
+    {
+      to: 'everybody',
+    }
+  )(MultiplyByItself)
+
+  return (
+    <BrowserqlProvider
+      schema={schema}
+      queries={{
+        multiplyByItself({ number }) {
+          return number * number
         },
       }}
     >

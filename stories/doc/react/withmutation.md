@@ -66,3 +66,43 @@ function Log({ log, message }) {
 
 withMutation`log`(LOG)(DoSomething)
 ```
+
+## Demo
+
+The `GraphQL` schema:
+
+```graphql
+type Mutation {
+  multiplyByItself(number: Int!): Int!
+}
+```
+
+The resolver:
+
+```javascript
+function multiplyByItself({ number }) {
+  return number * number
+}
+```
+
+The `react` view:
+
+```javascript
+function MultiplyByItSelf({ multiplyByItself: mutation }) {
+  const number = (mutation.data && mutation.data.multiplyByItself) || 2
+  return (
+    <Button
+      disabled={mutation.loading}
+      onClick={() => mutation.execute({ number })}
+    >
+      {number}
+    </Button>
+  )
+}
+```
+
+The result:
+
+```snapshot
+React.WithMutationExample
+```
