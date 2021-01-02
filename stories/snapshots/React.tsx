@@ -9,6 +9,7 @@ import {
   UseQuery,
   withMutation,
   withQuery,
+  WithMutationProps,
 } from '@browserql/react'
 import { buildQuery, buildMutation } from '@browserql/operations'
 import connect from '@browserql/client'
@@ -238,7 +239,13 @@ export function WithMutationExample() {
     }
   `
 
-  function MultiplyByItself({ multiplyByItself }) {
+  function MultiplyByItself({
+    multiplyByItself,
+  }: WithMutationProps<
+    'multiplyByItself',
+    { multiplyByItself: 2 },
+    { number: number }
+  >) {
     const number =
       (multiplyByItself.data && multiplyByItself.data.multiplyByItself) || 2
 
