@@ -5,6 +5,8 @@ import {
   buildMutation,
   buildCompoundQuery,
   buildOperationString,
+  buildArguments,
+  printArguments,
 } from '@browserql/operations'
 import { print } from 'graphql'
 
@@ -102,6 +104,66 @@ export function BuildOperationString() {
     <Code
       language="graphql"
       value={buildOperationString(schema, 'User.getUser')}
+    />
+  )
+}
+
+export function BuildArguments() {
+  const schema = gql`
+    type User {
+      id: ID!
+      email: String!
+      isVerified: Boolean!
+    }
+
+    type Query {
+      getUsers(isVerified: Boolean = false, limit: Int = 100): [Users!]!
+    }
+  `
+  return (
+    <Code
+      language="json"
+      value={JSON.stringify(buildArguments(schema, 'Query.getUsers'), null, 2)}
+    />
+  )
+}
+
+export function PrintArguments() {
+  const schema = gql`
+    type User {
+      id: ID!
+      email: String!
+      isVerified: Boolean!
+    }
+
+    type Query {
+      getUsers(isVerified: Boolean = false, limit: Int = 100): [Users!]!
+    }
+  `
+  return (
+    <Code
+      language="graphql"
+      value={printArguments(buildArguments(schema, 'Query.getUsers'))}
+    />
+  )
+}
+
+export function PrintArgumentsWithTab() {
+  const schema = gql`
+    type User {
+      id: ID!
+      email: String!
+      isVerified: Boolean!
+    }
+
+    type Query {
+      getUsers(isVerified: Boolean = false, limit: Int = 100): [Users!]!
+    }
+  `
+  return (
+    <Code
+      language="graphql"
+      value={printArguments(buildArguments(schema, 'Query.getUsers'), 8)}
     />
   )
 }

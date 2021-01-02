@@ -37,7 +37,12 @@ const renderers = {
     return <TableCell>{children}</TableCell>
   },
   inlineCode: ({ children }) => (
-    <Chip color="primary" variant="outlined" label={children} />
+    <Chip
+      color="primary"
+      variant="outlined"
+      label={children}
+      component="span"
+    />
   ),
 }
 
