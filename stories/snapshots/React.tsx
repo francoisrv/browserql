@@ -239,13 +239,13 @@ export function WithMutationExample() {
     }
   `
 
-  function MultiplyByItself({
-    multiplyByItself,
-  }: WithMutationProps<
+  type MutationProps = WithMutationProps<
     'multiplyByItself',
     { multiplyByItself: number },
     { number: number }
-  >) {
+  >
+
+  function MultiplyByItself({ multiplyByItself }: MutationProps) {
     const number =
       (multiplyByItself.data && multiplyByItself.data.multiplyByItself) || 2
 
@@ -279,9 +279,10 @@ export function WithMutationExample() {
     )
   }
 
-  const Wrapped = withMutation('multiplyByItself')(
-    buildMutation(schema, 'multiplyByItself')
-  )(MultiplyByItself)
+  const Wrapped = withMutation('multiplyByItself')<
+    { multiplyByItself: number },
+    { number: number }
+  >(buildMutation(schema, 'multiplyByItself'))(MultiplyByItself)
 
   return (
     <BrowserqlProvider
