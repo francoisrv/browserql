@@ -83,7 +83,7 @@ export default function UseQuery<D = any>(props: UseQueryProps<D>) {
       props.children &&
       typeof accessor !== 'undefined'
     ) {
-      return props.children(accessor, { loading, error })
+      return props.children(data, { loading, error })
     }
 
     return null
