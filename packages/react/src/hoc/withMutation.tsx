@@ -1,5 +1,6 @@
 import type { DocumentNode } from 'graphql'
 import React, { ComponentType } from 'react'
+import { Z_UNKNOWN } from 'zlib'
 import { UseMutation } from '..'
 
 interface HOCMutation<DATA, VARIABLES> {
@@ -21,10 +22,16 @@ export type WithMutationProps<
   VARIABLES = unknown
 > = { [P in PROP_NAME]: HOCMutation<DATA, VARIABLES> }
 
-export default function withMutation<P>(name: string) {
+export default function withMutation<
+  PROPS,
+  DATA = unknown,
+  VARIABLES = unknown
+>(name: string) {
   return (mutation: DocumentNode) => (
-    Component: ComponentType<P & HOCMutationProps<typeof name>>
-  ) => (props: P) => (
+    Component: ComponentType<
+      PROPS & WithMutationProps<typeof name, DATA, VARIABLES>
+    >
+  ) => (props: PROPS) => (
     <UseMutation mutation={mutation}>
       {(mutate, { loading, error, data }) => (
         <Component

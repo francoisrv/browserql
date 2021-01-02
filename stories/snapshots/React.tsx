@@ -178,7 +178,7 @@ export function MutationExample() {
 
   return (
     <BrowserqlProvider schema={schema} mutations={mutations}>
-      <UseMutation mutation={SAY_HELLO} variables={{ to: 'everybody' }}>
+      <UseMutation mutation={SAY_HELLO}>
         {(response) => <p>{response}</p>}
       </UseMutation>
     </BrowserqlProvider>
@@ -243,7 +243,7 @@ export function WithMutationExample() {
     multiplyByItself,
   }: WithMutationProps<
     'multiplyByItself',
-    { multiplyByItself: 2 },
+    { multiplyByItself: number },
     { number: number }
   >) {
     const number =
@@ -279,11 +279,8 @@ export function WithMutationExample() {
     )
   }
 
-  const Wrapped = withMutation`multiplyByItself`(
-    buildMutation(schema, 'multiplyByItself'),
-    {
-      to: 'everybody',
-    }
+  const Wrapped = withMutation('multiplyByItself')(
+    buildMutation(schema, 'multiplyByItself')
   )(MultiplyByItself)
 
   return (
