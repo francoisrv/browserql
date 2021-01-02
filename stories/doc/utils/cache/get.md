@@ -12,6 +12,18 @@ type Query {
 Cache.GetExample
 ```
 
+## Query with variables
+
+```graphql
+type Query {
+  getCounter(userID: ID!): Int
+}
+```
+
+```snapshot
+Cache.GetExampleWithVariables
+```
+
 ## Get empty cache
 
 When there is no entry in the cache for the query, the module will do its best to return a value, following this simple flow:

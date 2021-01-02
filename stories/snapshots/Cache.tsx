@@ -38,6 +38,35 @@ export function GetExample() {
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 
+export function GetExampleWithVariables() {
+  const schema = gql`
+    directive @default(value: Int!) on FIELD_DEFINITION
+    type Query {
+      getCounter(userID: ID!): Int
+    }
+  `
+  const variables = { user: 1234 }
+  function Inner() {
+    const { cache, schema } = React.useContext(BrowserqlContext)
+    const cached = cacheql(cache, schema)
+    const query = buildQuery(schema, 'getCounter')
+    const value = cached.get(query, variables)
+    const source = `cached.get(GET_COUNTER, { user: 1234 }) // ${value}`
+    return <Code language="javascript" value={source} />
+  }
+  return (
+    <BrowserqlProvider schema={schema}>
+      <Inner />
+    </BrowserqlProvider>
+  )
+}
+
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
 export function GetQueryExample() {
   const schema = gql`
     type Query {
@@ -203,7 +232,9 @@ export function SetExampleWithVariablesGet() {
   function Inner() {
     const { cache, schema } = React.useContext(BrowserqlContext)
     const cached = cacheql(cache, schema)
-    const value = cached.get(buildQuery(schema, 'getCounter'))
+    const value = cached.get(buildQuery(schema, 'getCounter'), {
+      user: 1234,
+    })
     const source = `cached.get(GET_COUNTER) // ${value}`
     return <Code language="javascript" value={source} />
   }
@@ -224,8 +255,8 @@ export function SetExampleWithVariablesSet() {
     const { cache, schema } = React.useContext(BrowserqlContext)
     const cached = cacheql(cache, schema)
     const query = buildQuery(schema, 'getCounter')
-    cached.set(query, 100)
-    const value = cached.get(buildQuery(schema, 'getCounter'))
+    cached.set(query, { user: 1234 }, 100)
+    const value = cached.get(buildQuery(schema, 'getCounter'), { user: 1234 })
     const source = `cached.get(GET_COUNTER) // ${value}`
     return <Code language="javascript" value={source} />
   }

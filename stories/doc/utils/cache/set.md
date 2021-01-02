@@ -38,8 +38,16 @@ type Query {
 }
 ```
 
+```snapshot
+Cache.SetExampleWithVariablesGet
+```
+
 ```javascript
-cache.set(query, { user: 1234 }, 100)
+cached.set(GET_COUNTER, { user: 1234 }, 100)
+```
+
+```snapshot
+Cache.SetExampleWithVariablesSet
 ```
 
 Note that if a query requires variables and you on your part do not specify them, then it will throw an error:
