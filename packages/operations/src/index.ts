@@ -133,26 +133,7 @@ export function buildOperationString(
 
   let definitions = hasArgs ? `(\n  ${defs}\n)` : ''
   let variables = hasArgs ? `(\n  ${fvars}\n)` : ''
-  console.log(123, variables)
-  // const args = getArguments(field) as InputValueDefinitionNode[]
-  // if (Array.isArray(args) && args.length > 0) {
-  //   definitions = `(\n${args
-  //     .map((arg) => {
-  //       let string = `  $${getName(arg)}: ${getKind(arg)}`
-  //       const val = getDefaultValue(arg)
-  //       if (typeof val !== 'undefined') {
-  //         string += ` = ${JSON.stringify(val, null, 2)}`
-  //       }
-  //       return string
-  //     })
-  //     .join('\n')}\n)`
-  //   variables = `(\n${args
-  //     .map((arg) => {
-  //       let string = `    ${getName(arg)}: $${getName(arg)}`
-  //       return string
-  //     })
-  //     .join('\n')}\n  )`
-  // }
+
   return `${definitions}  {
   ${fieldName}${variables} ${selection}
 }`
