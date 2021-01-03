@@ -292,4 +292,8 @@ export const mds = {
     __dirname + '/doc/utils/fpql/getDefaultValue.md',
     'utf-8'
   ),
+  'utils/executable/query': readFileSync(
+    __dirname + '/doc/utils/executable/query.md',
+    'utf-8'
+  ),
 }

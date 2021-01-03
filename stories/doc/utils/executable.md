@@ -13,88 +13,20 @@ Build a `GraphQL` executable query or mutation from a definition schema.
 
 Tired of writing executable queries/mutations from schema queries/mutations and make sure they stay in-sync? This library generates them for you on the fly from the schema directly.
 
-## Build executable query
-
-Define your queries in your schema:
-
-```graphql
-type User {
-  id: ID!
-  email: String!
-  isVerified: Boolean!
-}
-
-type Query {
-  getUser(userID: ID!, isVerified: Boolean = false): User
-}
-```
-
-Then generate executable queries from the schema:
-
-```javascript
-import { makeExecutableQuery } from '@browserql/executable'
-
-makeExecutableQuery(schema, 'getUser')
-```
-
-Which will return in the following `GraphQL` document:
-
-```snapshot
-Operations.BuildQueryExample
-```
-
-You can return a string instead:
-
-```javascript
-import { printExecutableQuery } from '@browserql/executable'
-
-printExecutableQuery(schema, 'getUser')
-```
-
-```text
-query Query($userID: ID!, $isVerified: Boolean) {
-  getUser(userID: $userID, isVerified: $isVerified) {
-    __typename
-    id
-    email
-    isVerified
-  }
-}
-```
-
-You can rename the main query too:
-
-```javascript
-import { makeExecutableQuery } from '@browserql/executable'
-
-makeExecutableQuery(
-  schema,
-  'getUser',
-  makeExecutableQuery.main('MySuperCoolGraphQLQuery')
-)
-```
-
-```graphql
-query MySuperCoolGraphQLQuery($userID: ID!, $isVerified: Boolean) {
-  getUser(userID: $userID, isVerified: $isVerified) {
-    __typename
-    id
-    email
-    isVerified
-  }
-}
+```section-h3
+utils/executable/query
 ```
 
 ## Build executable mutation
 
 ```graphql
+type Mutation {
+  addUser(email: String!): User
+}
+
 type User {
   id: ID!
   email: String!
-}
-
-type Mutation {
-  addUser(email: String!): User
 }
 ```
 
