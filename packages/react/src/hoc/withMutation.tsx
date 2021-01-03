@@ -10,42 +10,41 @@ interface HOCMutation<DATA, VARIABLES> {
   data: DATA
 }
 
-type HOCMutationProps<
-  PROP_NAME extends string,
-  DATA = unknown,
-  VARIABLES = unknown
-> = Record<PROP_NAME, HOCMutation<DATA, VARIABLES>>
-
 export type WithMutationProps<
   PROP_NAME extends string,
   DATA = unknown,
   VARIABLES = unknown
 > = { [P in PROP_NAME]: HOCMutation<DATA, VARIABLES> }
 
-export default function withMutation<
-  PROPS,
-  DATA = unknown,
-  VARIABLES = unknown
->(name: string | TemplateStringsArray) {
-  return (mutation: DocumentNode) => (
-    Component: ComponentType<
-      PROPS & WithMutationProps<typeof name, DATA, VARIABLES>
-    >
-  ) => (props: PROPS) => (
-    <UseMutation mutation={mutation}>
-      {(mutate, { loading, error, data }) => (
-        <Component
-          {...{
-            ...props,
-            [name]: {
-              execute: mutate,
-              loading,
-              error,
-              data,
-            },
-          }}
-        />
-      )}
-    </UseMutation>
-  )
+export default function withMutation<NAME extends string>(name: NAME) {
+  return function <PROPS = unknown, DATA = unknown, VARIABLES = unknown>(
+    mutation: DocumentNode
+  ) {
+    return function (
+      Component: ComponentType<PROPS & WithMutationProps<NAME, DATA, VARIABLES>>
+    ) {
+      return function (props: PROPS) {
+        return (
+          <UseMutation mutation={mutation}>
+            {(mutate, { loading, error, data }) => {
+              const mergedProps: WithMutationProps<NAME, DATA, VARIABLES> = {
+                [name]: {
+                  execute: mutate,
+                  loading,
+                  error,
+                  data,
+                },
+              }
+              const nextProps: PROPS &
+                WithMutationProps<NAME, DATA, VARIABLES> = {
+                ...props,
+                ...mergedProps,
+              }
+              return <Component {...nextProps} />
+            }}
+          </UseMutation>
+        )
+      }
+    }
+  }
 }
