@@ -1,4 +1,4 @@
-# Operation builder
+# Executable
 
 Build a `GraphQL` executable query or mutation from a definition schema.
 
@@ -17,9 +17,9 @@ type Query {
 ```
 
 ```javascript
-import { buildQuery } from '@browserql/operations'
+import { makeExecutableQuery } from '@browserql/executable'
 
-buildQuery(schema, 'getUser')
+makeExecutableQuery(schema, 'getUser')
 ```
 
 ```snapshot
@@ -66,18 +66,22 @@ type Query {
 You could group them like this
 
 ```javascript
-import { buildCompoundQuery } from '@browserql/operations'
+import { makeExecutableQuery } from '@browserql/executable'
 
-buildCompoundQuery(
-  schema,
-  // Define your top variables here
+makeExecutableQuery(
+  gql`
+    type Query {
+      getUserById(id: ID!): User!
+      getUserTags(userId: ID!): [Tag]!
+      getUserBadges(userId: ID!): [Badge]!
+    }
+  `,
   { userId: 'ID!' },
   // Then put a list of queries to include by name
   'getUserTags',
   'getUserBadges',
-    // You can assign a query field to a variable like this:
-    ('getUserById', { id: 'userId' })
-  ]
+  // You can assign a query field to a variable like this:
+  ('getUserById', { id: 'userId' })
 )
 ```
 
@@ -109,8 +113,16 @@ For a given field, returns an object with the fields and their types.
 
 ```javascript
 import { buildArguments } from '@browserql/operations'
+import gql from 'graphql-tag'
 
-buildArguments(schema, 'Query.getUser')
+buildArguments(
+  gql`
+    type Query {
+      getUsers(isVerified: Boolean = false, limit: Int = 100): [User!]!
+    }
+  `,
+  'Query.getUsers'
+)
 ```
 
 ```snapshot

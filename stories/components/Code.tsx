@@ -8,6 +8,7 @@ import * as components from '../components'
 import Section from './Section'
 import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
+import { Chip } from '@material-ui/core'
 
 export default function Code({
   language,
@@ -84,11 +85,22 @@ export default function Code({
   }
 
   return (
-    <SyntaxHighlighter
-      showLineNumbers={false}
-      style={style}
-      language={language}
-      children={value}
-    />
+    <div style={{ position: 'relative' }}>
+      <SyntaxHighlighter
+        showLineNumbers={false}
+        style={style}
+        language={language}
+        children={value}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          top: 12,
+          right: 12,
+        }}
+      >
+        <Chip color="default" label={language} />
+      </div>
+    </div>
   )
 }

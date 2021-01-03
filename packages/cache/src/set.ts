@@ -1,4 +1,4 @@
-import { getName, getQuery } from '@browserql/fpql'
+import { getExecutableQueries, getName, getQuery } from '@browserql/fpql'
 import type { BrowserqlClient } from '@browserql/types'
 import type { DocumentNode } from 'graphql'
 
@@ -19,6 +19,9 @@ export default function set(
   let Variables = typeof data === 'undefined' ? variables : {}
   let Data = typeof data === 'undefined' ? variables : data
   const queryName = getName(query.definitions[0])
+  const queries = getExecutableQueries(query)
+  if (queries.length > 1) {
+  }
   return function (cache, schema) {
     cache.writeQuery({
       query,

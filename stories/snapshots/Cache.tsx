@@ -183,9 +183,9 @@ export function SetExampleGet() {
   `
   function Inner() {
     const { cache, schema } = React.useContext(BrowserqlContext)
-    const cached = cacheql(cache, schema)
-    const value = cached.get(buildQuery(schema, 'getCounter'))
-    const source = `cached.get(GET_COUNTER) // ${value}`
+    const cachedQueries = cacheql(cache, schema)
+    const value = cachedQueries.get(buildQuery(schema, 'getCounter'))
+    const source = `cachedQueries.get(GET_COUNTER) // ${value}`
     return <Code language="javascript" value={source} />
   }
   return (
@@ -203,11 +203,11 @@ export function SetExampleSet() {
   `
   function Inner() {
     const { cache, schema } = React.useContext(BrowserqlContext)
-    const cached = cacheql(cache, schema)
+    const cachedQueries = cacheql(cache, schema)
     const query = buildQuery(schema, 'getCounter')
-    cached.set(query, 100)
-    const value = cached.get(buildQuery(schema, 'getCounter'))
-    const source = `cached.get(GET_COUNTER) // ${value}`
+    cachedQueries.set(query, 100)
+    const value = cachedQueries.get(buildQuery(schema, 'getCounter'))
+    const source = `cachedQueries.get(GET_COUNTER) // ${value}`
     return <Code language="javascript" value={source} />
   }
   return (

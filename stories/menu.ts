@@ -106,12 +106,8 @@ const menu: Menu = {
       doc: readFileSync(__dirname + '/doc/utils/graphql-class.md', 'utf-8'),
     },
     {
-      name: 'Operations',
-      doc: readFileSync(__dirname + '/doc/utils/operations.md', 'utf-8'),
-    },
-    {
-      name: 'Resolved',
-      doc: readFileSync(__dirname + '/doc/utils/resolved.md', 'utf-8'),
+      name: 'Executable',
+      doc: readFileSync(__dirname + '/doc/utils/executable.md', 'utf-8'),
     },
     {
       name: 'Scalars',

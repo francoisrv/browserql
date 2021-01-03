@@ -5,6 +5,8 @@ import {
   BrowserqlProvider,
   UseMutation,
   UseQuery,
+  withMutation,
+  WithMutationProps,
 } from '@browserql/react'
 import { useQuery, useMutation } from '@apollo/client'
 import { Button } from '@material-ui/core'
@@ -13,6 +15,7 @@ import { print } from 'graphql'
 import cacheql from '@browserql/cache'
 import Code from '../components/Code'
 import connect from '@browserql/client'
+import { flowRight } from 'lodash'
 
 function ShowSchema() {
   const ctx = React.useContext(BrowserqlContext)
@@ -159,6 +162,24 @@ export function ResolversExample() {
     }
   `
 
+  const IS_LOGGED_IN = gql`
+    query IS_LOGGED_IN {
+      isLoggedIn
+    }
+  `
+
+  const LOGIN = gql`
+    mutation LOGIN {
+      login
+    }
+  `
+
+  const LOGOUT = gql`
+    mutation LOGOUT {
+      logout
+    }
+  `
+
   const isLoggedIn = (_variables: null, context: BrowserqlClientContext) => {
     return false // default value
   }
@@ -167,28 +188,14 @@ export function ResolversExample() {
     console.log('login')
     const { cache, schema } = context.browserqlClient
     const cached = cacheql(cache, schema)
-    cached.set(
-      gql`
-        query {
-          isLoggedIn
-        }
-      `,
-      true
-    )
+    cached.set(IS_LOGGED_IN, true)
   }
 
   const logout = (_variables: null, context: BrowserqlClientContext) => {
     console.log('logout')
     const { cache, schema } = context.browserqlClient
     const cached = cacheql(cache, schema)
-    cached.set(
-      gql`
-        query {
-          isLoggedIn
-        }
-      `,
-      false
-    )
+    cached.set(IS_LOGGED_IN, false)
   }
 
   const client = connect(defs, {
@@ -196,43 +203,32 @@ export function ResolversExample() {
     mutations: { login, logout },
   })
 
-  function Inner() {
+  const View = flowRight(
+    withMutation`login`(LOGIN),
+    withMutation`logout`(LOGOUT)
+  )(function Inner({
+    login,
+    logout,
+  }: WithMutationProps<'login'> & WithMutationProps<'logout'>) {
     return (
-      <UseQuery
-        query={gql`
-          {
-            isLoggedIn
-          }
-        `}
-      >
+      <UseQuery query={IS_LOGGED_IN}>
         {({ isLoggedIn }) => (
-          <UseMutation
-            mutation={gql`
-              mutation {
-                login
-                logout
-              }
-            `}
+          <Button
+            fullWidth
+            onClick={isLoggedIn ? login.execute : logout.execute}
+            color={isLoggedIn ? 'secondary' : 'primary'}
+            variant="contained"
           >
-            {({ login, logout }) => (
-              <Button
-                fullWidth
-                onClick={isLoggedIn ? login : logout}
-                color={isLoggedIn ? 'secondary' : 'primary'}
-                variant="contained"
-              >
-                {isLoggedIn ? 'Log out' : 'Log in'}
-              </Button>
-            )}
-          </UseMutation>
+            {isLoggedIn ? 'Log out' : 'Log in'}
+          </Button>
         )}
       </UseQuery>
     )
-  }
+  })
 
   return (
     <BrowserqlProvider client={client}>
-      <Inner />
+      <View />
     </BrowserqlProvider>
   )
 }

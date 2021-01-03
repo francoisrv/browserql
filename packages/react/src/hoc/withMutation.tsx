@@ -26,7 +26,7 @@ export default function withMutation<
   PROPS,
   DATA = unknown,
   VARIABLES = unknown
->(name: string) {
+>(name: string | TemplateStringsArray) {
   return (mutation: DocumentNode) => (
     Component: ComponentType<
       PROPS & WithMutationProps<typeof name, DATA, VARIABLES>

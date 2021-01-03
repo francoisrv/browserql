@@ -11,12 +11,14 @@ Cache.SetExampleGet
 ```
 
 ```javascript
-cached.set(GET_COUNTER, 100)
+cachedQueries.set(makeExecutableQuery('getCounter'), 100)
 ```
 
 ```snapshot
 Cache.SetExampleSet
 ```
+
+### Queries with more than a
 
 #### Set with a function
 
