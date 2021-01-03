@@ -5,7 +5,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter'
 import BrowserqlPlayground from './BrowserqlPlayground'
 import Snapshot from './Snapshot'
 import * as components from '../components'
-import Section from './Section'
+import Section, { NavSection } from './Section'
 import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
 import { Chip } from '@material-ui/core'
@@ -82,6 +82,11 @@ export default function Code({
   if (language === 'section-h3') {
     const link = value.trim()
     return <Section link={link} />
+  }
+
+  if (language === 'section') {
+    const [title, link, description] = value.trim().split(/\n/)
+    return <NavSection title={title} description={description} link={link} />
   }
 
   return (

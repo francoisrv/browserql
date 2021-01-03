@@ -296,4 +296,16 @@ export const mds = {
     __dirname + '/doc/utils/executable/query.md',
     'utf-8'
   ),
+  'utils/executable/mutation': readFileSync(
+    __dirname + '/doc/utils/executable/mutation.md',
+    'utf-8'
+  ),
+  'utils/executable/api': readFileSync(
+    __dirname + '/doc/utils/executable/api.md',
+    'utf-8'
+  ),
+  'utils/fpql/getKind': readFileSync(
+    __dirname + '/doc/utils/fpql/getKind.md',
+    'utf-8'
+  ),
 }

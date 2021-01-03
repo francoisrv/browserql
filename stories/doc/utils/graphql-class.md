@@ -1,6 +1,8 @@
 # Graphql Class
 
-Use `GraphQL` to create classes! Just enter a schema and it will return you a class
+Use `GraphQL` to create classes with validation, formatting, required and default values included!
+
+Just enter a schema and it will return you a class
 
 ```javascript
 import graphql from '@browserql/graphql-class'
@@ -8,11 +10,13 @@ import graphql from '@browserql/graphql-class'
 const Todo = graphql`
   type Todo {
     title: String!
-    done: Boolean = false
+    done: Boolean @default(value: false)
   }
 `
 
-new Todo({ title: 'Buy milk' }).toJSON()
+const todo = new Todo({ title: 'Buy milk' })
+
+todo.toJSON()
 ```
 
 ```json
@@ -21,6 +25,18 @@ new Todo({ title: 'Buy milk' }).toJSON()
   "done": false
 }
 ```
+
+## How does it work
+
+Just provide the type and it will generate a class that make sure its schema:
+
+- is valid
+- handles required fields
+- handles default values
+- handles value types and type formatting
+- includes serializing
+- can be extended
+- has safe-type getters and setters
 
 ## Example with MongoDB
 
@@ -43,14 +59,20 @@ async function save(Model, document) {
   }
 }
 
-class Post extends (graphql`
+class Post extends graphql`
+  scalar ObjectID
+  scalar Date
+
   type Post {
-    _id: ObjectId
+    _id: ObjectID
     author: ObjectID!
     createdAt: Date! @default(function: "now")
     title: String!
   }
-`) {
+`.resolve({
+  ObjectID: ObjectIDResolver,
+  Date: DateResolver,
+}) {
   static collection = 'posts'
 
   static async find(query) {

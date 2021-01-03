@@ -69,6 +69,10 @@ utils/fpql/getExecutableQueries
 ```
 
 ```section-h3
+utils/fpql/getKind
+```
+
+```section-h3
 utils/fpql/getName
 ```
 

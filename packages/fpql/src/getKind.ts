@@ -3,6 +3,7 @@ import {
   InputValueDefinitionNode,
   TypeNode,
 } from 'graphql'
+import getDefaultValue from './getDefaultValue'
 import getName from './getName'
 
 function findKind(type: TypeNode): string {
@@ -21,5 +22,9 @@ function findKind(type: TypeNode): string {
 export default function getKind(
   def: FieldDefinitionNode | InputValueDefinitionNode
 ) {
-  return findKind(def.type)
+  let kind = findKind(def.type)
+  const defaultValue = getDefaultValue(def)
+  return typeof defaultValue === 'undefined'
+    ? kind
+    : `${kind} = ${JSON.stringify(defaultValue)}`
 }

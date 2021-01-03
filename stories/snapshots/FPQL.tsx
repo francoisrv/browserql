@@ -6,6 +6,7 @@ import {
   getDirective,
   getExecutableQueries,
   getField,
+  getKind,
   getName,
   getQuery,
   getScalar,
@@ -229,6 +230,35 @@ export function GetDefaultValue() {
         fp(schema)(getQuery('get'), getArgument('flag'), getDefaultValue),
         null,
         2
+      )}
+    />
+  )
+}
+
+export function GetFieldKind() {
+  const schema = gql`
+    type Query {
+      getUser(id: ID!, includeSettings: Boolean = false): User
+    }
+  `
+  return (
+    <Code language="text" value={fp(schema)(getQuery('getUser'), getKind)} />
+  )
+}
+
+export function GetArgumentKind() {
+  const schema = gql`
+    type Query {
+      getUser(id: ID!, includeSettings: Boolean = false): User
+    }
+  `
+  return (
+    <Code
+      language="text"
+      value={fp(schema)(
+        getQuery('getUser'),
+        getArgument('includeSettings'),
+        getKind
       )}
     />
   )
