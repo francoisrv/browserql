@@ -27,7 +27,6 @@
   "dependencies": {
     "@browserql/fpql": "^1.13.0",
     "@browserql/input": "^1.0.0",
-    "@browserql/resolved": "^1.8.0",
     "@browserql/types": "^1.1.0",
     "typescript": "^4.0.3"
   },
