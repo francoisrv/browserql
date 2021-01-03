@@ -15,6 +15,7 @@ import {
   getTypes,
   getValue,
   merge,
+  parseKind,
 } from '@browserql/fpql'
 import { print } from 'graphql'
 import type { ObjectTypeDefinitionNode } from 'graphql'
@@ -260,6 +261,36 @@ export function GetArgumentKind() {
         getArgument('includeSettings'),
         getKind
       )}
+    />
+  )
+}
+
+export function ParseKind() {
+  return (
+    <Code language="json" value={JSON.stringify(parseKind('ID'), null, 2)} />
+  )
+}
+
+export function ParseKindRequired() {
+  return (
+    <Code language="json" value={JSON.stringify(parseKind('ID!'), null, 2)} />
+  )
+}
+
+export function ParseKindList() {
+  return (
+    <Code
+      language="json"
+      value={JSON.stringify(parseKind('[ID!]!'), null, 2)}
+    />
+  )
+}
+
+export function ParseKindDefault() {
+  return (
+    <Code
+      language="json"
+      value={JSON.stringify(parseKind('Int = 0'), null, 2)}
     />
   )
 }

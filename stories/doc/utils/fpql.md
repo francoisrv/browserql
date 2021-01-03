@@ -99,3 +99,7 @@ utils/fpql/group
 ```section-h3
 utils/fpql/merge
 ```
+
+```section-h3
+utils/fpql/parseKind
+```

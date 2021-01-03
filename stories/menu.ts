@@ -308,4 +308,8 @@ export const mds = {
     __dirname + '/doc/utils/fpql/getKind.md',
     'utf-8'
   ),
+  'utils/fpql/parseKind': readFileSync(
+    __dirname + '/doc/utils/fpql/parseKind.md',
+    'utf-8'
+  ),
 }
