@@ -341,7 +341,7 @@ export function MakeExecutableQueryVariablesMultipleQueries() {
   return (
     <Code
       language="graphql"
-      value={printExecutable(schema, 'Query.sayHello', 'Query.divide')}
+      value={printExecutableQuery(schema, 'sayHello', 'divide')}
     />
   )
 }
@@ -361,7 +361,53 @@ export function MakeExecutableQueryNotFound() {
   `
   let error = ''
   try {
-    printExecutable(schema, 'Query.bar')
+    printExecutableQuery(schema, 'bar')
+  } catch (e) {
+    error = e.message
+  }
+  return <Code language="text" value={error} />
+}
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+export function MakeExecutableQueryDoNotMatch() {
+  const schema = gql`
+    type Query {
+      ceil(number: Float!): Int!
+      square(number: Int!): Float!
+    }
+  `
+  let error = ''
+  try {
+    printExecutableQuery(schema, 'ceil', 'square')
+  } catch (e) {
+    error = e.message
+  }
+  return <Code language="text" value={error} />
+}
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+export function MakeExecutableQueryDoNotMatch2() {
+  const schema = gql`
+    type Query {
+      ceil(number: Float!): Int!
+      upper(text: String!): String!
+    }
+  `
+  let error = ''
+  try {
+    console.log(123, printExecutableQuery(schema, 'ceil', 'upper'))
   } catch (e) {
     error = e.message
   }

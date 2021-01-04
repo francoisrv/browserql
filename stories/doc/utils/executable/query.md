@@ -82,8 +82,6 @@ Executable.MakeExecutableQueryVariables
 
 ### Variables with multiple queries
 
-When creating a query with multiple queries in it, it will throw an error if the queries arguments do not match:
-
 ```graphql
 type Query {
   sayHello(to: String!, upperCase: Boolean = false): String
@@ -99,62 +97,21 @@ makeExecutableSchema(schema, 'sayHello', 'divide')
 Executable.MakeExecutableQueryVariablesMultipleQueries
 ```
 
-```text
-Error: query divide has no arguments in common with query sayHello
-```
-
-Same if two arguments have the same name but not the same kind:
+When creating a query with multiple queries in it, it will throw an error if two arguments have the same name but not the same kind:
 
 ```graphql
 type Query {
   ceil(number: Float!): Int!
-  rootSquare(number: Int!): Float!
+  square(number: Int!): Float!
 }
 ```
 
 ```javascript
-makeExecutableSchema(schema, 'ceil', 'rootSquare')
+makeExecutableSchema(schema, 'ceil', 'square')
 ```
 
-```text
-Error: query rootSquare has no arguments in common with query ceil
-```
-
-If it finds variables that are not present in other queries and are optional, then they will be included
-
-```graphql
-type Query {
-  rootSquare(number: Int!): Int!
-  increment(number: Int!, step: Int = 1): Int!
-}
-```
-
-```javascript
-makeExecutableSchema(schema, 'ceil', 'rootSquare')
-```
-
-```graphql
-query Query($number: Int!, $step: Int! = 1) {
-  rootSquare(number: $number)
-  increment(number: $number, step: $step)
-}
-```
-
-Also, you can set
-
-```javascript
-makeExecutableSchema(schema, 'divide', {
-  sum: {
-    to: '$by',
-  },
-})
-```
-
-```graphql
-query Query($number: Int!, $by: Int!) {
-  divide(number: $number, by: $by): Float!
-  sum(number: $number, to: $by): Float
-}
+```snapshot
+Executable.MakeExecutableQueryDoNotMatch
 ```
 
 ## Signature

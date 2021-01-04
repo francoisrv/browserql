@@ -1,17 +1,7 @@
 import { DocumentNode } from 'graphql'
-
-type ExecutableArg =
-  | DocumentNode
-  | string
-  | Record<string, string>
-  | [string]
-  | [string, Record<string, string>]
+import gql from 'graphql-tag'
+import printExecutable, { ExecutableArg } from './printExecutable'
 
 export default function makeExecutable(...args: ExecutableArg[]): DocumentNode {
-  // const [typeName, fieldName] = path.split(/\./)
-  // return gql`
-  //   ${typeName.toLowerCase}
-  //   ${fieldName}
-  //   ${printOperation(schema, path)}
-  // `
+  return gql(printExecutable(...args))
 }

@@ -8,25 +8,23 @@ import {
   getType,
   merge,
 } from '@browserql/fpql'
-import { ArgumentNode, DocumentNode, FieldDefinitionNode } from 'graphql'
-import buildArguments from './buildArguments'
+import { DocumentNode, FieldDefinitionNode } from 'graphql'
 import printArguments from './printArguments'
 import printSelections from './printSelections'
 
-type ExecutableArg = DocumentNode | string
+export type ExecutableArg = DocumentNode | string
 
 /**
  * Print agnostic operation
  * @param schema GraphQL definitions
  * @param path The path to the field, using dot notation, ie `Type.field`
  */
-export default function printExecutable(
-  ...params: ExecutableArg[]
-): string | undefined {
+export default function printExecutable(...params: ExecutableArg[]): string {
   const schemas: DocumentNode[] = []
   const operations: {
     type: string
     field: string
+    node: FieldDefinitionNode
     variables: Record<string, string>
   }[] = []
 
@@ -53,6 +51,7 @@ export default function printExecutable(
         operations.push({
           type: typeName,
           field: fieldName,
+          node: query,
           variables: [...args].reduce(
             (vars, arg) => ({
               ...vars,
@@ -70,6 +69,7 @@ export default function printExecutable(
         operations.push({
           type: typeName,
           field: fieldName,
+          node: mutation,
           variables: [...args].reduce(
             (vars, arg) => ({
               ...vars,
@@ -83,7 +83,7 @@ export default function printExecutable(
         if (!type) {
           throw new Error(`No such type: ${typeName}`)
         }
-        const field = getField(fieldName)(type)
+        const field = getField(fieldName)(type) as FieldDefinitionNode
         if (!field) {
           throw new Error(`No such field: ${typeName}.${fieldName}`)
         }
@@ -91,6 +91,7 @@ export default function printExecutable(
         operations.push({
           type: typeName,
           field: fieldName,
+          node: field,
           variables: [...args].reduce(
             (vars, arg) => ({
               ...vars,
@@ -105,43 +106,32 @@ export default function printExecutable(
 
   const variables: Record<string, string> = {}
 
-  operations.forEach((operation) => {})
+  operations.forEach((operation) => {
+    for (const variable in operation.variables) {
+      if (variable in variables) {
+        if (variables[variable] !== operation.variables[variable]) {
+          throw new Error(
+            `Field ${operation.type}.${operation.field}'s kind is not matching ${variables[variable]}`
+          )
+        }
+      } else {
+        variables[variable] = operation.variables[variable]
+      }
+    }
+  })
 
-  return 'hello'
-  //   const [typeName, fieldName] = path.split(/\./)
-  //   let field: FieldDefinitionNode
-
-  //   if (typeName === 'Query') {
-  //     field = getQuery(fieldName)(schema) as FieldDefinitionNode
-  //   } else if (typeName === 'Mutation') {
-  //     field = getMutation(fieldName)(schema) as FieldDefinitionNode
-  //   } else {
-  //     const type = getType(typeName)(schema)
-  //     if (!type) {
-  //       console.warn(`Type not found in schema: ${typeName}`)
-  //       return undefined
-  //     }
-  //     field = getField(fieldName)(type) as FieldDefinitionNode
-  //   }
-
-  //   if (!field) {
-  //     console.warn(`Field not found in schema: ${path}`)
-  //     return undefined
-  //   }
-
-  //   const selection = printSelections(field, schema)
-
-  //   const args = buildArguments(schema, path)
-
-  //   const hasArgs = Object.keys(args).length > 0
-
-  //   const defs = printArguments(args, 4, { variant: 'define' })
-  //   const fvars = printArguments(args, 6, { variant: 'assign' })
-
-  //   const definitions = hasArgs ? `(\n  ${defs}\n)` : ''
-  //   const variables = hasArgs ? `(\n  ${fvars}\n)` : ''
-
-  //   return `${definitions}  {
-  //   ${fieldName}${variables} ${selection}
-  // }`
+  return `(\n${printArguments(variables, 2, { variant: 'define' })}\n) {
+${operations
+  .map((operation) => {
+    let string = `  ${operation.field}`
+    if (Object.keys(operation.variables).length) {
+      string += `(\n${printArguments(operation.variables, 4, {
+        variant: 'assign',
+      })}\n  )`
+    }
+    string += printSelections(operation.node, schema)
+    return string
+  })
+  .join('\n\n')}
+}`
 }
