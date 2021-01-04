@@ -31,13 +31,6 @@ export enum QueryOperator {
   isLesserThan = 'isLesserThan',
   isLesserThanOrEqualTo = 'isLesserThanOrEqualTo',
 }
-
-export interface Query {
-  field: string
-  value: any
-  operator: QueryOperator
-}
-
 export interface QueryFilters {
   page?: number
   size?: number
@@ -49,4 +42,10 @@ export interface QueryFilters {
 export interface Transformer {
   field: string
   value?: any
+}
+
+export interface QueryWhere {
+  field: string
+  operator: QueryOperator
+  value: any
 }

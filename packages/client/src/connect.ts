@@ -16,7 +16,6 @@ export default function connect(
   ...args: Array<Schemaql | SchemaqlFactory | DocumentNode>
 ): BrowserqlClient {
   const cache = makeCache()
-
   const schemas: DocumentNode[] = []
 
   const rootValue: any = {}
@@ -67,10 +66,10 @@ export default function connect(
       schemas.push(arg)
     } else if (typeof arg == 'object') {
       applyArg(arg)
-    } else {
+    } else if (typeof arg === 'function') {
       applyArg(
         arg({
-          schema: merge(...schemas),
+          schema: schemas.length ? merge(...schemas) : undefined,
           queries,
           mutations,
           scalars,

@@ -5,10 +5,13 @@ import { print, ASTNode, DocumentNode } from 'graphql'
 import MockFirebase from 'mock-cloud-firestore'
 import connect from '@browserql/client'
 import { connect as connectFirestoreql } from '@browserql/firestore'
+import { JSONResolver } from 'graphql-scalars'
 
 import Code from '../components/Code'
 import { firestore } from '../utils'
 import { getQuery, merge } from '@browserql/fpql'
+import { BrowserqlProvider, UseQuery } from '@browserql/react'
+import Typography from '@material-ui/core/Typography'
 
 const fixtureData = {
   __collection__: {
@@ -177,13 +180,57 @@ export function Example1() {
 }
 
 export function ApiGet() {
-  const { schema } = build(
-    firestore,
-    gql`
-      type Todo @firestore {
-        name: String!
-      }
-    `
+  const schema = gql`
+    type Todo @firestore {
+      name: String!
+    }
+  `
+
+  const client = connect(
+    schema,
+    connectFirestoreql(firebase.firestore(), schema),
+    {
+      schema: gql('scalar JSON'),
+    },
+    {
+      scalars: {
+        JSON: JSONResolver,
+      },
+    }
   )
-  return <Code language="graphql" value={print(get(schema, 'Todo').query)} />
+  console.log(client.schema.loc?.source.body)
+
+  function View() {
+    return (
+      <UseQuery
+        query={get(client.schema, 'Todo')}
+        renderError={(error) => {
+          return <div>{error.message}</div>
+        }}
+      >
+        {(todos) => (
+          <Code language="json" value={JSON.stringify(todos, null, 2)} />
+        )}
+      </UseQuery>
+    )
+  }
+
+  return (
+    <div
+      style={{
+        padding: 16,
+      }}
+    >
+      <Typography variant="h5">Query</Typography>
+      <Code language="graphql" value={print(get(client.schema, 'Todo'))} />
+
+      <Typography variant="h5">Variables</Typography>
+      <Code language="json" value={JSON.stringify({}, null, 2)} />
+
+      <Typography variant="h5">Results</Typography>
+      <BrowserqlProvider client={client}>
+        <View />
+      </BrowserqlProvider>
+    </div>
+  )
 }

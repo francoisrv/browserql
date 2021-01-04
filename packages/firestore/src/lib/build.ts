@@ -4,6 +4,7 @@ import { merge } from '@browserql/fpql'
 
 import BASE_SCHEMA from '../schema'
 import { makeSchema } from '../utils/graphql'
+import { makeResolvers } from '../utils/resolvers'
 
 /**
  * Build a new schema along with its resolvers
@@ -16,5 +17,6 @@ export default function build(
 ): { schema: DocumentNode } {
   return {
     schema: merge(BASE_SCHEMA, ...makeSchema(schema)),
+    ...makeResolvers(db, schema),
   }
 }

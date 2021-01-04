@@ -52,3 +52,22 @@ type State @state {
 await client.query(getState('State.isLoggedIn'))
 await client.mutate(toggleState('State.isLoggedIn'))
 ```
+
+### Use it with React
+
+```javascript
+function SayHello({ to }) {
+  return (
+    <UseQuery
+      query={graphql`
+        query SayHello($to: String!) {
+          sayHello(to: $to)
+        }
+      `}
+      variables={{ to }}
+    >
+      {({ sayHello }) => <p>{sayHello}</p>}
+    </UseQuery>
+  )
+}
+```
