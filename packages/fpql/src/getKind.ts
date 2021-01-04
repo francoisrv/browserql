@@ -23,7 +23,7 @@ export default function getKind(
   def: FieldDefinitionNode | InputValueDefinitionNode
 ) {
   let kind = findKind(def.type)
-  const defaultValue = getDefaultValue(def)
+  const defaultValue = getDefaultValue(def as InputValueDefinitionNode)
   return typeof defaultValue === 'undefined'
     ? kind
     : `${kind} = ${JSON.stringify(defaultValue)}`

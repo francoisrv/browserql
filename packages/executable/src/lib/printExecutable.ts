@@ -8,7 +8,11 @@ import {
   getType,
   merge,
 } from '@browserql/fpql'
-import { DocumentNode, FieldDefinitionNode } from 'graphql'
+import {
+  DocumentNode,
+  FieldDefinitionNode,
+  InputValueDefinitionNode,
+} from 'graphql'
 import printArguments from './printArguments'
 import printSelections from './printSelections'
 
@@ -55,7 +59,7 @@ export default function printExecutable(...params: ExecutableArg[]): string {
           variables: [...args].reduce(
             (vars, arg) => ({
               ...vars,
-              [getName(arg)]: getKind(arg),
+              [getName(arg)]: getKind(arg as InputValueDefinitionNode),
             }),
             {} as Record<string, string>
           ),
@@ -73,7 +77,7 @@ export default function printExecutable(...params: ExecutableArg[]): string {
           variables: [...args].reduce(
             (vars, arg) => ({
               ...vars,
-              [getName(arg)]: getKind(arg),
+              [getName(arg)]: getKind(arg as InputValueDefinitionNode),
             }),
             {} as Record<string, string>
           ),
@@ -95,7 +99,7 @@ export default function printExecutable(...params: ExecutableArg[]): string {
           variables: [...args].reduce(
             (vars, arg) => ({
               ...vars,
-              [getName(arg)]: getKind(arg),
+              [getName(arg)]: getKind(arg as InputValueDefinitionNode),
             }),
             {} as Record<string, string>
           ),
