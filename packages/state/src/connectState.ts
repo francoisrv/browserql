@@ -1,116 +1,49 @@
-import type {
-  Schemaql,
-  SchemaqlFactory,
-  BrowserqlContext,
-} from '@browserql/types'
+import type { SchemaqlFactory, BrowserqlClientContext } from '@browserql/types'
 import gql from 'graphql-tag'
 import type { DocumentNode } from 'graphql'
-import {
-  getDirective,
-  getKind,
-  getName,
-  getType,
-  getTypes,
-  merge,
-  parseKind,
-  printParsedKind,
-} from '@browserql/fpql'
-import { transformTypeToInput } from '@browserql/input'
+import { getName, getQueries, merge } from '@browserql/fpql'
+import { JSONResolver } from 'graphql-scalars'
+import cacheql from '@browserql/cache'
 
-import { get, increment, set } from './lib'
+import { makeExecutableQuery } from '@browserql/executable'
 
 export interface ConnectStateOptions {
   schema?: DocumentNode
 }
 
-export default function connectState(
-  options: ConnectStateOptions = {}
-): SchemaqlFactory {
-  return (browserqlClient) => {
-    const queries: Schemaql['queries'] = {}
-    const mutations: Schemaql['mutations'] = {}
-    const ourSchema: DocumentNode[] = [
+export default function connectState(): SchemaqlFactory {
+  return ({ schema }) => ({
+    schema: merge(
       gql`
-        directive @state on OBJECT
+        scalar JSON
+        directive @default(value: JSON) on FIELD_DEFINITION
+
+        extend type Mutation {
+          setState(query: StateQuery!, variables: JSON, to: JSON!): Boolean!
+        }
       `,
-    ]
-    const inputs: DocumentNode[] = []
-
-    const theirSchema = merge(browserqlClient.schema, options.schema)
-    const types = getTypes(theirSchema)
-
-    const typesWithState = types.filter(getDirective('state'))
-    typesWithState.forEach((type) => {
-      const typeName = getName(type)
-      const { fields = [] } = type
-
-      fields.forEach((field) => {
-        const fieldName = getName(field)
-        const kind = getKind(field)
-        const parsedKind = parseKind(kind)
-        const kindType = getType(parsedKind.type)(theirSchema)
-
-        if (kindType) {
-          inputs.push(transformTypeToInput(kindType, theirSchema))
+      gql`
+        enum StateQuery {
+          ${getQueries(schema as DocumentNode)
+            .map(getName)
+            .join('\n  ')}
         }
-
-        const names = {
-          get: `state_${typeName}_${fieldName}_get`,
-          set: `state_${typeName}_${fieldName}_set`,
-          increment: `state_${typeName}_${fieldName}_increment`,
-        }
-
-        ourSchema.push(gql`
-          extend type Query {
-            """
-            Get state of ${typeName}.${fieldName}
-            """
-            ${names.get}: ${kind}
-          }
-
-          extend type Mutation {
-            """
-            Set state of ${typeName}.${fieldName}
-            """
-            ${names.set}(next: ${
-          kindType
-            ? printParsedKind({
-                ...parsedKind,
-                type: `${parsedKind.type}Input`,
-              })
-            : kind
-        }): Boolean !
-          }
-        `)
-
-        if (parsedKind.type === 'Int') {
-          ourSchema.push(gql`
-          extend type Mutation {
-            ${names.increment}(step: Int): Boolean !
-          }
-        `)
-        }
-
-        queries[names.get] = (_variables: any, context: BrowserqlContext) =>
-          get(context.browserqlClient, typeName, field)
-
-        mutations[names.set] = (
-          data: { next: any },
-          context: BrowserqlContext
-        ) => set(context.browserqlClient, typeName, fieldName, data.next)
-
-        if (parsedKind.type === 'Int') {
-          mutations[names.increment] = (
-            data: { step?: number },
-            context: BrowserqlContext
-          ) => increment(context.browserqlClient, typeName, field, data.step)
-        }
-      })
-    })
-    return {
-      schema: merge(...ourSchema, ...inputs),
-      queries,
-      mutations,
-    }
-  }
+      `
+    ),
+    mutations: {
+      setState(
+        { query: queryName, to }: { query: string; variables?: any; to: any },
+        ctx: BrowserqlClientContext
+      ) {
+        const query = makeExecutableQuery(schema as DocumentNode, queryName)
+        const { cache } = ctx.browserqlClient
+        const cachedQueries = cacheql(cache, schema as DocumentNode)
+        cachedQueries.set(query, to)
+        return true
+      },
+    },
+    scalars: {
+      JSON: JSONResolver,
+    },
+  })
 }

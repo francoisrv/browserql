@@ -15,6 +15,10 @@ import {
 import gql from 'graphql-tag'
 import 'graphiql/graphiql.min.css'
 import React, { useState } from 'react'
+import {
+  getExecutableOperation,
+  getExecutableOperations,
+} from '@browserql/fpql'
 
 interface Props {
   graphiqlProps?: Partial<GraphiQLProps>
@@ -30,11 +34,14 @@ export default function GraphiQL(props: Props) {
 
     const schema = buildSchema(print(ctx.schema))
 
-    const { data } = await graphql({
+    const response = await graphql({
       source,
       schema,
     })
-    console.log(0, buildSchema(print(ctx.schema)))
+    if (response.errors) {
+      throw new Error(response.errors.join('\n'))
+    }
+    const { data } = response
     if (!data) {
       throw new Error('Could not read introspection query')
     }
@@ -42,24 +49,43 @@ export default function GraphiQL(props: Props) {
   }
 
   async function graphQLFetcher(graphQLParams: FetcherParams) {
+    console.log({ graphQLParams })
     if ('query' in graphQLParams) {
-      const { query } = graphQLParams
-      if (/^query/.test(query)) {
+      const { query, operationName, variables } = graphQLParams
+      const node = gql(query)
+      const operations = getExecutableOperations(node)
+      if (operations.length > 2 && !operationName) {
+        throw new Error(
+          `${operations.length} operations passed but no operation name to specify which one to execute`
+        )
+      }
+      const operation =
+        operations.length === 1
+          ? operations[0]
+          : getExecutableOperation(operationName)(node)
+      if (!operation) {
+        throw new Error('No suitable operation found')
+      }
+      const source = print(operation)
+      const op = gql(source)
+      if (operation.operation === 'query') {
         return await ctx.apollo.query({
-          query: gql(query),
+          query: op,
+          variables,
         })
-      } else if (/^mutation/.test(query)) {
+      } else if (operation.operation === 'mutation') {
         return await ctx.apollo.mutate({
-          mutation: gql(query),
+          mutation: op,
+          variables,
         })
       }
     }
+    throw new Error('Could no execute operation')
   }
 
   if (!introspection) {
     setTimeout(async () => {
       const x = await makeSchema()
-      console.log({ x })
       // @ts-ignore
       setIntrospection(x)
     })

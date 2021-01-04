@@ -13,9 +13,33 @@ query {
 ```
 
 ```javascript
-getExecutableQueries(schema).map(getName)
+getExecutableQueries(schema)
 ```
 
 ```snapshot
 FPQL.WithQueryExample
+```
+
+## Support multiple operations
+
+```graphql
+query Query1 {
+  query1
+}
+
+mutation Mutation1 {
+  mutation1
+}
+
+query Query2 {
+  query2
+}
+```
+
+```javascript
+getExecutableQueries(schema)
+```
+
+```snapshot
+FPQL.WithMultipleQueriesExample
 ```

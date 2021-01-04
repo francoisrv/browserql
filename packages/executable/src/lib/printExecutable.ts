@@ -124,7 +124,11 @@ export default function printExecutable(...params: ExecutableArg[]): string {
     }
   })
 
-  return `(\n${printArguments(variables, 2, { variant: 'define' })}\n) {
+  const entry = Object.keys(variables).length
+    ? `(\n${printArguments(variables, 2, { variant: 'define' })}\n)`
+    : ''
+
+  return `${entry} {
 ${operations
   .map((operation) => {
     let string = `  ${operation.field}`

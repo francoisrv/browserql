@@ -90,7 +90,7 @@ export default function Code({
   }
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative' }} className="browserqldocs-code">
       <SyntaxHighlighter
         showLineNumbers={false}
         style={style}

@@ -11,5 +11,6 @@ export default function makeExecutableQuery(
   schema: DocumentNode,
   queryName: string
 ): DocumentNode {
-  return gql(printExecutableQuery(schema, queryName))
+  const Q = printExecutableQuery(schema, queryName)
+  return gql(Q)
 }

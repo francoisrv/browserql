@@ -9,19 +9,44 @@
 }
 ```
 
+```snapshot
+State.Example
+```
+
 ```graphql
-type State @state {
-  counter: Int! @default(value: 100)
+type Query {
+  getCounter: Int
 }
 ```
 
-```javascript
-const state = stateql(client, cache, schema)
-await client.query(state.get('State.counter'))
+```graphql
+query {
+  getCounter
+}
 ```
 
-```snapshot
-State.Example
+```json
+{
+  "getCounter": null
+}
+```
+
+```graphql
+mutation {
+  _set(query: getCounter, to: 100)
+}
+```
+
+```graphql
+query {
+  getCounter
+}
+```
+
+```json
+{
+  "getCounter": 100
+}
 ```
 
 ## Toggle

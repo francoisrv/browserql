@@ -65,6 +65,14 @@ utils/fpql/getDirective
 ```
 
 ```section-h3
+utils/fpql/getExecutableOperation
+```
+
+```section-h3
+utils/fpql/getExecutableOperations
+```
+
+```section-h3
 utils/fpql/getExecutableQueries
 ```
 

@@ -32,7 +32,6 @@ export function Example() {
         style={{
           position: 'relative',
           height: 700,
-          lineHeight: '5px',
         }}
       >
         <GraphiQL

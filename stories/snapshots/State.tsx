@@ -1,14 +1,46 @@
 import * as React from 'react'
-import { stateql } from '@browserql/state'
+import { stateql, connectState } from '@browserql/state'
 import gql from 'graphql-tag'
+import { BrowserqlContext, BrowserqlProvider } from '@browserql/react'
+import GraphiQL from '@browserql/graphiql'
 
 export function Example() {
   const schema = gql`
-    type State @state {
-      counter: Int! @default(value: 100)
+    type Query {
+      getCounter: Int
     }
   `
-  const { get } = stateql(schema)
-  console.log(get('State.counter'))
-  return <div>Hello</div>
+  function App() {
+    return (
+      <div style={{ height: 450 }}>
+        <GraphiQL
+          graphiqlProps={{
+            query: `query GetCounter {
+  getCounter
+}
+
+mutation SetCounter($query: StateQuery! $variables: JSON $to: JSON!) {
+  setState(
+    query: $query
+    to: $to
+    variables: $variables
+  )
+}`,
+            response: JSON.stringify(
+              {
+                getCounter: 0,
+              },
+              null,
+              2
+            ),
+          }}
+        />
+      </div>
+    )
+  }
+  return (
+    <BrowserqlProvider schema={schema} extensions={[connectState({ schema })]}>
+      <App />
+    </BrowserqlProvider>
+  )
 }

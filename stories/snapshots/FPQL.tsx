@@ -5,6 +5,8 @@ import {
   getDefaultValue,
   getDirective,
   getExecutableQueries,
+  getExecutableOperation,
+  getExecutableOperations,
   getField,
   getKind,
   getName,
@@ -167,7 +169,69 @@ export function WithQueryExample() {
   return (
     <Code
       language="json"
-      value={JSON.stringify(getExecutableQueries(schema).map(getName), null, 2)}
+      value={JSON.stringify(getExecutableQueries(schema), null, 2)}
+    />
+  )
+}
+
+export function WithMultipleQueriesExample() {
+  const schema = gql`
+    query Query1 {
+      query1
+    }
+
+    mutation Mutation1 {
+      mutation1
+    }
+
+    query Query2 {
+      query2
+    }
+  `
+  return (
+    <Code
+      language="json"
+      value={JSON.stringify(getExecutableQueries(schema), null, 2)}
+    />
+  )
+}
+
+export function GetExecutableOperations() {
+  const schema = gql`
+    query {
+      query1
+    }
+
+    mutation Mutation1 {
+      mutation1
+    }
+
+    query Query2 {
+      query2
+    }
+  `
+  return (
+    <Code
+      language="json"
+      value={JSON.stringify(getExecutableOperations(schema), null, 2)}
+    />
+  )
+}
+
+export function GetExecutableOperation() {
+  const schema = gql`
+    query Query1 {
+      query1
+    }
+
+    query Query2 {
+      query2
+    }
+  `
+  return (
+    <Code
+      language="json"
+      value={JSON.stringify(getExecutableOperation('Query2')(schema), null, 2)}
     />
   )
 }

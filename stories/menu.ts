@@ -312,4 +312,12 @@ export const mds = {
     __dirname + '/doc/utils/fpql/parseKind.md',
     'utf-8'
   ),
+  'utils/fpql/getExecutableOperations': readFileSync(
+    __dirname + '/doc/utils/fpql/getExecutableOperations.md',
+    'utf-8'
+  ),
+  'utils/fpql/getExecutableOperation': readFileSync(
+    __dirname + '/doc/utils/fpql/getExecutableOperation.md',
+    'utf-8'
+  ),
 }
