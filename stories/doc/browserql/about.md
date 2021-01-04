@@ -43,14 +43,17 @@ await client.mutate(add(schema, 'Todo', { name: 'buy milk' }))
 ### Use it a state manager
 
 ```graphql
-type State @state {
-  isLoggedIn: Boolean! @default(value: false)
+type Query {
+  isLoggedIn: Boolean
+  getCounter: Int
 }
 ```
 
-```javascript
-await client.query(getState('State.isLoggedIn'))
-await client.mutate(toggleState('State.isLoggedIn'))
+```grapqhl
+mutation {
+  toggleState(query: isLoggedIn)
+  incrementState(query: getCounter step: 25)
+}
 ```
 
 ### Use it with React
