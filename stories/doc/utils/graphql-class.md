@@ -5,7 +5,7 @@ Use `GraphQL` to create classes with validation, formatting, required and defaul
 Just enter a schema and it will return you a class
 
 ```javascript
-import graphql from '@browserql/graphql-class'
+import graphql from '@browserql/graphql-schema-class'
 
 const Todo = graphql`
   type Todo {
@@ -19,11 +19,8 @@ const todo = new Todo({ title: 'Buy milk' })
 todo.toJSON()
 ```
 
-```json
-{
-  "title": "Buy milk",
-  "done": false
-}
+```snapshot
+GraphqlSchemaClass.Example
 ```
 
 ## How does it work
@@ -41,66 +38,57 @@ Just provide the type and it will generate a class that make sure its schema:
 ## Example with MongoDB
 
 ```javascript
-async function find(Model, query) {
-  const documents = await db.collection(Model.collection).find(query)
-  return documents.map((document) => new Model(document))
-}
+// First we create a wrapper class that will extend our schema class with Mongodb
+function graphql(schema) {
+  const Schema = makeGraphqlSchemaClass(`
+  scalar ObjectID
+  scalar Date
+  ${schema}
+  `)
+  return collectionName => abstract class MongodbClass extends Schema {
+    static __resolvers = {
+      ObjectID: ObjectIDResolver,
+      Date: DateResolver,
+    }
 
-async function save(Model, document) {
-  const _id = document.get('_id')
-  const collection = db.collection(Model.collection)
-  const doc = document.data()
+    static collection = collectionName
 
-  if (_id) {
-    await collection.updateOne({ _id }, doc)
-  } else {
-    const { insertedId } = await collection.insertOne(doc)
-    document.set('_id', insertedId)
+    static async function find(query) {
+      const documents = await db.collection(MongodbClass.collection).find(query)
+      return documents.map((document) => new Model(document))
+    }
+
+    async function save(document) {
+      const _id = document.get('_id')
+      const collection = db.collection(MongodbClass.collection)
+      const doc = document.toObject()
+
+      if (_id) {
+        await collection.updateOne({ _id }, doc)
+      } else {
+        const { insertedId } = await collection.insertOne(doc)
+        document.set('_id', insertedId)
+      }
+    }
   }
 }
 
-class Post extends graphql`
-  scalar ObjectID
-  scalar Date
-
+const Post = graphql`
   type Post {
     _id: ObjectID
     author: ObjectID!
     createdAt: Date! @default(function: "now")
     title: String!
   }
-`.resolve({
-  ObjectID: ObjectIDResolver,
-  Date: DateResolver,
-}) {
-  static collection = 'posts'
+`('posts')
 
-  static async find(query) {
-    return find(Post, query)
-  }
-
-  save() {
-    save(Post, this)
-  }
-}
-
-class Author extends (graphql`
+const Author = graphql`
   type Author {
     _id: ObjectId
     createdAt: Date! @default(function: "now")
     name: String!
   }
-`) {
-  static collection = 'authors'
-
-  static async find(query) {
-    return find(Author, query)
-  }
-
-  save() {
-    save(Author, this)
-  }
-}
+`('authors')
 
 const author = new Author({ name: 'doe' })
 
