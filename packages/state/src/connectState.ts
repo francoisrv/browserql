@@ -1,10 +1,17 @@
 import type { SchemaqlFactory, BrowserqlClientContext } from '@browserql/types'
 import gql from 'graphql-tag'
-import type { DocumentNode } from 'graphql'
-import { getName, getQueries, merge } from '@browserql/fpql'
+import type { DocumentNode, FieldDefinitionNode, DirectiveNode } from 'graphql'
+import {
+  getArgument,
+  getDirective,
+  getName,
+  getQueries,
+  getValue,
+  merge,
+} from '@browserql/fpql'
 import { JSONResolver } from 'graphql-scalars'
 import cacheql from '@browserql/cache'
-
+import fp from '@browserql/fp'
 import { makeExecutableQuery } from '@browserql/executable'
 
 export interface ConnectStateOptions {
@@ -16,10 +23,23 @@ export default function connectState(): SchemaqlFactory {
     schema: merge(
       gql`
         scalar JSON
-        directive @default(value: JSON) on FIELD_DEFINITION
+
+        directive @getState(initialValue: JSON) on FIELD_DEFINITION
 
         extend type Mutation {
           setState(query: StateQuery!, variables: JSON, to: JSON!): Boolean!
+
+          incrementState(
+            query: StateQuery!
+            variables: JSON
+            step: Float = 1
+          ): Boolean!
+
+          multiplyState(
+            query: StateQuery!
+            variables: JSON
+            by: Float = 1
+          ): Boolean!
         }
       `,
       gql`
@@ -42,6 +62,24 @@ export default function connectState(): SchemaqlFactory {
         return true
       },
     },
+    queries: fp(schema)(
+      getQueries,
+      (queries) => queries.filter(getDirective('getState')),
+      (queries) =>
+        (queries as FieldDefinitionNode[]).reduce((querySet, query) => {
+          const directive = getDirective('getState')(query)
+          const initialValue = getArgument('initialValue')(
+            directive as DirectiveNode
+          )
+          if (initialValue) {
+            return {
+              ...querySet,
+              [getName(query)]: () => getValue(initialValue),
+            }
+          }
+          return querySet
+        }, {})
+    ),
     scalars: {
       JSON: JSONResolver,
     },

@@ -15,7 +15,7 @@ State.Example
 
 ```graphql
 type Query {
-  getCounter: Int
+  getCounter: Int @getState(initialValue: 100)
 }
 ```
 
