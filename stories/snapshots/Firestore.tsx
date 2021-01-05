@@ -12,6 +12,7 @@ import { firestore } from '../utils'
 import { getQuery, merge } from '@browserql/fpql'
 import { BrowserqlProvider, UseQuery } from '@browserql/react'
 import Typography from '@material-ui/core/Typography'
+import GraphiQL from '@browserql/graphiql'
 
 const fixtureData = {
   __collection__: {
@@ -20,6 +21,14 @@ const fixtureData = {
         user_a: {
           age: 15,
           username: 'user_a',
+        },
+      },
+    },
+    Todo: {
+      __doc__: {
+        todo_1: {
+          done: false,
+          title: 'Buy milk',
         },
       },
     },
@@ -182,7 +191,9 @@ export function Example1() {
 export function ApiGet() {
   const schema = gql`
     type Todo @firestore {
-      name: String!
+      id: ID!
+      title: String!
+      done: Boolean!
     }
   `
 
@@ -232,5 +243,67 @@ export function ApiGet() {
         <View />
       </BrowserqlProvider>
     </div>
+  )
+}
+
+export function TryIt() {
+  const schema = gql`
+    type Todo @firestore {
+      title: String!
+      done: Boolean!
+    }
+  `
+  return (
+    <BrowserqlProvider
+      schema={schema}
+      scalars={{ JSON: JSONResolver }}
+      extensions={[
+        connectFirestoreql(firebase.firestore(), schema),
+        {
+          schema: gql`
+            scalar JSON
+          `,
+        },
+      ]}
+    >
+      <div style={{ height: 600 }}>
+        <GraphiQL
+          graphiqlProps={{
+            query: `query GetManyTodo(
+  $where: [FirestoreWhere]
+  $filters: FirestoreFilters
+) {
+  firestore_getMany_Todo(
+    where: $where
+    filters: $filters
+  ) {
+    title
+    done
+  }
+}
+`,
+            response: JSON.stringify(
+              {
+                data: {
+                  firestore_getMany_Todo: [
+                    {
+                      title: 'Buy milk',
+                      done: false,
+                      __typename: 'Todo',
+                    },
+                  ],
+                },
+                loading: false,
+                networkStatus: 7,
+                stale: false,
+              },
+              null,
+              2
+            ),
+            variables: JSON.stringify({}, null, 2),
+          }}
+        />
+      </div>
+    </BrowserqlProvider>
   )
 }

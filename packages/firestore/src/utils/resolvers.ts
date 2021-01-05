@@ -2,7 +2,7 @@ import { getDirective, getName, getTypes } from '@browserql/fpql'
 import type { DocumentNode } from 'graphql'
 import type { firestore } from 'firebase'
 import { QueryFilters, QueryWhere } from '../types'
-import { makeFirestoreQuery } from './firestore'
+import { getDocument, makeFirestoreQuery } from './firestore'
 
 export function makeResolvers(db: firestore.Firestore, schema: DocumentNode) {
   const types = getTypes(schema)
@@ -18,8 +18,12 @@ export function makeResolvers(db: firestore.Firestore, schema: DocumentNode) {
         filters?: QueryFilters
       }) {
         const query = makeFirestoreQuery(getName(type), where, filters)(db)
-        console.log({ query })
-        return []
+        const snapshot = await query.get()
+        const results: any[] = []
+        snapshot.forEach((doc) => results.push(doc))
+        const documents = await Promise.all(results.map(getDocument))
+        console.log(documents)
+        return documents
       },
     }),
     {}

@@ -332,7 +332,9 @@ export function TryIt() {
           <Typography variant="h5">GraphQL input</Typography>
         </div>
         <div style={{ flex: 1 }}>
-          <Typography variant="h5">Typescript output</Typography>
+          <Typography variant="h5" align="right">
+            Typescript output
+          </Typography>
         </div>
       </div>
 
