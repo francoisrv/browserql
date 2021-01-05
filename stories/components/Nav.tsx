@@ -12,7 +12,7 @@ import * as React from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import BugReportIcon from '@material-ui/icons/BugReport'
 
-import menu, { MenuItem } from '../menu'
+import menu from '../menu'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'

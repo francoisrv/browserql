@@ -1,10 +1,10 @@
 import * as React from 'react'
 import 'refractor'
+import Paper from '@material-ui/core/Paper'
 
 import Topbar from './components/Topbar'
 import Router from './components/Router'
 import Nav from './components/Nav'
-import Paper from '@material-ui/core/Paper'
 
 function App() {
   return (
