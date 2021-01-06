@@ -1,6 +1,19 @@
 # Firestoreql
 
+```component
+{
+  "component": "NPMBadge",
+  "props": {
+    "pkg": "firestore"
+  }
+}
+```
+
 Use GraphQL with Firestore directly in your front-end apps
+
+```snapshot
+Firestore.TryIt
+```
 
 # Usage
 

@@ -1,5 +1,14 @@
 # Graphql Class
 
+```component
+{
+  "component": "NPMBadge",
+  "props": {
+    "pkg": "graphql-schema-class"
+  }
+}
+```
+
 Use `GraphQL` to create classes with validation, formatting, required and default values included!
 
 Just enter a schema and it will return you a class
@@ -11,12 +20,25 @@ const Todo = graphql`
   type Todo {
     title: String!
     done: Boolean @default(value: false)
+
+    makeHTML: String! @method
+  }
+  type Query {
+    getTodos: [Todo!]
   }
 `
 
 const todo = new Todo({ title: 'Buy milk' })
 
 todo.toJSON()
+
+Todo.resolve({
+  Query: {
+    async getTodos() {
+      return await http.get('/todos')
+    },
+  },
+})
 ```
 
 ```snapshot

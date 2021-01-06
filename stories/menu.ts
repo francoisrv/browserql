@@ -320,4 +320,28 @@ export const mds = {
     __dirname + '/doc/utils/fpql/getExecutableOperation.md',
     'utf-8'
   ),
+  'utils/typescript-generator/scalars': readFileSync(
+    __dirname + '/doc/utils/typescript-generator/scalars.md',
+    'utf-8'
+  ),
+  'utils/typescript-generator/null': readFileSync(
+    __dirname + '/doc/utils/typescript-generator/null.md',
+    'utf-8'
+  ),
+  'utils/typescript-generator/list': readFileSync(
+    __dirname + '/doc/utils/typescript-generator/list.md',
+    'utf-8'
+  ),
+  'utils/typescript-generator/methods': readFileSync(
+    __dirname + '/doc/utils/typescript-generator/methods.md',
+    'utf-8'
+  ),
+  'utils/typescript-generator/extension': readFileSync(
+    __dirname + '/doc/utils/typescript-generator/extension.md',
+    'utf-8'
+  ),
+  'utils/typescript-generator/enumeration': readFileSync(
+    __dirname + '/doc/utils/typescript-generator/enumeration.md',
+    'utf-8'
+  ),
 }

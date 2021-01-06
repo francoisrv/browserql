@@ -16,3 +16,5 @@ const fixtureData = {
 export const firebase = new MockFirebase(fixtureData)
 
 export const firestore = firebase.firestore
+
+export const breakpoints = { xs: 0, sm: 480, md: 1024 }

@@ -11,26 +11,30 @@ import { kebabCase, keys } from 'lodash'
 import * as React from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import BugReportIcon from '@material-ui/icons/BugReport'
-
-import menu, { MenuItem } from '../menu'
+import { useResponsive } from 'react-hooks-responsive'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
 import TextField from '@material-ui/core/TextField'
+import menu from '../menu'
+import { breakpoints } from '../utils'
 
 function Nav(props: RouteComponentProps) {
   const {
     history,
     location: { pathname },
   } = props
+  const { size, orientation, screenIsAtLeast, screenIsAtMost } = useResponsive(
+    breakpoints
+  )
 
   return (
     <div
       style={{
-        width: '18vw',
+        width: screenIsAtMost('sm', 'portrait') ? '62vw' : '22vw',
         height: '100vh',
         overflow: 'auto',
-        minWidth: 180,
+        // minWidth: 180,
         borderRight: '1px solid #ccc',
         boxSizing: 'border-box',
       }}

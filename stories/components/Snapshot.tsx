@@ -1,5 +1,4 @@
-import Typography from '@material-ui/core/Typography'
-import { get, startCase } from 'lodash'
+import { get } from 'lodash'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as snapshots from '../snapshots'

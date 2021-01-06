@@ -1,5 +1,9 @@
 # Firestoreql with React
 
+```snapshot
+FirestoreReact.TryIt
+```
+
 ## Components
 
 ```jsx
