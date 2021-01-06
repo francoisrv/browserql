@@ -2,8 +2,8 @@ import * as React from 'react'
 import cacheql from '@browserql/cache'
 import gql from 'graphql-tag'
 import { BrowserqlContext, BrowserqlProvider } from '@browserql/react'
-import { buildQuery } from '@browserql/operations'
 import Code from '../components/Code'
+import { makeExecutableQuery } from '@browserql/executable'
 
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ export function GetExample() {
   function Inner() {
     const { cache, schema } = React.useContext(BrowserqlContext)
     const cached = cacheql(cache, schema)
-    const value = cached.get(buildQuery(schema, 'getCounter'))
+    const value = cached.get(makeExecutableQuery(schema, 'getCounter'))
     const source = `cached.get(GET_COUNTER) // ${value}`
     return <Code language="javascript" value={source} />
   }
@@ -49,7 +49,7 @@ export function GetExampleWithVariables() {
   function Inner() {
     const { cache, schema } = React.useContext(BrowserqlContext)
     const cached = cacheql(cache, schema)
-    const query = buildQuery(schema, 'getCounter')
+    const query = makeExecutableQuery(schema, 'getCounter')
     const value = cached.get(query, variables)
     const source = `cached.get(GET_COUNTER, { user: 1234 }) // ${value}`
     return <Code language="javascript" value={source} />
@@ -79,7 +79,7 @@ export function GetQueryExample() {
   function Inner() {
     const { cache, schema } = React.useContext(BrowserqlContext)
     const cached = cacheql(cache, schema)
-    const value = cached.get(buildQuery(schema, 'getCounter'))
+    const value = cached.get(makeExecutableQuery(schema, 'getCounter'))
     const source = `cached.get(GET_COUNTER) // ${value}`
     return <Code language="javascript" value={source} />
   }
@@ -105,7 +105,7 @@ export function GetNonNullEmpty() {
   function Inner() {
     const { cache, schema } = React.useContext(BrowserqlContext)
     const cached = cacheql(cache, schema)
-    const value = cached.get(buildQuery(schema, 'getCounter'))
+    const value = cached.get(makeExecutableQuery(schema, 'getCounter'))
     const source = `cached.get(GET_COUNTER) // ${value}`
     return <Code language="javascript" value={source} />
   }
@@ -131,7 +131,7 @@ export function GetNullEmpty() {
   function Inner() {
     const { cache, schema } = React.useContext(BrowserqlContext)
     const cached = cacheql(cache, schema)
-    const value = cached.get(buildQuery(schema, 'getCounter'))
+    const value = cached.get(makeExecutableQuery(schema, 'getCounter'))
     const source = `cached.get(GET_COUNTER) // ${value}`
     return <Code language="javascript" value={source} />
   }
@@ -158,7 +158,7 @@ export function GetDefault() {
   function Inner() {
     const { cache, schema } = React.useContext(BrowserqlContext)
     const cached = cacheql(cache, schema)
-    const value = cached.get(buildQuery(schema, 'getCounter'))
+    const value = cached.get(makeExecutableQuery(schema, 'getCounter'))
     const source = `cached.get(GET_COUNTER) // ${value}`
     return <Code language="javascript" value={source} />
   }
@@ -184,7 +184,7 @@ export function SetExampleGet() {
   function Inner() {
     const { cache, schema } = React.useContext(BrowserqlContext)
     const cachedQueries = cacheql(cache, schema)
-    const value = cachedQueries.get(buildQuery(schema, 'getCounter'))
+    const value = cachedQueries.get(makeExecutableQuery(schema, 'getCounter'))
     const source = `cachedQueries.get(GET_COUNTER) // ${value}`
     return <Code language="javascript" value={source} />
   }
@@ -204,9 +204,9 @@ export function SetExampleSet() {
   function Inner() {
     const { cache, schema } = React.useContext(BrowserqlContext)
     const cachedQueries = cacheql(cache, schema)
-    const query = buildQuery(schema, 'getCounter')
+    const query = makeExecutableQuery(schema, 'getCounter')
     cachedQueries.set(query, 100)
-    const value = cachedQueries.get(buildQuery(schema, 'getCounter'))
+    const value = cachedQueries.get(makeExecutableQuery(schema, 'getCounter'))
     const source = `cachedQueries.get(GET_COUNTER) // ${value}`
     return <Code language="javascript" value={source} />
   }
@@ -232,7 +232,7 @@ export function SetExampleWithVariablesGet() {
   function Inner() {
     const { cache, schema } = React.useContext(BrowserqlContext)
     const cached = cacheql(cache, schema)
-    const value = cached.get(buildQuery(schema, 'getCounter'), {
+    const value = cached.get(makeExecutableQuery(schema, 'getCounter'), {
       user: 1234,
     })
     const source = `cached.get(GET_COUNTER) // ${value}`
@@ -254,9 +254,11 @@ export function SetExampleWithVariablesSet() {
   function Inner() {
     const { cache, schema } = React.useContext(BrowserqlContext)
     const cached = cacheql(cache, schema)
-    const query = buildQuery(schema, 'getCounter')
+    const query = makeExecutableQuery(schema, 'getCounter')
     cached.set(query, { user: 1234 }, 100)
-    const value = cached.get(buildQuery(schema, 'getCounter'), { user: 1234 })
+    const value = cached.get(makeExecutableQuery(schema, 'getCounter'), {
+      user: 1234,
+    })
     const source = `cached.get(GET_COUNTER) // ${value}`
     return <Code language="javascript" value={source} />
   }

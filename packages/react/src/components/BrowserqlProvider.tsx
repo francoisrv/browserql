@@ -1,10 +1,11 @@
-import BrowserqlContext from '../contexts/BrowserqlContext'
 import React from 'react'
 import connect from '@browserql/client'
 import type { DocumentNode } from 'graphql'
 import type { ReactElement } from 'react'
 import type { Schemaql, SchemaqlFactory } from '@browserql/types'
 import { ApolloProvider } from '@apollo/client'
+
+import BrowserqlContext from '../contexts/BrowserqlContext'
 
 export interface BrowserqlProviderProps {
   client?: any

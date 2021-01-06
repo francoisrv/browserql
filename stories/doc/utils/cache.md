@@ -1,5 +1,9 @@
 # cacheql
 
+```snapshot
+Cache.GetExample
+```
+
 ```component
 {
   "component": "NPMBadge",

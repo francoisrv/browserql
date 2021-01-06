@@ -2,7 +2,7 @@ import * as React from 'react'
 import { atomOneDark as style } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 
-import BrowserqlPlayground from './BrowserqlPlayground'
+// import BrowserqlPlayground from './BrowserqlPlayground'
 import Snapshot from './Snapshot'
 import * as components from '../components'
 import Section, { NavSection } from './Section'
@@ -17,9 +17,9 @@ export default function Code({
   language: string
   value: any
 }) {
-  if (language === 'browserqlPlayground') {
-    return <BrowserqlPlayground />
-  }
+  // if (language === 'browserqlPlayground') {
+  //   return <BrowserqlPlayground />
+  // }
 
   if (language === 'sandbox') {
     if (process.env.NODE_ENV === 'development') {

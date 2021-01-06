@@ -21,15 +21,6 @@ export default function Router() {
     <Switch>
       {routes.map(({ menu: menuName, name, doc }) => {
         const path = `/${kebabCase(menuName)}/${kebabCase(name)}`
-        return <Route key={name} exact path={path} component={() => <div />} />
-      })}
-    </Switch>
-  )
-}
-
-/*
-{routes.map(({ menu: menuName, name, doc }) => {
-        const path = `/${kebabCase(menuName)}/${kebabCase(name)}`
         return (
           <Route
             key={name}
@@ -39,4 +30,6 @@ export default function Router() {
           />
         )
       })}
-      */
+    </Switch>
+  )
+}

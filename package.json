@@ -14,7 +14,8 @@
     "docsify": "docsify serve ./docs",
     "docsify:update": "cp docs/README.md . && cp docs/ROADMAP.md .",
     "add:pkg": "bash add-package.sh",
-    "stories": "rm -rf .parcel-cache .cache dist && parcel index.html"
+    "stories": "rm -rf .parcel-cache .cache dist && parcel index.html",
+    "build": "rm -f public/*.js public/*.js.map && parcel build index.html --dist-dir public"
   },
   "dependencies": {
     "@babel/core": "^7.12.3",
