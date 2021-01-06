@@ -10,6 +10,7 @@ import TableCell from '@material-ui/core/TableCell'
 import Chip from '@material-ui/core/Chip'
 
 import Code from './Code'
+import Typography from '@material-ui/core/Typography'
 
 const renderers = {
   code: ({ language, value }: { language: string; value: any }) => {
@@ -44,6 +45,7 @@ const renderers = {
       component="span"
     />
   ),
+  paragraph: ({ children }) => <Typography>{children}</Typography>,
 }
 
 export default function MD({ doc }: { doc: string }) {
