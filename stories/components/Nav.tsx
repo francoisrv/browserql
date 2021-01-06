@@ -31,7 +31,7 @@ function Nav(props: RouteComponentProps) {
   return (
     <div
       style={{
-        width: screenIsAtMost('sm', 'portrait') ? '62vw' : '32vw',
+        width: screenIsAtMost('sm', 'portrait') ? '62vw' : '22vw',
         height: '100vh',
         overflow: 'auto',
         // minWidth: 180,

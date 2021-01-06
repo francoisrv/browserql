@@ -22,7 +22,7 @@ function Main() {
     flexDirection: 'column',
     position: 'absolute',
     top: 0,
-    left: screenIsAtMost('sm', 'portrait') ? '62vw' : '32vw',
+    left: screenIsAtMost('sm', 'portrait') ? '62vw' : '22vw',
     width: '100vw',
     bottom: 0,
     transition: 'all 0.25s ease-out',

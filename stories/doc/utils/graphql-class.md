@@ -1,5 +1,14 @@
 # Graphql Class
 
+```component
+{
+  "component": "NPMBadge",
+  "props": {
+    "pkg": "graphql-schema-class"
+  }
+}
+```
+
 Use `GraphQL` to create classes with validation, formatting, required and default values included!
 
 Just enter a schema and it will return you a class
