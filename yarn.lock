@@ -1003,6 +1003,16 @@
     "@browserql/fpql" "^1.18.0"
     "@browserql/fragments" "^2.5.0"
 
+"@browserql/react@^3.1.0", "@browserql/react@^3.5.0":
+  version "3.17.0"
+  resolved "https://registry.yarnpkg.com/@browserql/react/-/react-3.17.0.tgz#409f85c990cbc46e28dd8ccf2333ad495fc13b33"
+  integrity sha512-Ug1+TYVttvZ+tF2tN3nWwyWnm2npZfNCRzTQr6HvwUQRC9EKiOZszOHg4qV1RpgIFwNm3E4VMKESNYliIFtp1Q==
+  dependencies:
+    "@apollo/client" "^3.2.2"
+    "@browserql/client" "^3.38.0"
+    react "^16.13.1"
+    react-dom "^16.13.1"
+
 "@browserql/resolved@^1.1.0", "@browserql/resolved@^1.4.0", "@browserql/resolved@^1.8.0":
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/@browserql/resolved/-/resolved-1.12.0.tgz#dee0924f854f2155c0da5dd4d7b7670ef0fdaedb"
@@ -12463,7 +12473,7 @@ range-parser@~1.2.1:
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
 
-react-dom@^16.8.0:
+react-dom@^16.13.1, react-dom@^16.8.0:
   version "16.14.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.14.0.tgz#7ad838ec29a777fb3c75c3a190f661cf92ab8b89"
   integrity sha512-1gCeQXDLoIqMgqD3IO2Ah9bnf0w9kzhwN5q4FGnHZ67hBm9yePzB5JJAIQCc8x3pFnNlwFq4RidZggNAAkzWWw==
@@ -12583,7 +12593,7 @@ react-transition-group@^4.4.0:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@^16.8.0:
+react@^16.13.1, react@^16.8.0:
   version "16.14.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.14.0.tgz#94d776ddd0aaa37da3eda8fc5b6b18a4c9a3114d"
   integrity sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==
