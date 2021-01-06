@@ -11,12 +11,25 @@ const Todo = graphql`
   type Todo {
     title: String!
     done: Boolean @default(value: false)
+
+    makeHTML: String! @method
+  }
+  type Query {
+    getTodos: [Todo!]
   }
 `
 
 const todo = new Todo({ title: 'Buy milk' })
 
 todo.toJSON()
+
+Todo.resolve({
+  Query: {
+    async getTodos() {
+      return await http.get('/todos')
+    },
+  },
+})
 ```
 
 ```snapshot
