@@ -3,6 +3,7 @@
   "version": "1.54.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "source": "src/index.ts",
   "license": "ISC",
   "keywords": [
     "browserql",
@@ -24,13 +25,9 @@
     "prepublishOnly": "git tag | xargs git tag -d && yarn build && yarn test --forceExit"
   },
   "dependencies": {
-    "@apollo/client": "^3.2.2",
-    "@browserql/contracts": "^1.2.0",
     "@browserql/firestore": "^1.49.0",
-    "@browserql/react": "^3.1.0",
-    "@browserql/resolved": "^1.4.0",
-    "react-error-boundary": "^3.0.2",
-    "typescript": "^4.0.3"
+    "@browserql/react": "^4.0.0",
+    "@browserql/resolved": "^1.4.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.4",
@@ -38,9 +35,11 @@
     "@types/jest": "^26.0.14",
     "@types/node": "^14.11.8",
     "firestore-jest-mock": "^0.6.0",
-    "jest": "^26.5.2"
+    "jest": "^26.5.2",
+    "typescript": "^4.0.3"
   },
   "peerDependencies": {
+    "@apollo/client": "^3.2.2",
     "react": "^16.13.1"
   }
 }

@@ -6,6 +6,11 @@ import * as React from 'react'
 import Code from '../components/Code'
 import gql from 'graphql-tag'
 import { print } from 'graphql'
+import { BrowserqlProvider } from '@browserql/react'
+import { JSONResolver } from 'graphql-scalars'
+import { connect as connectFirestoreql } from '@browserql/firestore'
+import MockFirebase from 'mock-cloud-firestore'
+import { Firestoreql } from '@browserql/firestore-react'
 
 function makeSource(collection: string, action: string) {
   return `function View() {
@@ -15,6 +20,10 @@ function makeSource(collection: string, action: string) {
     </firestoreql>
   )
 }`
+}
+
+function getQueryName(collection: string, action: string) {
+  return `firestore_${action}Many_${collection}`
 }
 
 export function TryIt() {
@@ -31,64 +40,105 @@ export function TryIt() {
     }
   `
 
+  const fixtureData = {
+    __collection__: {
+      users: {
+        __doc__: {
+          user_a: {
+            age: 15,
+            username: 'user_a',
+          },
+        },
+      },
+      Todo: {
+        __doc__: {
+          todo_1: {
+            done: false,
+            title: 'Buy milk',
+          },
+        },
+      },
+    },
+  }
+
+  const firebase = new MockFirebase(fixtureData)
+
   React.useEffect(() => {
     setSource(makeSource(collection, action))
   }, [collection, action])
 
   return (
-    <div style={{ display: 'flex' }}>
-      <div style={{ padding: 16, width: 400 }}>
-        <FormControl fullWidth>
-          <InputLabel>Collection</InputLabel>
-          <Select
-            value={collection}
-            onChange={(e) => setCollection(e.target.value)}
-          >
-            <MenuItem value="Todo">Todo</MenuItem>
-          </Select>
-        </FormControl>
+    <BrowserqlProvider
+      schema={schema}
+      scalars={{ JSON: JSONResolver }}
+      extensions={[
+        connectFirestoreql(firebase.firestore(), schema),
+        {
+          schema: gql`
+            scalar JSON
+            directive @default(value: JSON!) on FIELD_DEFINITION
+          `,
+        },
+      ]}
+    >
+      <div style={{ display: 'flex' }}>
+        <div style={{ padding: 16, width: 400 }}>
+          <FormControl fullWidth>
+            <InputLabel>Collection</InputLabel>
+            <Select
+              value={collection}
+              onChange={(e) => setCollection(e.target.value)}
+            >
+              <MenuItem value="Todo">Todo</MenuItem>
+            </Select>
+          </FormControl>
 
-        <div style={{ height: 24 }} />
+          <div style={{ height: 24 }} />
 
-        <FormControl fullWidth>
-          <InputLabel>Action</InputLabel>
-          <Select value={action} onChange={(e) => setAction(e.target.value)}>
-            <MenuItem value="get">get</MenuItem>
-            <MenuItem value="add">add</MenuItem>
-          </Select>
-        </FormControl>
+          <FormControl fullWidth>
+            <InputLabel>Action</InputLabel>
+            <Select value={action} onChange={(e) => setAction(e.target.value)}>
+              <MenuItem value="get">get</MenuItem>
+              <MenuItem value="add">add</MenuItem>
+            </Select>
+          </FormControl>
 
-        <FormControl fullWidth>
-          <InputLabel>Limit</InputLabel>
-          <Select value={action}>
-            <MenuItem value="get">get</MenuItem>
-          </Select>
-        </FormControl>
-      </div>
-      <div style={{ flex: 1 }}>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <div style={{ flex: 1 }}>
-            <Code language="graphql" value={print(schema)} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <Code language="javascript" value={source} />
-          </div>
+          <FormControl fullWidth>
+            <InputLabel>Limit</InputLabel>
+            <Select value={action}>
+              <MenuItem value="get">get</MenuItem>
+            </Select>
+          </FormControl>
         </div>
-        <Code
-          language="json"
-          value={JSON.stringify(
-            [
-              {
-                id: '1234',
-                title: 'Buy milk',
-                done: true,
-              },
-            ],
-            null,
-            2
-          )}
-        />
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', gap: 12 }}>
+            <div style={{ flex: 1 }}>
+              <Code language="graphql" value={print(schema)} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <Code language="javascript" value={source} />
+            </div>
+          </div>
+          <Firestoreql get="Todo">
+            {() => (
+              <Code
+                language="json"
+                value={JSON.stringify(
+                  [
+                    {
+                      id: '1234',
+                      title: 'Buy milk',
+                      done: true,
+                    },
+                  ],
+                  null,
+                  2
+                )}
+              />
+            )}
+          </Firestoreql>
+        </div>
       </div>
-    </div>
+    </BrowserqlProvider>
   )
 }
