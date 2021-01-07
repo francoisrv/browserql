@@ -62,75 +62,18 @@ function SayHello({ to }) {
 React.QueryExample
 ```
 
-## Usage
-
-Just fill it with a `GraphQL` query and a renderer:
-
-### GraphQL Definitions
-
-```graphql
-type Query {
-  getUser: User!
-}
-
-type User {
-  id: ID!
-  name: String!
-}
-```
-
-### GraphQL executable query
-
-```graphql
-query {
-  getUser
-}
-```
-
-### Concile everything with React
-
-```javascript
-import React from 'react'
-import { BrowserqlProvider , UseQuery } from '@browserql/react'
-
-function User {
-  return (
-    <BrowserqlProvider schema={schema}>
-      <UseQuery query={GET_USER}>
-        {({ getUser: user }) => <h4>{user.name}</h4>}
-      </UseQuery>
-    </BrowserqlProvider>
-  )
-}
-```
-
 ## Variables
 
 If the query has variables, enter them via the `variables` prop:
 
+```javascript
+function View() {
+  return <UseQuery query={GET_USER} variables={{ id: '1' }} />
+}
+```
+
 ```snapshot
 React.UseQueryVariables
-```
-
-```graphql
-type Query {
-  getUser(id: ID!): User!
-}
-
-type User {
-  id: ID!
-  name: String!
-}
-```
-
-```javascript
-function User {
-  return (
-    <WithQuery query={GET_USER} variables={{ id: 1234 }}>
-      {({ getUser: user }) => <h4>{user.name}</h4>}
-    </WithQuery>
-  )
-}
 ```
 
 ## Rendering loading states
@@ -142,11 +85,16 @@ You can specify a loading view via the `renderLoading` prop:
 ```javascript
 function User {
   return (
-    <WithQuery query={GET_USER} renderLoading={<div>Loading..</div>}>
-      {({ getUser: user }) => <h4>{user.name}</h4>}
-    </WithQuery>
+    <UseQuery
+      query={GET_USER}
+      renderLoading={<div>Loading..</div>}
+    />
   )
 }
+```
+
+```snapshot
+React.UseQueryLoading
 ```
 
 ## Handling errors
@@ -158,11 +106,16 @@ You can specify an error view via the `renderError` prop which accepts a functio
 ```javascript
 function User {
   return (
-    <WithQuery query={GET_USER} renderError={({ error }) => <div>{error.message}</div>}>
-      {({ getUser: user }) => <h4>{user.name}</h4>}
-    </WithQuery>
+    <UseQuery
+      query={GET_USER}
+      renderError={({ error }) => <div>{error.message}</div>}
+    />
   )
 }
+```
+
+```snapshot
+React.UseQueryError
 ```
 
 ## Lasy loading
