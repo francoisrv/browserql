@@ -11,17 +11,17 @@ import TextField from '@material-ui/core/TextField'
 export default function UseQueryError() {
   const schema = gql`
     type Query {
-      wait(seconds: Int!): Boolean
+      foo: Boolean!
     }
   `
-  const query = makeExecutableQuery(schema, 'wait')
-  async function wait({ seconds }: { seconds: number }) {
+  const query = makeExecutableQuery(schema, 'foo')
+  async function foo() {
     throw new Error('Throwing a lambda error to test error renderer')
   }
   function View(props: { seconds: number }) {
     const { seconds } = props
     return (
-      <BrowserqlProvider schema={schema} queries={{ wait }}>
+      <BrowserqlProvider schema={schema} queries={{ foo }}>
         <UseQuery
           query={query}
           variables={{ seconds }}
@@ -35,58 +35,23 @@ export default function UseQueryError() {
   }
   return (
     <TabNav
-      selected={4}
+      selected={1}
       tabs={[
-        {
-          tab: 'Schema',
-          component: () => (
-            <div style={{ padding: 12 }}>
-              <Typography>The GraphQL schema.</Typography>
-              <Code language="graphql" value={print(schema)} />
-            </div>
-          ),
-        },
-        {
-          tab: 'Query',
-          component: () => (
-            <div style={{ padding: 12 }}>
-              <Typography>The GraphQL query.</Typography>
-              <Code language="graphql" value={print(query)} />
-            </div>
-          ),
-        },
-        {
-          tab: 'Resolver',
-          component: () => (
-            <div style={{ padding: 12 }}>
-              <Typography>The resolver query we'll use to get user.</Typography>
-              <Code
-                language="javascript"
-                value={`async function wait({ seconds }) {
-  await new Promise((resolve) => setTimeout(resolve, seconds * 1000))
-  return true
-}`}
-              />
-            </div>
-          ),
-        },
         {
           tab: 'React',
           component: () => (
             <div style={{ padding: 12 }}>
-              <Typography>The React view we'll use.</Typography>
               <Code
                 language="javascript"
-                value={`function View(props) {
-  const { seconds } = props
+                value={`function View() {
   return (
     <BrowserqlProvider schema={schema} queries={{ wait }}>
       <UseQuery
         query={query}
         variables={{ seconds }}
-        renderLoading={<div>Waiting {seconds} seconds...</div>}
+        renderError={(e) => <h5>{e.message}</h5>}
       >
-        {() => <p>Wait is over!</p>}
+        {() => <div />}
       </UseQuery>
     </BrowserqlProvider>
   )
@@ -107,16 +72,7 @@ export default function UseQueryError() {
                   justifyContent: 'center',
                 }}
               >
-                <div>
-                  <TextField
-                    type="number"
-                    label="Seconds to wait"
-                    value={seconds}
-                    onChange={(e) => setSeconds(Number(e.target.value))}
-                  />
-                  {!seconds && <p>Enter a user id</p>}
-                  {seconds && <View seconds={seconds} />}
-                </div>
+                <View seconds={seconds} />
               </div>
             )
           },

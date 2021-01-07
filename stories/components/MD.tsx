@@ -45,7 +45,19 @@ const renderers = {
       component="span"
     />
   ),
-  paragraph: ({ children }) => <Typography>{children}</Typography>,
+  paragraph: ({ children }) => (
+    <Typography
+      style={{
+        lineHeight: '22px',
+        paddingBottom: 22,
+      }}
+    >
+      {children}
+    </Typography>
+  ),
+  heading: ({ children, level }) => (
+    <Typography variant={`h${Number(level) + 1}`}>{children}</Typography>
+  ),
 }
 
 export default function MD({ doc }: { doc: string }) {

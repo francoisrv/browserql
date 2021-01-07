@@ -60,6 +60,8 @@ function App() {
       style={{
         height: '100vh',
         overflow: 'hidden',
+        backgroundColor: '#222',
+        color: '#fff',
       }}
     >
       <Nav />

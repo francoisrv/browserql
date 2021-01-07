@@ -20,6 +20,7 @@ import Typography from '@material-ui/core/Typography'
 export { default as UseQueryVariables } from './React/UseQueryVariables'
 export { default as UseQueryLoading } from './React/UseQueryLoading'
 export { default as UseQueryError } from './React/UseQueryError'
+export { default as UseQuerySideToSideComparison } from './React/UseQuerySideToSideComparison'
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

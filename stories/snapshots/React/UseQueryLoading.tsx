@@ -78,8 +78,7 @@ export default function UseQueryLoading() {
               <Typography>The React view we'll use.</Typography>
               <Code
                 language="javascript"
-                value={`function View(props) {
-  const { seconds } = props
+                value={`function View({ seconds }) {
   return (
     <BrowserqlProvider schema={schema} queries={{ wait }}>
       <UseQuery
