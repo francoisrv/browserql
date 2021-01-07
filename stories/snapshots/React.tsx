@@ -16,6 +16,21 @@ import connect from '@browserql/client'
 import { JSONResolver } from 'graphql-scalars'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
+import { makeExecutableQuery } from '@browserql/executable'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import { print } from 'graphql'
+import { renderToStaticMarkup } from 'react-dom/server'
+
+import Code from '../components/Code'
+import { find } from 'lodash'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import Paper from '@material-ui/core/Paper'
+import TextField from '@material-ui/core/TextField'
+import FormGroup from '@material-ui/core/FormGroup'
+import InputLabel from '@material-ui/core/InputLabel'
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -297,5 +312,258 @@ export function WithMutationExample() {
         <Wrapped />
       </div>
     </BrowserqlProvider>
+  )
+}
+
+export function UseQueryVariables() {
+  const schema = gql`
+    type Query {
+      getUser(id: ID!): User
+    }
+
+    type User {
+      id: ID!
+      name: String!
+    }
+  `
+  const query = makeExecutableQuery(schema, 'getUser')
+  const data = {
+    users: [
+      {
+        id: '1',
+        name: 'user1',
+      },
+      {
+        id: '2',
+        name: 'user2',
+      },
+      {
+        id: '3',
+        name: 'user3',
+      },
+    ],
+  }
+  function getUser({ id }: { id: string }) {
+    return data.users.find((user) => user.id === id)
+  }
+  function View(props: { id: string }) {
+    const { id } = props
+    return (
+      <BrowserqlProvider schema={schema} queries={{ getUser }}>
+        <UseQuery
+          query={query}
+          variables={{ id }}
+          renderError={(e) => <h5>{e.message}</h5>}
+        >
+          {({ getUser: user }) => (
+            <div>
+              {user === null && <p>No user found with id {id}</p>}
+              {user !== null && (
+                <p>
+                  User #{id} is named "{user.name}"
+                </p>
+              )}
+            </div>
+          )}
+        </UseQuery>
+      </BrowserqlProvider>
+    )
+  }
+  return (
+    <TabNav
+      selected={5}
+      tabs={[
+        {
+          tab: 'Schema',
+          component: () => (
+            <div style={{ padding: 12 }}>
+              <Typography>The GraphQL schema.</Typography>
+              <Code language="graphql" value={print(schema)} />
+            </div>
+          ),
+        },
+        {
+          tab: 'Query',
+          component: () => (
+            <div style={{ padding: 12 }}>
+              <Typography>The GraphQL query.</Typography>
+              <Code language="graphql" value={print(query)} />
+            </div>
+          ),
+        },
+        {
+          tab: 'Data',
+          component: () => (
+            <div style={{ padding: 12 }}>
+              <Typography>The data.</Typography>
+              <Code language="json" value={JSON.stringify(data, null, 2)} />
+            </div>
+          ),
+        },
+        {
+          tab: 'Resolver',
+          component: () => (
+            <div style={{ padding: 12 }}>
+              <Typography>The resolver query we'll use to get user.</Typography>
+              <Code
+                language="javascript"
+                value={`function getUser({ id }) {
+  return data.users.find((user) => user.id === id)
+}`}
+              />
+            </div>
+          ),
+        },
+        {
+          tab: 'React',
+          component: () => (
+            <div style={{ padding: 12 }}>
+              <Typography>The React view we'll use.</Typography>
+              <Code
+                language="javascript"
+                value={`function View({ id }) {
+  return (
+    <BrowserqlProvider schema={schema} queries={{ getUser }}>
+      <UseQuery
+        query={query}
+        variables={{ id }}
+      >
+        {({ getUser: user }) => (
+          <div>
+            {user === null && <p>No user found with id {id}</p>}
+            {user !== null && (
+              <p>
+                User #{id} is named "{user.name}"
+              </p>
+            )}
+          </div>
+        )}
+      </UseQuery>
+    </BrowserqlProvider>
+  )
+}`}
+              />
+            </div>
+          ),
+        },
+        {
+          tab: 'Result',
+          component: () => {
+            const [userId, setUserId] = React.useState('1')
+            return (
+              <div style={{ padding: 12 }}>
+                <TextField
+                  label="User ID"
+                  value={userId}
+                  onChange={(e) => setUserId(e.target.value)}
+                />
+                {!userId && <p>Enter a user id</p>}
+                {userId && <View id={userId} />}
+              </div>
+            )
+          },
+        },
+      ]}
+    />
+  )
+}
+
+enum CodeBlockIs {
+  graphql,
+  react,
+  json,
+  js,
+  reactSource,
+}
+interface CodeBlockProps {
+  blocks: {
+    name: string
+    is: CodeBlockIs
+    snippet: any
+    description?: string
+    props?: any
+  }[]
+}
+
+interface TabNavProps {
+  tabs: {
+    tab: string
+    component: React.ComponentType
+  }[]
+  selected?: number
+}
+
+function TabNav({ tabs, selected }: TabNavProps) {
+  const [selectedTab, setSelectedTab] = React.useState(selected)
+  return (
+    <div>
+      <Tabs
+        variant="fullWidth"
+        indicatorColor="primary"
+        value={selectedTab}
+        onChange={(_event: React.ChangeEvent<{}>, tab: number) =>
+          setSelectedTab(tab)
+        }
+      >
+        {tabs.map(({ tab }) => (
+          <Tab key={tab} label={tab} />
+        ))}
+      </Tabs>
+      <Paper elevation={0} style={{ background: '#eee' }}>
+        {tabs.map((tab, index) => (
+          <div
+            key={index}
+            style={{ display: selectedTab === index ? 'block' : 'none' }}
+          >
+            <tab.component />
+          </div>
+        ))}
+      </Paper>
+    </div>
+  )
+}
+
+TabNav.defaultProps = {
+  selected: 0,
+}
+
+function Render({
+  Component,
+  props,
+}: {
+  Component: React.ComponentType
+  props?: any
+}) {
+  return <Component {...props} />
+}
+
+function CodeBlock({ blocks }: CodeBlockProps) {
+  return (
+    <TabNav
+      selected={5}
+      tabs={blocks.map(({ name, is, snippet, description, props }) => ({
+        tab: name,
+        component: () => (
+          <div style={{ padding: 12 }}>
+            <Typography>{description}</Typography>
+            {is === CodeBlockIs.graphql && (
+              <Code language="graphql" value={print(snippet)} />
+            )}
+            {is === CodeBlockIs.json && (
+              <Code language="json" value={JSON.stringify(snippet, null, 2)} />
+            )}
+            {is === CodeBlockIs.js && (
+              <Code language="javascript" value={snippet.toString()} />
+            )}
+            {is === CodeBlockIs.react && (
+              <Render Component={snippet} props={props} />
+            )}
+            {is === CodeBlockIs.reactSource && (
+              <Code language="javascript" value={snippet.toString()} />
+            )}
+          </div>
+        ),
+      }))}
+    />
   )
 }

@@ -1,4 +1,4 @@
-# BrowserqlQuery
+# UseQuery
 
 ```component
 {
@@ -23,19 +23,11 @@ type Query {
 
 ```jsx
 import { useQuery } from '@apollo/client'
+import { makeExecutableQuery } from '@browserql/executable'
 
 function SayHello({ to }) {
   const { data, loading, error } = useQuery(
-    gql`
-      query SayHello($to: String!) {
-        sayHello(to: $to)
-      }
-    `,
-    {
-      variables: {
-        to: 'everybody',
-      },
-    }
+    makeExecutableQuery(schema, 'sayHello')
   )
 
   if (error) return <div>{error.message}</div>
@@ -50,11 +42,12 @@ function SayHello({ to }) {
 
 ```javascript
 import { UseQuery } from '@browserql/react'
+import { makeExecutableQuery } from '@browserql/executable'
 
 function SayHello({ to }) {
   return (
     <UseQuery
-      query={buildQuery(schema, 'sayHello')}
+      query={makeExecutableQuery(schema, 'sayHello')}
       variables={{ to: 'everybody' }}
       renderError={({ error }) => <div>{error.message}</div>}
       renderLoading={<div>Loading...</div>}
@@ -97,11 +90,16 @@ query {
 ### Concile everything with React
 
 ```javascript
+import React from 'react'
+import { BrowserqlProvider , UseQuery } from '@browserql/react'
+
 function User {
   return (
-    <WithQuery query={GET_USER}>
-      {({ getUser: user }) => <h4>{user.name}</h4>}
-    </WithQuery>
+    <BrowserqlProvider schema={schema}>
+      <UseQuery query={GET_USER}>
+        {({ getUser: user }) => <h4>{user.name}</h4>}
+      </UseQuery>
+    </BrowserqlProvider>
   )
 }
 ```
@@ -109,6 +107,10 @@ function User {
 ## Variables
 
 If the query has variables, enter them via the `variables` prop:
+
+```snapshot
+React.UseQueryVariables
+```
 
 ```graphql
 type Query {

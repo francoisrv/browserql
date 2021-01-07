@@ -5,10 +5,15 @@ import gql from 'graphql-tag'
 export function makeSchema(schema: DocumentNode) {
   const types = getTypes(schema)
   const collections = types.filter(getDirective('firestore'))
-  const queries: DocumentNode[] = []
+  const schemas: DocumentNode[] = []
   collections.forEach((collection) => {
     const name = getName(collection)
-    queries.push(gql`
+    schemas.push(gql`
+    extend type ${name} {
+      id: ID!
+    }
+    `)
+    schemas.push(gql`
       extend type Query {
        firestore_getMany_${name}(
          where: [ FirestoreWhere ]
@@ -27,5 +32,5 @@ export function makeSchema(schema: DocumentNode) {
       }
     `)
   })
-  return queries
+  return schemas
 }

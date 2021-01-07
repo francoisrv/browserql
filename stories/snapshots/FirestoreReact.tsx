@@ -11,6 +11,10 @@ import { JSONResolver } from 'graphql-scalars'
 import { connect as connectFirestoreql } from '@browserql/firestore'
 import MockFirebase from 'mock-cloud-firestore'
 import { Firestoreql } from '@browserql/firestore-react'
+import { omit, range } from 'lodash'
+import { Chance } from 'chance'
+
+const chance = new Chance()
 
 function makeSource(collection: string, action: string) {
   return `function View() {
@@ -40,6 +44,12 @@ export function TryIt() {
     }
   `
 
+  const todos = range(1000).map((id) => ({
+    id,
+    title: `${chance.word({ syllables: 3 })} ${chance.word({ syllables: 3 })}`,
+    boolean: chance.bool(),
+  }))
+
   const fixtureData = {
     __collection__: {
       users: {
@@ -51,12 +61,13 @@ export function TryIt() {
         },
       },
       Todo: {
-        __doc__: {
-          todo_1: {
-            done: false,
-            title: 'Buy milk',
-          },
-        },
+        __doc__: todos.reduce(
+          (docs, todo) => ({
+            ...docs,
+            [todo.id]: omit(todo, ['id']),
+          }),
+          {}
+        ),
       },
     },
   }
@@ -120,21 +131,8 @@ export function TryIt() {
             </div>
           </div>
           <Firestoreql get="Todo">
-            {() => (
-              <Code
-                language="json"
-                value={JSON.stringify(
-                  [
-                    {
-                      id: '1234',
-                      title: 'Buy milk',
-                      done: true,
-                    },
-                  ],
-                  null,
-                  2
-                )}
-              />
+            {(data) => (
+              <Code language="json" value={JSON.stringify(data, null, 2)} />
             )}
           </Firestoreql>
         </div>

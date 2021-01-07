@@ -277,6 +277,7 @@ export function TryIt() {
     where: $where
     filters: $filters
   ) {
+    id
     title
     done
   }
@@ -287,6 +288,7 @@ export function TryIt() {
                 data: {
                   firestore_getMany_Todo: [
                     {
+                      id: 'todo_1',
                       title: 'Buy milk',
                       done: false,
                       __typename: 'Todo',
