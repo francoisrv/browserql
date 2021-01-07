@@ -31,6 +31,7 @@ import Paper from '@material-ui/core/Paper'
 import TextField from '@material-ui/core/TextField'
 import FormGroup from '@material-ui/core/FormGroup'
 import InputLabel from '@material-ui/core/InputLabel'
+import TabNav from '../components/TabNav'
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -464,106 +465,6 @@ export function UseQueryVariables() {
           },
         },
       ]}
-    />
-  )
-}
-
-enum CodeBlockIs {
-  graphql,
-  react,
-  json,
-  js,
-  reactSource,
-}
-interface CodeBlockProps {
-  blocks: {
-    name: string
-    is: CodeBlockIs
-    snippet: any
-    description?: string
-    props?: any
-  }[]
-}
-
-interface TabNavProps {
-  tabs: {
-    tab: string
-    component: React.ComponentType
-  }[]
-  selected?: number
-}
-
-function TabNav({ tabs, selected }: TabNavProps) {
-  const [selectedTab, setSelectedTab] = React.useState(selected)
-  return (
-    <div>
-      <Tabs
-        variant="fullWidth"
-        indicatorColor="primary"
-        value={selectedTab}
-        onChange={(_event: React.ChangeEvent<{}>, tab: number) =>
-          setSelectedTab(tab)
-        }
-      >
-        {tabs.map(({ tab }) => (
-          <Tab key={tab} label={tab} />
-        ))}
-      </Tabs>
-      <Paper elevation={0} style={{ background: '#eee' }}>
-        {tabs.map((tab, index) => (
-          <div
-            key={index}
-            style={{ display: selectedTab === index ? 'block' : 'none' }}
-          >
-            <tab.component />
-          </div>
-        ))}
-      </Paper>
-    </div>
-  )
-}
-
-TabNav.defaultProps = {
-  selected: 0,
-}
-
-function Render({
-  Component,
-  props,
-}: {
-  Component: React.ComponentType
-  props?: any
-}) {
-  return <Component {...props} />
-}
-
-function CodeBlock({ blocks }: CodeBlockProps) {
-  return (
-    <TabNav
-      selected={5}
-      tabs={blocks.map(({ name, is, snippet, description, props }) => ({
-        tab: name,
-        component: () => (
-          <div style={{ padding: 12 }}>
-            <Typography>{description}</Typography>
-            {is === CodeBlockIs.graphql && (
-              <Code language="graphql" value={print(snippet)} />
-            )}
-            {is === CodeBlockIs.json && (
-              <Code language="json" value={JSON.stringify(snippet, null, 2)} />
-            )}
-            {is === CodeBlockIs.js && (
-              <Code language="javascript" value={snippet.toString()} />
-            )}
-            {is === CodeBlockIs.react && (
-              <Render Component={snippet} props={props} />
-            )}
-            {is === CodeBlockIs.reactSource && (
-              <Code language="javascript" value={snippet.toString()} />
-            )}
-          </div>
-        ),
-      }))}
     />
   )
 }
