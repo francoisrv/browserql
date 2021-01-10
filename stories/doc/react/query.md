@@ -86,8 +86,19 @@ You can choose lazy mode instead so you can call the query whenever you want.
 function User {
   return (
     <UseQuery lazy query={GET_USER}>
-      {() => <div />}
+      {(getUser, data, { loading }) => (
+        <button onClick={() => getUser({ id: 1234 })} disabled={loading}>
+          {data && !data.getUser && 'No user found'}
+          {data && data.getUser && data.getUser.name}
+          {!data && loading && 'Loading'}
+          {!data && !loading && 'Anonymous'}
+        </button>
+      )}
     </UseQuery>
   )
 }
+```
+
+```snapshot
+React.UseLazyQuery
 ```

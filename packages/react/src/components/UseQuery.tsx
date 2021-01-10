@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
 import type { DocumentNode } from 'graphql'
-import { useQuery } from '@apollo/client'
+import {
+  LazyQueryResult,
+  QueryResult,
+  useLazyQuery,
+  useQuery,
+} from '@apollo/client'
 
-type UseQueryRenderer<D = any> = (
-  data: D,
-  extra: {
-    loading: boolean
-    error: Error | undefined
-  }
+type UseQueryRenderer<Data = any, Variables = any> = (
+  data: Data,
+  result: QueryResult<Data, Variables>
 ) => React.ReactElement
 
 type UseQueryEachRenderer<D = any> = (
@@ -16,77 +18,69 @@ type UseQueryEachRenderer<D = any> = (
   data: D[],
   loading: boolean,
   error: Error | undefined
-) => React.ReactNode
+) => ReactElement
 
-type UseQueryProps<D = any> = {
-  children: UseQueryRenderer<D>
+type UseQueryProps<D = any, V = any> = {
   dontRenderError?: boolean
   dontRenderLoading?: boolean
   query: DocumentNode
   queryProps?: Parameters<typeof useQuery>[1]
   renderEach?: UseQueryEachRenderer<D>
-  renderEmpty?: React.ReactNode
-  renderError?: React.ReactNode | ((e: Error) => React.ReactNode)
-  renderLoading?: React.ReactNode
-  renderNull?: React.ReactNode
-  variables?: any
+  renderEmpty?: ReactElement
+  renderError?: ReactElement | ((e: Error) => ReactElement)
+  renderLoading?: ReactElement
+  renderNull?: ReactElement
+  variables?: V
 }
 
-export default function UseQuery<D = any>(props: UseQueryProps<D>) {
+type UseNonLazyQueryProps<Data = any> = {
+  lazy?: false
+  children: UseQueryRenderer<Data>
+}
+
+type UseLazyQueryProps<Data = any, Variables = any> = {
+  lazy: true
+  children(
+    get: (v: Variables) => void,
+    result: LazyQueryResult<Data, Variables>
+  ): ReactElement
+}
+
+export default function UseQuery<Data = any, Variables = any>(
+  props: UseQueryProps<Data> &
+    (UseNonLazyQueryProps<Data> | UseLazyQueryProps<Data, Variables>)
+) {
   try {
     if (!props.query) {
     }
 
-    const { data, loading, error } = useQuery(props.query, {
+    if (props.lazy === true) {
+      const [get, tuple] = useLazyQuery<Data, Variables>(props.query)
+
+      if (tuple.error) {
+        throw tuple.error
+      }
+
+      if (tuple.loading && props.renderLoading) {
+        return props.renderLoading
+      }
+
+      return props.children(get, tuple)
+    }
+
+    const tuple = useQuery<Data, Variables>(props.query, {
       variables: props.variables,
     })
 
-    if (error) {
-      throw error
+    if (tuple.error) {
+      throw tuple.error
     }
 
-    let accessor: any = undefined
-
-    if (loading && props.renderLoading) {
+    if (tuple.loading && props.renderLoading) {
       return props.renderLoading
     }
 
-    if (!loading && !error && data) {
-      const [queryName] = Object.keys(data)
-      accessor = data[queryName]
-    }
-
-    if (!loading && !error && data === null && props.renderNull) {
-      return props.renderNull
-    }
-
-    if (Array.isArray(accessor)) {
-      if (!accessor.length && props.renderEmpty) {
-        return props.renderEmpty
-      }
-      if (props.renderEach) {
-        return (
-          <>
-            {accessor.map(
-              (item, index, items) =>
-                props.renderEach &&
-                props.renderEach(item, index, items, loading, error)
-            )}
-          </>
-        )
-      }
-    }
-    const [queryName] = Object.keys(data)
-
-    if (
-      'children' in props &&
-      props.children &&
-      typeof accessor !== 'undefined'
-    ) {
-      return props.children(data, { loading, error })
-    }
-
-    return null
+    return props.children(tuple.data as Data, tuple)
   } catch (error) {
     if (typeof props.renderError === 'function') {
       return props.renderError(error)
@@ -96,4 +90,8 @@ export default function UseQuery<D = any>(props: UseQueryProps<D>) {
     }
     return <span />
   }
+}
+
+UseQuery.defaultProps = {
+  lazy: false,
 }

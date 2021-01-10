@@ -7,6 +7,8 @@ import Topbar from './components/Topbar'
 import Router from './components/Router'
 import Nav from './components/Nav'
 import { breakpoints } from './utils'
+import Snapshot from './components/Snapshot'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 
 function Main() {
   const { size, orientation, screenIsAtLeast, screenIsAtMost } = useResponsive(
@@ -54,7 +56,18 @@ function Main() {
   )
 }
 
-function App() {
+function App(props: RouteComponentProps) {
+  const params = new URLSearchParams(props.location.search)
+  const shot = params.get('shot')
+
+  if (shot) {
+    return (
+      <div style={{ padding: 16 }}>
+        <Snapshot value={shot} />
+      </div>
+    )
+  }
+
   return (
     <div
       style={{
@@ -68,4 +81,4 @@ function App() {
   )
 }
 
-export default App
+export default withRouter(App)

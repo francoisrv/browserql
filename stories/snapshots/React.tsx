@@ -7,9 +7,9 @@ import {
   BrowserqlProviderProps,
   UseMutation,
   UseQuery,
-  withMutation,
-  withQuery,
-  WithMutationProps,
+  // withMutation,
+  // withQuery,
+  // WithMutationProps,
 } from '@browserql/react'
 import { buildQuery, buildMutation } from '@browserql/operations'
 import connect from '@browserql/client'
@@ -21,6 +21,7 @@ export { default as UseQueryVariables } from './React/UseQueryVariables'
 export { default as UseQueryLoading } from './React/UseQueryLoading'
 export { default as UseQueryError } from './React/UseQueryError'
 export { default as UseQuerySideToSideComparison } from './React/UseQuerySideToSideComparison'
+export { default as UseLazyQuery } from './React/UseLazyQuery'
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
