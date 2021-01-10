@@ -25,6 +25,9 @@ import fp from '@browserql/fp'
 
 import Code from '../components/Code'
 
+export { default as GetFieldArguments } from './FPQL/GetFieldArguments'
+export { default as GetDirectiveArguments } from './FPQL/GetDirectiveArguments'
+
 export function GetTypes() {
   const schema = gql`
     type A {

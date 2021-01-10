@@ -19,30 +19,115 @@ import graphql from '@browserql/graphql-schema-class'
 const Todo = graphql`
   type Todo {
     title: String!
-    done: Boolean @default(value: false)
-
-    makeHTML: String! @method
+    done: Boolean!
   }
-  type Query {
-    getTodos: [Todo!]
+`
+
+const todo = new Todo({ title: 'Buy milk', done: false })
+
+todo.toJSON()
+```
+
+```snapshot
+GraphqlSchemaClass.Example
+```
+
+## GraphQL schema
+
+## Class
+
+### Constructor
+
+When you construct a new instance, just pass the data.
+
+**It has to be a valid schema**
+
+```javascript
+import graphql from '@browserql/graphql-schema-class'
+
+const Todo = graphql`
+  type Todo @schema {
+    title: String!
+    done: Boolean! = false
   }
 `
 
 const todo = new Todo({ title: 'Buy milk' })
 
 todo.toJSON()
-
-Todo.resolve({
-  Query: {
-    async getTodos() {
-      return await http.get('/todos')
-    },
-  },
-})
 ```
 
-```snapshot
-GraphqlSchemaClass.Example
+### get
+
+### set
+
+### toJSON
+
+### toObject
+
+### Custom methods
+
+```graphql
+type TodoSchema {
+  id: ID!
+  title: String!
+  done: Boolean!
+}
+```
+
+```graphql
+type TodoModel {
+  new(title: String!, done: Boolean = false): Todo @constructor
+
+  paginate(page: Int = 1, size: Int = 25): [Todo!]! @static
+  getById(id: ID!): Todo @static
+
+  add(todo: AddableTodo!): Todo! @static
+  update(id: ID!, todo: UpdatableTodo): Todo @static
+  remove(id: ID!): Todo @static
+}
+```
+
+```javascript
+import graphql from '@browserql/graphql-schema-class'
+
+const todos = []
+let id = 1
+
+const Todo = graphql({ schema, model }, {
+  Query: {
+    async paginate({ page, size }) {
+      return todos.slice(page * size, size)
+    }
+    async getById({ id }) {
+      return todos.find(todo => todo.id === id)
+    }
+  },
+  Mutation: {
+    async add({ title, done }) {
+      id++
+      const todo = new Todo({ title, done, id })
+      todos.push(todo)
+      return todo
+    }
+    async update({ id, title, done }) {}
+    async remove({ id }) {}
+  }
+})
+
+const todo = new Todo({ title: 'Buy milk' })
+
+expect(todo.get('done')).toBe(false)
+
+const { id } = await Todo.add(todo.toJSON())
+
+todo.set({ done: true })
+
+await Todo.update(id, todo.toJSON())
+
+const { done } = await Todo.getById(id)
+
+expect(done).toBe(true)
 ```
 
 ## How does it work

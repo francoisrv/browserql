@@ -65,6 +65,10 @@ const menu: Menu = {
       name: 'GraphiQL',
       doc: readFileSync(__dirname + '/doc/react/graphiql.md', 'utf-8'),
     },
+    {
+      name: 'Build Query',
+      doc: readFileSync(__dirname + '/doc/react/build-query.md', 'utf-8'),
+    },
   ],
   Firestore: [
     {
@@ -249,6 +253,10 @@ export const mds = {
 
   'utils/fpql/getArgument': readFileSync(
     __dirname + '/doc/utils/fpql/getArgument.md',
+    'utf-8'
+  ),
+  'utils/fpql/getArguments': readFileSync(
+    __dirname + '/doc/utils/fpql/getArguments.md',
     'utf-8'
   ),
   'utils/fpql/getDirective': readFileSync(
