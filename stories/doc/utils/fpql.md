@@ -46,8 +46,8 @@ fp(schema)(
 )
 ```
 
-```snapshot3
-FPQLExample
+```snapshot
+FPQL.Base
 ```
 
 ## API
@@ -94,6 +94,10 @@ utils/fpql/getScalar
 
 ```section-h3
 utils/fpql/getScalars
+```
+
+```section-h3
+utils/fpql/getSelections
 ```
 
 ```section-h3

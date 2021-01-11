@@ -27,25 +27,10 @@ import Code from '../components/Code'
 
 export { default as GetFieldArguments } from './FPQL/GetFieldArguments'
 export { default as GetDirectiveArguments } from './FPQL/GetDirectiveArguments'
-
-export function GetTypes() {
-  const schema = gql`
-    type A {
-      id: ID
-    }
-
-    type B {
-      id: ID
-    }
-  `
-
-  return (
-    <Code
-      language="json"
-      value={JSON.stringify(getTypes(schema).map(getName))}
-    />
-  )
-}
+export { default as GetExecutableOperationArguments } from './FPQL/GetExecutableOperationArguments'
+export { default as GetSelections } from './FPQL/GetSelections'
+export { default as GetTypes } from './FPQL/GetTypes'
+export { default as Base } from './FPQL/Base'
 
 export function GetTypesNames() {
   const schema = gql`
@@ -223,12 +208,15 @@ export function GetExecutableOperations() {
 
 export function GetExecutableOperation() {
   const schema = gql`
-    query Query1 {
-      query1
+    query Query1($a: Int) {
+      query1(a: $a)
     }
 
-    query Query2 {
-      query2
+    query Query2($b: Int) {
+      query2(b: $b) {
+        id
+        name
+      }
     }
   `
   return (

@@ -37,3 +37,22 @@ fp(schema)(getType('User'), getDirective('model'), getArguments)
 ```snapshot
 FPQL.GetDirectiveArguments
 ```
+
+## Get executable operation's arguments
+
+```graphql
+query Get($page: Int = 1) {
+  get(page: $page)
+}
+```
+
+```javascript
+import { getArguments, getExecutableOperation } from '@browserql/fpql'
+import fp from '@browserql/fp'
+
+fp(schema)(getExecutableOperation('Get'), getArguments)
+```
+
+```snapshot
+FPQL.GetExecutableOperationArguments
+```

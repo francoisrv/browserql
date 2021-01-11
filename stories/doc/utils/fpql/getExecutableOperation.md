@@ -5,12 +5,15 @@ import { getExecutableOperation } from '@browserql/fpql'
 ```
 
 ```graphql
-query Query1 {
-  query1
+query Query1($a: Int) {
+  query1(a: $a)
 }
 
-query Query2 {
-  query2
+query Query2($b: Int) {
+  query2(b: $b) {
+    id
+    name
+  }
 }
 ```
 

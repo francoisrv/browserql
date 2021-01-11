@@ -295,6 +295,10 @@ export const mds = {
     __dirname + '/doc/utils/fpql/merge.md',
     'utf-8'
   ),
+  'utils/fpql/getSelections': readFileSync(
+    __dirname + '/doc/utils/fpql/getSelections.md',
+    'utf-8'
+  ),
   'http/url': readFileSync(__dirname + '/doc/http/url.md', 'utf-8'),
   'utils/fpql/getDefaultValue': readFileSync(
     __dirname + '/doc/utils/fpql/getDefaultValue.md',
