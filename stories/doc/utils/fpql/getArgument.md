@@ -1,4 +1,8 @@
-Get node's argument by name
+Get node's argument by name.
+
+{{ include: schema }}
+
+You need to pass it a name, which will return you a function that you call with the target node
 
 ```define
 @schema

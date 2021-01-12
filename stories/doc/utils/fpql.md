@@ -52,8 +52,10 @@ FPQL.Base
 
 ## API
 
-```section-h3
+```section
+Get Argument
 utils/fpql/getArgument
+Get given node's argument by name
 ```
 
 ```section-h3
