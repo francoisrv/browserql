@@ -2,6 +2,7 @@ import type {
   DocumentNode,
   ObjectTypeDefinitionNode,
   FieldDefinitionNode,
+  GraphQLScalarType,
 } from 'graphql'
 import {
   getArgument,
@@ -10,18 +11,25 @@ import {
   getFields,
   getKind,
   getName,
+  getType,
   getValue,
   parseKind,
 } from '@browserql/fpql'
 import parseGraphQLValue from './parseGraphqlValue'
 
-export default abstract class GraphqlSchemaClass<Schema = unknown> {
+export default class GraphqlSchemaClass<Schema = unknown> {
   static schema: DocumentNode
+
+  static type?: string
 
   static defaultFunctions: Record<string, () => any> = {}
 
-  static applyDefaults<V>(type: ObjectTypeDefinitionNode): Partial<V> {
-    const fields = getFields(type)
+  static scalars: Record<string, GraphQLScalarType> = {}
+
+  static applyDefaults<Schema = unknown>(
+    model: InstanceType<typeof GraphqlSchemaClass>
+  ): Partial<Schema> {
+    const fields = getFields(model.type)
     return fields.reduce((defaults, field) => {
       const fieldName = getName(field)
       const defaultDirective = getDirective('default')(
@@ -43,10 +51,10 @@ export default abstract class GraphqlSchemaClass<Schema = unknown> {
 
         if (argFn) {
           const fn = getValue(argFn)
-          const defaultFunction =
-            GraphqlSchemaClass.defaultFunctions[
-              fn as keyof typeof GraphqlSchemaClass.defaultFunctions
-            ]
+          const defaultFunction = (model.constructor as typeof GraphqlSchemaClass)
+            .defaultFunctions[
+            fn as keyof typeof GraphqlSchemaClass.defaultFunctions
+          ]
           if (!defaultFunction) {
             throw new Error(`No such default function: ${fn}`)
           }
@@ -82,26 +90,40 @@ export default abstract class GraphqlSchemaClass<Schema = unknown> {
     })
   }
 
-  readonly data: Schema
+  private readonly data: Schema
 
-  readonly type: ObjectTypeDefinitionNode
+  private readonly type: ObjectTypeDefinitionNode
 
   constructor(data: Partial<Schema>) {
-    const { schema } = this.constructor as typeof GraphqlSchemaClass
+    const { schema, type: typeName } = this
+      .constructor as typeof GraphqlSchemaClass
 
     if (!schema) {
       throw new Error(`Missing schema in Model ${this.constructor.name}`)
     }
 
-    const [type] = schema.definitions
+    if (typeName) {
+      const type = getType(typeName)(schema)
 
-    if (type.kind !== 'ObjectTypeDefinition') {
-      throw new Error(`Was expecting an Object Type, instead got ${type.kind}`)
+      if (!type) {
+        throw new Error(`Could not find type ${typeName} in schema`)
+      }
+
+      this.type = type as ObjectTypeDefinitionNode
+    } else {
+      const [type] = schema.definitions
+
+      if (type.kind !== 'ObjectTypeDefinition') {
+        throw new Error(
+          `Was expecting an Object Type, instead got ${type.kind}`
+        )
+      }
+
+      this.type = type as ObjectTypeDefinitionNode
     }
 
-    this.type = type as ObjectTypeDefinitionNode
     this.data = {
-      ...GraphqlSchemaClass.applyDefaults(this.type),
+      ...GraphqlSchemaClass.applyDefaults<Schema>(this),
       ...data,
     } as Schema
 
@@ -121,11 +143,12 @@ export default abstract class GraphqlSchemaClass<Schema = unknown> {
     if (!field) {
       throw new Error(`Unknown field: ${fieldName}`)
     }
-    const { schema } = this.constructor as typeof GraphqlSchemaClass
+    const { schema, scalars } = this.constructor as typeof GraphqlSchemaClass
     this.data[fieldName] = parseGraphQLValue(
       value,
       parseKind(getKind(field)),
-      schema
+      schema,
+      scalars
     ) as Schema[typeof fieldName]
     return this
   }
