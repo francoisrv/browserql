@@ -1,4 +1,4 @@
-# Graphql Class
+# Graphql Schema Class
 
 ```component
 {
@@ -14,16 +14,18 @@ Use `GraphQL` to create classes with validation, formatting, required and defaul
 Just enter a schema and it will return you a class
 
 ```javascript
-import graphql from '@browserql/graphql-schema-class'
+import { GraphqlSchemaClass } from '@browserql/graphql-schema-class'
 
-const Todo = graphql`
-  type Todo {
-    title: String!
-    done: Boolean!
-  }
-`
+class Todo extends GraphqlSchemaClass {
+  static schema = gql`
+    input Todo {
+      title: String!
+      done: Boolean = false
+    }
+  `
+}
 
-const todo = new Todo({ title: 'Buy milk', done: false })
+const todo = new Todo({ title: 'Buy milk' })
 
 todo.toJSON()
 ```

@@ -82,7 +82,7 @@ export default class GraphqlSchemaClass<Schema = unknown> {
       const fieldName = getName(field)
       const kind = parseKind(getKind(field))
       const value = model.get(fieldName as keyof S)
-      if (kind.required && (value === null || value === undefined)) {
+      if (kind.required && (value === null || typeof value === 'undefined')) {
         throw new Error(
           `Error in model: ${model.constructor.name}: Missing required field ${fieldName}`
         )
@@ -124,11 +124,13 @@ export default class GraphqlSchemaClass<Schema = unknown> {
 
     this.data = {
       ...GraphqlSchemaClass.applyDefaults<Schema>(this),
-      ...data,
     } as Schema
 
     Object.keys(data).forEach((key) => {
-      this.set(key as keyof Schema, this.data[key as keyof Schema])
+      this.set(
+        key as keyof Schema,
+        data[key as keyof Schema] as Schema[keyof Schema]
+      )
     })
 
     GraphqlSchemaClass.ensureRequired(this)

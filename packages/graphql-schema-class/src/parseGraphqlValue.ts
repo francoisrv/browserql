@@ -126,11 +126,7 @@ export default function parseGraphQLValue(
       return null
     }
 
-    try {
-      return existingScalar.parseValue(value)
-    } catch (error) {
-      return null
-    }
+    return existingScalar.parseValue(value)
   }
 
   return null
