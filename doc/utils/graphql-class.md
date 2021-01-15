@@ -34,7 +34,63 @@ todo.toJSON()
 GraphqlSchemaClass.Example
 ```
 
-## GraphQL schema
+## static schema
+
+The schema to use.
+
+By default we pick the first encountered type as the model.
+
+```javascript
+class Post extends GraphqlSchemaClass {
+  static readonly schema = gql`
+    type Post {
+      title: String!
+      tags: [Tag!]!
+    }
+
+    type Tag {
+      tilte: String!
+    }
+  `
+}
+
+new Post({
+  title: '...',
+  tags: [{ title: '...' }]
+})
+```
+
+## static type
+
+Specify which type to use.
+
+```javascript
+const schema = gql`
+  type Post {
+    title: String!
+    tags: [Tag!]!
+  }
+
+  type Tag {
+    tilte: String!
+  }
+`
+
+class Post extends GraphqlSchemaClass {
+  static readonly schema = schema
+  static readonly type = "Post"
+}
+
+class Tag extends GraphqlSchemaClass {
+  static readonly schema = schema
+  static readonly type = "Tag"
+}
+
+new Post({
+  title: '...',
+  tags: [new Tag({ title: '...' })]
+})
+```
 
 ## Class
 
@@ -147,57 +203,76 @@ Just provide the type and it will generate a class that make sure its schema:
 ## Example with MongoDB
 
 ```javascript
-// First we create a wrapper class that will extend our schema class with Mongodb
-function graphql(schema) {
-  const Schema = makeGraphqlSchemaClass(`
-  scalar ObjectID
-  scalar Date
-  ${schema}
-  `)
-  return collectionName => abstract class MongodbClass extends Schema {
-    static __resolvers = {
-      ObjectID: ObjectIDResolver,
-      Date: DateResolver,
+import gql from 'graphql-tag'
+import { GraphqlSchemaClass } from '@browserql/graphql-schema-class'
+import {
+  ObjectIDResolver,
+  DateResolver
+} from 'graphql-scalars'
+import { ObjectID } from 'mongodb'
+
+class MongodbClass extends GraphqlSchemaClass {
+  static schema = gql`
+    input Post {
+      _id:        ObjectID!
+      author:     ObjectID!
+      createdAt:  Date = now()
+      title:      String!
     }
 
-    static collection = collectionName
-
-    static async function find(query) {
-      const documents = await db.collection(MongodbClass.collection).find(query)
-      return documents.map((document) => new Model(document))
+    input Author {
+      _id:        ObjectID!
+      createdAt:  Date = now()
+      name:       String!
     }
+  `
 
-    async function save(document) {
-      const _id = document.get('_id')
-      const collection = db.collection(MongodbClass.collection)
-      const doc = document.toObject()
+  static scalars = {
+    ObjectID: ObjectIDResolver,
+    Date: DateResolver,
+  }
 
-      if (_id) {
-        await collection.updateOne({ _id }, doc)
-      } else {
-        const { insertedId } = await collection.insertOne(doc)
-        document.set('_id', insertedId)
-      }
+  static defaultFunctions = {
+    now: () => new Date()
+  }
+
+  static async function find(query) {
+    const documents = await db
+      .collection(MongodbClass.collection)
+      .find(query)
+    return documents.map((document) => new Model(document))
+  }
+
+  defaults = {
+    _id: new ObjectID()
+  }
+
+  isSaved = false
+
+  async function save(document) {
+    const _id = document.get('_id')
+    const collection = db.collection(this.constructor.collection)
+    const doc = document.toObject()
+
+    if (this.isSaved) {
+      await collection.updateOne({ _id }, doc)
+    } else {
+      const { insertedId } = await collection.insertOne(doc)
+      document.set('_id', insertedId)
+      this.isSaved = true
     }
   }
 }
 
-const Post = graphql`
-  type Post {
-    _id: ObjectID
-    author: ObjectID!
-    createdAt: Date! @default(function: "now")
-    title: String!
-  }
-`('posts')
+class Post extends MongodbClass {
+  static input = "Post"
+  static collection = "posts"
+}
 
-const Author = graphql`
-  type Author {
-    _id: ObjectId
-    createdAt: Date! @default(function: "now")
-    name: String!
-  }
-`('authors')
+class Author extends MongodbClass {
+  static input = "Author"
+  static collection = "authors"
+}
 
 const author = new Author({ name: 'doe' })
 

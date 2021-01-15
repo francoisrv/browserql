@@ -7,6 +7,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import * as React from 'react'
 import { mds } from '../menu'
 import MD from './MD'
+import Run from './Run'
 
 interface Props {
   link: string
@@ -111,7 +112,7 @@ export function NavSection({
             // overflow: 'auto',
           }}
         >
-          <MD
+          <Run
             doc={mds[link as keyof typeof mds] || `Link not found: ${link}`}
           />
         </div>

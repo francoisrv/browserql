@@ -2,7 +2,7 @@
 
 ```component
 {
-  "component": "NPMBadge",
+  "component": "stories/components/NPMBadge",
   "props": {
     "pkg": "fpql"
   }

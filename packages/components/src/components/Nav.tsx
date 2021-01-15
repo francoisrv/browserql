@@ -16,8 +16,8 @@ import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
 import TextField from '@material-ui/core/TextField'
-import menu from '../menu'
-import { breakpoints } from '../utils'
+import menu from '../../../../stories/menu'
+import { breakpoints } from '../../../../stories/utils'
 
 function Nav(props: RouteComponentProps) {
   const {

@@ -1,7 +1,7 @@
 Pass it a name and it will return you a function that you call with the target node.
 
-{{ import schema.graphql as schema }}
+{{ import schema.graphql }}
 
-{{ import main.js as main }}
+{{ import main.js }}
 
 {{ run main }}

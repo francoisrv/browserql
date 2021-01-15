@@ -3,11 +3,11 @@ import 'refractor'
 import Paper from '@material-ui/core/Paper'
 import { useResponsive } from 'react-hooks-responsive'
 
-import Topbar from './components/Topbar'
-import Router from './components/Router'
-import Nav from './components/Nav'
+import Topbar from '@browserql/components/Topbar'
+import Router from '@browserql/components/Router'
+import Nav from '@browserql/components/Nav'
 import { breakpoints } from './utils'
-import Snapshot from './components/Snapshot'
+import Snapshot from '@browserql/components/Snapshot'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 
 function Main() {

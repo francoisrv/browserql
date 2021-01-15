@@ -1,6 +1,5 @@
 import * as React from 'react'
 // @ts-ignore no types from typed, so we'll need to do it ourself #TODO
-import NpmApi from 'npm-api'
 import MD from './MD'
 
 interface Props {

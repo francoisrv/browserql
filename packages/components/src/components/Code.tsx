@@ -1,14 +1,12 @@
-import * as React from 'react'
-import { atomOneDark as style } from 'react-syntax-highlighter/dist/esm/styles/hljs'
-import SyntaxHighlighter from 'react-syntax-highlighter'
-
-// import BrowserqlPlayground from './BrowserqlPlayground'
-import Snapshot from './Snapshot'
-import * as components from '../components'
-import Section, { NavSection } from './Section'
-import Typography from '@material-ui/core/Typography'
+import React from 'react'
 import Link from '@material-ui/core/Link'
+import SyntaxHighlighter from 'react-syntax-highlighter'
+import Typography from '@material-ui/core/Typography'
 import { Chip } from '@material-ui/core'
+import { atomOneDark as style } from 'react-syntax-highlighter/dist/esm/styles/hljs'
+
+import Snapshot from './Snapshot'
+import Section, { NavSection } from './Section'
 
 export default function Code({
   language,
@@ -72,7 +70,7 @@ export default function Code({
     if (!data.component) {
       return <div>Missing component's name</div>
     }
-    const Component = components[data.component as keyof typeof components]
+    const { default: Component } = require(data.component)
     if (!Component) {
       return <div>No such component: {value.trim()}</div>
     }

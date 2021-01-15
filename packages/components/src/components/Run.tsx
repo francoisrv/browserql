@@ -6,6 +6,6 @@ interface Props {
 }
 
 export default function Run(props: Props) {
-  const md = require(`../doc/${props.doc}.md`)
-  return <Code language="json" value={JSON.stringify(props, null, 2)} />
+  const vars: Record<string, string> = {}
+  return <div>{props.doc}</div>
 }

@@ -1,16 +1,16 @@
-import * as React from 'react'
+import React from 'react'
+import Chip from '@material-ui/core/Chip'
 import Markdown from 'react-markdown'
-import gfm from 'remark-gfm'
 import Paper from '@material-ui/core/Paper'
 import Table from '@material-ui/core/Table'
-import TableHead from '@material-ui/core/TableHead'
 import TableBody from '@material-ui/core/TableBody'
-import TableRow from '@material-ui/core/TableRow'
 import TableCell from '@material-ui/core/TableCell'
-import Chip from '@material-ui/core/Chip'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
+import Typography from '@material-ui/core/Typography'
+import gfm from 'remark-gfm'
 
 import Code from './Code'
-import Typography from '@material-ui/core/Typography'
 
 const renderers = {
   code: ({ language, value }: { language: string; value: any }) => {

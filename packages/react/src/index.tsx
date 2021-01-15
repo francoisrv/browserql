@@ -8,6 +8,8 @@ export { default as UseMutation } from './components/UseMutation'
 
 export { default as UseQuery } from './components/UseQuery'
 
+export { default as BuildMutation } from './components/BuildMutation'
+
 // export { default as withQuery } from './hoc/withQuery'
 
 // export { default as withMutation } from './hoc/withMutation'

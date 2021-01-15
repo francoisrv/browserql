@@ -8,7 +8,7 @@ import { connect as connectFirestoreql } from '@browserql/firestore'
 import { JSONResolver } from 'graphql-scalars'
 
 import Code from '../components/Code'
-import { firestore } from '../utils'
+import { firestore } from '../../../../stories/utils'
 import { getQuery, merge } from '@browserql/fpql'
 import { BrowserqlProvider, UseQuery } from '@browserql/react'
 import Typography from '@material-ui/core/Typography'

@@ -22,6 +22,7 @@ export { default as UseQueryLoading } from './React/UseQueryLoading'
 export { default as UseQueryError } from './React/UseQueryError'
 export { default as UseQuerySideToSideComparison } from './React/UseQuerySideToSideComparison'
 export { default as UseLazyQuery } from './React/UseLazyQuery'
+export { default as BuildMutation } from './React/BuildMutation'
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
