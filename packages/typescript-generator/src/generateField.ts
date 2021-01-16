@@ -1,12 +1,25 @@
 import { getKind, getName, parseKind } from '@browserql/fpql'
 import type { DocumentNode, FieldDefinitionNode } from 'graphql'
 import generateKind from './generateKind'
-import { TSGeneratorOptions } from './types'
+import { NULL_STRATEGY, TSGeneratorOptions } from './types'
 
 export default function generateField(
   schema: DocumentNode,
   options: TSGeneratorOptions
 ) {
+  const { null: nullStrategy = 'null' } = options
+  const acceptsMissing =
+    nullStrategy === 'missing' ||
+    (Array.isArray(nullStrategy) &&
+      nullStrategy.includes(NULL_STRATEGY.missing))
+  const acceptsNull =
+    nullStrategy === 'null' ||
+    (Array.isArray(nullStrategy) && nullStrategy.includes(NULL_STRATEGY.null))
+  const accepstUndefined =
+    nullStrategy === 'undefined' ||
+    (Array.isArray(nullStrategy) &&
+      nullStrategy.includes(NULL_STRATEGY.undefined))
+
   return (field: FieldDefinitionNode) => {
     const q: string[] = ['  ', getName(field)]
     const { arguments: args = [] } = field
@@ -17,9 +30,22 @@ export default function generateField(
       q.push(
         ...args.map((arg) => {
           const argType = parseKind(getKind(arg))
-          return `\n      ${getName(arg)}${
-            argType.required ? '' : '?'
-          }: ${generateKind(argType, schema, options)},`
+          const kind = generateKind(argType, schema, options)
+          let line = `\n      ${getName(arg)}`
+          if (!argType.required && acceptsMissing) {
+            line += '?'
+          }
+
+          line += `: ${kind}`
+
+          if (!argType.required && acceptsNull) {
+            line += ' | null'
+          }
+
+          if (!argType.required && accepstUndefined) {
+            line += ' | undefined'
+          }
+          return line
         })
       )
       q.push('\n    }\n  )')
