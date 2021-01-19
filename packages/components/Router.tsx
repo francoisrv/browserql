@@ -23,7 +23,7 @@ mapKeys(nav, (section, sectionName) => {
   })
 })
 
-console.log(routes)
+console.log(routes, 2)
 
 export default function Router() {
   return (
