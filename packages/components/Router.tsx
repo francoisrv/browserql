@@ -12,29 +12,20 @@ mapKeys(nav, (section, sectionName) => {
     subSection.forEach((example) => {
       console.log(`${kebabCase(sectionName)}/${kebabCase(subSectionName)}`)
       routes.push({
-        path: `${kebabCase(sectionName)}/${kebabCase(subSectionName)}`,
-        component: () => {
-          console.log(123)
-          return <div>Hello</div>
-          // return <MD doc={example.bundle} />
-        },
+        path: `/${kebabCase(sectionName)}/${kebabCase(subSectionName)}`,
+        component: () => <MD doc={example.bundle} />,
       })
     })
   })
 })
 
-console.log(routes, 2)
+console.log(routes)
 
 export default function Router() {
   return (
     <Switch>
       {routes.map((route) => (
-        <Route
-          component={route.component}
-          exact
-          key={route.path as string}
-          path={route.path}
-        />
+        <Route key={route.path as string} {...route} />
       ))}
     </Switch>
   )
