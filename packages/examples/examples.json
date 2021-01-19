@@ -1,0 +1,7 @@
+[
+  {
+    "module": "fpql",
+    "name": "getArgument",
+    "bundle": "Hello `test`"
+  }
+]

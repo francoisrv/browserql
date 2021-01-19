@@ -9,6 +9,7 @@
     "declarationMap": true,
     "types": ["node"],
     "jsx": "preserve",
-    "lib": ["esnext.asynciterable", "ES2016", "DOM"]
+    "lib": ["esnext.asynciterable", "ES2016", "DOM"],
+    "resolveJsonModule": true
   }
 }

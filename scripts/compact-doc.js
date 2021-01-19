@@ -6,35 +6,38 @@ const { promisify } = require('util')
 function findLanguageByExtension(fileName) {
   const extension = last(fileName.split(/\./))
   switch (extension) {
-    case 'js': return 'javascript'
+    case 'js':
+      return 'javascript'
   }
 }
 
 function runScript(file, ctx) {
   const extension = last(file.name.split(/\./))
   switch (extension) {
-    case 'js': return `\`\`\`component
-${JSON.stringify({
-  component: '@browserql/components/Run',
-  props: {
-    file,
-    ...ctx,
-  }
-}, null, 2)}
+    case 'js':
+      return `\`\`\`component
+${JSON.stringify(
+  {
+    component: '@browserql/components/Run',
+    props: {
+      file,
+      ...ctx,
+    },
+  },
+  null,
+  2
+)}
 \`\`\``
   }
 }
 
 function transform(source, ctx) {
   let src = source
-  ctx.files.forEach(file => {
+  ctx.files.forEach((file) => {
     const SHOW = `\{\{ show ${file.name} \}\}`
     const RUN = `\{\{ run ${file.name} \}\}`
 
-    src = src.replace(
-      new RegExp(RUN, 'g'),
-      runScript(file, ctx)
-    )
+    src = src.replace(new RegExp(RUN, 'g'), runScript(file, ctx))
 
     src = src.replace(
       new RegExp(SHOW, 'g'),
@@ -50,10 +53,8 @@ async function tree(dir) {
   const repTree = {}
   const files = await promisify(readdir)(dir)
   await Promise.all(
-    files.map(async file => {
-      const x = await promisify(stat)(
-        join(dir, file)
-      )
+    files.map(async (file) => {
+      const x = await promisify(stat)(join(dir, file))
       if (x.isDirectory()) {
         repTree[file] = await tree(join(dir, file))
       } else {
@@ -73,32 +74,35 @@ async function fillTree(repTree, path = '') {
     mapKeys(repTree[moduleKey], (value, exampleKey) => {
       const promise = async () => {
         const index = await promisify(readFile)(
-          join('examples', moduleKey, exampleKey, 'index.md')
+          join('packages/examples/modules', moduleKey, exampleKey, 'index.md')
         )
         const files = []
         const filePromises = []
         mapKeys(value.files, (file, fileName) => {
           filePromises.push(async () => {
             const source = await promisify(readFile)(
-              join('examples', moduleKey, exampleKey, 'files', fileName)
+              join(
+                'packages/examples/modules',
+                moduleKey,
+                exampleKey,
+                'files',
+                fileName
+              )
             )
             files.push({ name: fileName, source: source.toString() })
           })
         })
-        await Promise.all(filePromises.map(p => p()))
+        await Promise.all(filePromises.map((p) => p()))
         examples.push({
           module: moduleKey,
           name: exampleKey,
           index: index.toString(),
           files,
-          bundle: transform(
-            index.toString(),
-            {
-              module: moduleKey,
-              name: exampleKey,
-              files
-            }
-          )
+          bundle: transform(index.toString(), {
+            module: moduleKey,
+            name: exampleKey,
+            files,
+          }),
         })
       }
       promises.push(promise())
@@ -111,24 +115,32 @@ async function fillTree(repTree, path = '') {
 }
 
 async function run() {
-  const repTree = await tree('examples')
+  const repTree = await tree('packages/examples/modules')
   const examples = await fillTree(repTree)
-  console.log(examples[0].bundle)
   await Promise.all(
-    examples.map(async example => {
+    examples.map(async (example) => {
       await promisify(writeFile)(
-        join('examples', example.module, example.name, 'bundle.md'),
+        join(
+          'packages/examples/modules',
+          example.module,
+          example.name,
+          'bundle.md'
+        ),
         example.bundle
       )
     })
   )
   await promisify(writeFile)(
-    'examples/examples.json',
-    JSON.stringify(examples.map(example => ({
-      module: example.module,
-      name: example.name,
-      bundle: example.bundle,
-    })), null, 2).concat('\n')
+    'packages/examples/modules/examples.json',
+    JSON.stringify(
+      examples.map((example) => ({
+        module: example.module,
+        name: example.name,
+        bundle: example.bundle,
+      })),
+      null,
+      2
+    ).concat('\n')
   )
 }
 

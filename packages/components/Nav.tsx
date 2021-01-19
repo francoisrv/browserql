@@ -1,7 +1,6 @@
 import Accordion from '@material-ui/core/Accordion'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
-import GitHubIcon from '@material-ui/icons/GitHub'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -10,23 +9,18 @@ import Typography from '@material-ui/core/Typography'
 import { kebabCase, keys } from 'lodash'
 import * as React from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import BugReportIcon from '@material-ui/icons/BugReport'
 import { useResponsive } from 'react-hooks-responsive'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
-import IconButton from '@material-ui/core/IconButton'
-import TextField from '@material-ui/core/TextField'
-import menu from '../../../../stories/menu'
-import { breakpoints } from '../../../../stories/utils'
+import { breakpoints } from './utils'
+import nav from './nav'
 
 function Nav(props: RouteComponentProps) {
   const {
     history,
     location: { pathname },
   } = props
-  const { size, orientation, screenIsAtLeast, screenIsAtMost } = useResponsive(
-    breakpoints
-  )
+  const { screenIsAtMost } = useResponsive(breakpoints)
 
   return (
     <div
@@ -46,19 +40,8 @@ function Nav(props: RouteComponentProps) {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Toolbar>
-        <IconButton>
-          <GitHubIcon />
-        </IconButton>
-        <IconButton>
-          <BugReportIcon />
-        </IconButton>
-      </Toolbar>
-      <Toolbar>
-        <TextField fullWidth placeholder="Search..." />
-      </Toolbar>
       <div style={{ height: 16 }} />
-      {keys(menu).map((menuName) => (
+      {keys(nav).map((menuName) => (
         <Accordion
           key={menuName}
           square
@@ -80,21 +63,21 @@ function Nav(props: RouteComponentProps) {
           <AccordionDetails>
             <div style={{ flex: 1 }}>
               <List component="nav" disablePadding>
-                {menu[menuName].map((child) => (
+                {keys(nav[menuName as keyof typeof nav]).map((childName) => (
                   <ListItem
                     button
-                    key={child.name}
+                    key={childName}
                     selected={
                       pathname ===
-                      `/${kebabCase(menuName)}/${kebabCase(child.name)}`
+                      `/${kebabCase(menuName)}/${kebabCase(childName)}`
                     }
                     onClick={() => {
                       history.push(
-                        `/${kebabCase(menuName)}/${kebabCase(child.name)}`
+                        `/${kebabCase(menuName)}/${kebabCase(childName)}`
                       )
                     }}
                   >
-                    <ListItemText primary={child.name} />
+                    <ListItemText primary={childName} />
                   </ListItem>
                 ))}
               </List>
