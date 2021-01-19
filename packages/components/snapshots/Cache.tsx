@@ -2,7 +2,7 @@ import * as React from 'react'
 import cacheql from '@browserql/cache'
 import gql from 'graphql-tag'
 import { BrowserqlContext, BrowserqlProvider } from '@browserql/react'
-import Code from '../components/Code'
+import Code from '../Code'
 import { makeExecutableQuery } from '@browserql/executable'
 
 ////////////////////////////////////////////////////////////////

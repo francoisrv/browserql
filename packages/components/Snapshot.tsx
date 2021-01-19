@@ -1,7 +1,9 @@
 import { get } from 'lodash'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import * as snapshots from '../snapshots'
+// import * as snapshots from '../snapshots'
+
+const snapshots = {}
 
 interface Props {
   value: string

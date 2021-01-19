@@ -1,7 +1,7 @@
 import * as React from 'react'
 import gql from 'graphql-tag'
 import { buildFragment } from '@browserql/fragments'
-import Code from '../components/Code'
+import Code from '../Code'
 
 export function Example() {
   const schema = gql`

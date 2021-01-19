@@ -1,5 +1,5 @@
-const { readdir, readFile, stat } = require('fs')
-const { set, compact, mapKeys, last } = require('lodash')
+const { readdir, readFile, stat, writeFile } = require('fs')
+const { set, compact, mapKeys, last, upperFirst } = require('lodash')
 const { join } = require('path')
 const { promisify } = require('util')
 
@@ -13,17 +13,15 @@ function findLanguageByExtension(fileName) {
 function runScript(file, ctx) {
   const extension = last(file.name.split(/\./))
   switch (extension) {
-    case 'js': return `
-\`\`\`component
-{
-  "component": "@browserql/components/Code",
-  "props": {
-    "value": "GOO",
-    "language": "json"
+    case 'js': return `\`\`\`component
+${JSON.stringify({
+  component: '@browserql/components/Run',
+  props: {
+    file,
+    ...ctx,
   }
-}
-\`\`\`
-`
+}, null, 2)}
+\`\`\``
   }
 }
 
@@ -40,11 +38,9 @@ function transform(source, ctx) {
 
     src = src.replace(
       new RegExp(SHOW, 'g'),
-      `
-\`\`\`${findLanguageByExtension(file.name)}
+      `\`\`\`${findLanguageByExtension(file.name)}
 ${file.source}
-\`\`\`
-`
+\`\`\``
     )
   })
   return src
@@ -117,9 +113,23 @@ async function fillTree(repTree, path = '') {
 async function run() {
   const repTree = await tree('examples')
   const examples = await fillTree(repTree)
-  console.log(JSON.stringify(examples, null, 2))
-  console.log()
   console.log(examples[0].bundle)
+  await Promise.all(
+    examples.map(async example => {
+      await promisify(writeFile)(
+        join('examples', example.module, example.name, 'bundle.md'),
+        example.bundle
+      )
+    })
+  )
+  await promisify(writeFile)(
+    'examples/examples.json',
+    JSON.stringify(examples.map(example => ({
+      module: example.module,
+      name: example.name,
+      bundle: example.bundle,
+    })), null, 2).concat('\n')
+  )
 }
 
 run()

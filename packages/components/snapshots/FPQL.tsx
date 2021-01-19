@@ -23,7 +23,7 @@ import { print } from 'graphql'
 import type { ObjectTypeDefinitionNode } from 'graphql'
 import fp from '@browserql/fp'
 
-import Code from '../components/Code'
+import Code from '../Code'
 
 export { default as GetFieldArguments } from './FPQL/GetFieldArguments'
 export { default as GetDirectiveArguments } from './FPQL/GetDirectiveArguments'

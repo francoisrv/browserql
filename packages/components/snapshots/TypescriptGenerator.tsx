@@ -1,7 +1,7 @@
 import * as React from 'react'
 import gents from '@browserql/typescript-generator'
 import gql from 'graphql-tag'
-import Code from '../components/Code'
+import Code from '../Code'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import FormGroup from '@material-ui/core/FormGroup'

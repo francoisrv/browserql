@@ -4,8 +4,8 @@ import Typography from '@material-ui/core/Typography'
 import gql from 'graphql-tag'
 import React from 'react'
 import { print } from 'graphql'
-import Code from '../../components/Code'
-import TabNav from '../../components/TabNav'
+import Code from '../../Code'
+import TabNav from '../../TabNav'
 import TextField from '@material-ui/core/TextField'
 
 export default function UseQueryLoading() {

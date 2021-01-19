@@ -1,6 +1,6 @@
 import * as React from 'react'
 import gql from 'graphql-tag'
-import Code from '../../components/Code'
+import Code from '../../Code'
 import fp from '@browserql/fp'
 import { getArguments, getExecutableOperation } from '@browserql/fpql'
 

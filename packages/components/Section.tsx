@@ -5,13 +5,15 @@ import Typography from '@material-ui/core/Typography'
 import { last, startCase } from 'lodash'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import * as React from 'react'
-import { mds } from '../menu'
+// import { mds } from '../menu'
 import MD from './MD'
 import Run from './Run'
 
 interface Props {
   link: string
 }
+
+const mds = {}
 
 export default function Section({ link }: Props) {
   const bit = last(link.split(/\//))

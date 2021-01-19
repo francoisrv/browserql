@@ -5,7 +5,7 @@ import gql from 'graphql-tag'
 import { buildQuery, buildQueryString } from '@browserql/operations'
 import { useQuery } from '@apollo/client'
 import { JSONResolver } from 'graphql-scalars'
-import Code from '../components/Code'
+import Code from '../Code'
 
 export function Example() {
   const schema = gql`

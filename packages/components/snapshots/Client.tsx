@@ -13,7 +13,7 @@ import { Button } from '@material-ui/core'
 import { BrowserqlContext as BrowserqlClientContext } from '@browserql/types'
 import { print } from 'graphql'
 import cacheql from '@browserql/cache'
-import Code from '../components/Code'
+import Code from '../Code'
 import connect from '@browserql/client'
 import { flowRight } from 'lodash'
 

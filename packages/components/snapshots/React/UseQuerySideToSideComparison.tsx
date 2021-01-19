@@ -1,6 +1,6 @@
 import Typography from '@material-ui/core/Typography'
 import React from 'react'
-import Code from '../../components/Code'
+import Code from '../../Code'
 
 export default function UseQuerySideToSideComparison() {
   return (

@@ -2,8 +2,8 @@ import * as React from 'react'
 import gql from 'graphql-tag'
 import { print } from 'graphql'
 
-import TabNav from '../../components/TabNav'
-import Code from '../../components/Code'
+import TabNav from '../../TabNav'
+import Code from '../../Code'
 import fp from '@browserql/fp'
 import { getArguments, getDirective, getQuery, getType } from '@browserql/fpql'
 

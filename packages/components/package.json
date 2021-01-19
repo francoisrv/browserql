@@ -1,8 +1,6 @@
 {
   "name": "@browserql/components",
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "source": true,
   "license": "ISC",
   "keywords": [
@@ -19,10 +17,9 @@
     "url": "https://github.com/francoisrv/browserql/issues"
   },
   "scripts": {
-    "build": "rm -rf dist && yarn tsc",
-    "watch": "yarn build -w",
-    "test": "jest dist",
-    "prepublishOnly": "git tag | xargs git tag -d && yarn build && yarn test"
+    "build": "echo",
+    "watch": "echo",
+    "test": "echo"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",

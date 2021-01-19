@@ -6,8 +6,8 @@ import { print } from 'graphql'
 import { BrowserqlProvider, UseQuery } from '@browserql/react'
 import TextField from '@material-ui/core/TextField'
 
-import Code from '../../components/Code'
-import TabNav from '../../components/TabNav'
+import Code from '../../Code'
+import TabNav from '../../TabNav'
 
 export default function UseLazyQuery() {
   const schema = gql`

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import gql from 'graphql-tag'
 import { GraphqlSchemaClass } from '@browserql/graphql-schema-class'
-import Code from '../components/Code'
+import Code from '../Code'
 
 export function Example() {
   class Todo extends GraphqlSchemaClass<{ title: string }> {
