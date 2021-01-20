@@ -37,10 +37,12 @@ export default function parseKind(kind: string): ParsedType {
   let defaultValue = undefined
   if (/=/.test(kind)) {
     const [kindStr, defaultValueString] = kind.split(/=/)
-    try {
-      defaultValue = JSON.parse(defaultValueString.trim())
-    } catch (error) {
-      defaultValue = defaultValueString.trim()
+    if (defaultValueString) {
+      try {
+        defaultValue = JSON.parse(defaultValueString.trim())
+      } catch (error) {
+        defaultValue = defaultValueString.trim()
+      }
     }
     kindString = kindStr
   } else {
