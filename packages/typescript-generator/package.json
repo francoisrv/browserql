@@ -1,6 +1,6 @@
 {
   "name": "@browserql/typescript-generator",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "source": "src/index.ts",
