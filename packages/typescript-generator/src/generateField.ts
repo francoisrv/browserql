@@ -32,17 +32,29 @@ export default function generateField(
           const argType = parseKind(getKind(arg))
           const kind = generateKind(argType, schema, options)
           let line = `\n      ${getName(arg)}`
-          if (!argType.required && acceptsMissing) {
+          if (
+            !argType.required &&
+            acceptsMissing &&
+            typeof argType.defaultValue === 'undefined'
+          ) {
             line += '?'
           }
 
           line += `: ${kind}`
 
-          if (!argType.required && acceptsNull) {
+          if (
+            !argType.required &&
+            acceptsNull &&
+            typeof argType.defaultValue === 'undefined'
+          ) {
             line += ' | null'
           }
 
-          if (!argType.required && accepstUndefined) {
+          if (
+            !argType.required &&
+            accepstUndefined &&
+            typeof argType.defaultValue === 'undefined'
+          ) {
             line += ' | undefined'
           }
           return line
