@@ -1,0 +1,3 @@
+type A @foo(bar: 24) {
+  id: ID!
+}

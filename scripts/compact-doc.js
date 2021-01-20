@@ -2,20 +2,21 @@ const { readdir, readFile, stat, writeFile } = require('fs')
 const { set, compact, mapKeys, last, upperFirst } = require('lodash')
 const { join } = require('path')
 const { promisify } = require('util')
+const { exec } = require('child_process')
 const vm = require('vm');
 
 function findLanguageByExtension(fileName) {
   const extension = last(fileName.split(/\./))
   switch (extension) {
-    case 'js':
-      return 'javascript'
+    case 'mjs': return 'javascript'
+    case 'graphql': return 'graphql'
   }
 }
 
 function runScript(file, ctx) {
   const extension = last(file.name.split(/\./))
   switch (extension) {
-    case 'js':
+    case 'mjs':
       return `\`\`\`component
 ${JSON.stringify(
   {
@@ -90,19 +91,26 @@ async function fillTree(repTree, path = '') {
                 fileName
               )
             )
-            
-            const contextobj = { ____: { example: undefined } } 
-              
-            vm.createContext(contextobj); 
-              
-            let result = vm.runInNewContext(source.toString(), contextobj);
 
-            const nextSource = source.toString().trim().split('\n')
+            if (/\.mjs$/.test(fileName)) {
+              const result = await promisify(exec)('node -r graphql-import-node/register packages/examples/modules/fpql/getArgument/files/main.mjs')
+              files.push({ name: fileName, source: source.toString(), output: contextobj.____.example })
+            } else {
+              files.push({ name: fileName, source: source.toString() })
+            }
 
-            nextSource.pop()
-            nextSource.pop()
-              
-            files.push({ name: fileName, source: nextSource.join('\n').toString(), output: contextobj.____.example })
+            if (/\.graphql$/.test(fileName)) {
+              await promisify(writeFile)(
+                join(
+                  'packages/examples/modules',
+                  moduleKey,
+                  exampleKey,
+                  'files',
+                  fileName.concat('.mjs')
+                ),
+
+              )
+            }
           })
         })
         await Promise.all(filePromises.map((p) => p()))
