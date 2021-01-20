@@ -131,7 +131,7 @@ async function run() {
     })
   )
   await promisify(writeFile)(
-    'packages/examples/modules/examples.json',
+    'packages/examples/examples.json',
     JSON.stringify(
       examples.map((example) => ({
         module: example.module,

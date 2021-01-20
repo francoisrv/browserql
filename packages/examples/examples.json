@@ -2,6 +2,6 @@
   {
     "module": "fpql",
     "name": "getArgument",
-    "bundle": "Hello `test`"
+    "bundle": "Hello `test`\n\n```javascript\nconst foo = 2\nfoo\n```\n\n```component\n{\n  \"component\": \"@browserql/components/Run\",\n  \"props\": {\n    \"file\": {\n      \"name\": \"main.js\",\n      \"source\": \"const foo = 2\\nfoo\"\n    },\n    \"module\": \"fpql\",\n    \"name\": \"getArgument\",\n    \"files\": [\n      {\n        \"name\": \"main.js\",\n        \"source\": \"const foo = 2\\nfoo\"\n      }\n    ]\n  }\n}\n```\n"
   }
 ]
