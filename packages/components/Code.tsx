@@ -8,6 +8,8 @@ import { atomOneDark as style } from 'react-syntax-highlighter/dist/esm/styles/h
 import Snapshot from './Snapshot'
 import Section, { NavSection } from './Section'
 
+import './Code'
+
 export default function Code({
   language,
   value,
@@ -70,6 +72,7 @@ export default function Code({
     if (!data.component) {
       return <div>Missing component's name</div>
     }
+    console.log(data.component)
     const { default: Component } = require(data.component)
     if (!Component) {
       return <div>No such component: {value.trim()}</div>

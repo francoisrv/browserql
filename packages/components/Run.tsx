@@ -7,5 +7,5 @@ interface Props {
 
 export default function Run(props: Props) {
   const vars: Record<string, string> = {}
-  return <div>{props.doc}</div>
+  return <div>OK?{console.log(props)}</div>
 }

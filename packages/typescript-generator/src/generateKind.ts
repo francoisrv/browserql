@@ -23,64 +23,56 @@ export default function generateKind(
 
   let parsed = generatePrimitive(type.type, options)
 
-  if (parsed) {
-    if (!type.required && acceptsNull) {
-      parsed += ' | null'
-    }
-
-    if (!type.required && accepstUndefined) {
-      parsed += ' | undefined'
-    }
-  }
-
   if (!parsed) {
     const t = getType(type.type)(schema)
     if (t) {
       if (options.typeSuffix) {
         parsed = `${type.type}${options.typeSuffix}`
-        if (
-          !type.required &&
-          acceptsNull &&
-          typeof type.defaultValue === 'undefined'
-        ) {
-          parsed += ' | null'
-        }
-
-        if (
-          !type.required &&
-          accepstUndefined &&
-          typeof type.defaultValue === 'undefined'
-        ) {
-          parsed += ' | undefined'
-        }
       }
     }
   }
 
   if (!parsed) {
     parsed = type.type
-    if (!type.required && acceptsNull) {
-      parsed += ' | null'
-    }
-
-    if (!type.required && accepstUndefined) {
-      parsed += ' | undefined'
-    }
   }
 
   if (type.depth) {
     let next = parsed
-    if (!type.required && acceptsNull) {
+    if (
+      !type.required &&
+      acceptsNull &&
+      typeof type.defaultValue === 'undefined'
+    ) {
       next += ' | null'
     }
 
-    if (!type.required && accepstUndefined) {
+    if (
+      !type.required &&
+      accepstUndefined &&
+      typeof type.defaultValue === 'undefined'
+    ) {
       next += ' | undefined'
     }
     for (let i = 0; i < type.depth; i++) {
       next = `(${next})[]`
     }
     return next
+  }
+
+  if (
+    !type.required &&
+    acceptsNull &&
+    typeof type.defaultValue === 'undefined'
+  ) {
+    parsed += ' | null'
+  }
+
+  if (
+    !type.required &&
+    accepstUndefined &&
+    typeof type.defaultValue === 'undefined'
+  ) {
+    parsed += ' | undefined'
   }
 
   return parsed

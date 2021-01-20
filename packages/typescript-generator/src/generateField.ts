@@ -41,22 +41,6 @@ export default function generateField(
           }
 
           line += `: ${kind}`
-
-          if (
-            !argType.required &&
-            acceptsNull &&
-            typeof argType.defaultValue === 'undefined'
-          ) {
-            line += ' | null'
-          }
-
-          if (
-            !argType.required &&
-            accepstUndefined &&
-            typeof argType.defaultValue === 'undefined'
-          ) {
-            line += ' | undefined'
-          }
           return line
         })
       )

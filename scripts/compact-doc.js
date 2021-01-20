@@ -2,6 +2,7 @@ const { readdir, readFile, stat, writeFile } = require('fs')
 const { set, compact, mapKeys, last, upperFirst } = require('lodash')
 const { join } = require('path')
 const { promisify } = require('util')
+const vm = require('vm');
 
 function findLanguageByExtension(fileName) {
   const extension = last(fileName.split(/\./))
@@ -18,10 +19,10 @@ function runScript(file, ctx) {
       return `\`\`\`component
 ${JSON.stringify(
   {
-    component: '@browserql/components/Run',
+    component: './Code',
     props: {
-      file,
-      ...ctx,
+      language: 'json',
+      value: JSON.stringify(file.output, null, 2)
     },
   },
   null,
@@ -89,7 +90,19 @@ async function fillTree(repTree, path = '') {
                 fileName
               )
             )
-            files.push({ name: fileName, source: source.toString() })
+            
+            const contextobj = { ____: { example: undefined } } 
+              
+            vm.createContext(contextobj); 
+              
+            let result = vm.runInNewContext(source.toString(), contextobj);
+
+            const nextSource = source.toString().trim().split('\n')
+
+            nextSource.pop()
+            nextSource.pop()
+              
+            files.push({ name: fileName, source: nextSource.join('\n').toString(), output: contextobj.____.example })
           })
         })
         await Promise.all(filePromises.map((p) => p()))
@@ -117,6 +130,8 @@ async function fillTree(repTree, path = '') {
 async function run() {
   const repTree = await tree('packages/examples/modules')
   const examples = await fillTree(repTree)
+  // console.log(JSON.stringify(examples, null, 2))
+  console.log(examples[0].bundle)
   await Promise.all(
     examples.map(async (example) => {
       await promisify(writeFile)(

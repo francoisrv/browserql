@@ -48,14 +48,6 @@ export default function generateType(
 
     line += `: ${kind}`
 
-    if (!parsedType.required && acceptsNull) {
-      line += ' | null'
-    }
-
-    if (!parsedType.required && accepstUndefined) {
-      line += ' | undefined'
-    }
-
     lines.push(line)
   }
   lines.push('}')
