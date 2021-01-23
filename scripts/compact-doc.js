@@ -13,6 +13,15 @@ function findLanguageByExtension(fileName) {
   }
 }
 
+function printSnippet(snippet, fileName) {
+  if (/\.mjs$/.test(fileName)) {
+    return snippet
+      .replace(/\.default/g, '')
+      .replace(/globalThis\./g, '')
+  }
+  return snippet
+}
+
 function runScript(file, ctx) {
   const extension = last(file.name.split(/\./))
   switch (extension) {
@@ -23,7 +32,7 @@ ${JSON.stringify(
     component: './Code',
     props: {
       language: 'json',
-      value: JSON.stringify(file.output, null, 2)
+      value: file.result
     },
   },
   null,
@@ -44,7 +53,7 @@ function transform(source, ctx) {
     src = src.replace(
       new RegExp(SHOW, 'g'),
       `\`\`\`${findLanguageByExtension(file.name)}
-${file.source}
+${printSnippet(file.source.trim(), file.name)}
 \`\`\``
     )
   })
@@ -72,7 +81,22 @@ async function fillTree(repTree, path = '') {
 
   const promises = []
 
+  const versions = []
+
   mapKeys(repTree, (_a, moduleKey) => {
+    promises.push((async () => {
+      if (repTree[moduleKey] !== 1) {
+        const jsonSource = await promisify(readFile)(
+          `packages/${moduleKey}/package.json`
+        )
+        const json = JSON.parse(jsonSource.toString())
+        versions.push({
+          name: moduleKey,
+          version: json.version,
+          description: json.description
+        })
+      }
+    })())
     mapKeys(repTree[moduleKey], (value, exampleKey) => {
       const promise = async () => {
         const index = await promisify(readFile)(
@@ -93,23 +117,10 @@ async function fillTree(repTree, path = '') {
             )
 
             if (/\.mjs$/.test(fileName)) {
-              const result = await promisify(exec)('node -r graphql-import-node/register packages/examples/modules/fpql/getArgument/files/main.mjs')
-              files.push({ name: fileName, source: source.toString(), output: contextobj.____.example })
+              const result = await promisify(exec)(`node ./scripts/output-file.mjs ${moduleKey} ${exampleKey} ${fileName}`)
+              files.push({ name: fileName, source: source.toString(), result: result.stdout })
             } else {
               files.push({ name: fileName, source: source.toString() })
-            }
-
-            if (/\.graphql$/.test(fileName)) {
-              await promisify(writeFile)(
-                join(
-                  'packages/examples/modules',
-                  moduleKey,
-                  exampleKey,
-                  'files',
-                  fileName.concat('.mjs')
-                ),
-
-              )
             }
           })
         })
@@ -132,27 +143,23 @@ async function fillTree(repTree, path = '') {
 
   await Promise.all(promises)
 
+  await promisify(writeFile)(
+    'packages/examples/versions.json',
+    JSON.stringify(
+      versions,
+      null,
+      2
+    ).concat('\n')
+  )
+
   return examples
 }
 
 async function run() {
   const repTree = await tree('packages/examples/modules')
   const examples = await fillTree(repTree)
-  // console.log(JSON.stringify(examples, null, 2))
+  console.log(JSON.stringify(examples, null, 2))
   console.log(examples[0].bundle)
-  await Promise.all(
-    examples.map(async (example) => {
-      await promisify(writeFile)(
-        join(
-          'packages/examples/modules',
-          example.module,
-          example.name,
-          'bundle.md'
-        ),
-        example.bundle
-      )
-    })
-  )
   await promisify(writeFile)(
     'packages/examples/examples.json',
     JSON.stringify(

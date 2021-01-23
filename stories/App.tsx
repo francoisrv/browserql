@@ -25,13 +25,14 @@ function Main() {
     position: 'absolute',
     top: 0,
     left: screenIsAtMost('sm', 'portrait') ? '62vw' : '22vw',
-    width: '100vw',
+    width: screenIsAtMost('sm', 'portrait') ? '38vw' : '78vw',
     bottom: 0,
     transition: 'all 0.25s ease-out',
   }
 
   if (hidden) {
     Object.assign(style, {
+      width: '100vw',
       left: 0,
     })
   }
