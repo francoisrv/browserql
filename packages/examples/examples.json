@@ -2,6 +2,6 @@
   {
     "module": "fpql",
     "name": "getArgument",
-    "bundle": "Get node's argument by name.\n\n```graphql\ntype A @foo(bar: 24) {\n  id: ID!\n}\n\n```\n\n```javascript\nconst foo = 2\n```\n\n```component\n{\n  \"component\": \"./Code\",\n  \"props\": {\n    \"language\": \"json\",\n    \"value\": \"2\"\n  }\n}\n```\n"
+    "bundle": "Get node's argument by name.\n\nYou need to pass it a name, which will return you a function that you call with the target node\n\n## Get directive's argument\n\n```graphql\ntype A @foo(bar: 24) {\n  id: ID!\n}\n```\n\n```javascript\nimport { getArgument, getType, getDirective } from '@browserql/fpql'\n\nconst A = getType('A')(files['directive.graphql'])\nconst foo = getDirective('foo')(A)\nconst bar = getArgument('bar')(foo)\n\nexport default bar\n```\n\n```component\n{\n  \"component\": \"./Code\",\n  \"props\": {\n    \"language\": \"json\",\n    \"value\": \"{\\n  \\\"kind\\\": \\\"Argument\\\",\\n  \\\"name\\\": {\\n    \\\"kind\\\": \\\"Name\\\",\\n    \\\"value\\\": \\\"bar\\\"\\n  },\\n  \\\"value\\\": {\\n    \\\"kind\\\": \\\"IntValue\\\",\\n    \\\"value\\\": \\\"24\\\"\\n  }\\n}\\n\"\n  }\n}\n```\n"
   }
 ]
