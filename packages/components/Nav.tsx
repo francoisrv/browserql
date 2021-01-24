@@ -26,7 +26,13 @@ import { breakpoints } from './utils'
 import examples from '@browserql/examples/examples.json'
 import versions from '@browserql/examples/versions.json'
 
-const items = [
+interface Item {
+  name: string
+  modules: string[]
+  examples: Record<string, { section: string; examples: any[] }>[]
+}
+
+const items: Item[] = [
   {
     name: 'GraphQL',
     modules: [
@@ -37,20 +43,34 @@ const items = [
       'graphiql',
       'input',
     ],
+    examples: [],
   },
   {
     name: 'Integrations',
     modules: ['firestore', 'http', 'state'],
+    examples: [],
   },
   {
     name: 'React',
     modules: ['react', 'firestore-react'],
+    examples: [],
   },
   {
     name: 'Utilities',
     modules: ['fp', 'fpql', 'graphql-schema-class', 'typescript-generator'],
+    examples: [],
   },
-]
+].map((item: Item) => {
+  item.modules.forEach((section) => {
+    item.examples.push({
+      section,
+      examples: filter(examples, { module: section }),
+    })
+  })
+  return item
+})
+
+console.log(items)
 
 const SubNav = withRouter(function SubNavView({
   section,
@@ -103,6 +123,54 @@ const SubNav = withRouter(function SubNavView({
   )
 })
 
+function Section({ item, section }: { item: Item; section: string }) {
+  return (
+    <Accordion key={section}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-evenly',
+            flex: 1,
+          }}
+        >
+          <Typography>{startCase(section)}</Typography>
+          <Typography color="textSecondary">
+            v{get(find(versions, { name: section }), 'version', '')}
+          </Typography>
+        </div>
+      </AccordionSummary>
+      <AccordionDetails>
+        <div style={{ flex: 1 }}>
+          <List component="nav" disablePadding>
+            <ListItem button disabled>
+              <ListItemText
+                primary={get(
+                  find(versions, { name: section }),
+                  'description',
+                  ''
+                )}
+                secondary={`npm install @browserql/${section}`}
+              />
+            </ListItem>
+            {map(filter(item.examples, { module: section }), (example) => (
+              <ListItem
+                key={example.name}
+                button
+                onClick={() => {
+                  history.push(`/${section}/${example.name}`)
+                }}
+              >
+                <ListItemText primary={startCase(example.name)} />
+              </ListItem>
+            ))}
+          </List>
+        </div>
+      </AccordionDetails>
+    </Accordion>
+  )
+}
+
 function Nav(props: RouteComponentProps & { toggleHidden: () => void }) {
   const { screenIsAtMost } = useResponsive(breakpoints)
 
@@ -147,8 +215,9 @@ function Nav(props: RouteComponentProps & { toggleHidden: () => void }) {
                 ['asc']
               ),
               (example) => (
-                <SubNav
+                <Section
                   section={example.module}
+                  item={item}
                   key={`${example.module}.${example.name}`}
                 />
               )
