@@ -1,3 +1,4 @@
 import { makeExecutableMutation } from '@browserql/executable'
+import { SCHEMA } from '../loaders'
 
-export default makeExecutableMutation(schema, 'addUser')
+export default makeExecutableMutation(SCHEMA, 'addUser')

@@ -24,6 +24,18 @@ export default [
   },
 
   {
+    module: 'executable',
+    example: 'usage',
+    file: 'mutation',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/executable/usage/files/mutation'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'fpql',
     example: 'getArgument',
     file: 'index',

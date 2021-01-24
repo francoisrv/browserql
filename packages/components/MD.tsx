@@ -49,15 +49,32 @@ const renderers = {
     <Typography
       style={{
         lineHeight: '22px',
-        paddingBottom: 22,
+        paddingTop: 8,
+        paddingBottom: 8,
       }}
     >
       {children}
     </Typography>
   ),
-  heading: ({ children, level }) => (
-    <Typography variant={`h${Number(level) + 1}`}>{children}</Typography>
-  ),
+  heading: ({ children, level }) => {
+    let marginX = 0
+    if (level === 1) {
+      marginX = 22
+    } else if (level === 2) {
+      marginX = 22
+    }
+    return (
+      <Typography
+        variant={`h${level}`}
+        style={{
+          marginTop: marginX,
+          marginBottom: marginX,
+        }}
+      >
+        {children}
+      </Typography>
+    )
+  },
 }
 
 export default function MD({ doc }: { doc: string }) {

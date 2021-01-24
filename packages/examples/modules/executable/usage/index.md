@@ -13,3 +13,11 @@ This is how you would generate an executable query from it:
 And this is the query it returns:
 
 {{ render query.tsx }}
+
+This is how you would generate an executable mutation from it:
+
+{{ show mutation.mjs }}
+
+And this is the mutation it returns:
+
+{{ render mutation.tsx }}

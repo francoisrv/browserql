@@ -171,6 +171,7 @@ async function fillTree(repTree, path = '') {
             files,
           }),
         })
+        console.log('Built', moduleKey, exampleKey)
       }
       promises.push(promise())
     })
@@ -194,8 +195,6 @@ async function fillTree(repTree, path = '') {
 async function run() {
   const repTree = await tree('packages/examples/modules')
   const examples = await fillTree(repTree)
-  console.log(JSON.stringify(examples, null, 2))
-  console.log(examples[0].bundle)
   await promisify(writeFile)(
     'packages/examples/examples.json',
     JSON.stringify(
