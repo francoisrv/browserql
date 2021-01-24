@@ -7,7 +7,16 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
-import { filter, find, get, includes, map, startCase, uniq } from 'lodash'
+import {
+  filter,
+  find,
+  get,
+  includes,
+  map,
+  sortBy,
+  startCase,
+  uniq,
+} from 'lodash'
 import * as React from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { useResponsive } from 'react-hooks-responsive'
@@ -132,7 +141,11 @@ function Nav(props: RouteComponentProps & { toggleHidden: () => void }) {
           </AccordionSummary>
           <div style={{ margin: 8 }}>
             {map(
-              filter(examples, (x) => includes(item.modules, x.module)),
+              sortBy(
+                filter(examples, (x) => includes(item.modules, x.module)),
+                ['module'],
+                ['asc']
+              ),
               (example) => (
                 <SubNav
                   section={example.module}
