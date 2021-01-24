@@ -72,10 +72,11 @@ const items: Item[] = [
 
 console.log(items)
 
-const SubNav = withRouter(function SubNavView({
+const Section = withRouter(function SectionView({
+  item,
   section,
   history,
-}: { section: string } & RouteComponentProps) {
+}: { item: Item; section: string } & RouteComponentProps) {
   return (
     <Accordion key={section}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -105,71 +106,25 @@ const SubNav = withRouter(function SubNavView({
                 secondary={`npm install @browserql/${section}`}
               />
             </ListItem>
-            {map(filter(examples, { module: section }), (example) => (
-              <ListItem
-                key={example.name}
-                button
-                onClick={() => {
-                  history.push(`/${section}/${example.name}`)
-                }}
-              >
-                <ListItemText primary={startCase(example.name)} />
-              </ListItem>
-            ))}
+            {map(filter(item.examples, { section }), ({ examples }) =>
+              examples.map((example) => (
+                <ListItem
+                  key={example.name}
+                  button
+                  onClick={() => {
+                    history.push(`/${section}/${example.name}`)
+                  }}
+                >
+                  <ListItemText primary={startCase(example.name)} />
+                </ListItem>
+              ))
+            )}
           </List>
         </div>
       </AccordionDetails>
     </Accordion>
   )
 })
-
-function Section({ item, section }: { item: Item; section: string }) {
-  return (
-    <Accordion key={section}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-evenly',
-            flex: 1,
-          }}
-        >
-          <Typography>{startCase(section)}</Typography>
-          <Typography color="textSecondary">
-            v{get(find(versions, { name: section }), 'version', '')}
-          </Typography>
-        </div>
-      </AccordionSummary>
-      <AccordionDetails>
-        <div style={{ flex: 1 }}>
-          <List component="nav" disablePadding>
-            <ListItem button disabled>
-              <ListItemText
-                primary={get(
-                  find(versions, { name: section }),
-                  'description',
-                  ''
-                )}
-                secondary={`npm install @browserql/${section}`}
-              />
-            </ListItem>
-            {map(filter(item.examples, { module: section }), (example) => (
-              <ListItem
-                key={example.name}
-                button
-                onClick={() => {
-                  history.push(`/${section}/${example.name}`)
-                }}
-              >
-                <ListItemText primary={startCase(example.name)} />
-              </ListItem>
-            ))}
-          </List>
-        </div>
-      </AccordionDetails>
-    </Accordion>
-  )
-}
 
 function Nav(props: RouteComponentProps & { toggleHidden: () => void }) {
   const { screenIsAtMost } = useResponsive(breakpoints)
@@ -208,20 +163,9 @@ function Nav(props: RouteComponentProps & { toggleHidden: () => void }) {
             </Typography>
           </AccordionSummary>
           <div style={{ margin: 8 }}>
-            {map(
-              sortBy(
-                filter(examples, (x) => includes(item.modules, x.module)),
-                ['module'],
-                ['asc']
-              ),
-              (example) => (
-                <Section
-                  section={example.module}
-                  item={item}
-                  key={`${example.module}.${example.name}`}
-                />
-              )
-            )}
+            {map(item.modules, (section) => (
+              <Section section={section} item={item} key={section} />
+            ))}
           </div>
         </div>
       ))}
