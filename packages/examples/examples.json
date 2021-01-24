@@ -1,10 +1,5 @@
 [
   {
-    "module": "cache",
-    "name": "example",
-    "bundle": "cache example\n"
-  },
-  {
     "module": "client",
     "name": "example",
     "bundle": "client\n"
@@ -63,6 +58,11 @@
     "module": "state",
     "name": "example",
     "bundle": ""
+  },
+  {
+    "module": "cache",
+    "name": "usage",
+    "bundle": "Apollo cache accessor utility\n\n## Usage\n\n```javascript\nimport cacheql from '@browserql/cache'\nimport connect from '@browserql/connect'\nimport gql from 'graphql-tag'\n\nconst { cache, schema } = connect(\n  gql'type Query { getCounter: Int! @default(value: 100) }'\n)\n\nconst cached = cacheql(cache, schema)\nconst GET_COUNTER = gql`{ getCounter }`\n\ncached.get(GET_COUNTER) // 100\n\ncached.set(GET_COUNTER, 0)\n\ncached.get(GET_COUNTER) // 0\n```\n\n## Demo\n\n```react\n{\n  \"file\": {\n    \"name\": \"example.tsx\",\n    \"source\": \"import React from 'react'\\n\\nexport default function Example() {\\n  return <div>OK</div>\\n}\\n\"\n  },\n  \"ctx\": {\n    \"module\": \"cache\",\n    \"name\": \"usage\",\n    \"files\": [\n      {\n        \"name\": \"example.tsx\",\n        \"source\": \"import React from 'react'\\n\\nexport default function Example() {\\n  return <div>OK</div>\\n}\\n\"\n      }\n    ]\n  }\n}\n```\n"
   },
   {
     "module": "typescript-generator",

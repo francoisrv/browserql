@@ -1,5 +1,17 @@
 export default [
   {
+    module: 'cache',
+    example: 'usage',
+    file: 'example',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/cache/usage/files/example'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'fpql',
     example: 'getArgument',
     file: 'index',

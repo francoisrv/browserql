@@ -1,10 +1,5 @@
 [
   {
-    "name": "cache",
-    "version": "1.2.0",
-    "description": "Util for updating apollo cache"
-  },
-  {
     "name": "client",
     "version": "3.41.0",
     "description": "Create a new GraphQL server in the browser"
@@ -63,6 +58,11 @@
     "name": "state",
     "version": "7.1.0",
     "description": "State manager based on GraphQL cache"
+  },
+  {
+    "name": "cache",
+    "version": "1.2.0",
+    "description": "Util for updating apollo cache"
   },
   {
     "name": "fpql",
