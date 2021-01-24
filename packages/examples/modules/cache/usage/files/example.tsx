@@ -1,7 +1,7 @@
 import Code from '@browserql/components/Code'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { BrowserqlContext, BrowserqlProvider } from '@browserql/react'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
@@ -19,10 +19,12 @@ const query = gql`
 
 function View() {
   const ctx = useContext(BrowserqlContext)
+  const [updated, setUpdated] = useState(0)
   const cached = cacheql(ctx.cache, ctx.schema)
   const query1 = useQuery(query, {
     variables: { user: 1 },
   })
+  console.log({ query1 })
   let counter1 = ''
   if (query1.loading) {
     counter1 = 'loading'
@@ -31,6 +33,18 @@ function View() {
   } else {
     counter1 = query1.data.getCounter
   }
+  const query2 = useQuery(query, {
+    variables: { user: 2 },
+  })
+  let counter2 = ''
+  if (query2.loading) {
+    counter2 = 'loading'
+  } else if (query2.error) {
+    counter2 = 'error'
+  } else {
+    counter2 = query2.data.getCounter
+  }
+  console.log({ updated })
   return (
     <div>
       <Code language="graphql" value={schema} />
@@ -39,14 +53,14 @@ function View() {
           <Button onClick={() => cached.set(query, { user: 1 }, 10)}>
             User 1
           </Button>
-          <Button>User 2</Button>
+          <Button onClick={() => setUpdated(updated + 1)}>User 2</Button>
         </ButtonGroup>
       </div>
       <Code
         language="graphql"
         value={`query {
   getCounter(user: 1): ${counter1}
-  getCounter(user: 2): 0
+  getCounter(user: 2): ${counter2}
 }`}
       />
     </div>

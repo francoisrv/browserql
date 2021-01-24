@@ -1,6 +1,7 @@
 import { getExecutableQueries, getName, getQuery } from '@browserql/fpql'
 import type { BrowserqlClient } from '@browserql/types'
 import type { DocumentNode } from 'graphql'
+import { print } from 'graphql'
 
 type SetCache = (cache: BrowserqlClient['cache'], schema: DocumentNode) => void
 
@@ -17,17 +18,24 @@ export default function set(
   variables: any,
   data?: any
 ): SetCache {
-  let Variables = typeof data === 'undefined' ? variables : {}
   let Data = typeof data === 'undefined' ? variables : data
   const [doc] = getExecutableQueries(query)
   const queryName = getName(doc)
   return function (cache, schema) {
-    cache.writeQuery({
-      query,
-      variables: Variables,
+    console.log({
+      query: print(query),
+      variables,
       data: {
         [queryName]: Data,
       },
     })
+    cache.writeQuery({
+      query,
+      variables,
+      data: {
+        [queryName]: Data,
+      },
+    })
+    console.log(123, cache.readQuery({ query, variables }))
   }
 }
