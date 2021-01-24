@@ -14,6 +14,18 @@ export default [
   {
     module: 'executable',
     example: 'usage',
+    file: 'mutation',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/executable/usage/files/mutation'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'executable',
+    example: 'usage',
     file: 'query',
     async load() {
       const { default: loaded } = await import(
@@ -24,12 +36,12 @@ export default [
   },
 
   {
-    module: 'executable',
-    example: 'usage',
-    file: 'mutation',
+    module: 'firestore',
+    example: 'try-it',
+    file: 'tryit',
     async load() {
       const { default: loaded } = await import(
-        './modules/executable/usage/files/mutation'
+        './modules/firestore/try-it/files/tryit'
       )
       return loaded
     },
@@ -42,6 +54,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/fpql/getArgument/files/index'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'graphiql',
+    example: 'usage',
+    file: 'example',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/graphiql/usage/files/example'
       )
       return loaded
     },

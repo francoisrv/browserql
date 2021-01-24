@@ -1,6 +1,6 @@
 import { find, isNull } from 'lodash'
 import React, { ComponentType, ReactElement, useEffect, useState } from 'react'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import Skeleton from '@material-ui/lab/Skeleton'
 
 import imports from '@browserql/examples/imports'
 
@@ -50,5 +50,5 @@ export default function Render({ section, example, file }: Props) {
   if (component) {
     return component
   }
-  return <div>RENDER</div>
+  return <Skeleton variant="rect" width="100%" height={118} />
 }

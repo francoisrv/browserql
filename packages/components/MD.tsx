@@ -62,6 +62,10 @@ const renderers = {
       marginX = 22
     } else if (level === 2) {
       marginX = 22
+    } else if (level === 3) {
+      marginX = 16
+    } else if (level === 4) {
+      marginX = 12
     }
     return (
       <Typography

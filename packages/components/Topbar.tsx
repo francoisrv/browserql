@@ -4,6 +4,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 import * as React from 'react'
 import MenuIcon from '@material-ui/icons/Menu'
 import Typography from '@material-ui/core/Typography'
+import NightsStayIcon from '@material-ui/icons/Brightness2'
 
 export default function Topbar({ toggleHidden }: { toggleHidden: () => void }) {
   return (
@@ -16,6 +17,9 @@ export default function Topbar({ toggleHidden }: { toggleHidden: () => void }) {
         <Typography variant="h6" style={{ flex: 1 }}>
           browserql
         </Typography>
+        <IconButton color="inherit">
+          <NightsStayIcon />
+        </IconButton>
       </Toolbar>
     </AppBar>
   )
