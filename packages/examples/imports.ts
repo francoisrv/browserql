@@ -12,6 +12,18 @@ export default [
   },
 
   {
+    module: 'executable',
+    example: 'usage',
+    file: 'query',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/executable/usage/files/query'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'fpql',
     example: 'getArgument',
     file: 'index',

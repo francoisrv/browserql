@@ -5,11 +5,6 @@
     "description": "Create a new GraphQL server in the browser"
   },
   {
-    "name": "executable",
-    "version": "1.11.0",
-    "description": "Create executable queries and mutations from a GraphQL schema"
-  },
-  {
     "name": "firestore",
     "version": "2.0.0",
     "description": "ORM for Firestore using GraphQL"
@@ -30,14 +25,14 @@
     "description": "Generate a GraphQL fragment from a type"
   },
   {
-    "name": "graphiql",
-    "version": "3.0.0",
-    "description": "GraphiQL in the browser"
-  },
-  {
     "name": "graphql-schema-class",
     "version": "2.4.0",
     "description": "Generate schema classes from GraphQL schema"
+  },
+  {
+    "name": "graphiql",
+    "version": "3.0.0",
+    "description": "GraphiQL in the browser"
   },
   {
     "name": "http",
@@ -45,14 +40,14 @@
     "description": "Fire HTTP requests using a GraphQL schema"
   },
   {
-    "name": "input",
-    "version": "1.1.0",
-    "description": "Generate a GraphQL input from a GraphQL type"
-  },
-  {
     "name": "react",
     "version": "4.0.0",
     "description": "React integration for browserql"
+  },
+  {
+    "name": "input",
+    "version": "1.1.0",
+    "description": "Generate a GraphQL input from a GraphQL type"
   },
   {
     "name": "state",
@@ -63,6 +58,11 @@
     "name": "cache",
     "version": "1.2.0",
     "description": "Util for updating apollo cache"
+  },
+  {
+    "name": "executable",
+    "version": "1.11.0",
+    "description": "Create executable queries and mutations from a GraphQL schema"
   },
   {
     "name": "fpql",
