@@ -5,6 +5,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.ts",
   "license": "ISC",
+  "description": "React integration for Firestore with GraphQL",
   "keywords": [
     "browserql",
     "graphql",

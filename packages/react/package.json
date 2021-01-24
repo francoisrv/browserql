@@ -5,6 +5,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.tsx",
   "license": "ISC",
+  "description": "React integration for browserql",
   "keywords": [
     "browserql",
     "graphql",

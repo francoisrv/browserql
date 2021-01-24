@@ -5,6 +5,7 @@
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
   "license": "ISC",
+  "description": "ORM for Firestore using GraphQL",
   "keywords": [
     "browserql",
     "graphql",

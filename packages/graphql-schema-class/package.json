@@ -5,6 +5,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.ts",
   "license": "ISC",
+  "description": "Generate schema classes from GraphQL schema",
   "keywords": [
     "browserql",
     "graphql",

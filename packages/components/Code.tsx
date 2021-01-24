@@ -9,6 +9,7 @@ import Snapshot from './Snapshot'
 import Section, { NavSection } from './Section'
 
 import './Code'
+import Preview from './Preview'
 
 export default function Code({
   language,
@@ -78,6 +79,20 @@ export default function Code({
       return <div>No such component: {value.trim()}</div>
     }
     return <Component {...data.props} />
+  }
+
+  if (language === 'react') {
+    const raw = value.trim()
+    let data
+    try {
+      data = JSON.parse(raw)
+    } catch (error) {
+      return <div>Could not parse component data: invalid JSON</div>
+    }
+    if (typeof data !== 'object' || !data) {
+      return <div>Could not parse component data: was expecting object</div>
+    }
+    return <Preview data={data} />
   }
 
   if (language === 'section-h3') {

@@ -3,21 +3,21 @@ const { set, compact, mapKeys, last, upperFirst } = require('lodash')
 const { join } = require('path')
 const { promisify } = require('util')
 const { exec } = require('child_process')
-const vm = require('vm');
+const vm = require('vm')
 
 function findLanguageByExtension(fileName) {
   const extension = last(fileName.split(/\./))
   switch (extension) {
-    case 'mjs': return 'javascript'
-    case 'graphql': return 'graphql'
+    case 'mjs':
+      return 'javascript'
+    case 'graphql':
+      return 'graphql'
   }
 }
 
 function printSnippet(snippet, fileName) {
   if (/\.mjs$/.test(fileName)) {
-    return snippet
-      .replace(/\.default/g, '')
-      .replace(/globalThis\./g, '')
+    return snippet.replace(/\.default/g, '').replace(/globalThis\./g, '')
   }
   return snippet
 }
@@ -32,7 +32,7 @@ ${JSON.stringify(
     component: './Code',
     props: {
       language: 'json',
-      value: file.result
+      value: file.result,
     },
   },
   null,
@@ -47,6 +47,7 @@ function transform(source, ctx) {
   ctx.files.forEach((file) => {
     const SHOW = `\{\{ show ${file.name} \}\}`
     const RUN = `\{\{ run ${file.name} \}\}`
+    const RENDER = `\{\{ render ${file.name} \}\}`
 
     src = src.replace(new RegExp(RUN, 'g'), runScript(file, ctx))
 
@@ -54,6 +55,13 @@ function transform(source, ctx) {
       new RegExp(SHOW, 'g'),
       `\`\`\`${findLanguageByExtension(file.name)}
 ${printSnippet(file.source.trim(), file.name)}
+\`\`\``
+    )
+
+    src = src.replace(
+      new RegExp(RENDER, 'g'),
+      `\`\`\`react
+${JSON.stringify({ file, ctx }, null, 2)}
 \`\`\``
     )
   })
@@ -83,20 +91,24 @@ async function fillTree(repTree, path = '') {
 
   const versions = []
 
+  const imports = []
+
   mapKeys(repTree, (_a, moduleKey) => {
-    promises.push((async () => {
-      if (repTree[moduleKey] !== 1) {
-        const jsonSource = await promisify(readFile)(
-          `packages/${moduleKey}/package.json`
-        )
-        const json = JSON.parse(jsonSource.toString())
-        versions.push({
-          name: moduleKey,
-          version: json.version,
-          description: json.description
-        })
-      }
-    })())
+    promises.push(
+      (async () => {
+        if (repTree[moduleKey] !== 1) {
+          const jsonSource = await promisify(readFile)(
+            `packages/${moduleKey}/package.json`
+          )
+          const json = JSON.parse(jsonSource.toString())
+          versions.push({
+            name: moduleKey,
+            version: json.version,
+            description: json.description,
+          })
+        }
+      })()
+    )
     mapKeys(repTree[moduleKey], (value, exampleKey) => {
       const promise = async () => {
         const index = await promisify(readFile)(
@@ -117,8 +129,31 @@ async function fillTree(repTree, path = '') {
             )
 
             if (/\.mjs$/.test(fileName)) {
-              const result = await promisify(exec)(`node ./scripts/output-file.mjs ${moduleKey} ${exampleKey} ${fileName}`)
-              files.push({ name: fileName, source: source.toString(), result: result.stdout })
+              const result = await promisify(exec)(
+                `node ./scripts/output-file.mjs ${moduleKey} ${exampleKey} ${fileName}`
+              )
+              files.push({
+                name: fileName,
+                source: source.toString(),
+                result: result.stdout,
+              })
+            } else if (/\.tsx$/.test(fileName)) {
+              files.push({ name: fileName, source: source.toString() })
+              imports.push(`
+  {
+    module: '${moduleKey}',
+    example: '${exampleKey}',
+    file: '${fileName.replace(/\.tsx$/, '')}',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/${moduleKey}/${exampleKey}/files/${fileName.replace(
+                /\.tsx$/,
+                ''
+              )}'
+      )
+      return loaded
+    },
+  }`)
             } else {
               files.push({ name: fileName, source: source.toString() })
             }
@@ -145,11 +180,12 @@ async function fillTree(repTree, path = '') {
 
   await promisify(writeFile)(
     'packages/examples/versions.json',
-    JSON.stringify(
-      versions,
-      null,
-      2
-    ).concat('\n')
+    JSON.stringify(versions, null, 2).concat('\n')
+  )
+
+  await promisify(writeFile)(
+    'packages/examples/imports.ts',
+    `export default [${imports.join(',\n')}]\n`
   )
 
   return examples

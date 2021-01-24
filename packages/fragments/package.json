@@ -5,6 +5,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.ts",
   "license": "ISC",
+  "description": "Generate a GraphQL fragment from a type",
   "keywords": [
     "browserql",
     "graphql",

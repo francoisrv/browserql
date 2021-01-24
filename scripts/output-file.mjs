@@ -3,20 +3,20 @@ import { join } from 'path'
 import { promisify } from 'util'
 import gql from 'graphql-tag'
 
-const [,, moduleName, exampleName, fileName] = process.argv
+const [, , moduleName, exampleName, fileName] = process.argv
 
 const base = join(
   process.cwd(),
   'packages/examples/modules/',
   moduleName,
-  exampleName,
+  exampleName
 )
 
 async function run() {
   const files = {}
   const fileNames = await promisify(readdir)(join(base, 'files'))
   await Promise.all(
-    fileNames.map(async file => {
+    fileNames.map(async (file) => {
       if (/\.graphql/.test(file)) {
         const source = await promisify(readFile)(join(base, 'files', file))
         files[file] = gql(source.toString())

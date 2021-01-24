@@ -5,6 +5,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.ts",
   "license": "ISC",
+  "description": "Fire HTTP requests using a GraphQL schema",
   "keywords": [
     "browserql",
     "graphql",

@@ -5,6 +5,7 @@
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
   "license": "ISC",
+  "description": "Accessor util for GraphQL schemas",
   "keywords": [
     "browserql",
     "graphql",

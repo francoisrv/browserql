@@ -8,4 +8,4 @@ You need to pass it a name, which will return you a function that you call with 
 
 {{ show directive.mjs }}
 
-{{ run directive.mjs }}
+{{ render index.tsx }}

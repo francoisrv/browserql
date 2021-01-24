@@ -5,6 +5,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.ts",
   "license": "ISC",
+  "description": "Create executable queries and mutations from a GraphQL schema",
   "keywords": [
     "browserql",
     "graphql",

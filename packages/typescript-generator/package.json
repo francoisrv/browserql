@@ -5,6 +5,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.ts",
   "license": "ISC",
+  "description": "Generate TypeScript from GraphQL",
   "keywords": [
     "browserql",
     "graphql",

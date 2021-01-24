@@ -5,6 +5,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.ts",
   "license": "ISC",
+  "description": "State manager based on GraphQL cache",
   "keywords": [
     "browserql",
     "graphql",

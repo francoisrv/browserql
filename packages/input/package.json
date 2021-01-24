@@ -4,6 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "ISC",
+  "description": "Generate a GraphQL input from a GraphQL type",
   "keywords": [
     "browserql",
     "graphql",

@@ -6,6 +6,7 @@ import { useResponsive } from 'react-hooks-responsive'
 import Topbar from '@browserql/components/Topbar'
 import Router from '@browserql/components/Router'
 import Nav from '@browserql/components/Nav'
+import Render from '@browserql/components/Render'
 import { breakpoints } from './utils'
 import Snapshot from '@browserql/components/Snapshot'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
@@ -14,7 +15,7 @@ function Main() {
   const { size, orientation, screenIsAtLeast, screenIsAtMost } = useResponsive(
     breakpoints
   )
-  const [hidden, setHidden] = React.useState(true)
+  const [hidden, setHidden] = React.useState(screenIsAtMost('sm', 'portrait'))
   const toggleHidden = React.useCallback(() => {
     setHidden(!hidden)
   }, [hidden])
@@ -58,17 +59,6 @@ function Main() {
 }
 
 function App(props: RouteComponentProps) {
-  const params = new URLSearchParams(props.location.search)
-  const shot = params.get('shot')
-
-  if (shot) {
-    return (
-      <div style={{ padding: 16 }}>
-        <Snapshot value={shot} />
-      </div>
-    )
-  }
-
   return (
     <div
       style={{
