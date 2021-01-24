@@ -1,0 +1,3 @@
+query Get($page: Int = 1) {
+  get(page: $page)
+}

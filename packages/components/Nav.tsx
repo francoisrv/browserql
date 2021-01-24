@@ -107,7 +107,7 @@ const Section = withRouter(function SectionView({
               />
             </ListItem>
             {map(filter(item.examples, { section }), ({ examples }) =>
-              examples.map((example) => (
+              sortBy(examples, ['name'], ['asc']).map((example) => (
                 <ListItem
                   key={example.name}
                   button

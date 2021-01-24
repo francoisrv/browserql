@@ -1,4 +1,5 @@
 import { getArguments, getQuery } from '@browserql/fpql'
 import fp from '@browserql/fp'
+import { FIELDS } from '../loaders'
 
-fp(schema)(getQuery('sayHello'), getArguments)
+export default fp(FIELDS)(getQuery('sayHello'), getArguments)

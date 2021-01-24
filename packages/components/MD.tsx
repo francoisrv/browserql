@@ -58,10 +58,13 @@ const renderers = {
   ),
   heading: ({ children, level }) => {
     let marginX = 0
+    let variant = 'body1'
     if (level === 1) {
       marginX = 22
+      variant = 'h3'
     } else if (level === 2) {
       marginX = 22
+      variant = 'h4'
     } else if (level === 3) {
       marginX = 16
     } else if (level === 4) {
@@ -69,7 +72,7 @@ const renderers = {
     }
     return (
       <Typography
-        variant={`h${level}`}
+        variant={variant}
         style={{
           marginTop: marginX,
           marginBottom: marginX,

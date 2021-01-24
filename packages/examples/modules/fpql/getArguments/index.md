@@ -6,44 +6,20 @@ Get node's arguments
 
 {{ show fields.mjs }}
 
-```snapshot2
-FPQL.GetFieldArguments
-```
+{{ render fields.tsx }}
 
 ## Get directive's arguments
 
-```graphql
-type User @model(collection: "users") {
-  email: EmailAddress!
-}
-```
+{{ show directive.graphql }}
 
-```javascript
-import { getArguments, getType, getDirective } from '@browserql/fpql'
-import fp from '@browserql/fp'
+{{ show directive.mjs }}
 
-fp(schema)(getType('User'), getDirective('model'), getArguments)
-```
-
-```snapshot2
-FPQL.GetDirectiveArguments
-```
+{{ render directive.tsx }}
 
 ## Get executable operation's arguments
 
-```graphql
-query Get($page: Int = 1) {
-  get(page: $page)
-}
-```
+{{ show query.graphql }}
 
-```javascript
-import { getArguments, getExecutableOperation } from '@browserql/fpql'
-import fp from '@browserql/fp'
+{{ show query.mjs }}
 
-fp(schema)(getExecutableOperation('Get'), getArguments)
-```
-
-```snapshot2
-FPQL.GetExecutableOperationArguments
-```
+{{ render query.tsx }}

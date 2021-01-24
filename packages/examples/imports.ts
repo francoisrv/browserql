@@ -50,10 +50,94 @@ export default [
   {
     module: 'fpql',
     example: 'getArgument',
-    file: 'index',
+    file: 'directive',
     async load() {
       const { default: loaded } = await import(
-        './modules/fpql/getArgument/files/index'
+        './modules/fpql/getArgument/files/directive'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fpql',
+    example: 'getArgument',
+    file: 'field',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getArgument/files/field'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fpql',
+    example: 'getArgument',
+    file: 'query',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getArgument/files/query'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fpql',
+    example: 'getArguments',
+    file: 'directive',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getArguments/files/directive'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fpql',
+    example: 'getArguments',
+    file: 'fields',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getArguments/files/fields'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fpql',
+    example: 'getArguments',
+    file: 'query',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getArguments/files/query'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fpql',
+    example: 'getDirective',
+    file: 'main',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getDirective/files/main'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fpql',
+    example: 'getExecutableOperation',
+    file: 'main',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getExecutableOperation/files/main'
       )
       return loaded
     },

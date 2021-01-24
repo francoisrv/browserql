@@ -1,0 +1,11 @@
+query {
+  query1
+}
+
+mutation Mutation1 {
+  mutation1
+}
+
+query Query2 {
+  query2
+}

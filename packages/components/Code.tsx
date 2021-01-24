@@ -10,6 +10,10 @@ import Section, { NavSection } from './Section'
 
 import './Code'
 import Preview from './Preview'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import MD from './MD'
 
 export default function Code({
   language,
@@ -93,6 +97,24 @@ export default function Code({
       return <div>Could not parse component data: was expecting object</div>
     }
     return <Preview data={data} />
+  }
+
+  if (language === 'foo') {
+    const v = value.trim()
+    const lines = v.split(/\n/)
+    const header = lines.shift()
+    return (
+      <Accordion>
+        <AccordionSummary>
+          <Typography>{header.replace(/^#+/, '')}</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <div style={{ flex: 1 }}>
+            <MD doc={lines.join('\n')} />
+          </div>
+        </AccordionDetails>
+      </Accordion>
+    )
   }
 
   if (language === 'section-h3') {
