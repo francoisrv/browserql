@@ -3,12 +3,14 @@ import type {
   ObjectTypeDefinitionNode,
   FieldDefinitionNode,
   GraphQLScalarType,
+  InputObjectTypeDefinitionNode,
 } from 'graphql'
 import {
   getArgument,
   getDirective,
   getField,
   getFields,
+  getInput,
   getKind,
   getName,
   getType,
@@ -21,6 +23,7 @@ export default class GraphqlSchemaClass<Schema = unknown> {
   static schema: DocumentNode
 
   static type?: string
+  static input?: string
 
   static defaultFunctions: Record<string, () => any> = {}
 
@@ -29,7 +32,7 @@ export default class GraphqlSchemaClass<Schema = unknown> {
   static applyDefaults<Schema = unknown>(
     model: InstanceType<typeof GraphqlSchemaClass>
   ): Partial<Schema> {
-    const fields = getFields(model.type)
+    const fields = getFields(model.definition)
     return fields.reduce((defaults, field) => {
       const fieldName = getName(field)
       const defaultDirective = getDirective('default')(
@@ -77,7 +80,7 @@ export default class GraphqlSchemaClass<Schema = unknown> {
   }
 
   static ensureRequired<S = unknown>(model: GraphqlSchemaClass<S>) {
-    const fields = getFields(model.type)
+    const fields = getFields(model.definition)
     fields.forEach((field) => {
       const fieldName = getName(field)
       const kind = parseKind(getKind(field))
@@ -92,10 +95,12 @@ export default class GraphqlSchemaClass<Schema = unknown> {
 
   private readonly data: Schema
 
-  private readonly type: ObjectTypeDefinitionNode
+  private readonly definition:
+    | ObjectTypeDefinitionNode
+    | InputObjectTypeDefinitionNode
 
   constructor(data: Partial<Schema>) {
-    const { schema, type: typeName } = this
+    const { schema, type: typeName, input: inputName } = this
       .constructor as typeof GraphqlSchemaClass
 
     if (!schema) {
@@ -109,17 +114,27 @@ export default class GraphqlSchemaClass<Schema = unknown> {
         throw new Error(`Could not find type ${typeName} in schema`)
       }
 
-      this.type = type as ObjectTypeDefinitionNode
+      this.definition = type as ObjectTypeDefinitionNode
+    } else if (inputName) {
+      const input = getInput(inputName)(schema)
+
+      if (!input) {
+        throw new Error(`Could not find input ${inputName} in schema`)
+      }
+
+      this.definition = input as InputObjectTypeDefinitionNode
     } else {
       const [type] = schema.definitions
 
-      if (type.kind !== 'ObjectTypeDefinition') {
+      if (type.kind === 'ObjectTypeDefinition') {
+        this.definition = type as ObjectTypeDefinitionNode
+      } else if (type.kind === 'InputObjectTypeDefinition') {
+        this.definition = type as InputObjectTypeDefinitionNode
+      } else {
         throw new Error(
-          `Was expecting an Object Type, instead got ${type.kind}`
+          `Was expecting an Object Type or an Input Object, instead got ${type.kind}`
         )
       }
-
-      this.type = type as ObjectTypeDefinitionNode
     }
 
     this.data = {
@@ -141,7 +156,7 @@ export default class GraphqlSchemaClass<Schema = unknown> {
   }
 
   set<K extends keyof Schema>(fieldName: keyof Schema, value: Schema[K]): this {
-    const field = getField(fieldName as string)(this.type)
+    const field = getField(fieldName as string)(this.definition)
     if (!field) {
       throw new Error(`Unknown field: ${fieldName}`)
     }

@@ -12,30 +12,6 @@ export default [
   },
 
   {
-    module: 'executable',
-    example: 'usage',
-    file: 'mutation',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/executable/usage/files/mutation'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'executable',
-    example: 'usage',
-    file: 'query',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/executable/usage/files/query'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'client',
     example: 'resolvers',
     file: 'app',
@@ -66,6 +42,30 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/firestore/try-it/files/tryit'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'executable',
+    example: 'usage',
+    file: 'mutation',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/executable/usage/files/mutation'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'executable',
+    example: 'usage',
+    file: 'query',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/executable/usage/files/query'
       )
       return loaded
     },
@@ -204,6 +204,18 @@ export default [
   },
 
   {
+    module: 'input',
+    example: 'example',
+    file: 'example',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/input/example/files/example'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'http',
     example: 'about',
     file: 'app',
@@ -234,18 +246,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/react/use-query/files/example'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'input',
-    example: 'example',
-    file: 'example',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/input/example/files/example'
       )
       return loaded
     },
