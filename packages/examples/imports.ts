@@ -204,6 +204,30 @@ export default [
   },
 
   {
+    module: 'http',
+    example: 'about',
+    file: 'app',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/http/about/files/app'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'http',
+    example: 'about',
+    file: 'response',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/http/about/files/response'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'input',
     example: 'example',
     file: 'example',

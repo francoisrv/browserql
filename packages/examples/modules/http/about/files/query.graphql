@@ -1,0 +1,8 @@
+query {
+  getTodo(id: 2) {
+    completed
+    id
+    title
+    userId
+  }
+}

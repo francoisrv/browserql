@@ -1,24 +1,15 @@
 Fire HTTP queries from your front end using GraphQL!
 
-```graphql
-type Query {
-  getTodo(id: ID!): Todo
-    @http(url: "https://jsonplaceholder.typicode.com/todos/:id")
-}
-```
+## Show me!
 
-```javascript
-import { connectHttp } from '@browserql/http'
-import connect from '@browserql/client'
-import resolved from '@browserql/resolve'
-import schema from './schema.graphql'
+In your `GraphQL` schema, just tag your operations that are meant to fire HTTP requests with our `http` directive:
 
-const { client, schema: finalSchema } = connect(schema, connectHttp())
-const { Query } = resolve(finalSchema)
+{{ show schema.graphql }}
 
-await client.query(Query.getTodo({ id: 2 }))
-```
+Now just fire a `GraphQL` query:
 
-```snapshot2
-HTTP.Example
-```
+{{ show query.graphql }}
+
+This is the result from the HTTP request:
+
+{{ render app.tsx }}
