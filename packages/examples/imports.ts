@@ -12,30 +12,6 @@ export default [
   },
 
   {
-    module: 'client',
-    example: 'resolvers',
-    file: 'app',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/client/resolvers/files/app'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'client',
-    example: 'resolvers',
-    file: 'view',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/client/resolvers/files/view'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'executable',
     example: 'usage',
     file: 'mutation',
@@ -54,6 +30,30 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/executable/usage/files/query'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'client',
+    example: 'resolvers',
+    file: 'app',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/resolvers/files/app'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'client',
+    example: 'resolvers',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/resolvers/files/view'
       )
       return loaded
     },
@@ -228,12 +228,36 @@ export default [
   },
 
   {
+    module: 'react',
+    example: 'use-query',
+    file: 'example',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/react/use-query/files/example'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'input',
     example: 'example',
     file: 'example',
     async load() {
       const { default: loaded } = await import(
         './modules/input/example/files/example'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'react',
+    example: 'use-query',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/react/use-query/files/index'
       )
       return loaded
     },

@@ -15,11 +15,6 @@
     "description": "Generate schema classes from GraphQL schema"
   },
   {
-    "name": "react",
-    "version": "4.0.0",
-    "description": "React integration for browserql"
-  },
-  {
     "name": "state",
     "version": "7.1.0",
     "description": "State manager based on GraphQL cache"
@@ -30,14 +25,14 @@
     "description": "Util for updating apollo cache"
   },
   {
-    "name": "client",
-    "version": "3.41.0",
-    "description": "Create a new GraphQL server in the browser"
-  },
-  {
     "name": "executable",
     "version": "1.11.0",
     "description": "Create executable queries and mutations from a GraphQL schema"
+  },
+  {
+    "name": "client",
+    "version": "3.41.0",
+    "description": "Create a new GraphQL server in the browser"
   },
   {
     "name": "firestore",
@@ -68,6 +63,11 @@
     "name": "input",
     "version": "1.1.0",
     "description": "Generate a GraphQL input from a GraphQL type"
+  },
+  {
+    "name": "react",
+    "version": "4.0.0",
+    "description": "React integration for browserql"
   },
   {
     "name": "typescript-generator",
