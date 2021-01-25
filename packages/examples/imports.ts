@@ -12,6 +12,30 @@ export default [
   },
 
   {
+    module: 'client',
+    example: 'resolvers',
+    file: 'app',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/resolvers/files/app'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'client',
+    example: 'resolvers',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/resolvers/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'executable',
     example: 'usage',
     file: 'mutation',
@@ -156,24 +180,12 @@ export default [
   },
 
   {
-    module: 'client',
-    example: 'resolvers',
-    file: 'app',
+    module: 'graphiql',
+    example: 'usage',
+    file: 'example',
     async load() {
       const { default: loaded } = await import(
-        './modules/client/resolvers/files/app'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'client',
-    example: 'resolvers',
-    file: 'view',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/client/resolvers/files/view'
+        './modules/graphiql/usage/files/example'
       )
       return loaded
     },
@@ -182,10 +194,22 @@ export default [
   {
     module: 'graphiql',
     example: 'usage',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/graphiql/usage/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'input',
+    example: 'example',
     file: 'example',
     async load() {
       const { default: loaded } = await import(
-        './modules/graphiql/usage/files/example'
+        './modules/input/example/files/example'
       )
       return loaded
     },

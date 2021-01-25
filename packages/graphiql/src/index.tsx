@@ -1,4 +1,3 @@
-import { BrowserqlContext } from '@browserql/react'
 import NativeGraphiQL from 'graphiql'
 import type {
   FetcherParams,
@@ -11,6 +10,7 @@ import {
   buildSchema,
   print,
   IntrospectionQuery,
+  DocumentNode,
 } from 'graphql'
 import gql from 'graphql-tag'
 import 'graphiql/graphiql.min.css'
@@ -19,24 +19,25 @@ import {
   getExecutableOperation,
   getExecutableOperations,
 } from '@browserql/fpql'
+import { ApolloClient } from '@apollo/client'
 
 interface Props {
+  schema: DocumentNode
+  client: ApolloClient<any>
   graphiqlProps?: Partial<GraphiQLProps>
 }
 
-export default function GraphiQL(props: Props) {
-  const { graphiqlProps } = props
-  const ctx = React.useContext(BrowserqlContext)
+export default function GraphiQL({ client, graphiqlProps, schema }: Props) {
   const [introspection, setIntrospection] = useState()
 
   async function makeSchema() {
     const source = getIntrospectionQuery()
 
-    const schema = buildSchema(print(ctx.schema))
+    const builtSchema = buildSchema(print(schema))
 
     const response = await graphql({
       source,
-      schema,
+      schema: builtSchema,
     })
     if (response.errors) {
       throw new Error(response.errors.join('\n'))
@@ -49,7 +50,6 @@ export default function GraphiQL(props: Props) {
   }
 
   async function graphQLFetcher(graphQLParams: FetcherParams) {
-    console.log({ graphQLParams })
     if ('query' in graphQLParams) {
       const { query, operationName, variables } = graphQLParams
       const node = gql(query)
@@ -69,12 +69,12 @@ export default function GraphiQL(props: Props) {
       const source = print(operation)
       const op = gql(source)
       if (operation.operation === 'query') {
-        return await ctx.apollo.query({
+        return await client.query({
           query: op,
           variables,
         })
       } else if (operation.operation === 'mutation') {
-        return await ctx.apollo.mutate({
+        return await client.mutate({
           mutation: op,
           variables,
         })

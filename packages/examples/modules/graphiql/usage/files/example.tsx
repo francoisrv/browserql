@@ -1,19 +1,9 @@
-import GraphiQL from '@browserql/graphiql'
 import { BrowserqlProvider } from '@browserql/react'
-import * as React from 'react'
-import gql from 'graphql-tag'
+import React from 'react'
+import View from './view'
+import { schema } from '../loaders'
 
 export default function Example() {
-  const schema = gql`
-    type Query {
-      sayHello(to: String!): String!
-    }
-
-    type Mutation {
-      sayByeTo(to: String!): String!
-    }
-  `
-
   const queries = {
     sayHello({ to }: { to: string }) {
       return `hello ${to}`
@@ -34,25 +24,10 @@ export default function Example() {
           height: 700,
         }}
       >
-        <GraphiQL
-          graphiqlProps={{
-            defaultQuery: '{ sayHello(to: "everybody") }',
-            defaultSecondaryEditorOpen: true,
-            headerEditorEnabled: true,
-            response: `{
-  "data": {
-    "sayHello": "hello everybdoy"
-  },
-  "loading": false,
-  "networkStatus": 7,
-  "stale": false
-}
-            `,
-          }}
-        />
+        <View />
       </div>
     </BrowserqlProvider>
   )
 }
 
-Example.height = 900
+Example.height = 700

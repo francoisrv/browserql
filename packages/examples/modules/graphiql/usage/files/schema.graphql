@@ -1,0 +1,7 @@
+type Query {
+  sayHello(to: String!): String!
+}
+
+type Mutation {
+  sayByeTo(to: String!): String!
+}

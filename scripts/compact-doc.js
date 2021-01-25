@@ -11,6 +11,8 @@ function findLanguageByExtension(fileName) {
     case 'mjs':
     case 'mjsx':
       return 'javascript'
+    case 'tsx':
+      return 'typescript'
     case 'graphql':
       return 'graphql'
   }

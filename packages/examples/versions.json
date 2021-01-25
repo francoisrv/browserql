@@ -35,6 +35,11 @@
     "description": "Util for updating apollo cache"
   },
   {
+    "name": "client",
+    "version": "3.41.0",
+    "description": "Create a new GraphQL server in the browser"
+  },
+  {
     "name": "executable",
     "version": "1.11.0",
     "description": "Create executable queries and mutations from a GraphQL schema"
@@ -55,13 +60,8 @@
     "description": "Generate a GraphQL fragment from a type"
   },
   {
-    "name": "client",
-    "version": "3.41.0",
-    "description": "Create a new GraphQL server in the browser"
-  },
-  {
     "name": "graphiql",
-    "version": "3.0.0",
+    "version": "4.0.0",
     "description": "GraphiQL in the browser"
   },
   {
