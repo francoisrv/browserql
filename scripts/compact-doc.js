@@ -9,6 +9,7 @@ function findLanguageByExtension(fileName) {
   const extension = last(fileName.split(/\./))
   switch (extension) {
     case 'mjs':
+    case 'mjsx':
       return 'javascript'
     case 'graphql':
       return 'graphql'

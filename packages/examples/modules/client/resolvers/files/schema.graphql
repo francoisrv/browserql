@@ -1,0 +1,9 @@
+# defs
+type Query {
+  isLoggedIn: Boolean
+}
+
+type Mutation {
+  login: Boolean
+  logout: Boolean
+}

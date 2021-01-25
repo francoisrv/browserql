@@ -25,6 +25,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 import { breakpoints } from './utils'
 import examples from '@browserql/examples/examples.json'
 import versions from '@browserql/examples/versions.json'
+import { useCallback } from 'react'
 
 interface Item {
   name: string
@@ -76,9 +77,15 @@ const Section = withRouter(function SectionView({
   item,
   section,
   history,
+  location,
 }: { item: Item; section: string } & RouteComponentProps) {
+  const [, currentSection, currentExample] = location.pathname.split(/\//)
+  const [expanded, setExpanded] = React.useState(currentSection === section)
+  const handleChange = useCallback(() => {
+    setExpanded(!expanded)
+  }, [expanded])
   return (
-    <Accordion key={section}>
+    <Accordion key={section} expanded={expanded} onChange={handleChange}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <div
           style={{
@@ -114,6 +121,10 @@ const Section = withRouter(function SectionView({
                   onClick={() => {
                     history.push(`/${section}/${example.name}`)
                   }}
+                  selected={
+                    currentSection === section &&
+                    currentExample === example.name
+                  }
                 >
                   <ListItemText primary={startCase(example.name)} />
                 </ListItem>

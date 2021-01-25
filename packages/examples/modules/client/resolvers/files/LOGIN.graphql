@@ -1,0 +1,4 @@
+# LOGIN
+mutation LOGIN {
+  login
+}

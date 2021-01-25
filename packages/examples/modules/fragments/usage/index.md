@@ -1,6 +1,6 @@
 Generate fragments from types (_GraphQL_)
 
-#### Example
+## Example
 
 Let's take a `GraphQL` schema
 
@@ -8,22 +8,11 @@ Let's take a `GraphQL` schema
 
 Now let's import it along with our fragment builder
 
-```javascript
-import schema from './schema.graphql'
-import { buildFragment } from '@browserql/fragments'
-```
-
-You can now build a fragment specifying the target type
-
-```javascript
-buildFragment(schema, 'Author')
-```
+{{ show index.mjs }}
 
 Which will generate the following string:
 
-```snapshot2
-Fragments.Example
-```
+{{ render index.tsx }}
 
 #### Code sandbox
 

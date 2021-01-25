@@ -48,11 +48,15 @@ function Main() {
           boxSizing: 'border-box',
           padding: screenIsAtMost('sm', 'portrait') ? 14 : 43,
           paddingTop: screenIsAtMost('sm', 'portrait') ? 8 : 22,
+          // display: 'flex',
+          // justifyContent: 'center',
           // lineHeight: screenIsAtMost('sm', 'portrait') ? '2em' : '3em',
           // fontSize: screenIsAtMost('sm', 'portrait') ? '1.2em' : '1.2em',
         }}
       >
-        <Router />
+        <div style={{ maxWidth: 990, margin: 'auto' }}>
+          <Router />
+        </div>
       </div>
     </Paper>
   )

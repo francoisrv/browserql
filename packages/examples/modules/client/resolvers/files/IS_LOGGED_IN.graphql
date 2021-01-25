@@ -1,0 +1,4 @@
+# IS_LOGGED_IN
+query {
+  isLoggedIn
+}

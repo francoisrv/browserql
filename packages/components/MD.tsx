@@ -52,6 +52,7 @@ const renderers = {
         paddingTop: 8,
         paddingBottom: 8,
       }}
+      variant="body1"
     >
       {children}
     </Typography>

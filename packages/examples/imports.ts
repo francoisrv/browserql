@@ -144,6 +144,42 @@ export default [
   },
 
   {
+    module: 'fragments',
+    example: 'usage',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fragments/usage/files/index'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'client',
+    example: 'resolvers',
+    file: 'app',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/resolvers/files/app'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'client',
+    example: 'resolvers',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/resolvers/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'graphiql',
     example: 'usage',
     file: 'example',

@@ -1,18 +1,8 @@
 [
   {
-    "name": "client",
-    "version": "3.41.0",
-    "description": "Create a new GraphQL server in the browser"
-  },
-  {
     "name": "firestore-react",
     "version": "1.54.0",
     "description": "React integration for Firestore with GraphQL"
-  },
-  {
-    "name": "fp",
-    "version": "1.3.0",
-    "description": "Pipe function"
   },
   {
     "name": "graphql-schema-class",
@@ -33,6 +23,11 @@
     "name": "state",
     "version": "7.1.0",
     "description": "State manager based on GraphQL cache"
+  },
+  {
+    "name": "fp",
+    "version": "1.3.0",
+    "description": "Pipe function"
   },
   {
     "name": "cache",
@@ -58,6 +53,11 @@
     "name": "fragments",
     "version": "2.6.0",
     "description": "Generate a GraphQL fragment from a type"
+  },
+  {
+    "name": "client",
+    "version": "3.41.0",
+    "description": "Create a new GraphQL server in the browser"
   },
   {
     "name": "graphiql",
