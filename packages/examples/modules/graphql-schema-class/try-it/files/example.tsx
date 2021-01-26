@@ -23,8 +23,7 @@ export default function Example() {
     a: 'hello',
     bar: null,
   })
-  const [schema, setSchema] = useState(`
-type Foo {
+  const [schema, setSchema] = useState(`type Foo {
   a: String!
   bar: Bar
 }
@@ -84,6 +83,7 @@ type Bar {
     <div>
       <Typography variant="h5">GraphQL Schema</Typography>
       <div style={{ padding: 12 }}>
+        <Typography>First define your schema with GraphQL</Typography>
         <TextField
           multiline
           value={schema}
@@ -129,6 +129,10 @@ type Bar {
       </div>
       <Typography variant="h5">Candidate</Typography>
       <div style={{ padding: 12 }}>
+        <Typography>
+          Now we're going to call the new class constructor with this object:
+          (you can edit it)
+        </Typography>
         <ReactJson
           src={object}
           theme="monokai"

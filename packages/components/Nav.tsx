@@ -71,8 +71,6 @@ const items: Item[] = [
   return item
 })
 
-console.log(items)
-
 const Section = withRouter(function SectionView({
   item,
   section,

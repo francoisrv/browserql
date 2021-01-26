@@ -156,6 +156,18 @@ export default [
   },
 
   {
+    module: 'fpql',
+    example: 'getExecutableOperation',
+    file: 'main',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getExecutableOperation/files/main'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'graphiql',
     example: 'usage',
     file: 'example',
@@ -174,18 +186,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/graphiql/usage/files/view'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'fpql',
-    example: 'getExecutableOperation',
-    file: 'main',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fpql/getExecutableOperation/files/main'
       )
       return loaded
     },
@@ -222,6 +222,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/graphql-schema-class/try-it/files/example'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'graphql-schema-class',
+    example: 'value-parser',
+    file: 'example',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/graphql-schema-class/value-parser/files/example'
       )
       return loaded
     },

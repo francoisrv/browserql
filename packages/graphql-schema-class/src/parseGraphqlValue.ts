@@ -50,7 +50,7 @@ export default function parseGraphQLValue(
   }
 
   if (isUndefined(value) || isNull(value)) {
-    if (typeof defaultValue !== undefined) {
+    if (typeof defaultValue !== 'undefined') {
       return defaultValue
     }
     return null
