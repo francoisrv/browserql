@@ -148,6 +148,7 @@ export default function parseGraphQLValue(
   const scalar = getScalar(type)(schema)
 
   if (scalar) {
+    console.log('is scalar')
     if (!scalars) {
       return null
     }

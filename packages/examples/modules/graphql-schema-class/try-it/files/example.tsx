@@ -9,16 +9,24 @@ import Typography from '@material-ui/core/Typography'
 import { DocumentNode } from 'graphql'
 import Accordion from '@material-ui/core/Accordion'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
-import { ExpandMore } from '@material-ui/icons'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
+import Checkbox from '@material-ui/core/Checkbox'
+import { JSONResolver } from 'graphql-scalars'
 
 export default function Example() {
   const [object, setObject] = useState({ name: 'me' })
   const [schema, setSchema] = useState(`type User {
   name: String !
   foo: JSON
-}`)
-  const [result, setResult] = useState({ name: 'me' })
+}
+
+scalar JSON
+`)
+  const [result, setResult] = useState({ foo: null, name: 'me' })
   const [error, setError] = useState<Error | undefined>()
 
   const handleAdd = (a: any) => setObject(a.updated_src)
@@ -37,6 +45,9 @@ export default function Example() {
       }
       const Model = class extends GraphqlSchemaClass<any> {
         static schema = node
+        static scalars = {
+          JSON: JSONResolver,
+        }
       }
       const model = new Model(object)
       setResult(model.toJSON())
@@ -57,11 +68,26 @@ export default function Example() {
           variant="filled"
         />
         <Accordion>
-          <AccordionSummary expandIcon={<ExpandMore />}>
-            <Typography>More options</Typography>
+          <AccordionSummary>
+            <Typography variant="h6">More options...</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography variant="h6">Scalars</Typography>
+            <div style={{ flex: 1 }}>
+              <Typography variant="h6">Scalars</Typography>
+              <List>
+                <ListItem dense button>
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked
+                      tabIndex={-1}
+                      disableRipple
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary="JSON" />
+                </ListItem>
+              </List>
+            </div>
           </AccordionDetails>
         </Accordion>
       </div>
@@ -73,7 +99,7 @@ export default function Example() {
           onAdd={handleAdd}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          style={{ padding: 16 }}
+          style={{ padding: 16, fontSize: 16 }}
           name="Candidate"
         />
       </div>
