@@ -1,23 +1,19 @@
 import type {
   DocumentNode,
   ObjectTypeDefinitionNode,
-  FieldDefinitionNode,
   GraphQLScalarType,
   InputObjectTypeDefinitionNode,
 } from 'graphql'
 import {
-  getArgument,
-  getDirective,
   getField,
   getFields,
-  getInput,
   getKind,
   getName,
-  getType,
-  getValue,
   parseKind,
 } from '@browserql/fpql'
 import parseGraphQLValue from './parseGraphqlValue'
+import applyDefaults from './applyDefaults'
+import getSchemaDefinition from './getSchemaDefinition'
 
 export default class GraphqlSchemaClass<Schema = unknown> {
   static schema: DocumentNode
@@ -35,50 +31,8 @@ export default class GraphqlSchemaClass<Schema = unknown> {
     model: InstanceType<typeof GraphqlSchemaClass>
   ): Partial<Schema> {
     const fields = getFields(model.definition)
-    return fields.reduce((defaults, field) => {
-      const fieldName = getName(field)
-      const defaultDirective = getDirective('default')(
-        field as FieldDefinitionNode
-      )
-      const { required } = parseKind(getKind(field))
-
-      if (defaultDirective) {
-        const argValue = getArgument('value')(defaultDirective)
-        const argFn = getArgument('function')(defaultDirective)
-
-        if (argValue) {
-          const value = getValue(argValue)
-          return {
-            ...defaults,
-            [fieldName]: value,
-          }
-        }
-
-        if (argFn) {
-          const fn = getValue(argFn)
-          const defaultFunction = (model.constructor as typeof GraphqlSchemaClass)
-            .defaultFunctions[
-            fn as keyof typeof GraphqlSchemaClass.defaultFunctions
-          ]
-          if (!defaultFunction) {
-            throw new Error(`No such default function: ${fn}`)
-          }
-          return {
-            ...defaults,
-            [fieldName]: defaultFunction(),
-          }
-        }
-      }
-
-      if (!required) {
-        return {
-          ...defaults,
-          [fieldName]: null,
-        }
-      }
-
-      return defaults
-    }, {})
+    const { defaultFunctions } = model.constructor as typeof GraphqlSchemaClass
+    return applyDefaults(fields, defaultFunctions)
   }
 
   static ensureRequired<S = unknown>(model: GraphqlSchemaClass<S>) {
@@ -102,46 +56,17 @@ export default class GraphqlSchemaClass<Schema = unknown> {
     | InputObjectTypeDefinitionNode
 
   constructor(data: Partial<Schema>) {
-    const {
-      schema,
-      type: typeName,
-      input: inputName,
-      ignoreExtraneousFields,
-    } = this.constructor as typeof GraphqlSchemaClass
+    const { schema, type, input, ignoreExtraneousFields } = this
+      .constructor as typeof GraphqlSchemaClass
 
     if (!schema) {
       throw new Error(`Missing schema in Model ${this.constructor.name}`)
     }
 
-    if (typeName) {
-      const type = getType(typeName)(schema)
-
-      if (!type) {
-        throw new Error(`Could not find type ${typeName} in schema`)
-      }
-
-      this.definition = type as ObjectTypeDefinitionNode
-    } else if (inputName) {
-      const input = getInput(inputName)(schema)
-
-      if (!input) {
-        throw new Error(`Could not find input ${inputName} in schema`)
-      }
-
-      this.definition = input as InputObjectTypeDefinitionNode
-    } else {
-      const [type] = schema.definitions
-
-      if (type.kind === 'ObjectTypeDefinition') {
-        this.definition = type as ObjectTypeDefinitionNode
-      } else if (type.kind === 'InputObjectTypeDefinition') {
-        this.definition = type as InputObjectTypeDefinitionNode
-      } else {
-        throw new Error(
-          `Was expecting an Object Type or an Input Object, instead got ${type.kind}`
-        )
-      }
-    }
+    this.definition = getSchemaDefinition(
+      schema,
+      type ? { type } : input ? { input } : {}
+    )
 
     this.data = {
       ...GraphqlSchemaClass.applyDefaults<Schema>(this),

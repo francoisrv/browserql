@@ -35,11 +35,6 @@
     "description": "ORM for Firestore using GraphQL"
   },
   {
-    "name": "fragments",
-    "version": "2.6.0",
-    "description": "Generate a GraphQL fragment from a type"
-  },
-  {
     "name": "fpql",
     "version": "1.30.0",
     "description": "Accessor util for GraphQL schemas"
@@ -50,8 +45,13 @@
     "description": "GraphiQL in the browser"
   },
   {
+    "name": "fragments",
+    "version": "2.6.0",
+    "description": "Generate a GraphQL fragment from a type"
+  },
+  {
     "name": "graphql-schema-class",
-    "version": "3.5.0",
+    "version": "3.12.0",
     "description": "Generate schema classes from GraphQL schema"
   },
   {

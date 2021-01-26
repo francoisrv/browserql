@@ -21,6 +21,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 export default function Example() {
   const [object, setObject] = useState({
     a: 'hello',
+    bar: null,
   })
   const [schema, setSchema] = useState(`
 type Foo {

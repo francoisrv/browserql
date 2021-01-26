@@ -72,18 +72,6 @@ export default [
   },
 
   {
-    module: 'fragments',
-    example: 'usage',
-    file: 'index',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fragments/usage/files/index'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'fpql',
     example: 'getArgument',
     file: 'directive',
@@ -168,18 +156,6 @@ export default [
   },
 
   {
-    module: 'fpql',
-    example: 'getExecutableOperation',
-    file: 'main',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fpql/getExecutableOperation/files/main'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'graphiql',
     example: 'usage',
     file: 'example',
@@ -198,6 +174,42 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/graphiql/usage/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fpql',
+    example: 'getExecutableOperation',
+    file: 'main',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getExecutableOperation/files/main'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fragments',
+    example: 'usage',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fragments/usage/files/index'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'graphql-schema-class',
+    example: 'default-values',
+    file: 'example',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/graphql-schema-class/default-values/files/example'
       )
       return loaded
     },
