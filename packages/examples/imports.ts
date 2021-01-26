@@ -36,18 +36,6 @@ export default [
   },
 
   {
-    module: 'firestore',
-    example: 'try-it',
-    file: 'tryit',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/firestore/try-it/files/tryit'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'executable',
     example: 'usage',
     file: 'mutation',
@@ -66,6 +54,30 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/executable/usage/files/query'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'firestore',
+    example: 'try-it',
+    file: 'tryit',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/firestore/try-it/files/tryit'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fragments',
+    example: 'usage',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fragments/usage/files/index'
       )
       return loaded
     },
@@ -168,18 +180,6 @@ export default [
   },
 
   {
-    module: 'fragments',
-    example: 'usage',
-    file: 'index',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fragments/usage/files/index'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'graphiql',
     example: 'usage',
     file: 'example',
@@ -204,12 +204,12 @@ export default [
   },
 
   {
-    module: 'input',
-    example: 'example',
+    module: 'graphql-schema-class',
+    example: 'try-it',
     file: 'example',
     async load() {
       const { default: loaded } = await import(
-        './modules/input/example/files/example'
+        './modules/graphql-schema-class/try-it/files/example'
       )
       return loaded
     },
@@ -234,6 +234,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/http/about/files/response'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'input',
+    example: 'example',
+    file: 'example',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/input/example/files/example'
       )
       return loaded
     },
