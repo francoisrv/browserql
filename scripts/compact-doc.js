@@ -114,6 +114,10 @@ async function fillTree(repTree, path = '') {
     )
     mapKeys(repTree[moduleKey], (value, exampleKey) => {
       const promise = async () => {
+        const settingsFile = join('packages/examples/modules', moduleKey, exampleKey, 'settings.json')
+
+        
+
         const index = await promisify(readFile)(
           join('packages/examples/modules', moduleKey, exampleKey, 'index.md')
         )

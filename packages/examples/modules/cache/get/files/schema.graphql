@@ -1,0 +1,6 @@
+type Query {
+  getScore: Int!
+  getLevel: Int
+  getTemp: Int @default(value: 100)
+  getUser(id: ID!): ID
+}

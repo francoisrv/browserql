@@ -168,6 +168,18 @@ export default [
   },
 
   {
+    module: 'fragments',
+    example: 'usage',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fragments/usage/files/index'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'graphiql',
     example: 'usage',
     file: 'example',
@@ -186,18 +198,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/graphiql/usage/files/view'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'fragments',
-    example: 'usage',
-    file: 'index',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fragments/usage/files/index'
       )
       return loaded
     },
@@ -240,6 +240,18 @@ export default [
   },
 
   {
+    module: 'input',
+    example: 'example',
+    file: 'example',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/input/example/files/example'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'http',
     example: 'about',
     file: 'app',
@@ -258,18 +270,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/http/about/files/response'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'input',
-    example: 'example',
-    file: 'example',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/input/example/files/example'
       )
       return loaded
     },
