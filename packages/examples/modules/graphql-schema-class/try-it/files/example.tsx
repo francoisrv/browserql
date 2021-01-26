@@ -20,23 +20,17 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 
 export default function Example() {
   const [object, setObject] = useState({
-    name: 'me',
-    pagination: {
-      after: [1, 2, { foo: { bar: 1 } }],
-    },
+    a: 'hello',
   })
-  const [schema, setSchema] = useState(`input User {
-  name: String !
-  pagination: Pagination
+  const [schema, setSchema] = useState(`
+type Foo {
+  a: String!
+  bar: Bar
 }
 
-input Pagination {
-  size: Int = 25
-  after: JSON
-  before: JSON
+type Bar {
+  b: Int!
 }
-
-scalar JSON
 `)
   const [result, setResult] = useState({ foo: null, name: 'me' })
   const [error, setError] = useState<Error | undefined>()
