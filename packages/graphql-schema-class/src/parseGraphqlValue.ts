@@ -24,7 +24,7 @@ const isNull = (value: any) => value === null
 
 export default function parseGraphQLValue(
   value: any,
-  { type, depth, nestedRequired }: ParsedType,
+  { type, depth, nestedRequired, defaultValue }: ParsedType,
   schema: DocumentNode,
   scalars?: Record<string, GraphQLScalarType>
 ): any {
@@ -43,12 +43,16 @@ export default function parseGraphQLValue(
           depth: depth - 1,
           nestedRequired: nextNestedRequired,
         },
-        schema
+        schema,
+        scalars
       )
     )
   }
 
   if (isUndefined(value) || isNull(value)) {
+    if (typeof defaultValue !== undefined) {
+      return defaultValue
+    }
     return null
   }
 
@@ -106,14 +110,12 @@ export default function parseGraphQLValue(
     return fields.reduce(
       (parsed, field) => ({
         ...parsed,
-        [getName(field)]:
-          isUndefined(value) || isNull(value)
-            ? null
-            : parseGraphQLValue(
-                value[getName(field)],
-                parseKind(getKind(field)),
-                schema
-              ),
+        [getName(field)]: parseGraphQLValue(
+          value[getName(field)],
+          parseKind(getKind(field)),
+          schema,
+          scalars
+        ),
       }),
       {}
     )
@@ -126,14 +128,12 @@ export default function parseGraphQLValue(
     return fields.reduce(
       (parsed, field) => ({
         ...parsed,
-        [getName(field)]:
-          isUndefined(value) || isNull(value)
-            ? null
-            : parseGraphQLValue(
-                value[getName(field)],
-                parseKind(getKind(field)),
-                schema
-              ),
+        [getName(field)]: parseGraphQLValue(
+          value[getName(field)],
+          parseKind(getKind(field)),
+          schema,
+          scalars
+        ),
       }),
       {}
     )
@@ -148,7 +148,6 @@ export default function parseGraphQLValue(
   const scalar = getScalar(type)(schema)
 
   if (scalar) {
-    console.log('is scalar')
     if (!scalars) {
       return null
     }

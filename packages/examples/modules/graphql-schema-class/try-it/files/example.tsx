@@ -1,7 +1,7 @@
 import Code from '@browserql/components/Code'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ReactJson from 'react-json-view'
 import { GraphqlSchemaClass } from '@browserql/graphql-schema-class'
 import gql from 'graphql-tag'
@@ -16,24 +16,50 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Checkbox from '@material-ui/core/Checkbox'
 import { JSONResolver } from 'graphql-scalars'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 
 export default function Example() {
-  const [object, setObject] = useState({ name: 'me' })
-  const [schema, setSchema] = useState(`type User {
+  const [object, setObject] = useState({
+    name: 'me',
+    pagination: {
+      after: [1, 2, { foo: { bar: 1 } }],
+    },
+  })
+  const [schema, setSchema] = useState(`input User {
   name: String !
-  foo: JSON
+  pagination: Pagination
+}
+
+input Pagination {
+  size: Int = 25
+  after: JSON
+  before: JSON
 }
 
 scalar JSON
 `)
   const [result, setResult] = useState({ foo: null, name: 'me' })
   const [error, setError] = useState<Error | undefined>()
+  const [ignoreExtraneousFields, setIgnoreExtraneousFields] = useState<boolean>(
+    GraphqlSchemaClass.ignoreExtraneousFields
+  )
 
-  const handleAdd = (a: any) => setObject(a.updated_src)
-  const handleDelete = (a: any) => setObject(a.updated_src)
-  const handleEdit = (a: any) => setObject(a.updated_src)
+  const toggleIgnoreExtraneousFields = useCallback(() => {
+    setIgnoreExtraneousFields(!ignoreExtraneousFields)
+  }, [ignoreExtraneousFields])
+
+  const handleAdd = (a: any) => {
+    setObject(a.updated_src)
+  }
+  const handleDelete = (a: any) => {
+    setObject(a.updated_src)
+  }
+  const handleEdit = (a: any) => {
+    setObject(a.updated_src)
+  }
 
   const handleSubmit = useCallback(() => {
+    console.log('H', object)
     setError(undefined)
     let node: DocumentNode
     try {
@@ -48,13 +74,16 @@ scalar JSON
         static scalars = {
           JSON: JSONResolver,
         }
+        static ignoreExtraneousFields = ignoreExtraneousFields
       }
       const model = new Model(object)
       setResult(model.toJSON())
     } catch (err) {
       setError(err)
     }
-  }, [object, schema])
+  }, [object, schema, ignoreExtraneousFields])
+
+  useEffect(handleSubmit, [object, schema, ignoreExtraneousFields])
 
   return (
     <div>
@@ -64,7 +93,9 @@ scalar JSON
           multiline
           value={schema}
           fullWidth
-          onChange={(e) => setSchema(e.target.value)}
+          onChange={(e) => {
+            setSchema(e.target.value)
+          }}
           variant="filled"
         />
         <Accordion>
@@ -73,6 +104,16 @@ scalar JSON
           </AccordionSummary>
           <AccordionDetails>
             <div style={{ flex: 1 }}>
+              <Typography variant="h6">Extraneous fields</Typography>
+              <FormControlLabel
+                label="Ignore extraneous fields"
+                control={
+                  <Checkbox
+                    checked={ignoreExtraneousFields}
+                    onChange={toggleIgnoreExtraneousFields}
+                  />
+                }
+              />
               <Typography variant="h6">Scalars</Typography>
               <List>
                 <ListItem dense button>
@@ -99,18 +140,11 @@ scalar JSON
           onAdd={handleAdd}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          style={{ padding: 16, fontSize: 16 }}
+          style={{ padding: 16, fontSize: 16, borderRadius: 8 }}
           name="Candidate"
         />
       </div>
-      <Button
-        fullWidth
-        color="primary"
-        onClick={handleSubmit}
-        variant="contained"
-      >
-        Instantiate schema with candidate
-      </Button>
+      <Typography variant="h5">Model</Typography>
       {Boolean(error) && <Typography>ERROR: {error.message}</Typography>}
       {!error && (
         <Code language="json" value={JSON.stringify(result, null, 2)} />
@@ -119,4 +153,4 @@ scalar JSON
   )
 }
 
-Example.height = 1000
+Example.height = 1670

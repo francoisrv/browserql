@@ -29,6 +29,8 @@ export default class GraphqlSchemaClass<Schema = unknown> {
 
   static scalars: Record<string, GraphQLScalarType> = {}
 
+  static ignoreExtraneousFields = true
+
   static applyDefaults<Schema = unknown>(
     model: InstanceType<typeof GraphqlSchemaClass>
   ): Partial<Schema> {
@@ -100,8 +102,12 @@ export default class GraphqlSchemaClass<Schema = unknown> {
     | InputObjectTypeDefinitionNode
 
   constructor(data: Partial<Schema>) {
-    const { schema, type: typeName, input: inputName } = this
-      .constructor as typeof GraphqlSchemaClass
+    const {
+      schema,
+      type: typeName,
+      input: inputName,
+      ignoreExtraneousFields,
+    } = this.constructor as typeof GraphqlSchemaClass
 
     if (!schema) {
       throw new Error(`Missing schema in Model ${this.constructor.name}`)
@@ -142,10 +148,20 @@ export default class GraphqlSchemaClass<Schema = unknown> {
     } as Schema
 
     Object.keys(data).forEach((key) => {
-      this.set(
-        key as keyof Schema,
-        data[key as keyof Schema] as Schema[keyof Schema]
-      )
+      try {
+        this.set(
+          key as keyof Schema,
+          data[key as keyof Schema] as Schema[keyof Schema]
+        )
+      } catch (error) {
+        if (
+          error.message === `Unknown field: ${key}` &&
+          ignoreExtraneousFields
+        ) {
+        } else {
+          throw error
+        }
+      }
     })
 
     GraphqlSchemaClass.ensureRequired(this)
