@@ -1,5 +1,7 @@
 import {
+  getEnumeration,
   getFields,
+  getInput,
   getKind,
   getName,
   getScalar,
@@ -7,7 +9,11 @@ import {
   ParsedType,
   parseKind,
 } from '@browserql/fpql'
-import type { DocumentNode, GraphQLScalarType } from 'graphql'
+import type {
+  DocumentNode,
+  GraphQLScalarType,
+  InputObjectTypeDefinitionNode,
+} from 'graphql'
 
 const isString = (value: any) => typeof value === 'string'
 const isNumber = (value: any) => typeof value === 'number'
@@ -40,6 +46,10 @@ export default function parseGraphQLValue(
         schema
       )
     )
+  }
+
+  if (isUndefined(value) || isNull(value)) {
+    return null
   }
 
   // eslint-disable-next-line default-case
@@ -92,10 +102,6 @@ export default function parseGraphQLValue(
   const gType = getType(type)(schema)
 
   if (gType) {
-    if (isUndefined(value) || isNull(value)) {
-      return null
-    }
-
     const fields = getFields(gType)
     return fields.reduce(
       (parsed, field) => ({
@@ -113,11 +119,37 @@ export default function parseGraphQLValue(
     )
   }
 
+  const gInput = getInput(type)(schema)
+
+  if (gInput) {
+    const fields = getFields(gInput as InputObjectTypeDefinitionNode)
+    return fields.reduce(
+      (parsed, field) => ({
+        ...parsed,
+        [getName(field)]:
+          isUndefined(value) || isNull(value)
+            ? null
+            : parseGraphQLValue(
+                value[getName(field)],
+                parseKind(getKind(field)),
+                schema
+              ),
+      }),
+      {}
+    )
+  }
+
+  const geEnum = getEnumeration(type)(schema)
+
+  if (geEnum) {
+    return value
+  }
+
   const scalar = getScalar(type)(schema)
 
   if (scalar) {
     if (!scalars) {
-      return undefined
+      return null
     }
 
     const existingScalar = scalars[type as keyof typeof scalars]
