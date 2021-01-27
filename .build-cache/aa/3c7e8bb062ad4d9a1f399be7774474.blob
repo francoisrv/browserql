@@ -1,0 +1,1 @@
+module.exports="query Query1($a:Int){query1(a:$a)}query Query2($b:Int){query2(b:$b){id name}}";

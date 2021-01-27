@@ -1,4 +1,4 @@
-const { readdir, readFile, stat, writeFile } = require('fs')
+const { readdir, readFile, stat, writeFile, mkdir } = require('fs')
 const { set, compact, mapKeys, last, upperFirst } = require('lodash')
 const { join } = require('path')
 const { promisify } = require('util')
@@ -109,14 +109,15 @@ async function fillTree(repTree, path = '') {
             version: json.version,
             description: json.description,
           })
+          try {
+            await promisify(mkdir)(`test/${moduleKey}`)
+          } catch (error) {}
         }
       })()
     )
     mapKeys(repTree[moduleKey], (value, exampleKey) => {
       const promise = async () => {
         const settingsFile = join('packages/examples/modules', moduleKey, exampleKey, 'settings.json')
-
-        
 
         const index = await promisify(readFile)(
           join('packages/examples/modules', moduleKey, exampleKey, 'index.md')
@@ -145,6 +146,25 @@ async function fillTree(repTree, path = '') {
                 result: result.stdout,
               })
             } else if (/\.tsx$/.test(fileName)) {
+              promises.push((async () => {
+                try {
+                  await promisify(mkdir)(`test/${moduleKey}/${exampleKey}`)
+                } catch (error) {}
+                await promisify(writeFile)(
+                  `test/${moduleKey}/${exampleKey}/${fileName.replace(/\.tsx$/, '')}.test.tsx`,
+                  `import React from 'react';
+import renderer from 'react-test-renderer';
+import App from '@browserql/examples/modules/${moduleKey}/${exampleKey}/files/${fileName.replace(/\.tsx$/, '')}';
+
+it('renders correctly', () => {
+  const tree = renderer
+    .create(<App />)
+    .toJSON();
+  expect(tree).toMatchSnapshot();
+});
+`
+                )
+              })())
               files.push({ name: fileName, source: source.toString() })
               imports.push(`
   {

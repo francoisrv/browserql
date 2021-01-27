@@ -1,28 +1,15 @@
 type FP = (input: any) => any
 type FPE = (error: Error, input: any) => any
 
-export default function fp<D = any, V = any>(value?: V, c?: (e: Error) => D): (F1: ((v: V) => any) | [(v: V) => any, FPE], ...F: (FP|[FP, FPE])[]) => D {
-  // @ts-ignore
-  return (...fns) => fns.reduce(
-    (io, fn) => {
-      if (typeof fn === 'function') {
-        // @ts-ignore
-        return fn(io)
-      }
-      const [tryer, catcher] = fn
-      try {
-        // @ts-ignore
-        return tryer(io)
-      } catch (error) {
-        return catcher(error, io)
-      }
-    },
-    value
-  ) as D
+export default function fp(value?: any) {
+  return (...fns: ((i: any) => any)[]) =>
+    fns.reduce((io, fn) => {
+      return fn(io)
+    }, value)
 }
 
 fp.promise = (value?: any) => {
-  return async <A = unknown>(...fns: Array<FP|[FP, FPE]>): Promise<A> => {
+  return async <A = unknown>(...fns: Array<FP | [FP, FPE]>): Promise<A> => {
     let io = value
     for (const fn of fns) {
       if (typeof fn === 'function') {

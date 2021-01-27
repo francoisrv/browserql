@@ -72,6 +72,30 @@ export default [
   },
 
   {
+    module: 'fp',
+    example: 'example',
+    file: 'promises',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fp/example/files/promises'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fp',
+    example: 'example',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fp/example/files/index'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'fpql',
     example: 'getArgument',
     file: 'directive',
@@ -240,18 +264,6 @@ export default [
   },
 
   {
-    module: 'input',
-    example: 'example',
-    file: 'example',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/input/example/files/example'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'http',
     example: 'about',
     file: 'app',
@@ -270,6 +282,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/http/about/files/response'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'input',
+    example: 'example',
+    file: 'example',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/input/example/files/example'
       )
       return loaded
     },

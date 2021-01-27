@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Browserql | Stories</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="6c736c8beddb25bfdfd40b8651c117bb">
+    <style data-parcel-key="89abb83832d0482ad4431e71216ce579">
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+        /* background-color: #eeeeee; */
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      p,
+      li,
+      table {
+        font-family: 'Roboto', sans-serif;
+      }
+      pre {
+        line-height: 1.6rem;
+      }
+      .browserqldocs-code pre {
+        border-radius: 8px;
+        padding: 32px !important;
+        font-size: 120%;
+        line-height: 1.6rem;
+        /* max-height: 60vh; */
+        overflow: auto;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script src="db064d160654b4a69e3b4b3971974100"></script>
+  </body>
+</html>
