@@ -14,7 +14,7 @@ We'll do it like this:
 
 Which will return the following node:
 
-{{ render field.tsx }}
+{{ render field-render.tsx }}
 
 ## Get query's argument
 
@@ -30,7 +30,7 @@ We'll do it like this:
 
 Which will return the following node:
 
-{{ render query.tsx }}
+{{ render query-render.tsx }}
 
 ## Get directive's argument
 
@@ -46,4 +46,4 @@ We'll do it like this:
 
 Which will return the following node:
 
-{{ render directive.tsx }}
+{{ render directive-render.tsx }}

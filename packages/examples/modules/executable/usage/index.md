@@ -12,7 +12,7 @@ This is how you would generate an executable query from it:
 
 And this is the query it returns:
 
-{{ render query.tsx }}
+{{ render query-render.tsx }}
 
 This is how you would generate an executable mutation from it:
 
@@ -20,4 +20,4 @@ This is how you would generate an executable mutation from it:
 
 And this is the mutation it returns:
 
-{{ render mutation.tsx }}
+{{ render mutation-render.tsx }}
