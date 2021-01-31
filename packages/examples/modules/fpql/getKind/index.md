@@ -1,18 +1,10 @@
 Get node's kind as a string
 
-```graphql
-type Query {
-  getUser(id: ID!, includeSettings: Boolean = false): User
-}
-```
+{{ show schema-get-query-kind.graphql }}
 
-```javascript
-fp(schema)(getQuery('getUser'), getKind)
-```
+{{ show snippet-get-query-kind.mjs }}
 
-```snapshot2
-FPQL.GetFieldKind
-```
+{{ render view-get-query-kind.tsx }}
 
 ```javascript
 fp(schema)(getQuery('getUser'), getArgument('includeSettings'), getKind)

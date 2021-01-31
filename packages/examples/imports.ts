@@ -1,17 +1,5 @@
 export default [
   {
-    module: 'cache',
-    example: 'usage',
-    file: 'example',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/cache/usage/files/example'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'client',
     example: 'resolvers',
     file: 'app',
@@ -36,12 +24,12 @@ export default [
   },
 
   {
-    module: 'executable',
+    module: 'cache',
     example: 'usage',
-    file: 'mutation',
+    file: 'example',
     async load() {
       const { default: loaded } = await import(
-        './modules/executable/usage/files/mutation'
+        './modules/cache/usage/files/example'
       )
       return loaded
     },
@@ -50,10 +38,22 @@ export default [
   {
     module: 'executable',
     example: 'usage',
-    file: 'query',
+    file: 'mutation-render',
     async load() {
       const { default: loaded } = await import(
-        './modules/executable/usage/files/query'
+        './modules/executable/usage/files/mutation-render'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'executable',
+    example: 'usage',
+    file: 'query-render',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/executable/usage/files/query-render'
       )
       return loaded
     },
@@ -74,10 +74,10 @@ export default [
   {
     module: 'fp',
     example: 'example',
-    file: 'promises',
+    file: 'index-render',
     async load() {
       const { default: loaded } = await import(
-        './modules/fp/example/files/promises'
+        './modules/fp/example/files/index-render'
       )
       return loaded
     },
@@ -86,10 +86,10 @@ export default [
   {
     module: 'fp',
     example: 'example',
-    file: 'index',
+    file: 'promises-render',
     async load() {
       const { default: loaded } = await import(
-        './modules/fp/example/files/index'
+        './modules/fp/example/files/promises-render'
       )
       return loaded
     },
@@ -98,10 +98,10 @@ export default [
   {
     module: 'fpql',
     example: 'getArgument',
-    file: 'directive',
+    file: 'directive-render',
     async load() {
       const { default: loaded } = await import(
-        './modules/fpql/getArgument/files/directive'
+        './modules/fpql/getArgument/files/directive-render'
       )
       return loaded
     },
@@ -110,10 +110,10 @@ export default [
   {
     module: 'fpql',
     example: 'getArgument',
-    file: 'field',
+    file: 'field-render',
     async load() {
       const { default: loaded } = await import(
-        './modules/fpql/getArgument/files/field'
+        './modules/fpql/getArgument/files/field-render'
       )
       return loaded
     },
@@ -122,10 +122,10 @@ export default [
   {
     module: 'fpql',
     example: 'getArgument',
-    file: 'query',
+    file: 'query-render',
     async load() {
       const { default: loaded } = await import(
-        './modules/fpql/getArgument/files/query'
+        './modules/fpql/getArgument/files/query-render'
       )
       return loaded
     },
@@ -186,6 +186,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/fpql/getExecutableOperation/files/main'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fpql',
+    example: 'getKind',
+    file: 'view-get-query-kind',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getKind/files/view-get-query-kind'
       )
       return loaded
     },

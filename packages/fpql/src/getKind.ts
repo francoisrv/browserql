@@ -19,12 +19,41 @@ function findKind(type: TypeNode): string {
   return ''
 }
 
+function parseValue(value: any): string {
+  if (value === null || typeof value === 'undefined') {
+    return 'null'
+  }
+  switch (typeof value) {
+    case 'string':
+    case 'number':
+    case 'boolean':
+      return JSON.stringify(value, null, 2)
+    case 'object': {
+      if (Array.isArray(value)) {
+        return value.map(parseValue).join(' ')
+      }
+      return '{ '
+        .concat(
+          Object.keys(value)
+            .map((key) => `${key}: ${parseValue(value[key])}`)
+            .join(' ')
+        )
+        .concat(' }')
+    }
+  }
+  throw new Error('Can not parse value')
+}
+
 export default function getKind(
   def: FieldDefinitionNode | InputValueDefinitionNode
 ) {
-  let kind = findKind(def.type)
-  const defaultValue = getDefaultValue(def as InputValueDefinitionNode)
-  return typeof defaultValue === 'undefined'
-    ? kind
-    : `${kind} = ${JSON.stringify(defaultValue)}`
+  const kind = findKind(def.type)
+  if (def.kind === 'FieldDefinition') {
+    return kind
+  }
+  const defaultValue = getDefaultValue(def)
+  if (typeof defaultValue === 'undefined') {
+    return kind
+  }
+  return kind.concat(' = ').concat(parseValue(defaultValue))
 }

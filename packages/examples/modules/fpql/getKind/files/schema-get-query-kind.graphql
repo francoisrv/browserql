@@ -1,0 +1,8 @@
+type Query {
+  getUser(id: ID!, includeSettings: Boolean = false): User
+  exists(user: User = { id: 1 }): Boolean
+}
+
+type User {
+  id: ID!
+}
