@@ -1,29 +1,5 @@
 export default [
   {
-    module: 'client',
-    example: 'resolvers',
-    file: 'app',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/client/resolvers/files/app'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'client',
-    example: 'resolvers',
-    file: 'view',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/client/resolvers/files/view'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'cache',
     example: 'usage',
     file: 'example',
@@ -60,18 +36,6 @@ export default [
   },
 
   {
-    module: 'firestore',
-    example: 'try-it',
-    file: 'tryit',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/firestore/try-it/files/tryit'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'fp',
     example: 'example',
     file: 'index-render',
@@ -90,6 +54,42 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/fp/example/files/promises-render'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'client',
+    example: 'resolvers',
+    file: 'app',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/resolvers/files/app'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'client',
+    example: 'resolvers',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/resolvers/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'firestore',
+    example: 'try-it',
+    file: 'tryit',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/firestore/try-it/files/tryit'
       )
       return loaded
     },
@@ -169,11 +169,11 @@ export default [
 
   {
     module: 'fpql',
-    example: 'getDirective',
-    file: 'main',
+    example: 'getKind',
+    file: 'view-get-query-kind',
     async load() {
       const { default: loaded } = await import(
-        './modules/fpql/getDirective/files/main'
+        './modules/fpql/getKind/files/view-get-query-kind'
       )
       return loaded
     },
@@ -193,23 +193,11 @@ export default [
 
   {
     module: 'fpql',
-    example: 'getKind',
-    file: 'view-get-query-kind',
+    example: 'getDirective',
+    file: 'main',
     async load() {
       const { default: loaded } = await import(
-        './modules/fpql/getKind/files/view-get-query-kind'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'fragments',
-    example: 'usage',
-    file: 'index',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fragments/usage/files/index'
+        './modules/fpql/getDirective/files/main'
       )
       return loaded
     },
@@ -234,6 +222,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/graphiql/usage/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fragments',
+    example: 'usage',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fragments/usage/files/index'
       )
       return loaded
     },
@@ -276,6 +276,30 @@ export default [
   },
 
   {
+    module: 'input',
+    example: 'example',
+    file: 'example',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/input/example/files/example'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'schema-composer',
+    example: 'try-it',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/schema-composer/try-it/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'http',
     example: 'about',
     file: 'app',
@@ -294,18 +318,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/http/about/files/response'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'input',
-    example: 'example',
-    file: 'example',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/input/example/files/example'
       )
       return loaded
     },

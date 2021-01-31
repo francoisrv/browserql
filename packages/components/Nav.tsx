@@ -53,7 +53,7 @@ const items: Item[] = [
   },
   {
     name: 'React',
-    modules: ['react', 'firestore-react'],
+    modules: ['react', 'firestore-react', 'schema-composer'],
     examples: [],
   },
   {
