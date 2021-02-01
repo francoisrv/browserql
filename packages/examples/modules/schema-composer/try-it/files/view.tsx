@@ -15,3 +15,5 @@ export default function View() {
     </div>
   )
 }
+
+View.height = 1000
