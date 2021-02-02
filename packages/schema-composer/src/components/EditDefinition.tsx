@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function EditDefinition({ definition }: Props) {
-  const [edit, setEdit] = useState(false)
+  const [edit, setEdit] = useState(true)
   const fields = getFields(definition)
   const toggleEdit = useCallback(() => setEdit(!edit), [edit])
   let content
@@ -25,7 +25,7 @@ export default function EditDefinition({ definition }: Props) {
         <TextField
           value={getName(definition)}
           style={{ flex: 1 }}
-          variant="outlined"
+          variant="filled"
         />
       </FormGroup>
     )

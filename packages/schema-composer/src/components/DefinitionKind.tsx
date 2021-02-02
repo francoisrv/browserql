@@ -23,7 +23,7 @@ export default function DefinitionKind({ onChange }: Props) {
             onChange(selected.props.value)
           }
         }}
-        variant="outlined"
+        fullWidth
       >
         <MenuItem value={NewDefinitionKind.input}>
           {NewDefinitionKind.input}

@@ -3,18 +3,20 @@ import type { DocumentNode } from 'graphql'
 import { getName, getTypes } from '@browserql/fpql'
 import TypeComposer from './components/TypeComposer'
 import AddComposer from './components/AddComposer'
+import DefinitionCard from './components/DefinitionCard'
 
 interface Props {
   schema: DocumentNode
 }
 
 export default function SchemaComposer({ schema }: Props) {
-  const [types, setTypes] = useState(getTypes(schema))
+  const [definitions, setDefinitions] = useState(schema.definitions)
   return (
-    <div>
-      <AddComposer onAdded={(type) => setTypes([...types, type])} />
-      {types.map((type) => (
-        <TypeComposer type={type} key={getName(type)} />
+    <div style={{ padding: 16 }}>
+      {definitions.map((definition) => (
+        <div key={getName(definition)}>
+          <DefinitionCard definition={definition} />
+        </div>
       ))}
     </div>
   )

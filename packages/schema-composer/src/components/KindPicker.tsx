@@ -6,10 +6,12 @@ import IconButton from '@material-ui/core/IconButton'
 import MenuItem from '@material-ui/core/MenuItem'
 import Select from '@material-ui/core/Select'
 import Typography from '@material-ui/core/Typography'
-import React from 'react'
+import React, { useState } from 'react'
 import MinusIcon from '@material-ui/icons/Remove'
 import AddIcon from '@material-ui/icons/Add'
 import TextField from '@material-ui/core/TextField'
+import { ParsedType } from '@browserql/fpql'
+import PriorityHighIcon from '@material-ui/icons/PriorityHigh'
 
 enum BuiltinKind {
   Boolean = 'Boolean',
@@ -19,11 +21,28 @@ enum BuiltinKind {
   String = 'String',
 }
 
-export default function KindPicker() {
+interface Props {
+  kind: ParsedType
+}
+
+export default function KindPicker(props: Props) {
+  const [kind, setKind] = useState(props.kind.type)
   return (
-    <FormGroup row style={{ alignItems: 'center', gap: 8 }}>
+    <FormGroup row style={{ alignItems: 'flex-end', gap: 8 }}>
+      <IconButton size="small">
+        <Typography
+          style={{
+            color: '#eee',
+            fontWeight: 'bold',
+          }}
+          variant="h5"
+        >
+          [
+        </Typography>
+      </IconButton>
+
       <FormControl>
-        <Select variant="outlined">
+        <Select value={kind} style={{ width: 125 }}>
           <MenuItem value={BuiltinKind.Boolean}>{BuiltinKind.Boolean}</MenuItem>
           <MenuItem value={BuiltinKind.Float}>{BuiltinKind.Float}</MenuItem>
           <MenuItem value={BuiltinKind.ID}>{BuiltinKind.ID}</MenuItem>
@@ -31,8 +50,20 @@ export default function KindPicker() {
           <MenuItem value={BuiltinKind.String}>{BuiltinKind.String}</MenuItem>
         </Select>
       </FormControl>
-      <FormControlLabel control={<Checkbox />} label="Required" />
-      <FormControlLabel control={<Checkbox />} label="Array" />
+
+      <Typography
+        style={{
+          color: '#eee',
+          fontWeight: 'bold',
+        }}
+        variant="h5"
+      >
+        ]
+      </Typography>
+
+      <IconButton size="small">
+        <PriorityHighIcon />
+      </IconButton>
     </FormGroup>
   )
 }

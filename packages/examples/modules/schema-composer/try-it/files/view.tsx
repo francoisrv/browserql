@@ -7,6 +7,11 @@ export default function View() {
   const schema = `
   type Foo {
     id: ID!
+    bar: Boolean!
+  }
+
+  type Bar {
+    foo: Float
   }
   `
   return (
