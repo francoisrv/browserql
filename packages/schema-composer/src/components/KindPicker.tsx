@@ -23,26 +23,25 @@ enum BuiltinKind {
 
 interface Props {
   kind: ParsedType
+  onChange(kind: ParsedType): void
 }
 
 export default function KindPicker(props: Props) {
-  const [kind, setKind] = useState(props.kind.type)
   return (
     <FormGroup row style={{ alignItems: 'flex-end', gap: 8 }}>
-      <IconButton size="small">
-        <Typography
-          style={{
-            color: '#eee',
-            fontWeight: 'bold',
-          }}
-          variant="h5"
-        >
-          [
-        </Typography>
-      </IconButton>
+      <Typography
+        style={{
+          color: '#eee',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+        }}
+        variant="h5"
+      >
+        [
+      </Typography>
 
       <FormControl>
-        <Select value={kind} style={{ width: 125 }}>
+        <Select value={props.kind.type} style={{ width: 125 }}>
           <MenuItem value={BuiltinKind.Boolean}>{BuiltinKind.Boolean}</MenuItem>
           <MenuItem value={BuiltinKind.Float}>{BuiltinKind.Float}</MenuItem>
           <MenuItem value={BuiltinKind.ID}>{BuiltinKind.ID}</MenuItem>
@@ -61,7 +60,16 @@ export default function KindPicker(props: Props) {
         ]
       </Typography>
 
-      <IconButton size="small">
+      <IconButton
+        size="small"
+        onClick={() => {
+          props.onChange({
+            ...props.kind,
+            required: !props.kind.required,
+          })
+        }}
+        color={props.kind.required ? 'secondary' : 'default'}
+      >
         <PriorityHighIcon />
       </IconButton>
     </FormGroup>

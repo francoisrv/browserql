@@ -15,7 +15,12 @@ interface Props {
 export default function DefinitionKind({ onChange }: Props) {
   const [kind, setKind] = useState<NewDefinitionKind>(NewDefinitionKind.type)
   return (
-    <FormControl>
+    <FormControl
+      style={{
+        backgroundColor: '#333',
+        alignSelf: 'stretch',
+      }}
+    >
       <Select
         value={kind}
         onChange={(_event, selected) => {

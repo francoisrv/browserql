@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 export default function View() {
   const schema = `
   type Foo {
-    id: ID!
+    id: ID
     bar: Boolean!
   }
 

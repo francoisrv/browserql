@@ -15,9 +15,10 @@ import FieldComposer from './FieldComposer'
 
 interface Props {
   definition: DefinitionNode
+  onChange(name: string, definition: DefinitionNode): void
 }
 
-export default function DefinitionCard({ definition }: Props) {
+export default function DefinitionCard({ definition, onChange }: Props) {
   const [expanded, setExpanded] = useState(true)
   const toggle = useCallback(() => setExpanded(!expanded), [expanded])
   return (
@@ -27,7 +28,18 @@ export default function DefinitionCard({ definition }: Props) {
           <div>
             <DefinitionKind onChange={() => {}} />
           </div>
-          <Input value={getName(definition)} onChangeValue={() => {}} />
+          <Input
+            value={getName(definition)}
+            onChangeValue={(name) => {
+              onChange(getName(definition), {
+                ...definition,
+                name: {
+                  kind: 'Name',
+                  value: name,
+                },
+              })
+            }}
+          />
           <IconButton
             onClick={toggle}
             aria-expanded={expanded}
@@ -42,7 +54,22 @@ export default function DefinitionCard({ definition }: Props) {
           {definition.kind === 'ObjectTypeDefinition' && (
             <div>
               {getFields(definition).map((field) => (
-                <FieldComposer field={field} key={getName(field)} />
+                <FieldComposer
+                  onChange={(changedField) => {
+                    console.log({ changedField })
+                    onChange({
+                      ...definition,
+                      fields: getFields(definition).map((f) => {
+                        if (getName(f) === getName(field)) {
+                          return changedField
+                        }
+                        return f
+                      }),
+                    })
+                  }}
+                  field={field}
+                  key={getName(field)}
+                />
               ))}
             </div>
           )}
