@@ -24,6 +24,7 @@ enum BuiltinKind {
 interface Props {
   kind: ParsedType
   onChange(kind: ParsedType): void
+  disabled?: boolean
 }
 
 export default function KindPicker(props: Props) {
@@ -50,6 +51,7 @@ export default function KindPicker(props: Props) {
               type: value,
             })
           }}
+          disabled={props.disabled}
         >
           <MenuItem value={BuiltinKind.Boolean}>{BuiltinKind.Boolean}</MenuItem>
           <MenuItem value={BuiltinKind.Float}>{BuiltinKind.Float}</MenuItem>
@@ -83,4 +85,8 @@ export default function KindPicker(props: Props) {
       </IconButton>
     </FormGroup>
   )
+}
+
+KindPicker.defaultProps = {
+  disabled: false,
 }

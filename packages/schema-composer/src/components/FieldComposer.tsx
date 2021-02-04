@@ -78,6 +78,7 @@ export default function FieldComposer({
       <KindPicker
         kind={field ? parseKind(getKind(field)) : parseKind('ID')}
         onChange={handleChangeKind}
+        disabled={Boolean(field) === false}
       />
       {Boolean(field) && (
         <IconButton size="small" onClick={() => onChange(getName(field))}>
