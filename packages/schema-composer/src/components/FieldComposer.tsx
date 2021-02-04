@@ -17,7 +17,7 @@ import { Typography } from '@material-ui/core'
 
 interface Props {
   field?: FieldDefinitionNode
-  onChange(name: string, field?: FieldDefinitionNode): void
+  onChange(name?: string, field?: FieldDefinitionNode): void
   isLast?: boolean
   onToggleShowNewField?: () => void
 }
@@ -35,11 +35,16 @@ export default function FieldComposer({
       type: parseType(printParsedKind(kind)),
     })
   }
+  const handleSave = () => {
+    onChange(newFieldName)
+    setNewFieldName('')
+  }
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
       <InputBase
         value={field ? getName(field) : newFieldName}
         placeholder="Field name"
+        autoFocus={Boolean(field) === false}
         inputProps={{
           style: {
             fontWeight: 'bold',
@@ -80,11 +85,6 @@ export default function FieldComposer({
         </IconButton>
       )}
       {isLast && (
-        <IconButton size="small" onClick={() => onChange(getName(field))}>
-          <AddCircleOutlineIcon style={{ color: '#fff' }} />
-        </IconButton>
-      )}
-      {!field && (
         <IconButton
           size="small"
           onClick={() => {
@@ -93,6 +93,11 @@ export default function FieldComposer({
             }
           }}
         >
+          <AddCircleOutlineIcon style={{ color: '#fff' }} />
+        </IconButton>
+      )}
+      {!field && (
+        <IconButton size="small" onClick={handleSave}>
           <SaveIcon style={{ color: '#fff' }} />
         </IconButton>
       )}

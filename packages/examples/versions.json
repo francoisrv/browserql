@@ -5,14 +5,14 @@
     "description": "React integration for Firestore with GraphQL"
   },
   {
-    "name": "cache",
-    "version": "1.2.0",
-    "description": "Util for updating apollo cache"
-  },
-  {
     "name": "state",
     "version": "7.1.0",
     "description": "State manager based on GraphQL cache"
+  },
+  {
+    "name": "cache",
+    "version": "1.2.0",
+    "description": "Util for updating apollo cache"
   },
   {
     "name": "client",
@@ -35,14 +35,14 @@
     "description": "Pipe function"
   },
   {
-    "name": "fragments",
-    "version": "2.6.0",
-    "description": "Generate a GraphQL fragment from a type"
-  },
-  {
     "name": "fpql",
     "version": "1.34.0",
     "description": "Accessor util for GraphQL schemas"
+  },
+  {
+    "name": "fragments",
+    "version": "2.6.0",
+    "description": "Generate a GraphQL fragment from a type"
   },
   {
     "name": "graphiql",

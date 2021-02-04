@@ -38,18 +38,6 @@ export default [
   {
     module: 'executable',
     example: 'usage',
-    file: 'mutation-render',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/executable/usage/files/mutation-render'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'executable',
-    example: 'usage',
     file: 'query-render',
     async load() {
       const { default: loaded } = await import(
@@ -60,24 +48,12 @@ export default [
   },
 
   {
-    module: 'fragments',
+    module: 'executable',
     example: 'usage',
-    file: 'index',
+    file: 'mutation-render',
     async load() {
       const { default: loaded } = await import(
-        './modules/fragments/usage/files/index'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'firestore',
-    example: 'try-it',
-    file: 'tryit',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/firestore/try-it/files/tryit'
+        './modules/executable/usage/files/mutation-render'
       )
       return loaded
     },
@@ -90,6 +66,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/fp/example/files/index-render'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'firestore',
+    example: 'try-it',
+    file: 'tryit',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/firestore/try-it/files/tryit'
       )
       return loaded
     },
@@ -210,6 +198,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/fpql/getKind/files/view-get-query-kind'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fragments',
+    example: 'usage',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fragments/usage/files/index'
       )
       return loaded
     },

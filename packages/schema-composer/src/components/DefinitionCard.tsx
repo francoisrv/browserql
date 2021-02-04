@@ -9,10 +9,11 @@ import IconButton from '@material-ui/core/IconButton'
 import Collapse from '@material-ui/core/Collapse'
 import Input from './Input'
 import DefinitionKind from './DefinitionKind'
-import { DefinitionNode } from 'graphql'
-import { getFields, getName } from '@browserql/fpql'
+import { DefinitionNode, ObjectTypeDefinition } from 'graphql'
+import { getField, getFields, getName, getType } from '@browserql/fpql'
 import FieldComposer from './FieldComposer'
-import { sortBy } from 'lodash'
+import { find, sortBy } from 'lodash'
+import gql from 'graphql-tag'
 
 interface Props {
   definition: DefinitionNode
@@ -80,17 +81,44 @@ export default function DefinitionCard({ definition, onChange }: Props) {
                           }),
                         })
                       } else {
-                        onChange(getName(definition), {
-                          ...definition,
-                          fields: fields.filter((f) => getName(f) !== name),
-                        })
+                        console.log(0)
+                        if (find(fields, (field) => getName(field) === name)) {
+                          console.log(1)
+                          onChange(getName(definition), {
+                            ...definition,
+                            fields: fields.filter((f) => getName(f) !== name),
+                          })
+                        } else {
+                          console.log(2)
+                          console.log({ fields })
+                          onChange(getName(definition), {
+                            ...definition,
+                            fields: [...fields],
+                          })
+                        }
                       }
                     }}
                     field={field}
                   />
                 </div>
               ))}
-              {showNewField && <FieldComposer />}
+              {showNewField && (
+                <FieldComposer
+                  onChange={(name) => {
+                    if (name) {
+                      const source = `type Foo { ${name}: ID }`
+                      const doc = gql(source)
+                      const Foo = getType('Foo')(doc) as ObjectTypeDefinition
+                      const field = getField(name)(Foo)
+                      onChange(getName(definition), {
+                        ...definition,
+                        fields: [...fields, field],
+                      })
+                      setShowNewField(false)
+                    }
+                  }}
+                />
+              )}
             </div>
           )}
         </CardContent>
