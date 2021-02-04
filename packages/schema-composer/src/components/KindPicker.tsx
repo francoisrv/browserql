@@ -41,7 +41,16 @@ export default function KindPicker(props: Props) {
       </Typography>
 
       <FormControl>
-        <Select value={props.kind.type} style={{ width: 125 }}>
+        <Select
+          value={props.kind.type}
+          style={{ width: 125 }}
+          onChange={(event, { props: { value } }) => {
+            props.onChange({
+              ...props.kind,
+              type: value,
+            })
+          }}
+        >
           <MenuItem value={BuiltinKind.Boolean}>{BuiltinKind.Boolean}</MenuItem>
           <MenuItem value={BuiltinKind.Float}>{BuiltinKind.Float}</MenuItem>
           <MenuItem value={BuiltinKind.ID}>{BuiltinKind.ID}</MenuItem>
