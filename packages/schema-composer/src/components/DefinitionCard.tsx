@@ -14,6 +14,7 @@ import { getField, getFields, getName, getType } from '@browserql/fpql'
 import FieldComposer from './FieldComposer'
 import { find, sortBy } from 'lodash'
 import gql from 'graphql-tag'
+import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 
 interface Props {
   definition: DefinitionNode
@@ -57,6 +58,9 @@ export default function DefinitionCard({ definition, onChange }: Props) {
             aria-label="show more"
           >
             <ExpandMoreIcon style={{ color: 'white' }} />
+          </IconButton>
+          <IconButton>
+            <HighlightOffIcon style={{ color: '#fff' }} />
           </IconButton>
         </div>
       </CardContent>
