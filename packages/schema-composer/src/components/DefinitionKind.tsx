@@ -2,6 +2,7 @@ import FormControl from '@material-ui/core/FormControl'
 import MenuItem from '@material-ui/core/MenuItem'
 import Select from '@material-ui/core/Select'
 import React, { useState } from 'react'
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 
 export enum NewDefinitionKind {
   type = 'type',
@@ -24,7 +25,8 @@ export default function DefinitionKind({ onChange }: Props) {
           }
         }}
         fullWidth
-        style={{ color: 'ActiveBorder' }}
+        style={{ color: '#b388ff', fontSize: 24, borderColor: '#b388ff' }}
+        IconComponent={() => <ArrowDropDownIcon style={{ color: '#b388ff' }} />}
       >
         <MenuItem value={NewDefinitionKind.input}>
           {NewDefinitionKind.input}

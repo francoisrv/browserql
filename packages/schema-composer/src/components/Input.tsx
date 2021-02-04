@@ -14,10 +14,11 @@ export default function Input({ value, onChangeValue }: Props) {
       inputProps={{
         style: {
           fontSize: 24,
-          paddingLeft: 20,
-          paddingRight: 20,
-          backgroundColor: '#444',
-          color: '#fff',
+          paddingLeft: 8,
+          paddingRight: 8,
+          backgroundColor: '#555',
+          color: '#ffc107',
+          borderRadius: '5px 5px 0 0',
         },
       }}
       fullWidth

@@ -21,7 +21,12 @@ interface Props {
 
 export default function DefinitionCard({ definition, onChange }: Props) {
   const [expanded, setExpanded] = useState(true)
+  const [showNewField, setShowNewField] = useState(false)
   const toggle = useCallback(() => setExpanded(!expanded), [expanded])
+  const onToggleShowNewField = useCallback(
+    () => setShowNewField(!showNewField),
+    [showNewField]
+  )
   const fields =
     definition.kind === 'ObjectTypeDefinition'
       ? sortBy(getFields(definition), getName)
@@ -50,7 +55,7 @@ export default function DefinitionCard({ definition, onChange }: Props) {
             aria-expanded={expanded}
             aria-label="show more"
           >
-            <ExpandMoreIcon />
+            <ExpandMoreIcon style={{ color: 'white' }} />
           </IconButton>
         </div>
       </CardContent>
@@ -59,30 +64,33 @@ export default function DefinitionCard({ definition, onChange }: Props) {
           {definition.kind === 'ObjectTypeDefinition' && (
             <div>
               {fields.map((field, fieldIndex) => (
-                <FieldComposer
-                  isLast={fields.length - 1 === fieldIndex}
-                  onChange={(name, changedField) => {
-                    if (changedField) {
-                      onChange(getName(definition), {
-                        ...definition,
-                        fields: fields.map((f) => {
-                          if (getName(f) === name) {
-                            return changedField
-                          }
-                          return f
-                        }),
-                      })
-                    } else {
-                      onChange(getName(definition), {
-                        ...definition,
-                        fields: fields.filter((f) => getName(f) !== name),
-                      })
-                    }
-                  }}
-                  field={field}
-                  key={fieldIndex}
-                />
+                <div key={fieldIndex} style={{ paddingBottom: 8 }}>
+                  <FieldComposer
+                    isLast={fields.length - 1 === fieldIndex}
+                    onToggleShowNewField={onToggleShowNewField}
+                    onChange={(name, changedField) => {
+                      if (changedField) {
+                        onChange(getName(definition), {
+                          ...definition,
+                          fields: fields.map((f) => {
+                            if (getName(f) === name) {
+                              return changedField
+                            }
+                            return f
+                          }),
+                        })
+                      } else {
+                        onChange(getName(definition), {
+                          ...definition,
+                          fields: fields.filter((f) => getName(f) !== name),
+                        })
+                      }
+                    }}
+                    field={field}
+                  />
+                </div>
               ))}
+              {showNewField && <FieldComposer />}
             </div>
           )}
         </CardContent>

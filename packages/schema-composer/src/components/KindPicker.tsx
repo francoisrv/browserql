@@ -43,7 +43,7 @@ export default function KindPicker(props: Props) {
       <FormControl>
         <Select
           value={props.kind.type}
-          style={{ width: 125, color: '#fff', fontSize: 18 }}
+          style={{ width: 125, color: '#ffc107', fontSize: 24 }}
           onChange={(event, { props: { value } }) => {
             props.onChange({
               ...props.kind,

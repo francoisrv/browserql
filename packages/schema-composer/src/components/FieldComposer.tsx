@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FieldDefinitionNode, parseType } from 'graphql'
 import {
   getKind,
@@ -8,19 +8,27 @@ import {
   printParsedKind,
 } from '@browserql/fpql'
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
-import TextField from '@material-ui/core/TextField'
+import SaveIcon from '@material-ui/icons/Save'
 import KindPicker from './KindPicker'
 import IconButton from '@material-ui/core/IconButton'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 import InputBase from '@material-ui/core/InputBase'
+import { Typography } from '@material-ui/core'
 
 interface Props {
-  field: FieldDefinitionNode
+  field?: FieldDefinitionNode
   onChange(name: string, field?: FieldDefinitionNode): void
-  isLast: boolean
+  isLast?: boolean
+  onToggleShowNewField?: () => void
 }
 
-export default function FieldComposer({ field, onChange, isLast }: Props) {
+export default function FieldComposer({
+  field,
+  onChange,
+  isLast,
+  onToggleShowNewField,
+}: Props) {
+  const [newFieldName, setNewFieldName] = useState('')
   const handleChangeKind = (kind: ParsedType) => {
     onChange(getName(field), {
       ...field,
@@ -30,7 +38,8 @@ export default function FieldComposer({ field, onChange, isLast }: Props) {
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
       <InputBase
-        value={getName(field)}
+        value={field ? getName(field) : newFieldName}
+        placeholder="Field name"
         inputProps={{
           style: {
             fontWeight: 'bold',
@@ -39,33 +48,58 @@ export default function FieldComposer({ field, onChange, isLast }: Props) {
             paddingLeft: 6,
             paddingRight: 6,
             textAlign: 'right',
-            width: 150,
-            fontSize: 18,
+            width: 120,
+            fontSize: 24,
           },
         }}
         onChange={(e) => {
-          onChange(getName(field), {
-            ...field,
-            name: {
-              kind: 'Name',
-              value: e.target.value,
-            },
-          })
+          if (field) {
+            onChange(getName(field), {
+              ...field,
+              name: {
+                kind: 'Name',
+                value: e.target.value,
+              },
+            })
+          } else {
+            setNewFieldName(e.target.value)
+          }
         }}
         style={{ marginRight: 12 }}
       />
+      <Typography variant="h4" style={{ color: '#fff', fontWeight: 'bold' }}>
+        :
+      </Typography>
       <KindPicker
-        kind={parseKind(getKind(field))}
+        kind={field ? parseKind(getKind(field)) : parseKind('ID')}
         onChange={handleChangeKind}
       />
-      <IconButton size="small" onClick={() => onChange(getName(field))}>
-        <HighlightOffIcon style={{ color: '#fff' }} />
-      </IconButton>
+      {Boolean(field) && (
+        <IconButton size="small" onClick={() => onChange(getName(field))}>
+          <HighlightOffIcon style={{ color: '#fff' }} />
+        </IconButton>
+      )}
       {isLast && (
         <IconButton size="small" onClick={() => onChange(getName(field))}>
           <AddCircleOutlineIcon style={{ color: '#fff' }} />
         </IconButton>
       )}
+      {!field && (
+        <IconButton
+          size="small"
+          onClick={() => {
+            if (onToggleShowNewField) {
+              onToggleShowNewField()
+            }
+          }}
+        >
+          <SaveIcon style={{ color: '#fff' }} />
+        </IconButton>
+      )}
     </div>
   )
+}
+
+FieldComposer.defaultProps = {
+  isLast: false,
 }
