@@ -60,6 +60,18 @@ export default [
   },
 
   {
+    module: 'fragments',
+    example: 'usage',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fragments/usage/files/index'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'firestore',
     example: 'try-it',
     file: 'tryit',
@@ -198,18 +210,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/fpql/getKind/files/view-get-query-kind'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'fragments',
-    example: 'usage',
-    file: 'index',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fragments/usage/files/index'
       )
       return loaded
     },

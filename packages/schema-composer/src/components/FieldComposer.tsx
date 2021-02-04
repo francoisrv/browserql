@@ -15,12 +15,15 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 
 interface Props {
   field: FieldDefinitionNode
-  onChange(field: FieldDefinitionNode): void
+  onChange(name: string, field: FieldDefinitionNode): void
 }
 
 export default function FieldComposer({ field, onChange }: Props) {
   const handleChangeKind = (kind: ParsedType) => {
-    onChange({ ...field, type: parseType(printParsedKind(kind)) })
+    onChange(getName(field), {
+      ...field,
+      type: parseType(printParsedKind(kind)),
+    })
   }
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
@@ -34,6 +37,15 @@ export default function FieldComposer({ field, onChange }: Props) {
             paddingLeft: 6,
             paddingRight: 6,
           },
+        }}
+        onChange={(e) => {
+          onChange(getName(field), {
+            ...field,
+            name: {
+              kind: 'Name',
+              value: e.target.value,
+            },
+          })
         }}
       />
       <KindPicker

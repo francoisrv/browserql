@@ -53,14 +53,13 @@ export default function DefinitionCard({ definition, onChange }: Props) {
         <CardContent>
           {definition.kind === 'ObjectTypeDefinition' && (
             <div>
-              {getFields(definition).map((field) => (
+              {getFields(definition).map((field, fieldIndex) => (
                 <FieldComposer
-                  onChange={(changedField) => {
-                    console.log({ changedField })
-                    onChange({
+                  onChange={(name, changedField) => {
+                    onChange(getName(definition), {
                       ...definition,
                       fields: getFields(definition).map((f) => {
-                        if (getName(f) === getName(field)) {
+                        if (getName(f) === name) {
                           return changedField
                         }
                         return f
@@ -68,7 +67,7 @@ export default function DefinitionCard({ definition, onChange }: Props) {
                     })
                   }}
                   field={field}
-                  key={getName(field)}
+                  key={fieldIndex}
                 />
               ))}
             </div>
