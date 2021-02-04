@@ -15,7 +15,7 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 
 interface Props {
   field: FieldDefinitionNode
-  onChange(name: string, field: FieldDefinitionNode): void
+  onChange(name: string, field?: FieldDefinitionNode): void
 }
 
 export default function FieldComposer({ field, onChange }: Props) {
@@ -52,7 +52,7 @@ export default function FieldComposer({ field, onChange }: Props) {
         kind={parseKind(getKind(field))}
         onChange={handleChangeKind}
       />
-      <IconButton size="small">
+      <IconButton size="small" onClick={() => onChange(getName(field))}>
         <HighlightOffIcon />
       </IconButton>
     </div>

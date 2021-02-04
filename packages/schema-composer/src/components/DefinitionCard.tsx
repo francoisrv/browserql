@@ -12,6 +12,7 @@ import DefinitionKind from './DefinitionKind'
 import { DefinitionNode } from 'graphql'
 import { getFields, getName } from '@browserql/fpql'
 import FieldComposer from './FieldComposer'
+import { sortBy } from 'lodash'
 
 interface Props {
   definition: DefinitionNode
@@ -21,6 +22,10 @@ interface Props {
 export default function DefinitionCard({ definition, onChange }: Props) {
   const [expanded, setExpanded] = useState(true)
   const toggle = useCallback(() => setExpanded(!expanded), [expanded])
+  const fields =
+    definition.kind === 'ObjectTypeDefinition'
+      ? sortBy(getFields(definition), getName)
+      : []
   return (
     <Card elevation={0}>
       <CardContent>
@@ -53,18 +58,25 @@ export default function DefinitionCard({ definition, onChange }: Props) {
         <CardContent>
           {definition.kind === 'ObjectTypeDefinition' && (
             <div>
-              {getFields(definition).map((field, fieldIndex) => (
+              {fields.map((field, fieldIndex) => (
                 <FieldComposer
                   onChange={(name, changedField) => {
-                    onChange(getName(definition), {
-                      ...definition,
-                      fields: getFields(definition).map((f) => {
-                        if (getName(f) === name) {
-                          return changedField
-                        }
-                        return f
-                      }),
-                    })
+                    if (changedField) {
+                      onChange(getName(definition), {
+                        ...definition,
+                        fields: fields.map((f) => {
+                          if (getName(f) === name) {
+                            return changedField
+                          }
+                          return f
+                        }),
+                      })
+                    } else {
+                      onChange(getName(definition), {
+                        ...definition,
+                        fields: fields.filter((f) => getName(f) !== name),
+                      })
+                    }
                   }}
                   field={field}
                   key={fieldIndex}
