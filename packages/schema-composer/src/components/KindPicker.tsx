@@ -31,7 +31,7 @@ export default function KindPicker(props: Props) {
     <FormGroup row style={{ alignItems: 'flex-end', gap: 8 }}>
       <Typography
         style={{
-          color: '#eee',
+          opacity: 0.5,
           fontWeight: 'bold',
           cursor: 'pointer',
         }}
@@ -43,7 +43,7 @@ export default function KindPicker(props: Props) {
       <FormControl>
         <Select
           value={props.kind.type}
-          style={{ width: 125 }}
+          style={{ width: 125, color: '#fff', fontSize: 18 }}
           onChange={(event, { props: { value } }) => {
             props.onChange({
               ...props.kind,
@@ -61,7 +61,7 @@ export default function KindPicker(props: Props) {
 
       <Typography
         style={{
-          color: '#eee',
+          opacity: 0.5,
           fontWeight: 'bold',
         }}
         variant="h5"

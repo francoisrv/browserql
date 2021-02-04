@@ -28,7 +28,7 @@ export default function SchemaComposer({ schema }: Props) {
     [definitions]
   )
   return (
-    <div style={{ padding: 16 }}>
+    <div style={{ padding: 16, backgroundColor: '#333' }}>
       {definitions.map((definition, indexByName) => (
         <div key={indexByName}>
           <DefinitionCard definition={definition} onChange={handleChange} />

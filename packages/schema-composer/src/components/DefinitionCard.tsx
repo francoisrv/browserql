@@ -27,7 +27,7 @@ export default function DefinitionCard({ definition, onChange }: Props) {
       ? sortBy(getFields(definition), getName)
       : []
   return (
-    <Card elevation={0}>
+    <Card elevation={0} style={{ backgroundColor: '#444' }}>
       <CardContent>
         <div style={{ display: 'flex', alignItems: 'flex-end' }}>
           <div>
@@ -60,6 +60,7 @@ export default function DefinitionCard({ definition, onChange }: Props) {
             <div>
               {fields.map((field, fieldIndex) => (
                 <FieldComposer
+                  isLast={fields.length - 1 === fieldIndex}
                   onChange={(name, changedField) => {
                     if (changedField) {
                       onChange(getName(definition), {

@@ -7,18 +7,20 @@ import {
   parseKind,
   printParsedKind,
 } from '@browserql/fpql'
-import Typography from '@material-ui/core/Typography'
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 import TextField from '@material-ui/core/TextField'
 import KindPicker from './KindPicker'
 import IconButton from '@material-ui/core/IconButton'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
+import InputBase from '@material-ui/core/InputBase'
 
 interface Props {
   field: FieldDefinitionNode
   onChange(name: string, field?: FieldDefinitionNode): void
+  isLast: boolean
 }
 
-export default function FieldComposer({ field, onChange }: Props) {
+export default function FieldComposer({ field, onChange, isLast }: Props) {
   const handleChangeKind = (kind: ParsedType) => {
     onChange(getName(field), {
       ...field,
@@ -27,15 +29,18 @@ export default function FieldComposer({ field, onChange }: Props) {
   }
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
-      <TextField
+      <InputBase
         value={getName(field)}
         inputProps={{
           style: {
             fontWeight: 'bold',
-            backgroundColor: '#666',
+            backgroundColor: '#444',
             color: '#fff',
             paddingLeft: 6,
             paddingRight: 6,
+            textAlign: 'right',
+            width: 150,
+            fontSize: 18,
           },
         }}
         onChange={(e) => {
@@ -47,14 +52,20 @@ export default function FieldComposer({ field, onChange }: Props) {
             },
           })
         }}
+        style={{ marginRight: 12 }}
       />
       <KindPicker
         kind={parseKind(getKind(field))}
         onChange={handleChangeKind}
       />
       <IconButton size="small" onClick={() => onChange(getName(field))}>
-        <HighlightOffIcon />
+        <HighlightOffIcon style={{ color: '#fff' }} />
       </IconButton>
+      {isLast && (
+        <IconButton size="small" onClick={() => onChange(getName(field))}>
+          <AddCircleOutlineIcon style={{ color: '#fff' }} />
+        </IconButton>
+      )}
     </div>
   )
 }

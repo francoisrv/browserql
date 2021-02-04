@@ -24,6 +24,7 @@ export default function DefinitionKind({ onChange }: Props) {
           }
         }}
         fullWidth
+        style={{ color: 'ActiveBorder' }}
       >
         <MenuItem value={NewDefinitionKind.input}>
           {NewDefinitionKind.input}
