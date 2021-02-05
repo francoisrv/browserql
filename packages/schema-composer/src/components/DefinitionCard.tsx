@@ -1,27 +1,26 @@
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
 import React, { useCallback, useState } from 'react'
-import ShareIcon from '@material-ui/icons/Share'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import CardActions from '@material-ui/core/CardActions'
+import AddIcon from '@material-ui/icons/Add'
 import IconButton from '@material-ui/core/IconButton'
 import Collapse from '@material-ui/core/Collapse'
 import Input from './Input'
 import DefinitionKind from './DefinitionKind'
-import { DefinitionNode, ObjectTypeDefinition } from 'graphql'
+import { DefinitionNode, ObjectTypeDefinitionNode } from 'graphql'
 import { getField, getFields, getName, getType } from '@browserql/fpql'
 import FieldComposer from './FieldComposer'
-import { find, sortBy } from 'lodash'
+import { find, sortBy, upperFirst } from 'lodash'
 import gql from 'graphql-tag'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 
 interface Props {
-  definition: DefinitionNode
-  onChange(name: string, definition?: DefinitionNode): void
+  definition?: DefinitionNode
+  onChange(name: string | null, definition?: DefinitionNode): void
 }
 
 export default function DefinitionCard({ definition, onChange }: Props) {
+  const [newName, setNewName] = useState('')
   const [expanded, setExpanded] = useState(true)
   const [showNewField, setShowNewField] = useState(false)
   const toggle = useCallback(() => setExpanded(!expanded), [expanded])
@@ -30,7 +29,7 @@ export default function DefinitionCard({ definition, onChange }: Props) {
     [showNewField]
   )
   const fields =
-    definition.kind === 'ObjectTypeDefinition'
+    definition && definition.kind === 'ObjectTypeDefinition'
       ? sortBy(getFields(definition), getName)
       : []
   return (
@@ -41,15 +40,19 @@ export default function DefinitionCard({ definition, onChange }: Props) {
             <DefinitionKind onChange={() => {}} />
           </div>
           <Input
-            value={getName(definition)}
+            value={definition ? getName(definition) : newName}
             onChangeValue={(name) => {
-              onChange(getName(definition), {
-                ...definition,
-                name: {
-                  kind: 'Name',
-                  value: name,
-                },
-              })
+              if (definition) {
+                onChange(getName(definition), {
+                  ...definition,
+                  name: {
+                    kind: 'Name',
+                    value: name,
+                  },
+                })
+              } else {
+                setNewName(upperFirst(name))
+              }
             }}
           />
           <IconButton
@@ -59,14 +62,31 @@ export default function DefinitionCard({ definition, onChange }: Props) {
           >
             <ExpandMoreIcon style={{ color: 'white' }} />
           </IconButton>
-          <IconButton onClick={() => onChange(getName(definition))}>
-            <HighlightOffIcon style={{ color: '#fff' }} />
-          </IconButton>
+          {definition && (
+            <IconButton onClick={() => onChange(getName(definition))}>
+              <HighlightOffIcon style={{ color: '#fff' }} />
+            </IconButton>
+          )}
+          {!definition && (
+            <IconButton
+              onClick={() => {
+                if (newName) {
+                  const source = `type ${newName}`
+                  const node = gql(source)
+                  console.log(node.definitions[0])
+                  onChange(null, node.definitions[0])
+                  setNewName('')
+                }
+              }}
+            >
+              <AddIcon style={{ color: '#fff' }} />
+            </IconButton>
+          )}
         </div>
       </CardContent>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          {definition.kind === 'ObjectTypeDefinition' && (
+          {definition && definition.kind === 'ObjectTypeDefinition' && (
             <div>
               {fields.map((field, fieldIndex) => (
                 <div key={fieldIndex} style={{ paddingBottom: 8 }}>
@@ -112,7 +132,9 @@ export default function DefinitionCard({ definition, onChange }: Props) {
                     if (name) {
                       const source = `type Foo { ${name}: ID }`
                       const doc = gql(source)
-                      const Foo = getType('Foo')(doc) as ObjectTypeDefinition
+                      const Foo = getType('Foo')(
+                        doc
+                      ) as ObjectTypeDefinitionNode
                       const field = getField(name)(Foo)
                       onChange(getName(definition), {
                         ...definition,

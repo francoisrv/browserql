@@ -11,6 +11,7 @@ export default function Input({ value, onChangeValue }: Props) {
     <TextField
       value={value}
       onChange={(e) => onChangeValue(e.target.value)}
+      placeholder="Enter name here"
       inputProps={{
         style: {
           fontSize: 24,
