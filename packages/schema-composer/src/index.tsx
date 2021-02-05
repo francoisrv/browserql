@@ -17,13 +17,20 @@ export default function SchemaComposer({ schema }: Props) {
   )
   const handleChange = useCallback(
     (name, nextDefinition) => {
-      const nextDefinitions = definitions.map((def) => {
-        if (getName(def) === name) {
-          return nextDefinition
-        }
-        return def
-      })
-      setDefinitions(sortBy(nextDefinitions, getName))
+      if (nextDefinition) {
+        const nextDefinitions = definitions.map((def) => {
+          if (getName(def) === name) {
+            return nextDefinition
+          }
+          return def
+        })
+        setDefinitions(sortBy(nextDefinitions, getName))
+      } else {
+        const nextDefinitions = definitions.filter(
+          (def) => getName(def) !== name
+        )
+        setDefinitions(sortBy(nextDefinitions, getName))
+      }
     },
     [definitions]
   )

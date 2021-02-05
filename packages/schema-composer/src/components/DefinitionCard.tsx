@@ -18,7 +18,7 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 
 interface Props {
   definition: DefinitionNode
-  onChange(name: string, definition: DefinitionNode): void
+  onChange(name: string, definition?: DefinitionNode): void
 }
 
 export default function DefinitionCard({ definition, onChange }: Props) {
@@ -59,7 +59,7 @@ export default function DefinitionCard({ definition, onChange }: Props) {
           >
             <ExpandMoreIcon style={{ color: 'white' }} />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={() => onChange(getName(definition))}>
             <HighlightOffIcon style={{ color: '#fff' }} />
           </IconButton>
         </div>
