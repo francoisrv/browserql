@@ -85,18 +85,6 @@ export default function FieldComposer({
           <HighlightOffIcon style={{ color: '#fff' }} />
         </IconButton>
       )}
-      {isLast && (
-        <IconButton
-          size="small"
-          onClick={() => {
-            if (onToggleShowNewField) {
-              onToggleShowNewField()
-            }
-          }}
-        >
-          <AddCircleOutlineIcon style={{ color: '#fff' }} />
-        </IconButton>
-      )}
       {!field && (
         <IconButton size="small" onClick={handleSave}>
           <SaveIcon style={{ color: '#fff' }} />

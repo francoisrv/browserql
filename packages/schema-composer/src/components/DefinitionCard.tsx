@@ -13,6 +13,7 @@ import FieldComposer from './FieldComposer'
 import { find, sortBy, upperFirst } from 'lodash'
 import gql from 'graphql-tag'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 
 interface Props {
   definition?: DefinitionNode
@@ -126,6 +127,9 @@ export default function DefinitionCard({ definition, onChange }: Props) {
                   />
                 </div>
               ))}
+              <IconButton size="small" onClick={onToggleShowNewField}>
+                <AddCircleOutlineIcon style={{ color: '#fff' }} />
+              </IconButton>
               {showNewField && (
                 <FieldComposer
                   onChange={(name) => {
