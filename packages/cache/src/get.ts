@@ -14,17 +14,14 @@ import {
 export default function get(query: DocumentNode, variables?: any) {
   return function (cache: BrowserqlClient['cache'], schema: DocumentNode) {
     const queries = getExecutableQueries(query)
-    return queries.reduce((acc, executableQuery) => {
-      const queryName = getName(executableQuery)
-      try {
-        return {
-          ...acc,
-          [queryName]: cache.readQuery<any>({
-            query,
-            variables,
-          }),
-        }
-      } catch (error) {
+    try {
+      return cache.readQuery<any>({
+        query,
+        variables,
+      })
+    } catch (error) {
+      return queries.reduce((acc, executableQuery) => {
+        const queryName = getName(executableQuery)
         const queryDefinition = getQuery(queryName)(schema)
         if (!queryDefinition) {
           throw new Error(`query not found in definitions: ${queryName}`)
@@ -44,7 +41,7 @@ export default function get(query: DocumentNode, variables?: any) {
           ...acc,
           [queryName]: kind.required ? undefined : null,
         }
-      }
-    }, {})
+      }, {})
+    }
   }
 }

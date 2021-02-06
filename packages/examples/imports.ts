@@ -1,6 +1,18 @@
 export default [
   {
     module: 'cache',
+    example: 'try-it',
+    file: 'tryit-render',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/cache/try-it/files/tryit-render'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'cache',
     example: 'usage',
     file: 'example',
     async load() {
@@ -54,18 +66,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/executable/usage/files/query-render'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'cache',
-    example: 'try-it',
-    file: 'tryit-render',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/cache/try-it/files/tryit-render'
       )
       return loaded
     },
@@ -216,18 +216,6 @@ export default [
   },
 
   {
-    module: 'fragments',
-    example: 'usage',
-    file: 'index',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fragments/usage/files/index'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'graphiql',
     example: 'usage',
     file: 'example',
@@ -252,24 +240,12 @@ export default [
   },
 
   {
-    module: 'http',
-    example: 'about',
-    file: 'app',
+    module: 'fragments',
+    example: 'usage',
+    file: 'index',
     async load() {
       const { default: loaded } = await import(
-        './modules/http/about/files/app'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'http',
-    example: 'about',
-    file: 'response',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/http/about/files/response'
+        './modules/fragments/usage/files/index'
       )
       return loaded
     },
@@ -306,6 +282,30 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/graphql-schema-class/value-parser/files/example'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'http',
+    example: 'about',
+    file: 'app',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/http/about/files/app'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'http',
+    example: 'about',
+    file: 'response',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/http/about/files/response'
       )
       return loaded
     },

@@ -18,6 +18,7 @@ export default function set(
 ): SetCache {
   let Data = typeof data === 'undefined' ? variables : data
   return function (cache, schema) {
+    console.log({ Data })
     cache.writeQuery({
       query,
       variables,
