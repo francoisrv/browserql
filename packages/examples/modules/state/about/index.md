@@ -1,6 +1,4 @@
-```snapshot2
-State.Example
-```
+State allows you to manage a state based on your cached queries
 
 ```graphql
 type Query {
