@@ -1,0 +1,18 @@
+enum DefinitionKind {
+  ObjectTypeDefinition
+}
+
+type Definition {
+  id: ID!
+  node: DefinitionNode
+}
+
+type DefinitionNode {
+  name: NameNode
+  kind: DefinitionKind
+}
+
+type Query {
+  getDefinitions: [Definition!]!
+  getTypes: [ObjectTypeDefinitionNode!]
+}

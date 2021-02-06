@@ -50,14 +50,14 @@
     "description": "GraphiQL in the browser"
   },
   {
-    "name": "graphql-schema-class",
-    "version": "3.14.0",
-    "description": "Generate schema classes from GraphQL schema"
-  },
-  {
     "name": "http",
     "version": "1.3.0",
     "description": "Fire HTTP requests using a GraphQL schema"
+  },
+  {
+    "name": "graphql-schema-class",
+    "version": "3.14.0",
+    "description": "Generate schema classes from GraphQL schema"
   },
   {
     "name": "input",

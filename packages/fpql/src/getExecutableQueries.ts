@@ -7,7 +7,6 @@ export default function getExecutableQueries(
   const operations = getExecutableOperations(schema)
   const queries: SelectionNode[] = []
   operations.forEach((operation) => {
-    console.log({ operations })
     const { selections } = operation.selectionSet
     selections.forEach((selection) => {
       queries.push(selection)

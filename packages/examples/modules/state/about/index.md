@@ -4,7 +4,7 @@ State.Example
 
 ```graphql
 type Query {
-  getCounter: Int @getState(initialValue: 100)
+  getCounter: Int @default(value: 100)
 }
 ```
 
@@ -17,6 +17,42 @@ query {
 ```json
 {
   "getCounter": null
+}
+```
+
+```javascript
+function App() {
+  return (
+    <State query="getCounter">
+      {(getCounter) => (
+        <button onClick={getCounter.increment}>{getCounter.get()}</button>
+      )}
+    </State>
+  )
+}
+
+function App() {
+  return (
+    <State use="definitions">
+      {(definitions) => (
+        <For each={definitions}>
+          {(definition) => (
+            <div key={definition.id}>
+              <Input
+                value={definition}
+                onChange={(e) =>
+                  definitions.map(
+                    { id: definition.id },
+                    { name: e.target.value }
+                  )
+                }
+              />
+            </div>
+          )}
+        </For>
+      )}
+    </State>
+  )
 }
 ```
 

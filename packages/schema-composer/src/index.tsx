@@ -1,9 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { print, DocumentNode } from 'graphql'
-import { getName, getTypes } from '@browserql/fpql'
+import { getName } from '@browserql/fpql'
 import Code from '@browserql/components/Code'
-import TypeComposer from './components/TypeComposer'
-import AddComposer from './components/AddComposer'
 import DefinitionCard from './components/DefinitionCard'
 import { sortBy } from 'lodash'
 
