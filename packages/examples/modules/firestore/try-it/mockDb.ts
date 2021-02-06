@@ -25,25 +25,6 @@ export default function mockDb(fixture: Fixture[]) {
       }
       return acc
     }, {} as Fixed),
-
-    __collection__2: {
-      users: {
-        __doc__: {
-          user_a: {
-            age: 15,
-            username: 'user_a',
-          },
-        },
-      },
-      Todo: {
-        __doc__: {
-          todo_1: {
-            done: false,
-            title: 'Buy milk',
-          },
-        },
-      },
-    },
   }
 
   const firebase = new MockFirebase(fixtureData)

@@ -72,24 +72,48 @@ export default [
   },
 
   {
-    module: 'fpql',
-    example: 'getArgument',
-    file: 'directive-render',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fpql/getArgument/files/directive-render'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'firestore',
     example: 'try-it',
     file: 'tryit',
     async load() {
       const { default: loaded } = await import(
         './modules/firestore/try-it/files/tryit'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fp',
+    example: 'example',
+    file: 'index-render',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fp/example/files/index-render'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fp',
+    example: 'example',
+    file: 'promises-render',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fp/example/files/promises-render'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fpql',
+    example: 'getArgument',
+    file: 'directive-render',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getArgument/files/directive-render'
       )
       return loaded
     },
@@ -192,30 +216,6 @@ export default [
   },
 
   {
-    module: 'fp',
-    example: 'example',
-    file: 'index-render',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fp/example/files/index-render'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'fp',
-    example: 'example',
-    file: 'promises-render',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fp/example/files/promises-render'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'fragments',
     example: 'usage',
     file: 'index',
@@ -312,12 +312,12 @@ export default [
   },
 
   {
-    module: 'react',
-    example: 'use-query',
-    file: 'index',
+    module: 'input',
+    example: 'example',
+    file: 'example',
     async load() {
       const { default: loaded } = await import(
-        './modules/react/use-query/files/index'
+        './modules/input/example/files/example'
       )
       return loaded
     },
@@ -336,12 +336,12 @@ export default [
   },
 
   {
-    module: 'input',
-    example: 'example',
-    file: 'example',
+    module: 'react',
+    example: 'use-query',
+    file: 'index',
     async load() {
       const { default: loaded } = await import(
-        './modules/input/example/files/example'
+        './modules/react/use-query/files/index'
       )
       return loaded
     },
