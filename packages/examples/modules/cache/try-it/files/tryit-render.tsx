@@ -55,6 +55,8 @@ directive @default(value: Int) on FIELD_DEFINITION`)
   return (
     <div>
       <Typography variant="h5">Schema</Typography>
+      <Typography>Enter here your GraphQL schema with queries.</Typography>
+      <div style={{ height: 15 }} />
       <TextField
         multiline
         fullWidth
@@ -62,12 +64,20 @@ directive @default(value: Int) on FIELD_DEFINITION`)
         onChange={(e) => setSchema(e.target.value)}
         variant="filled"
       />
+      <div style={{ height: 15 }} />
       <Typography variant="h5">Operation</Typography>
-      <Select value={operation} onChange={(e) => setOperation(e.target.value)}>
+      <div style={{ height: 15 }} />
+      <Select
+        value={operation}
+        onChange={(e) => setOperation(e.target.value)}
+        fullWidth
+      >
         <MenuItem value={CacheOp.get}>{CacheOp.get}</MenuItem>
         <MenuItem value={CacheOp.set}>{CacheOp.set}</MenuItem>
       </Select>
+      <div style={{ height: 15 }} />
       <Typography variant="h5">Query</Typography>
+      <div style={{ height: 15 }} />
       <TextField
         multiline
         fullWidth
@@ -75,7 +85,7 @@ directive @default(value: Int) on FIELD_DEFINITION`)
         variant="filled"
         onChange={(e) => setQuery(e.target.value)}
       />
-
+      <div style={{ height: 15 }} />
       <Button
         color="primary"
         onClick={handleSubmit}

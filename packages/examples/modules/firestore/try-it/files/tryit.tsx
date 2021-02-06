@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import gql from 'graphql-tag'
-import { BrowserqlProvider } from '@browserql/react'
+import { BrowserqlContext, BrowserqlProvider } from '@browserql/react'
 import { JSONResolver } from 'graphql-scalars'
 import { connect as connectFirestoreql } from '@browserql/firestore'
 import GraphiQL from '@browserql/graphiql'
 import MockFirebase from 'mock-cloud-firestore'
+import mockDb from '../mockDb'
 
 export default function TryIt() {
   const fixtureData = {
@@ -30,18 +31,76 @@ export default function TryIt() {
 
   const firebase = new MockFirebase(fixtureData)
 
+  const db = mockDb([
+    {
+      collection: 'Todo',
+      id: 'todo_1',
+      data: {
+        done: false,
+        title: 'Buy milk',
+      },
+    },
+  ])
+
   const schema = gql`
     type Todo @firestore {
       title: String!
       done: Boolean!
     }
   `
+
+  function View() {
+    const ctx = useContext(BrowserqlContext)
+    return (
+      <GraphiQL
+        schema={ctx.schema}
+        client={ctx.client}
+        graphiqlProps={{
+          query: `query GetManyTodo(
+$where: [FirestoreWhere]
+$filters: FirestoreFilters
+) {
+firestore_getMany_Todo(
+where: $where
+filters: $filters
+) {
+id
+title
+done
+}
+}
+`,
+          response: JSON.stringify(
+            {
+              data: {
+                firestore_getMany_Todo: [
+                  {
+                    id: 'todo_1',
+                    title: 'Buy milk',
+                    done: false,
+                    __typename: 'Todo',
+                  },
+                ],
+              },
+              loading: false,
+              networkStatus: 7,
+              stale: false,
+            },
+            null,
+            2
+          ),
+          variables: JSON.stringify({}, null, 2),
+        }}
+      />
+    )
+  }
+
   return (
     <BrowserqlProvider
       schema={schema}
       scalars={{ JSON: JSONResolver }}
       extensions={[
-        connectFirestoreql(firebase.firestore(), schema),
+        connectFirestoreql(db, schema),
         {
           schema: gql`
             scalar JSON
@@ -50,44 +109,7 @@ export default function TryIt() {
       ]}
     >
       <div style={{ height: 600 }}>
-        <GraphiQL
-          graphiqlProps={{
-            query: `query GetManyTodo(
-  $where: [FirestoreWhere]
-  $filters: FirestoreFilters
-) {
-  firestore_getMany_Todo(
-    where: $where
-    filters: $filters
-  ) {
-    id
-    title
-    done
-  }
-}
-`,
-            response: JSON.stringify(
-              {
-                data: {
-                  firestore_getMany_Todo: [
-                    {
-                      id: 'todo_1',
-                      title: 'Buy milk',
-                      done: false,
-                      __typename: 'Todo',
-                    },
-                  ],
-                },
-                loading: false,
-                networkStatus: 7,
-                stale: false,
-              },
-              null,
-              2
-            ),
-            variables: JSON.stringify({}, null, 2),
-          }}
-        />
+        <View />
       </div>
     </BrowserqlProvider>
   )
