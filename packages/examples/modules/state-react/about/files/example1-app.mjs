@@ -3,7 +3,13 @@ import State from '@browserql/state-react'
 
 export default function App() {
   return (
-    <State query="getCounter">
+    <State
+      query={gql`
+        {
+          getCounter
+        }
+      `}
+    >
       {(getCounter) => (
         <button onClick={getCounter.increment}>{getCounter.get()}</button>
       )}

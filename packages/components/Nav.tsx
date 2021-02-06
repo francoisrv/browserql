@@ -48,12 +48,12 @@ const items: Item[] = [
   },
   {
     name: 'Integrations',
-    modules: ['firestore', 'http', 'state'],
+    modules: ['firestore', 'http'],
     examples: [],
   },
   {
     name: 'React',
-    modules: ['react', 'firestore-react', 'schema-composer'],
+    modules: ['react', 'state-react', 'firestore-react', 'schema-composer'],
     examples: [],
   },
   {

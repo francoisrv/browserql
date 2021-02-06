@@ -193,11 +193,11 @@ export default [
 
   {
     module: 'fpql',
-    example: 'getExecutableOperation',
-    file: 'main',
+    example: 'getKind',
+    file: 'view-get-query-kind',
     async load() {
       const { default: loaded } = await import(
-        './modules/fpql/getExecutableOperation/files/main'
+        './modules/fpql/getKind/files/view-get-query-kind'
       )
       return loaded
     },
@@ -205,11 +205,11 @@ export default [
 
   {
     module: 'fpql',
-    example: 'getKind',
-    file: 'view-get-query-kind',
+    example: 'getExecutableOperation',
+    file: 'main',
     async load() {
       const { default: loaded } = await import(
-        './modules/fpql/getKind/files/view-get-query-kind'
+        './modules/fpql/getExecutableOperation/files/main'
       )
       return loaded
     },
@@ -253,11 +253,11 @@ export default [
 
   {
     module: 'graphql-schema-class',
-    example: 'default-values',
+    example: 'try-it',
     file: 'example',
     async load() {
       const { default: loaded } = await import(
-        './modules/graphql-schema-class/default-values/files/example'
+        './modules/graphql-schema-class/try-it/files/example'
       )
       return loaded
     },
@@ -265,11 +265,11 @@ export default [
 
   {
     module: 'graphql-schema-class',
-    example: 'try-it',
+    example: 'default-values',
     file: 'example',
     async load() {
       const { default: loaded } = await import(
-        './modules/graphql-schema-class/try-it/files/example'
+        './modules/graphql-schema-class/default-values/files/example'
       )
       return loaded
     },
@@ -326,10 +326,10 @@ export default [
   {
     module: 'react',
     example: 'use-query',
-    file: 'example',
+    file: 'index',
     async load() {
       const { default: loaded } = await import(
-        './modules/react/use-query/files/example'
+        './modules/react/use-query/files/index'
       )
       return loaded
     },
@@ -338,10 +338,10 @@ export default [
   {
     module: 'react',
     example: 'use-query',
-    file: 'index',
+    file: 'example',
     async load() {
       const { default: loaded } = await import(
-        './modules/react/use-query/files/index'
+        './modules/react/use-query/files/example'
       )
       return loaded
     },

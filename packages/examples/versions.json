@@ -1,13 +1,13 @@
 [
   {
-    "name": "firestore-react",
-    "version": "1.54.0",
-    "description": "React integration for Firestore with GraphQL"
-  },
-  {
     "name": "cache",
     "version": "1.2.0",
     "description": "Util for updating apollo cache"
+  },
+  {
+    "name": "firestore-react",
+    "version": "1.54.0",
+    "description": "React integration for Firestore with GraphQL"
   },
   {
     "name": "client",
@@ -69,9 +69,8 @@
     "version": "1.0.0"
   },
   {
-    "name": "state",
-    "version": "7.1.0",
-    "description": "State manager based on GraphQL cache"
+    "name": "state-react",
+    "version": "1.0.0"
   },
   {
     "name": "typescript-generator",
