@@ -30,7 +30,7 @@ export default function DefinitionCard({ id }: Props) {
             <DefinitionKind onChange={() => {}} />
           </div>
           <div>
-            <TextField />
+            <TextField fullWidth />
           </div>
         </div>
       </CardContent>
