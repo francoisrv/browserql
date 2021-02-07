@@ -15,4 +15,5 @@ type DefinitionNode {
 type Query {
   getDefinitions: [Definition!]!
   getTypes: [ObjectTypeDefinitionNode!]
+  printSchema: String!
 }

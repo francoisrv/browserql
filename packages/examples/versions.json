@@ -60,13 +60,13 @@
     "description": "Generate a GraphQL input from a GraphQL type"
   },
   {
+    "name": "schema-composer",
+    "version": "1.0.0"
+  },
+  {
     "name": "react",
     "version": "4.0.0",
     "description": "React integration for browserql"
-  },
-  {
-    "name": "schema-composer",
-    "version": "1.0.0"
   },
   {
     "name": "state-react",

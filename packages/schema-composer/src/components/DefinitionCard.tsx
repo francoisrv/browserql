@@ -14,13 +14,36 @@ import { find, sortBy, upperFirst } from 'lodash'
 import gql from 'graphql-tag'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
+import State from '@browserql/state-react'
+import TextField from '@material-ui/core/TextField'
 
 interface Props {
+  id: number
+}
+
+export default function DefinitionCard({ id }: Props) {
+  return (
+    <Card elevation={0} style={{ backgroundColor: '#444' }}>
+      <CardContent>
+        <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+          <div>
+            <DefinitionKind onChange={() => {}} />
+          </div>
+          <div>
+            <TextField />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+interface Props2 {
   definition?: DefinitionNode
   onChange(name: string | null, definition?: DefinitionNode): void
 }
 
-export default function DefinitionCard({ definition, onChange }: Props) {
+export function DefinitionCard2({ definition, onChange }: Props2) {
   const [newName, setNewName] = useState('')
   const [expanded, setExpanded] = useState(true)
   const [showNewField, setShowNewField] = useState(false)

@@ -25,7 +25,7 @@ export default function DefinitionKind({ onChange }: Props) {
           }
         }}
         fullWidth
-        style={{ color: '#b388ff', fontSize: 24, borderColor: '#b388ff' }}
+        style={{ color: '#b388ff', fontSize: 16, borderColor: '#b388ff' }}
         IconComponent={() => <ArrowDropDownIcon style={{ color: '#b388ff' }} />}
       >
         <MenuItem value={NewDefinitionKind.input}>

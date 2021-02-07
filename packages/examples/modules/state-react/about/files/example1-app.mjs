@@ -1,5 +1,6 @@
 import React from 'react'
 import State from '@browserql/state-react'
+import gql from 'graphql-tag'
 
 export default function App() {
   return (

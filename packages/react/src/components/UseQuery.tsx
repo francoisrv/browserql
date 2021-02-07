@@ -67,7 +67,6 @@ export default function UseQuery<Data = any, Variables = any>(
 
       return props.children(get, tuple)
     }
-
     const tuple = useQuery<Data, Variables>(props.query, {
       variables: props.variables,
     })

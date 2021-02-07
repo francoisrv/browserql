@@ -1,18 +1,6 @@
 export default [
   {
     module: 'cache',
-    example: 'try-it',
-    file: 'tryit-render',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/cache/try-it/files/tryit-render'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'cache',
     example: 'usage',
     file: 'example',
     async load() {
@@ -54,6 +42,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/executable/usage/files/mutation-render'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'cache',
+    example: 'try-it',
+    file: 'tryit-render',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/cache/try-it/files/tryit-render'
       )
       return loaded
     },
@@ -193,18 +193,6 @@ export default [
 
   {
     module: 'fpql',
-    example: 'getKind',
-    file: 'view-get-query-kind',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fpql/getKind/files/view-get-query-kind'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'fpql',
     example: 'getExecutableOperation',
     file: 'main',
     async load() {
@@ -240,6 +228,18 @@ export default [
   },
 
   {
+    module: 'fpql',
+    example: 'getKind',
+    file: 'view-get-query-kind',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getKind/files/view-get-query-kind'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'graphiql',
     example: 'usage',
     file: 'view',
@@ -253,11 +253,23 @@ export default [
 
   {
     module: 'graphql-schema-class',
-    example: 'try-it',
+    example: 'default-values',
     file: 'example',
     async load() {
       const { default: loaded } = await import(
-        './modules/graphql-schema-class/try-it/files/example'
+        './modules/graphql-schema-class/default-values/files/example'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'http',
+    example: 'about',
+    file: 'app',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/http/about/files/app'
       )
       return loaded
     },
@@ -265,11 +277,11 @@ export default [
 
   {
     module: 'graphql-schema-class',
-    example: 'default-values',
+    example: 'try-it',
     file: 'example',
     async load() {
       const { default: loaded } = await import(
-        './modules/graphql-schema-class/default-values/files/example'
+        './modules/graphql-schema-class/try-it/files/example'
       )
       return loaded
     },
@@ -290,22 +302,22 @@ export default [
   {
     module: 'http',
     example: 'about',
-    file: 'app',
+    file: 'response',
     async load() {
       const { default: loaded } = await import(
-        './modules/http/about/files/app'
+        './modules/http/about/files/response'
       )
       return loaded
     },
   },
 
   {
-    module: 'http',
-    example: 'about',
-    file: 'response',
+    module: 'schema-composer',
+    example: 'try-it',
+    file: 'view',
     async load() {
       const { default: loaded } = await import(
-        './modules/http/about/files/response'
+        './modules/schema-composer/try-it/files/view'
       )
       return loaded
     },
@@ -326,18 +338,6 @@ export default [
   {
     module: 'react',
     example: 'use-query',
-    file: 'index',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/react/use-query/files/index'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'react',
-    example: 'use-query',
     file: 'example',
     async load() {
       const { default: loaded } = await import(
@@ -348,12 +348,12 @@ export default [
   },
 
   {
-    module: 'schema-composer',
-    example: 'try-it',
-    file: 'view',
+    module: 'react',
+    example: 'use-query',
+    file: 'index',
     async load() {
       const { default: loaded } = await import(
-        './modules/schema-composer/try-it/files/view'
+        './modules/react/use-query/files/index'
       )
       return loaded
     },
