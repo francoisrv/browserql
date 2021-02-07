@@ -1,6 +1,18 @@
 export default [
   {
     module: 'cache',
+    example: 'try-it',
+    file: 'tryit-render',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/cache/try-it/files/tryit-render'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'cache',
     example: 'usage',
     file: 'example',
     async load() {
@@ -42,18 +54,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/executable/usage/files/mutation-render'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'cache',
-    example: 'try-it',
-    file: 'tryit-render',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/cache/try-it/files/tryit-render'
       )
       return loaded
     },
@@ -102,6 +102,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/fp/example/files/promises-render'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fragments',
+    example: 'usage',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fragments/usage/files/index'
       )
       return loaded
     },
@@ -204,36 +216,12 @@ export default [
   },
 
   {
-    module: 'fragments',
-    example: 'usage',
-    file: 'index',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fragments/usage/files/index'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'graphiql',
     example: 'usage',
     file: 'example',
     async load() {
       const { default: loaded } = await import(
         './modules/graphiql/usage/files/example'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'fpql',
-    example: 'getKind',
-    file: 'view-get-query-kind',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fpql/getKind/files/view-get-query-kind'
       )
       return loaded
     },
@@ -252,24 +240,24 @@ export default [
   },
 
   {
-    module: 'graphql-schema-class',
-    example: 'default-values',
-    file: 'example',
+    module: 'fpql',
+    example: 'getKind',
+    file: 'view-get-query-kind',
     async load() {
       const { default: loaded } = await import(
-        './modules/graphql-schema-class/default-values/files/example'
+        './modules/fpql/getKind/files/view-get-query-kind'
       )
       return loaded
     },
   },
 
   {
-    module: 'http',
-    example: 'about',
-    file: 'app',
+    module: 'graphql-schema-class',
+    example: 'default-values',
+    file: 'example',
     async load() {
       const { default: loaded } = await import(
-        './modules/http/about/files/app'
+        './modules/graphql-schema-class/default-values/files/example'
       )
       return loaded
     },
@@ -302,22 +290,22 @@ export default [
   {
     module: 'http',
     example: 'about',
-    file: 'response',
+    file: 'app',
     async load() {
       const { default: loaded } = await import(
-        './modules/http/about/files/response'
+        './modules/http/about/files/app'
       )
       return loaded
     },
   },
 
   {
-    module: 'schema-composer',
-    example: 'try-it',
-    file: 'view',
+    module: 'http',
+    example: 'about',
+    file: 'response',
     async load() {
       const { default: loaded } = await import(
-        './modules/schema-composer/try-it/files/view'
+        './modules/http/about/files/response'
       )
       return loaded
     },
@@ -330,6 +318,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/input/example/files/example'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'schema-composer',
+    example: 'try-it',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/schema-composer/try-it/files/view'
       )
       return loaded
     },

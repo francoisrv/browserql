@@ -1,6 +1,6 @@
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import AddIcon from '@material-ui/icons/Add'
 import IconButton from '@material-ui/core/IconButton'
@@ -16,12 +16,15 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 import State from '@browserql/state-react'
 import TextField from '@material-ui/core/TextField'
+import { BrowserqlContext } from '@browserql/react'
+import { GET_DEFINITIONS } from '../queries'
 
 interface Props {
   id: number
 }
 
 export default function DefinitionCard({ id }: Props) {
+  const ctx = useContext(BrowserqlContext)
   return (
     <Card elevation={0} style={{ backgroundColor: '#444' }}>
       <CardContent>
@@ -30,7 +33,30 @@ export default function DefinitionCard({ id }: Props) {
             <DefinitionKind onChange={() => {}} />
           </div>
           <div>
-            <TextField fullWidth />
+            <State
+              schema={ctx.schema}
+              cache={ctx.cache}
+              query={GET_DEFINITIONS}
+            >
+              {(state) => (
+                <TextField
+                  value={
+                    state.get().getDefinitions.find((def) => def.id === id).name
+                  }
+                  onChange={(e) =>
+                    state.map((def) => {
+                      if (def.id === id) {
+                        return {
+                          ...def,
+                          name: e.target.value,
+                        }
+                      }
+                      return def
+                    })
+                  }
+                />
+              )}
+            </State>
           </div>
         </div>
       </CardContent>

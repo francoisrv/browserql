@@ -4,6 +4,7 @@ import cacheql from '@browserql/cache'
 
 interface StateObject<Variables, Data> {
   get(variables: Variables): Data
+  map(iterator: (item: Data) => Data): void
 }
 
 interface Props<Variables, Data> {
@@ -21,10 +22,14 @@ export default function State<Variables, Data>({
   schema,
   variables,
 }: Props<Variables, Data>) {
+  console.log(123, cache)
   const cached = cacheql(cache, schema)
   return children({
     get(variables) {
       return cached.get(query, variables)
+    },
+    map(fn) {
+      cached.map(query, variables, fn)
     },
   })
 }

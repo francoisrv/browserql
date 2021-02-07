@@ -7,6 +7,7 @@ import gql from 'graphql-tag'
 import { getName } from '@browserql/fpql'
 import { BrowserqlProvider, UseQuery } from '@browserql/react'
 import DefinitionCard from './components/DefinitionCard'
+import Definitions from './components/Definitions'
 
 interface Props {
   schema: DocumentNode
@@ -84,37 +85,13 @@ function printSchema(variables: any, ctx: any) {
     .join('\n')
 }
 
-function Map<A>({
-  array,
-  children,
-}: {
-  array: A[]
-  children(item: A, index: number, all: A[]): ReactElement
-}) {
-  return <>{array.map(children)}</>
-}
-
 export default function SchemaComposer({ schema }: Props) {
   const baseSchema = makeBaseSchema(schema.definitions)
   console.log(print(baseSchema))
   return (
     <div style={{ padding: 16, backgroundColor: '#333' }}>
       <BrowserqlProvider schema={baseSchema} queries={{ printSchema }}>
-        <State schema={baseSchema} query={queries.getDefinitions}>
-          {(getDefinitions) => (
-            <div>
-              <Code
-                language="json"
-                value={JSON.stringify(getDefinitions.get(), null, 2)}
-              />
-              <Map array={getDefinitions.get().getDefinitions}>
-                {(definition) => (
-                  <DefinitionCard key={definition.id} id={definition.id} />
-                )}
-              </Map>
-            </div>
-          )}
-        </State>
+        <Definitions />
         <UseQuery
           query={queries.printSchema}
           renderLoading={<div>Loading</div>}
