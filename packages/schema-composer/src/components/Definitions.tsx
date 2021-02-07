@@ -6,23 +6,22 @@ import { GET_DEFINITIONS } from '../queries'
 import Code from '@browserql/components/Code'
 import Each from './Each'
 import DefinitionCard from './DefinitionCard'
+import { Definition } from '../types'
 
 export default function Definitions() {
   const ctx = useContext(BrowserqlContext)
   return (
-    <State schema={ctx.schema} cache={ctx.cache} query={GET_DEFINITIONS}>
+    <State<undefined, { getDefinitions: Definition[] }>
+      schema={ctx.schema}
+      cache={ctx.cache}
+      query={GET_DEFINITIONS}
+    >
       {(getDefinitions) => (
-        <div>
-          <Code
-            language="json"
-            value={JSON.stringify(getDefinitions.get(), null, 2)}
-          />
-          <Each of={getDefinitions.get().getDefinitions}>
-            {(definition) => (
-              <DefinitionCard key={definition.id} id={definition.id} />
-            )}
-          </Each>
-        </div>
+        <Each<Definition> of={getDefinitions.get().getDefinitions}>
+          {(definition) => (
+            <DefinitionCard key={definition.id} id={definition.id} />
+          )}
+        </Each>
       )}
     </State>
   )

@@ -1,18 +1,12 @@
 import React from 'react'
 import State from '@browserql/state-react'
-import gql from 'graphql-tag'
+import { parse } from 'graphql'
 
 export default function App() {
   return (
-    <State
-      query={gql`
-        {
-          getCounter
-        }
-      `}
-    >
-      {(getCounter) => (
-        <button onClick={getCounter.increment}>{getCounter.get()}</button>
+    <State query={parse('{ getCounter }')}>
+      {(state) => (
+        <button onClick={state.increment}>{state.get().getCounter}</button>
       )}
     </State>
   )

@@ -8,6 +8,8 @@ import { getName } from '@browserql/fpql'
 import { BrowserqlProvider, UseQuery } from '@browserql/react'
 import DefinitionCard from './components/DefinitionCard'
 import Definitions from './components/Definitions'
+import { GET_DEFINITIONS, PRINT_SCHEMA } from './queries'
+import Preview from './components/Preview'
 
 interface Props {
   schema: DocumentNode
@@ -62,23 +64,10 @@ const makeBaseSchema = (definitions: readonly DefinitionNode[]) => gql`
   }
 `
 
-const queries = {
-  getDefinitions: gql`
-    {
-      getDefinitions
-    }
-  `,
-  printSchema: gql`
-    {
-      printSchema
-    }
-  `,
-}
-
 function printSchema(variables: any, ctx: any) {
   const { schema, cache } = ctx.browserqlClient
   const cached = cacheql(cache, schema)
-  const definitions = cached.get(queries.getDefinitions)
+  const definitions = cached.get(GET_DEFINITIONS)
   console.log({ definitions })
   return definitions.getDefinitions
     .map((def) => `${def.kind} ${def.name}`)
@@ -92,8 +81,9 @@ export default function SchemaComposer({ schema }: Props) {
     <div style={{ padding: 16, backgroundColor: '#333' }}>
       <BrowserqlProvider schema={baseSchema} queries={{ printSchema }}>
         <Definitions />
+        <Preview />
         <UseQuery
-          query={queries.printSchema}
+          query={PRINT_SCHEMA}
           renderLoading={<div>Loading</div>}
           renderError={(e) => (
             <div>

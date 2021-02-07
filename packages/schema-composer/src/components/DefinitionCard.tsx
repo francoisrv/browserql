@@ -43,17 +43,25 @@ export default function DefinitionCard({ id }: Props) {
                   value={
                     state.get().getDefinitions.find((def) => def.id === id).name
                   }
-                  onChange={(e) =>
-                    state.map((def) => {
-                      if (def.id === id) {
-                        return {
-                          ...def,
-                          name: e.target.value,
+                  onChange={(e) => {
+                    state.set((r) => ({
+                      ...r,
+                      getDefinitions: r.getDefinitions.map((def) => {
+                        if (def.id === id) {
+                          return {
+                            ...def,
+                            name: e.target.value,
+                          }
                         }
-                      }
-                      return def
-                    })
-                  }
+                        return def
+                      }),
+                    }))
+                  }}
+                  inputProps={{
+                    style: {
+                      color: '#D19A66',
+                    },
+                  }}
                 />
               )}
             </State>

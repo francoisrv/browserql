@@ -3,13 +3,12 @@ import TryCache from '@browserql/components/tryit/Cache'
 
 export default function TryIt() {
   const schema = `type Query {
-    getCounter: Int @default(value: 10)
-    isLoggedIn: Boolean @default(value: false)
+    getScores: [Int!] @default(value: [])
   }
   
   directive @default(value: Int) on FIELD_DEFINITION`
 
-  const query = '{ getCounter, isLoggedIn }'
+  const query = '{ getScores }'
 
   return <TryCache initialSchema={schema} initialQuery={query} />
 }

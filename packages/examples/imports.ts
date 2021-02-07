@@ -1,6 +1,18 @@
 export default [
   {
     module: 'cache',
+    example: 'map',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/cache/map/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'cache',
     example: 'try-it',
     file: 'tryit-render',
     async load() {
@@ -108,18 +120,6 @@ export default [
   },
 
   {
-    module: 'fragments',
-    example: 'usage',
-    file: 'index',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fragments/usage/files/index'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'fpql',
     example: 'getArgument',
     file: 'directive-render',
@@ -216,6 +216,30 @@ export default [
   },
 
   {
+    module: 'fpql',
+    example: 'getKind',
+    file: 'view-get-query-kind',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getKind/files/view-get-query-kind'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fragments',
+    example: 'usage',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fragments/usage/files/index'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'graphiql',
     example: 'usage',
     file: 'example',
@@ -234,18 +258,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/graphiql/usage/files/view'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'fpql',
-    example: 'getKind',
-    file: 'view-get-query-kind',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fpql/getKind/files/view-get-query-kind'
       )
       return loaded
     },
@@ -324,18 +336,6 @@ export default [
   },
 
   {
-    module: 'schema-composer',
-    example: 'try-it',
-    file: 'view',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/schema-composer/try-it/files/view'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'react',
     example: 'use-query',
     file: 'example',
@@ -354,6 +354,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/react/use-query/files/index'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'schema-composer',
+    example: 'try-it',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/schema-composer/try-it/files/view'
       )
       return loaded
     },

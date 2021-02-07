@@ -1,5 +1,6 @@
 import type { BrowserqlClient } from '@browserql/types'
 import type { DocumentNode } from 'graphql'
+import get from './get'
 
 type SetCache = (cache: BrowserqlClient['cache'], schema: DocumentNode) => void
 
@@ -18,11 +19,15 @@ export default function set(
 ): SetCache {
   let Data = typeof data === 'undefined' ? variables : data
   return function (cache, schema) {
-    console.log({ Data })
+    let nextData = Data
+    if (typeof nextData === 'function') {
+      nextData = nextData(get(query, variables)(cache, schema))
+    }
+    console.log({ nextData })
     cache.writeQuery({
       query,
       variables,
-      data: Data,
+      data: nextData,
     })
     console.log(123, cache.readQuery({ query, variables }))
   }
