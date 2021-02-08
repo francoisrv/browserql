@@ -1,15 +1,11 @@
-import React, { ReactElement } from 'react'
+import React from 'react'
 import { DefinitionNode, DocumentNode, print } from 'graphql'
-import Code from '@browserql/components/Code'
-import State from '@browserql/state-react'
-import cacheql from '@browserql/cache'
 import gql from 'graphql-tag'
 import { getName } from '@browserql/fpql'
-import { BrowserqlProvider, UseQuery } from '@browserql/react'
-import DefinitionCard from './components/DefinitionCard'
+import { BrowserqlProvider } from '@browserql/react'
 import Definitions from './components/Definitions'
-import { GET_DEFINITIONS, PRINT_SCHEMA } from './queries'
 import Preview from './components/Preview'
+import DefinitionCard from './components/DefinitionCard'
 
 interface Props {
   schema: DocumentNode
@@ -64,21 +60,13 @@ const makeBaseSchema = (definitions: readonly DefinitionNode[]) => gql`
   }
 `
 
-function printSchema(_variables: any, ctx: any) {
-  const { schema, cache } = ctx.browserqlClient
-  const cached = cacheql(cache, schema)
-  const definitions = cached.get(GET_DEFINITIONS)
-  return definitions.getDefinitions
-    .map((def) => `${def.kind} ${def.name}`)
-    .join('\n')
-}
-
 export default function SchemaComposer({ schema }: Props) {
   const baseSchema = makeBaseSchema(schema.definitions)
   console.log(print(baseSchema))
   return (
     <div style={{ padding: 16, backgroundColor: '#333' }}>
       <BrowserqlProvider schema={baseSchema}>
+        <DefinitionCard />
         <Definitions />
         <Preview />
       </BrowserqlProvider>

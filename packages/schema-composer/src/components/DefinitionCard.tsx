@@ -20,7 +20,7 @@ import { BrowserqlContext } from '@browserql/react'
 import { GET_DEFINITIONS } from '../queries'
 
 interface Props {
-  id: number
+  id?: number
 }
 
 export default function DefinitionCard({ id }: Props) {
@@ -41,21 +41,26 @@ export default function DefinitionCard({ id }: Props) {
               {(state) => (
                 <TextField
                   value={
-                    state.get().getDefinitions.find((def) => def.id === id).name
+                    typeof id !== 'undefined'
+                      ? state.get().getDefinitions.find((def) => def.id === id)
+                          .name
+                      : ''
                   }
                   onChange={(e) => {
-                    state.set((r) => ({
-                      ...r,
-                      getDefinitions: r.getDefinitions.map((def) => {
-                        if (def.id === id) {
-                          return {
-                            ...def,
-                            name: e.target.value,
+                    if (typeof id !== 'undefined') {
+                      state.set((r) => ({
+                        ...r,
+                        getDefinitions: r.getDefinitions.map((def) => {
+                          if (def.id === id) {
+                            return {
+                              ...def,
+                              name: e.target.value,
+                            }
                           }
-                        }
-                        return def
-                      }),
-                    }))
+                          return def
+                        }),
+                      }))
+                    }
                   }}
                   inputProps={{
                     style: {

@@ -1,6 +1,18 @@
 export default [
   {
     module: 'cache',
+    example: 'map',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/cache/map/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'cache',
     example: 'try-it',
     file: 'tryit-render',
     async load() {
@@ -18,18 +30,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/cache/usage/files/example'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'cache',
-    example: 'map',
-    file: 'view',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/cache/map/files/view'
       )
       return loaded
     },
@@ -54,18 +54,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/client/resolvers/files/view'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'firestore',
-    example: 'try-it',
-    file: 'tryit',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/firestore/try-it/files/tryit'
       )
       return loaded
     },
@@ -120,6 +108,54 @@ export default [
   },
 
   {
+    module: 'firestore',
+    example: 'try-it',
+    file: 'tryit',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/firestore/try-it/files/tryit'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fragments',
+    example: 'usage',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fragments/usage/files/index'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'graphiql',
+    example: 'usage',
+    file: 'example',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/graphiql/usage/files/example'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'graphiql',
+    example: 'usage',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/graphiql/usage/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'fpql',
     example: 'getArgument',
     file: 'directive-render',
@@ -150,6 +186,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/fpql/getArgument/files/query-render'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fpql',
+    example: 'getDirective',
+    file: 'main',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getDirective/files/main'
       )
       return loaded
     },
@@ -193,18 +241,6 @@ export default [
 
   {
     module: 'fpql',
-    example: 'getDirective',
-    file: 'main',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fpql/getDirective/files/main'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'fpql',
     example: 'getExecutableOperation',
     file: 'main',
     async load() {
@@ -228,36 +264,24 @@ export default [
   },
 
   {
-    module: 'fragments',
-    example: 'usage',
-    file: 'index',
+    module: 'http',
+    example: 'about',
+    file: 'app',
     async load() {
       const { default: loaded } = await import(
-        './modules/fragments/usage/files/index'
+        './modules/http/about/files/app'
       )
       return loaded
     },
   },
 
   {
-    module: 'graphiql',
-    example: 'usage',
-    file: 'example',
+    module: 'http',
+    example: 'about',
+    file: 'response',
     async load() {
       const { default: loaded } = await import(
-        './modules/graphiql/usage/files/example'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'graphiql',
-    example: 'usage',
-    file: 'view',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/graphiql/usage/files/view'
+        './modules/http/about/files/response'
       )
       return loaded
     },
@@ -294,30 +318,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/graphql-schema-class/value-parser/files/example'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'http',
-    example: 'about',
-    file: 'app',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/http/about/files/app'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'http',
-    example: 'about',
-    file: 'response',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/http/about/files/response'
       )
       return loaded
     },
