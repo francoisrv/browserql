@@ -60,6 +60,18 @@ export default function DefinitionCard({ id }: Props) {
                           return def
                         }),
                       }))
+                    } else {
+                      state.set((r) => ({
+                        ...r,
+                        getDefinitions: [
+                          ...r.getDefinitions,
+                          {
+                            id: 3,
+                            name: e.target.value,
+                            kind: 'type',
+                          },
+                        ],
+                      }))
                     }
                   }}
                   inputProps={{
