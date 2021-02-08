@@ -64,11 +64,10 @@ const makeBaseSchema = (definitions: readonly DefinitionNode[]) => gql`
   }
 `
 
-function printSchema(variables: any, ctx: any) {
+function printSchema(_variables: any, ctx: any) {
   const { schema, cache } = ctx.browserqlClient
   const cached = cacheql(cache, schema)
   const definitions = cached.get(GET_DEFINITIONS)
-  console.log({ definitions })
   return definitions.getDefinitions
     .map((def) => `${def.kind} ${def.name}`)
     .join('\n')
@@ -79,21 +78,9 @@ export default function SchemaComposer({ schema }: Props) {
   console.log(print(baseSchema))
   return (
     <div style={{ padding: 16, backgroundColor: '#333' }}>
-      <BrowserqlProvider schema={baseSchema} queries={{ printSchema }}>
+      <BrowserqlProvider schema={baseSchema}>
         <Definitions />
         <Preview />
-        <UseQuery
-          query={PRINT_SCHEMA}
-          renderLoading={<div>Loading</div>}
-          renderError={(e) => (
-            <div>
-              {e.message}
-              {console.log(e)}
-            </div>
-          )}
-        >
-          {({ printSchema }) => <Code language="graphql" value={printSchema} />}
-        </UseQuery>
       </BrowserqlProvider>
     </div>
   )

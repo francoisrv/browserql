@@ -1,6 +1,7 @@
 import React, { ReactElement, useCallback, useState } from 'react'
 import type { DocumentNode } from 'graphql'
 import cacheql from '@browserql/cache'
+import { useQuery } from '@apollo/client'
 
 interface StateObject<Variables, Data> {
   get(variables: Variables): Data
