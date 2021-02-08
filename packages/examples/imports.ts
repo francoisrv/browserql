@@ -1,18 +1,6 @@
 export default [
   {
     module: 'cache',
-    example: 'map',
-    file: 'view',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/cache/map/files/view'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'cache',
     example: 'try-it',
     file: 'tryit-render',
     async load() {
@@ -30,6 +18,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/cache/usage/files/example'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'cache',
+    example: 'map',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/cache/map/files/view'
       )
       return loaded
     },
@@ -60,6 +60,18 @@ export default [
   },
 
   {
+    module: 'firestore',
+    example: 'try-it',
+    file: 'tryit',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/firestore/try-it/files/tryit'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'executable',
     example: 'usage',
     file: 'mutation-render',
@@ -78,18 +90,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/executable/usage/files/query-render'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'firestore',
-    example: 'try-it',
-    file: 'tryit',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/firestore/try-it/files/tryit'
       )
       return loaded
     },

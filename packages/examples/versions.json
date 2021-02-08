@@ -15,14 +15,14 @@
     "description": "Create a new GraphQL server in the browser"
   },
   {
-    "name": "executable",
-    "version": "1.11.0",
-    "description": "Create executable queries and mutations from a GraphQL schema"
-  },
-  {
     "name": "firestore",
     "version": "2.0.0",
     "description": "ORM for Firestore using GraphQL"
+  },
+  {
+    "name": "executable",
+    "version": "1.11.0",
+    "description": "Create executable queries and mutations from a GraphQL schema"
   },
   {
     "name": "fp",
@@ -69,12 +69,12 @@
     "version": "1.0.0"
   },
   {
-    "name": "state-react",
-    "version": "1.0.0"
-  },
-  {
     "name": "typescript-generator",
     "version": "2.3.0",
     "description": "Generate TypeScript from GraphQL"
+  },
+  {
+    "name": "state-react",
+    "version": "1.0.0"
   }
 ]

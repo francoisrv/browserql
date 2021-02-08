@@ -23,12 +23,10 @@ export default function set(
     if (typeof nextData === 'function') {
       nextData = nextData(get(query, variables)(cache, schema))
     }
-    console.log({ nextData })
     cache.writeQuery({
       query,
       variables,
       data: nextData,
     })
-    console.log(123, cache.readQuery({ query, variables }))
   }
 }
