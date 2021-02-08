@@ -78,28 +78,30 @@ export default function DefinitionCard({ id }: Props) {
                 }
 
                 return (
-                  <FormGroup row style={{ alignItems: 'flex-end' }}>
-                    <div style={{ flex: 1 }}>
-                      <TextField
-                        value={value}
-                        onChange={handleChange}
-                        fullWidth
-                        inputProps={{
-                          style: {
-                            color: '#D19A66',
-                          },
-                        }}
-                      />
-                    </div>
-                    <IconButton>
-                      {typeof id !== 'undefined' && (
-                        <HighlightOffIcon style={{ color: '#fff' }} />
-                      )}
-                      {typeof id === 'undefined' && (
-                        <AddCircleOutlineIcon style={{ color: '#fff' }} />
-                      )}
-                    </IconButton>
-                  </FormGroup>
+                  <div>
+                    <FormGroup row style={{ alignItems: 'flex-end' }}>
+                      <div style={{ flex: 1 }}>
+                        <TextField
+                          value={value}
+                          onChange={handleChange}
+                          fullWidth
+                          inputProps={{
+                            style: {
+                              color: '#D19A66',
+                            },
+                          }}
+                        />
+                      </div>
+                      <IconButton>
+                        {typeof id !== 'undefined' && (
+                          <HighlightOffIcon style={{ color: '#fff' }} />
+                        )}
+                        {typeof id === 'undefined' && (
+                          <AddCircleOutlineIcon style={{ color: '#fff' }} />
+                        )}
+                      </IconButton>
+                    </FormGroup>
+                  </div>
                 )
               }}
             </State>

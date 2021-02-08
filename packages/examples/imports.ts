@@ -1,11 +1,11 @@
 export default [
   {
     module: 'cache',
-    example: 'get',
-    file: 'view',
+    example: 'try-it',
+    file: 'tryit-render',
     async load() {
       const { default: loaded } = await import(
-        './modules/cache/get/files/view'
+        './modules/cache/try-it/files/tryit-render'
       )
       return loaded
     },
@@ -13,11 +13,11 @@ export default [
 
   {
     module: 'cache',
-    example: 'try-it',
-    file: 'tryit-render',
+    example: 'get',
+    file: 'view',
     async load() {
       const { default: loaded } = await import(
-        './modules/cache/try-it/files/tryit-render'
+        './modules/cache/get/files/view'
       )
       return loaded
     },
@@ -264,6 +264,30 @@ export default [
   },
 
   {
+    module: 'http',
+    example: 'about',
+    file: 'app',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/http/about/files/app'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'http',
+    example: 'about',
+    file: 'response',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/http/about/files/response'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'graphql-schema-class',
     example: 'default-values',
     file: 'example',
@@ -294,30 +318,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/graphql-schema-class/value-parser/files/example'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'http',
-    example: 'about',
-    file: 'app',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/http/about/files/app'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'http',
-    example: 'about',
-    file: 'response',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/http/about/files/response'
       )
       return loaded
     },

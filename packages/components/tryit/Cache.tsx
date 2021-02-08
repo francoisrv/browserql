@@ -33,7 +33,7 @@ export default function TryCache({ initialSchema, initialQuery }: Props) {
   const [query, setQuery] = useState(initialQuery)
   const [result, setResult] = useState(null)
   const [operation, setOperation] = useState<CacheOp>(CacheOp.get)
-  const [tab, setTab] = useState(0)
+  const [tab, setTab] = useState(3)
   const ref = useRef<HTMLTextAreaElement>(null)
 
   const handleSubmit = useCallback(() => {
@@ -133,6 +133,27 @@ export default function TryCache({ initialSchema, initialQuery }: Props) {
           <div style={{ position: 'relative' }}>
             <textarea ref={ref} value={query}></textarea>
           </div>
+        )}
+        {tab === 3 && (
+          <Code
+            language="javascript"
+            value={`import cacheql from '@browserql/cache'
+import connect from '@browserql/connect'
+import gql from 'graphql-tag'
+
+const schema = gql\`
+${schema}
+\`
+
+const query = gql\`
+${query}
+\`
+
+const { cache } = connect(schema)
+
+export default cacheql(cache, schema).get(query)
+`}
+          />
         )}
         {tab === 4 && (
           <Code language="json" value={JSON.stringify(result, null, 2)} />
