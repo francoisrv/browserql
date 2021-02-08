@@ -6,12 +6,11 @@ import { BrowserqlProvider } from '@browserql/react'
 import Definitions from './components/Definitions'
 import Preview from './components/Preview'
 import DefinitionCard from './components/DefinitionCard'
+import config from './config'
 
 interface Props {
   schema: DocumentNode
 }
-
-let id = 0
 
 function findDefinitionKind(definition: DefinitionNode) {
   switch (definition.kind) {
@@ -48,7 +47,7 @@ const makeBaseSchema = (definitions: readonly DefinitionNode[]) => gql`
           (def) => `{
         name: "${getName(def)}"
         kind: "${findDefinitionKind(def)}"
-        id: ${id++}
+        id: ${config.id++}
       }`
         )
         .join('\n  ')}

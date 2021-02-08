@@ -18,6 +18,8 @@ import State from '@browserql/state-react'
 import TextField from '@material-ui/core/TextField'
 import { BrowserqlContext } from '@browserql/react'
 import { GET_DEFINITIONS } from '../queries'
+import config from '../config'
+import FormGroup from '@material-ui/core/FormGroup'
 
 interface Props {
   id?: number
@@ -25,6 +27,7 @@ interface Props {
 
 export default function DefinitionCard({ id }: Props) {
   const ctx = useContext(BrowserqlContext)
+
   return (
     <Card elevation={0} style={{ backgroundColor: '#444' }}>
       <CardContent>
@@ -32,55 +35,73 @@ export default function DefinitionCard({ id }: Props) {
           <div>
             <DefinitionKind onChange={() => {}} />
           </div>
-          <div>
+          <div style={{ flex: 1 }}>
             <State
               schema={ctx.schema}
               cache={ctx.cache}
               query={GET_DEFINITIONS}
             >
-              {(state) => (
-                <TextField
-                  value={
-                    typeof id !== 'undefined'
-                      ? state.get().getDefinitions.find((def) => def.id === id)
-                          .name
-                      : ''
-                  }
-                  onChange={(e) => {
-                    if (typeof id !== 'undefined') {
-                      state.set((r) => ({
-                        ...r,
-                        getDefinitions: r.getDefinitions.map((def) => {
-                          if (def.id === id) {
-                            return {
-                              ...def,
-                              name: e.target.value,
-                            }
-                          }
-                          return def
-                        }),
-                      }))
-                    } else {
-                      state.set((r) => ({
-                        ...r,
-                        getDefinitions: [
-                          ...r.getDefinitions,
-                          {
-                            id: 3,
+              {(state) => {
+                const value =
+                  typeof id !== 'undefined'
+                    ? state.get().getDefinitions.find((def) => def.id === id)
+                        .name
+                    : ''
+
+                const handleChange = (e) => {
+                  if (typeof id !== 'undefined') {
+                    state.set((r) => ({
+                      ...r,
+                      getDefinitions: r.getDefinitions.map((def) => {
+                        if (def.id === id) {
+                          return {
+                            ...def,
                             name: e.target.value,
-                            kind: 'type',
+                          }
+                        }
+                        return def
+                      }),
+                    }))
+                  } else {
+                    state.set((r) => ({
+                      ...r,
+                      getDefinitions: [
+                        ...r.getDefinitions,
+                        {
+                          id: config.id++,
+                          name: e.target.value,
+                          kind: 'type',
+                        },
+                      ],
+                    }))
+                  }
+                }
+
+                return (
+                  <FormGroup row style={{ alignItems: 'flex-end' }}>
+                    <div style={{ flex: 1 }}>
+                      <TextField
+                        value={value}
+                        onChange={handleChange}
+                        fullWidth
+                        inputProps={{
+                          style: {
+                            color: '#D19A66',
                           },
-                        ],
-                      }))
-                    }
-                  }}
-                  inputProps={{
-                    style: {
-                      color: '#D19A66',
-                    },
-                  }}
-                />
-              )}
+                        }}
+                      />
+                    </div>
+                    <IconButton>
+                      {typeof id !== 'undefined' && (
+                        <HighlightOffIcon style={{ color: '#fff' }} />
+                      )}
+                      {typeof id === 'undefined' && (
+                        <AddCircleOutlineIcon style={{ color: '#fff' }} />
+                      )}
+                    </IconButton>
+                  </FormGroup>
+                )
+              }}
             </State>
           </div>
         </div>
