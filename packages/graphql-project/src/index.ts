@@ -3,34 +3,13 @@ import { promisify } from 'util'
 import addField from './addField'
 import addType from './addType'
 import deleteType from './deleteType'
+import help from './help'
 import highlight from './highlight'
 import init from './init'
 import renameType from './renameType'
 import sync from './sync'
 import type from './type'
 import types from './types'
-
-const HELP = `
-graphql (view schema)
-
-graphql help (view help)
-
-graphql init (init new graphql project)
-
-graphql sync (sync project)
-
-graphql types (view type names)
-
-graphql type <typename> (view type)
-
-graphql add type <typename> (add new type)
-
-graphql add field <typename.fieldname> <kind> (add new field)
-
-graphql rename type <typename> <newname> (rename type)
-
-graphql delete type <typename> (delete type)
-`
 
 const [, , command, ...other] = process.argv
 
@@ -46,7 +25,8 @@ async function run() {
     default:
       throw new Error(`Unknown command ${command}. Try \`graphql help\``)
     case 'help': {
-      console.log(HELP)
+      const [cmd] = other
+      help(cmd)
       process.exit(0)
     }
     case 'init': {
@@ -78,11 +58,11 @@ async function run() {
         default:
           throw new Error(`Unknown definition kind: ${def}`)
         case 'type': {
-          const [name] = addOther
+          const [name, ...directives] = addOther
           if (!name) {
             throw new Error('Missing type name')
           }
-          await addType(name)
+          await addType(name, ...directives)
           await sync()
           process.exit(0)
         }
