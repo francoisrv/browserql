@@ -1,5 +1,7 @@
-import { readFile } from 'fs'
+import { readFile, writeFile } from 'fs'
 import { promisify } from 'util'
+import { print } from 'graphql'
+import colors from 'colors'
 import addField from './addField'
 import addType from './addType'
 import deleteType from './deleteType'
@@ -10,25 +12,35 @@ import renameType from './renameType'
 import sync from './sync'
 import type from './type'
 import types from './types'
+import { getName } from '@browserql/fpql'
+import view from './view'
 
-const [, , command, ...other] = process.argv
+const [, , file, command, ...other] = process.argv
 
 async function run() {
+  if (!file) {
+    console.log(colors.bold.red('Missing file name'))
+    help()
+    console.log(colors.bold.red('Missing file name'))
+    process.exit(1)
+  }
   if (!command) {
-    const schema = (
-      await promisify(readFile)('graphql/schema.graphql')
-    ).toString()
+    if (file === 'help') {
+      const [cmd] = other
+      help(cmd)
+      process.exit(0)
+    }
+    const schema = (await view(file)).trim()
+    if (!schema) {
+      console.log(colors.magenta.bold('Empty'))
+      process.exit(0)
+    }
     highlight(schema)
     process.exit(0)
   }
   switch (command) {
     default:
       throw new Error(`Unknown command ${command}. Try \`graphql help\``)
-    case 'help': {
-      const [cmd] = other
-      help(cmd)
-      process.exit(0)
-    }
     case 'init': {
       await init()
       process.exit(0)
@@ -37,18 +49,31 @@ async function run() {
       await sync()
       process.exit(0)
     }
-    case 'types': {
-      const res = await types()
-      console.log(res.join('\n'))
-      process.exit(0)
-    }
-    case 'type': {
-      const [name] = other
-      if (!name) {
-        throw new Error('Missing type name')
+    case 'view': {
+      const [definition] = other
+      if (!definition) {
+        const schema = await view(file)
+        highlight(schema)
+        process.exit(0)
       }
-      highlight(await type(name))
-      process.exit(0)
+      switch (definition) {
+        default:
+          throw new Error(`Unknwon definition ${definition}`)
+        case 'type': {
+          const [name] = other
+          if (!name) {
+            throw new Error('Missing type name')
+          }
+          highlight(await type(file, name))
+          process.exit(0)
+        }
+        case 'types': {
+          const res = await types(file)
+          const got = print({ definitions: res, kind: 'Document' })
+          highlight(got)
+          process.exit(0)
+        }
+      }
     }
     case 'add': {
       const [def, ...addOther] = other
@@ -63,8 +88,7 @@ async function run() {
           if (!name) {
             throw new Error('Missing type name')
           }
-          await addType(name, ...directives)
-          await sync()
+          await addType(file, name, ...directives)
           process.exit(0)
         }
         case 'field': {
@@ -82,8 +106,8 @@ async function run() {
           if (!fieldName) {
             throw new Error(`Missing field name in path ${path}`)
           }
-          await addField(typeName, fieldName, kind)
-          await sync()
+          await addField(file, typeName, fieldName, kind)
+          // await sync()
           process.exit(0)
         }
       }
@@ -101,8 +125,8 @@ async function run() {
           if (!name) {
             throw new Error('Missing type name')
           }
-          await deleteType(name)
-          await sync()
+          await deleteType(file, name)
+          // await sync()
           process.exit(0)
         }
       }

@@ -3,6 +3,14 @@ import colors from 'colors'
 const commands = [
   {
     about: 'View schema',
+    arguments: [
+      {
+        name: 'file',
+        about: 'The file with a graphql definition in it',
+        required: true,
+        example: 'schema.graphql',
+      },
+    ],
   },
   {
     about: 'View help',
@@ -99,16 +107,8 @@ const commands = [
     ],
   },
   {
-    about: 'Init new graphql project',
-    command: 'init',
-  },
-  {
-    about: 'Sync project',
-    command: 'sync',
-  },
-  {
     about: 'View type definition',
-    command: 'type',
+    command: 'view type',
     arguments: [
       {
         name: 'type name',
@@ -119,12 +119,23 @@ const commands = [
   },
   {
     about: 'View type names',
-    command: 'types',
+    command: 'view types',
   },
 ]
 
 export default function help(command?: string) {
-  return commands
+  console.log(
+    colors.yellow.bold('graphql'),
+    colors.magenta('v').concat(colors.bold.magenta('1.0.0'))
+  )
+  console.log()
+  console.log('-'.repeat(35))
+  console.log('Manage a GraphQL file from terminal')
+  console.log('-'.repeat(35))
+  console.log()
+  console.log(' * Usage: graphql <file> <command> <...options>')
+  console.log()
+  commands
     .filter((cmd) => {
       if (command) {
         return cmd.command === command
