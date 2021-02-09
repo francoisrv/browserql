@@ -20,11 +20,8 @@ function highlightCode(kind: string) {
 
 export default function highlight(code: string) {
   const schema = parse(code)
-  const types = getTypes(schema)
-  const directives = getDirectives(schema)
-  const defs = [...types, ...directives]
   let i = 1
-  defs.forEach((def) => {
+  schema.definitions.forEach((def) => {
     switch (def.kind) {
       case 'ObjectTypeDefinition':
         {

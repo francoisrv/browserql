@@ -1,21 +1,5 @@
-import { readFile, stat, writeFile } from 'fs'
-import { promisify } from 'util'
-import { print } from 'graphql'
 import colors from 'colors'
-import addField from './addField'
-import addType from './addType'
-import deleteType from './deleteType'
 import help from './help'
-import highlight from './highlight'
-import init from './init'
-import renameType from './renameType'
-import sync from './sync'
-import type from './type'
-import types from './types'
-import { getDirective, getName } from '@browserql/fpql'
-import view from './view'
-import { parse } from 'graphql'
-import addDirective from './addDirective'
 import commands from './commands'
 
 const [, , file, command = 'view', ...other] = process.argv
@@ -36,7 +20,7 @@ async function run() {
   }
   const cmd = commands.find((item) => item.command === command)
   if (!cmd) {
-    throw new Error(`Unknwo command: ${command}`)
+    throw new Error(`Unknown command: ${command}`)
   }
   if (cmd.process) {
     await cmd.process(file, ...other)

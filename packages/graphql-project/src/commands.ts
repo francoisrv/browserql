@@ -47,7 +47,7 @@ const commands = [
     about: 'Access schema types',
     command: 'type',
     async process(file: string, name: string, ...other: string[]) {
-      const schema = parse(await view(file))
+      let schema = parse(await view(file))
       const isField = /\w\.\w/.test(name)
       if (name && other.indexOf('--delete') !== -1 && !isField) {
         const nextSchema = {
@@ -58,35 +58,54 @@ const commands = [
         }
         await promisify(writeFile)(file, print(nextSchema))
       } else if (name && !isField) {
-        const type = getType(name)(schema)
-        if (!type) {
-          const schema2 = parse(`type ${name}`)
-          const nextSchema = {
-            ...schema,
-            definitions: [...schema.definitions, getType(name)(schema2)],
+        if (name === 'Query') {
+          const Query = schema.definitions.find(
+            (def) => getName(def) === 'Query'
+          )
+          if (!Query) {
+            const schema2 = parse('type Query')
+            const nextSchema = {
+              ...schema,
+              definitions: [...schema.definitions, schema2.definitions[0]],
+            }
+            await promisify(writeFile)(file, print(nextSchema))
           }
-          await promisify(writeFile)(file, print(nextSchema))
+        } else {
+          const type = getType(name)(schema)
+          if (!type) {
+            const schema2 = parse(`type ${name}`)
+            const nextSchema = {
+              ...schema,
+              definitions: [...schema.definitions, getType(name)(schema2)],
+            }
+            await promisify(writeFile)(file, print(nextSchema))
+          }
         }
       } else if (name && isField) {
         const [typeName, fieldName] = name.split(/\./)
         const [kind = 'ID'] = other
-        const type = getType(typeName)(schema)
+        let type =
+          typeName === 'Query'
+            ? schema.definitions.find((def) => getName(def) === 'Query')
+            : getType(typeName)(schema)
         if (!type) {
           const schema2 = parse(`type ${typeName}`)
+          type = getType(typeName)(schema2)
           const nextSchema = {
             ...schema,
-            definitions: [...schema.definitions, getType(typeName)(schema2)],
+            definitions: [...schema.definitions, type],
           }
           await promisify(writeFile)(file, print(nextSchema))
+          schema = parse(await view(file))
         }
         let field = getField(fieldName)(type)
         if (!field) {
           const schema2 = parse(`type ${typeName} { ${fieldName}: ${kind}}`)
+          field = getField(fieldName)(schema2.definitions[0])
           const nextSchema = {
             ...schema,
             definitions: schema.definitions.map((def) => {
               if (getName(def) === typeName) {
-                field = getField(fieldName)(getType(typeName)(schema2))
                 return {
                   ...def,
                   fields: [...getFields(def), field],
@@ -94,8 +113,10 @@ const commands = [
               }
               return def
             }),
+            schema = parse(await view(file)),
           }
           await promisify(writeFile)(file, print(nextSchema))
+          schema = parse(await view(file))
         }
         const fieldKind = getKind(field)
         if (fieldKind !== kind) {
@@ -120,6 +141,7 @@ const commands = [
             }),
           }
           await promisify(writeFile)(file, print(nextSchema))
+          schema = parse(await view(file))
         }
       }
     },
@@ -143,6 +165,16 @@ const commands = [
           process.exit(0)
         }
         const schema = parse(await view(file))
+        if (name === 'Query') {
+          const nextSchema = {
+            ...schema,
+            definitions: schema.definitions.filter(
+              (def) => getName(def) === 'Query'
+            ),
+          }
+          highlight(print(nextSchema))
+          process.exit(0)
+        }
         const type = getType(name)(schema)
         if (!type) {
           const types = getTypes(schema)
@@ -168,7 +200,10 @@ const commands = [
       } else if (name && isField) {
         const [typeName, fieldName] = name.split(/\./)
         const schema = parse(await view(file))
-        const type = getType(typeName)(schema)
+        const type =
+          typeName === 'Query'
+            ? schema.definitions.find((def) => getName(def) === 'Query')
+            : getType(typeName)(schema)
         if (!type) {
           const types = getTypes(schema)
           throw new Error(
