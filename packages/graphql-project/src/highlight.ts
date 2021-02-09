@@ -27,7 +27,7 @@ export default function highlight(code: string) {
       const directives = getDirectives(def)
       const parsed = directives.map((directive) => `@${getName(directive)}`)
       console.log(
-        colors.magenta('type'),
+        colors.green('type'),
         colors.yellow(getName(def)),
         parsed.join(' ').length < 80
           ? parsed.join(' ').concat(fields.length ? colors.bold(' {') : '')

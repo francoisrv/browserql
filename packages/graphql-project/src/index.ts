@@ -38,7 +38,8 @@ async function run() {
       process.exit(0)
     }
     case 'types': {
-      console.log(await types())
+      const res = await types()
+      console.log(res.join('\n'))
       process.exit(0)
     }
     case 'type': {
