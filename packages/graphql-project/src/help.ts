@@ -25,11 +25,13 @@ const commands = [
         about:
           'The path of the field. Write it as: type.field, with a dot between them.',
         required: true,
+        example: 'MyType.myField',
       },
       {
         name: 'kind',
-        about: 'The kind of the field, ie ID!',
+        about: 'The kind of the field',
         required: true,
+        example: 'ID !',
       },
     ],
   },
@@ -47,6 +49,25 @@ const commands = [
         about: 'Directives for the new type',
         example: '@myDirective(myArg: "myValue")',
         spreadable: true,
+      },
+    ],
+  },
+  {
+    about: 'Change field kind',
+    command: 'change field',
+    arguments: [
+      {
+        name: 'path',
+        about:
+          'The path of the field. Write it as: type.field, with a dot between them.',
+        required: true,
+        example: 'MyType.myField',
+      },
+      {
+        name: 'kind',
+        about: 'The new kind of the field',
+        required: true,
+        example: 'ID !',
       },
     ],
   },
@@ -120,8 +141,9 @@ export default function help(command?: string) {
           ? cmd.arguments
               .map((arg) =>
                 [
+                  arg.required ? '' : '[',
                   arg.spreadable ? colors.underline('...') : '',
-                  colors.underline(arg.name),
+                  colors.underline(arg.name.concat(arg.required ? '' : ']')),
                 ].join('')
               )
               .join(' ')
