@@ -23,5 +23,5 @@ export default async function addField(
   const def = {
     ...(getType(typeName)(schema) as ObjectTypeDefinitionNode),
   }
-  await promisify(writeFile)(file, print(def))
+  // await promisify(writeFile)(file, print(def))
 }

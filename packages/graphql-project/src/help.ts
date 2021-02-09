@@ -25,6 +25,24 @@ const commands = [
   },
 
   {
+    about: 'Add new directive',
+    command: 'add directive',
+    arguments: [
+      {
+        name: 'directive name',
+        about: 'The name of the directive you want to add',
+        required: true,
+      },
+      {
+        name: 'location',
+        about:
+          'The location of the directive you want to add, separated by comma.',
+        required: true,
+        example: 'field,object,input',
+      },
+    ],
+  },
+  {
     about: 'Add new field',
     command: 'add field',
     arguments: [
@@ -164,10 +182,11 @@ export default function help(command?: string) {
         console.log()
         console.log('  Arguments:')
         cmd.arguments.forEach((arg) => {
+          const tab = 13 - arg.name.length
           console.log(
             colors.grey('  -'),
             colors.underline(arg.name),
-            ' '.repeat(13 - arg.name.length),
+            ' '.repeat(tab > 0 ? tab : 0),
             arg.about
           )
           console.log(

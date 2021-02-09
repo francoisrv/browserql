@@ -12,8 +12,10 @@ import renameType from './renameType'
 import sync from './sync'
 import type from './type'
 import types from './types'
-import { getName } from '@browserql/fpql'
+import { getDirective, getName } from '@browserql/fpql'
 import view from './view'
+import { parse } from 'graphql'
+import addDirective from './addDirective'
 
 const [, , file, command, ...other] = process.argv
 
@@ -49,7 +51,7 @@ async function run() {
       process.exit(0)
     }
     case 'view': {
-      const [definition] = other
+      const [definition, ...viewOther] = other
       if (!definition) {
         const schema = await view(file)
         highlight(schema)
@@ -59,11 +61,13 @@ async function run() {
         default:
           throw new Error(`Unknwon definition ${definition}`)
         case 'type': {
-          const [name] = other
+          const [name] = viewOther
           if (!name) {
             throw new Error('Missing type name')
           }
-          highlight(await type(file, name))
+          const typeDef = await type(file, name)
+          const source = print(typeDef)
+          highlight(source)
           process.exit(0)
         }
         case 'types': {
@@ -72,6 +76,43 @@ async function run() {
           highlight(got)
           process.exit(0)
         }
+        case 'directives': {
+          const schema = parse(await view(file))
+          const next = {
+            ...schema,
+            definitions: schema.definitions.filter(
+              (def) => def.kind === 'DirectiveDefinition'
+            ),
+          }
+          if (!next.definitions || !next.definitions.length) {
+            console.log(colors.bold('Empty'))
+          } else {
+            highlight(print(next))
+          }
+
+          process.exit(0)
+        }
+        case 'directive': {
+          const [name] = viewOther
+          if (!name) {
+            throw new Error('Missing type name')
+          }
+          const schema = parse(await view(file))
+          const next = {
+            ...schema,
+            definitions: schema.definitions.filter(
+              (def) => def.kind === 'DirectiveDefinition' && getName(def) === name
+            ),
+          }
+          if (!next.definitions || !next.definitions.length) {
+            console.log(colors.bold('Empty'))
+          } else {
+            highlight(print(next))
+          }
+
+          process.exit(0)
+        }
+      }
       }
     }
     case 'add': {
@@ -89,6 +130,20 @@ async function run() {
           }
           await addType(file, name, ...directives)
           highlight(print(await type(file, name)))
+          process.exit(0)
+        }
+        case 'directive': {
+          const [name, location] = addOther
+          if (!name) {
+            throw new Error('Missing directive name')
+          }
+          await addDirective(file, name, location)
+          const source = print(getDirective(name)(parse(await view(file))))
+          if (!source) {
+            console.log(colors.bold('Empty'))
+          } else {
+            highlight(source)
+          }
           process.exit(0)
         }
         case 'field': {
