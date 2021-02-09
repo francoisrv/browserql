@@ -1,6 +1,7 @@
 import colors from 'colors'
+import commands from './commands'
 
-const commands = [
+const commands2 = [
   {
     about: 'View schema',
     arguments: [
@@ -20,6 +21,7 @@ const commands = [
         name: 'command',
         about: 'View help for a specific command',
         example: 'add field',
+        param: true,
       },
     ],
   },

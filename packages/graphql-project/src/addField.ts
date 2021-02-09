@@ -1,4 +1,4 @@
-import { getField, getFields, getType } from '@browserql/fpql'
+import { getField, getFields, getName, getType } from '@browserql/fpql'
 import { writeFile } from 'fs'
 import { ObjectTypeDefinitionNode, parse, print } from 'graphql'
 import { promisify } from 'util'
@@ -16,18 +16,27 @@ export default async function addField(
     throw new Error(`No such type: ${typeName}`)
   }
   const source = await view(file)
-  const schema = parse(source)
   const fieldExists = getField(fieldName)(typeDef)
   if (fieldExists) {
     throw new Error(`Field exists: ${typeName}.${fieldName}`)
   }
-  const nextSource = `${source}\nextend type ${typeName} {
-    ${fieldName}: ${kind}
-  }`
-  // const schema = parse(nextSource)
-  // const def = {
-  //   ...(getType(typeName)(schema) as ObjectTypeDefinitionNode),
-  // }
-  // console.log(print(def))
+  const schema = parse(source)
+  const schema2 = parse(`type ${typeName} { ${fieldName}: ${kind}}`)
+  const fields = getFields(typeDef)
+  const newField = getField(fieldName)(getType(typeName)(schema2))
+  fields.push(newField)
+  const nextSource = print({
+    ...schema,
+    definitions: schema.definitions.map((def) => {
+      if (getName(def) === typeName) {
+        return {
+          ...def,
+          fields,
+        }
+      }
+      return def
+    }),
+  })
+  // console.log(nextSource)
   await promisify(writeFile)(file, nextSource)
 }
