@@ -1,6 +1,8 @@
-import { readFile } from 'fs'
-import { promisify } from 'util'
+import { getType } from '@browserql/fpql'
+import { parse } from 'graphql'
+import view from './view'
 
 export default async function type(file: string, name: string) {
-  return (await promisify(readFile)(file)).toString()
+  const schema = parse(await view(file))
+  return getType(name)(schema)
 }

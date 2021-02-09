@@ -1,13 +1,28 @@
-import { readFile } from 'fs'
+import { getName } from '@browserql/fpql'
+import { readFile, writeFile } from 'fs'
+import { print } from 'graphql'
+import { parse } from 'graphql'
 import { join } from 'path'
 import { promisify } from 'util'
 
-export default async function renameType(name: string, nextName: string) {
-  const source = (
-    await promisify(readFile)(join('graphql/types', name, `${name}.graphql`))
-  ).toString()
-  const nextSource = source.replace(
-    new RegExp(`type ${name}`),
-    `type ${nextName}`
-  )
+export default async function renameType(
+  file: string,
+  name: string,
+  nextName: string
+) {
+  const source = (await promisify(readFile)(file)).toString()
+  const schema = parse(source)
+  const definitions = schema.definitions.map((def) => {
+    if (getName(def) === name) {
+      return {
+        ...def,
+        name: {
+          kind: 'Name',
+          value: nextName,
+        },
+      }
+    }
+    return def
+  })
+  await promisify(writeFile)(file, print({ ...schema, definitions }))
 }

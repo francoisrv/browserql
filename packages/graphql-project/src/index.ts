@@ -24,12 +24,11 @@ async function run() {
     console.log(colors.bold.red('Missing file name'))
     process.exit(1)
   }
+  if (file === 'help') {
+    help(command)
+    process.exit(0)
+  }
   if (!command) {
-    if (file === 'help') {
-      const [cmd] = other
-      help(cmd)
-      process.exit(0)
-    }
     const schema = (await view(file)).trim()
     if (!schema) {
       console.log(colors.magenta.bold('Empty'))
@@ -89,6 +88,7 @@ async function run() {
             throw new Error('Missing type name')
           }
           await addType(file, name, ...directives)
+          highlight(print(await type(file, name)))
           process.exit(0)
         }
         case 'field': {
@@ -107,7 +107,7 @@ async function run() {
             throw new Error(`Missing field name in path ${path}`)
           }
           await addField(file, typeName, fieldName, kind)
-          // await sync()
+          highlight(print(await type(file, typeName)))
           process.exit(0)
         }
       }
@@ -148,8 +148,8 @@ async function run() {
           if (!nextName) {
             throw new Error('Missing type new name')
           }
-          await renameType(name, nextName)
-          await sync()
+          await renameType(file, name, nextName)
+          highlight(await view(file))
           process.exit(0)
         }
       }
