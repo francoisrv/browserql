@@ -1,13 +1,17 @@
 import {
   getField,
   getFields,
+  getKind,
   getName,
   getType,
   getTypes,
+  parseKind,
+  printParsedKind,
 } from '@browserql/fpql'
 import colors from 'colors'
 import { writeFile } from 'fs'
 import { parse, print } from 'graphql'
+import { parseType } from 'graphql'
 import { isOutputType } from 'graphql'
 import { promisify } from 'util'
 import help from './help'
@@ -82,12 +86,10 @@ const commands = [
             ...schema,
             definitions: schema.definitions.map((def) => {
               if (getName(def) === typeName) {
+                field = getField(fieldName)(getType(typeName)(schema2))
                 return {
                   ...def,
-                  fields: [
-                    ...getFields(def),
-                    getField(fieldName)(getType(typeName)(schema2)),
-                  ],
+                  fields: [...getFields(def), field],
                 }
               }
               return def
@@ -95,7 +97,30 @@ const commands = [
           }
           await promisify(writeFile)(file, print(nextSchema))
         }
-        // const
+        const fieldKind = getKind(field)
+        if (fieldKind !== kind) {
+          const nextSchema = {
+            ...schema,
+            definitions: schema.definitions.map((def) => {
+              if (getName(def) === typeName) {
+                return {
+                  ...def,
+                  fields: getFields(def).map((f) => {
+                    if (getName(f) === fieldName) {
+                      return {
+                        ...f,
+                        type: parseType(printParsedKind(parseKind(kind))),
+                      }
+                    }
+                    return f
+                  }),
+                }
+              }
+              return def
+            }),
+          }
+          await promisify(writeFile)(file, print(nextSchema))
+        }
       }
     },
     async output(file: string, name?: string, ...other: string[]) {
