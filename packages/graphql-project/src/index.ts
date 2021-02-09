@@ -101,7 +101,8 @@ async function run() {
           const next = {
             ...schema,
             definitions: schema.definitions.filter(
-              (def) => def.kind === 'DirectiveDefinition' && getName(def) === name
+              (def) =>
+                def.kind === 'DirectiveDefinition' && getName(def) === name
             ),
           }
           if (!next.definitions || !next.definitions.length) {
@@ -112,7 +113,6 @@ async function run() {
 
           process.exit(0)
         }
-      }
       }
     }
     case 'add': {

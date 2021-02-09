@@ -3,6 +3,7 @@ import { writeFile } from 'fs'
 import { ObjectTypeDefinitionNode, parse, print } from 'graphql'
 import { promisify } from 'util'
 import type from './type'
+import view from './view'
 
 export default async function addField(
   file: string,
@@ -11,7 +12,11 @@ export default async function addField(
   kind: string
 ) {
   const typeDef = await type(file, typeName)
-  const source = print(typeDef)
+  if (!typeDef) {
+    throw new Error(`No such type: ${typeName}`)
+  }
+  const source = await view(file)
+  const schema = parse(source)
   const fieldExists = getField(fieldName)(typeDef)
   if (fieldExists) {
     throw new Error(`Field exists: ${typeName}.${fieldName}`)
@@ -19,9 +24,10 @@ export default async function addField(
   const nextSource = `${source}\nextend type ${typeName} {
     ${fieldName}: ${kind}
   }`
-  const schema = parse(nextSource)
-  const def = {
-    ...(getType(typeName)(schema) as ObjectTypeDefinitionNode),
-  }
-  // await promisify(writeFile)(file, print(def))
+  // const schema = parse(nextSource)
+  // const def = {
+  //   ...(getType(typeName)(schema) as ObjectTypeDefinitionNode),
+  // }
+  // console.log(print(def))
+  await promisify(writeFile)(file, nextSource)
 }
