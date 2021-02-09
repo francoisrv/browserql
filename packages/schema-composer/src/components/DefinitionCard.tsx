@@ -101,6 +101,7 @@ export default function DefinitionCard({ id }: Props) {
                         )}
                       </IconButton>
                     </FormGroup>
+                    <div></div>
                   </div>
                 )
               }}

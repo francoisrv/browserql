@@ -11,3 +11,9 @@ export const PRINT_SCHEMA = gql`
     printSchema
   }
 `
+
+export const GET_FIELDS = gql`
+  {
+    printSchema
+  }
+`

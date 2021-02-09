@@ -5,19 +5,23 @@
     "description": "React integration for Firestore with GraphQL"
   },
   {
+    "name": "graphql-project",
+    "version": "1.0.0"
+  },
+  {
     "name": "cache",
     "version": "1.2.0",
     "description": "Util for updating apollo cache"
   },
   {
-    "name": "client",
-    "version": "3.41.0",
-    "description": "Create a new GraphQL server in the browser"
-  },
-  {
     "name": "executable",
     "version": "1.11.0",
     "description": "Create executable queries and mutations from a GraphQL schema"
+  },
+  {
+    "name": "client",
+    "version": "3.41.0",
+    "description": "Create a new GraphQL server in the browser"
   },
   {
     "name": "firestore",
@@ -30,14 +34,14 @@
     "description": "Pipe function"
   },
   {
-    "name": "fpql",
-    "version": "1.34.1",
-    "description": "Accessor util for GraphQL schemas"
-  },
-  {
     "name": "fragments",
     "version": "2.6.0",
     "description": "Generate a GraphQL fragment from a type"
+  },
+  {
+    "name": "fpql",
+    "version": "1.34.1",
+    "description": "Accessor util for GraphQL schemas"
   },
   {
     "name": "graphiql",
@@ -45,14 +49,14 @@
     "description": "GraphiQL in the browser"
   },
   {
-    "name": "http",
-    "version": "1.3.0",
-    "description": "Fire HTTP requests using a GraphQL schema"
-  },
-  {
     "name": "graphql-schema-class",
     "version": "3.14.0",
     "description": "Generate schema classes from GraphQL schema"
+  },
+  {
+    "name": "http",
+    "version": "1.3.0",
+    "description": "Fire HTTP requests using a GraphQL schema"
   },
   {
     "name": "input",

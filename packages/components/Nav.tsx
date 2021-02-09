@@ -48,7 +48,7 @@ const items: Item[] = [
   },
   {
     name: 'Integrations',
-    modules: ['firestore', 'http'],
+    modules: ['firestore', 'http', 'graphql-project'],
     examples: [],
   },
   {
