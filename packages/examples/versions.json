@@ -6,7 +6,8 @@
   },
   {
     "name": "graphql-project",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Manage a GraphQL file from terminal"
   },
   {
     "name": "cache",
@@ -14,14 +15,14 @@
     "description": "Util for updating apollo cache"
   },
   {
-    "name": "executable",
-    "version": "1.11.0",
-    "description": "Create executable queries and mutations from a GraphQL schema"
-  },
-  {
     "name": "client",
     "version": "3.41.0",
     "description": "Create a new GraphQL server in the browser"
+  },
+  {
+    "name": "executable",
+    "version": "1.11.0",
+    "description": "Create executable queries and mutations from a GraphQL schema"
   },
   {
     "name": "firestore",
