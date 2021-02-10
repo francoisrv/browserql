@@ -16,6 +16,7 @@ import { isOutputType } from 'graphql'
 import { promisify } from 'util'
 import help from './help'
 import highlight from './highlight'
+import sync from './sync'
 import view from './view'
 
 const commands = [
@@ -50,13 +51,12 @@ const commands = [
       let schema = parse(await view(file))
       const isField = /\w\.\w/.test(name)
       if (name && other.indexOf('--delete') !== -1 && !isField) {
-        const nextSchema = {
+        await sync(file, {
           ...schema,
           definitions: schema.definitions.filter(
             (def) => getName(def) !== name
           ),
-        }
-        await promisify(writeFile)(file, print(nextSchema))
+        })
       } else if (name && !isField) {
         if (name === 'Query') {
           const Query = schema.definitions.find(

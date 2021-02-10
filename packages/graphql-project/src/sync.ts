@@ -1,10 +1,7 @@
 import { writeFile } from 'fs'
+import { DocumentNode, print } from 'graphql'
 import { promisify } from 'util'
-import type from './type'
-import types from './types'
 
-export default async function sync() {
-  const typeNames = await types()
-  const typeDefs = await Promise.all(typeNames.map(type))
-  await promisify(writeFile)('graphql/schema.graphql', typeDefs.join('\n'))
+export default async function sync(file: string, schema: DocumentNode) {
+  await promisify(writeFile)(file, print(schema))
 }
