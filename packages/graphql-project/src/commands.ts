@@ -58,102 +58,51 @@ const commands = [
     about: 'Access schema types',
     command: 'type',
     async process(file: string, name: string, ...other: string[]) {
-      const source = await view(file)
-      let schema = source
-        ? parse(source)
-        : { definitions: [], kind: 'Document' as 'Document' }
-      const [typeName, fieldName, argName] = name.split(/\./)
-      const deleting = other.indexOf('--delete') !== -1
+      if (name) {
+        const source = await view(file)
+        let schema = source
+          ? parse(source)
+          : { definitions: [], kind: 'Document' as 'Document' }
+        const [typeName, fieldName, argName] = name.split(/\./)
+        const deleting = other.indexOf('--delete') !== -1
 
-      if (typeName) {
-        if (/:/.test(typeName)) {
-          console.log('you')
-        } else {
-          let type = schema.definitions.find((def) => getName(def) === typeName)
-          if (!type) {
-            schema = addTypeToSchema(schema, typeName)
-            await sync(file, schema)
-            type = schema.definitions.find((def) => getName(def) === typeName)
-          }
-          if (fieldName) {
-            let field = getField(fieldName)(type as ObjectTypeDefinitionNode)
-            if (!field) {
-              schema = addFieldToSchema(schema, typeName, fieldName, other[0])
+        if (typeName) {
+          if (/:/.test(typeName)) {
+            console.log('you')
+          } else {
+            let type = schema.definitions.find(
+              (def) => getName(def) === typeName
+            )
+            if (!type) {
+              schema = addTypeToSchema(schema, typeName)
               await sync(file, schema)
               type = schema.definitions.find((def) => getName(def) === typeName)
-              field = getField(fieldName)(type as ObjectTypeDefinitionNode)
             }
-            if (argName) {
+            if (fieldName) {
+              let field = getField(fieldName)(type as ObjectTypeDefinitionNode)
+              if (!field) {
+                schema = addFieldToSchema(schema, typeName, fieldName, other[0])
+                await sync(file, schema)
+                type = schema.definitions.find(
+                  (def) => getName(def) === typeName
+                )
+                field = getField(fieldName)(type as ObjectTypeDefinitionNode)
+              }
+              if (argName) {
+              } else if (deleting) {
+                schema = removeSchemaField(schema, typeName, fieldName)
+                await sync(file, schema)
+              } else if (other[0]) {
+                const fieldKind = getKind(field as FieldDefinitionNode)
+                // if
+              }
             } else if (deleting) {
-              schema = removeSchemaField(schema, typeName, fieldName)
+              schema = removeTypeFromSchema(schema, typeName)
               await sync(file, schema)
-            } else if (other[0]) {
-              const fieldKind = getKind(field as FieldDefinitionNode)
-              // if
             }
-          } else if (deleting) {
-            schema = removeTypeFromSchema(schema, typeName)
-            await sync(file, schema)
           }
         }
       }
-
-      // Delete type
-      // if (name && other.indexOf('--delete') !== -1 && !isField) {
-      //   schema = removeTypeFromSchema(schema, name)
-      //   await sync(file, schema)
-
-      //   // Add type
-      // } else if (
-      //   name &&
-      //   !isField &&
-      //   !schema.definitions.find((def) => getName(def) === name)
-      // ) {
-      //   schema = addTypeToSchema(schema, name)
-      //   await sync(file, schema)
-      // } else if (name && isField) {
-      //   const [typeName, fieldName] = name.split(/\./)
-      //   let type = schema.definitions.find((def) => getName(def) === typeName)
-
-      //   // Add type
-      //   if (!type) {
-      //     schema = addTypeToSchema(schema, typeName)
-      //     await sync(file, schema)
-      //     type = schema.definitions.find((def) => getName(def) === typeName)
-      //   }
-      //   let field = getField(fieldName)(type as ObjectTypeDefinitionNode)
-
-      //   const [kind] = other.filter((a) => !/^@/.test(a) && !/:/.test(a))
-      //   const fields = other.filter((a) => !/^@/.test(a) && /:/.test(a))
-
-      //   // Add field
-      //   if (!field) {
-      //     schema = addFieldToSchema(schema, typeName, fieldName, kind)
-      //     await sync(file, schema)
-      //     field = getField(fieldName)(
-      //       type as ObjectTypeDefinitionNode
-      //     ) as FieldDefinitionNode
-      //   }
-
-      //   if (kind) {
-      //     const fieldKind = getKind(field)
-
-      //     // Update field kind
-      //     if (kind !== fieldKind) {
-      //       schema = updateSchemaField(
-      //         schema,
-      //         typeName,
-      //         fieldName,
-      //         updateFieldKind(field as FieldDefinitionNode, kind)
-      //       )
-      //       await sync(file, schema)
-      //     }
-      //   }
-
-      //   if (fields.length) {
-      //     console.log('fields')
-      //   }
-      // }
     },
     async output(file: string, name?: string, ...other: string[]) {
       const isField = /\w\.\w/.test(name || '')
