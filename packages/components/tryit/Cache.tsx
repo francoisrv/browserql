@@ -2,21 +2,23 @@ import Code from '@browserql/components/Code'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import cacheql from '@browserql/cache'
 import connect from '@browserql/client'
-import { parse } from 'graphql'
+import { buildSchema, parse } from 'graphql'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import SchemaComposer from '@browserql/schema-composer'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import CodeMirror from 'codemirror'
+import ReactJson from 'react-json-view'
 import 'codemirror/addon/hint/show-hint'
 import 'codemirror/addon/lint/lint'
 import 'codemirror-graphql/hint'
 import 'codemirror-graphql/lint'
 import 'codemirror-graphql/mode'
+import { Helmet } from 'react-helmet'
 
 enum CacheOp {
   get = 'get',
@@ -29,6 +31,62 @@ interface Props {
   initialTab?: number
 }
 
+const Links = memo(function () {
+  return (
+    <Helmet>
+      <link rel="stylesheet" href="http://codemirror.net/doc/docs.css" />
+      <link rel="stylesheet" href="http://codemirror.net/lib/codemirror.css" />
+      <link rel="stylesheet" href="http://codemirror.net/theme/night.css" />
+    </Helmet>
+  )
+})
+
+function GraphqlExecutableSchemaEditor({
+  query,
+  schema,
+}: {
+  query: string
+  schema: string
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null)
+  const [editor, setEditor] = useState<any>()
+  useEffect(() => {
+    if (!editor) {
+      const un = setTimeout(() => {
+        const elem = ref.current
+        setEditor(
+          CodeMirror.fromTextArea(elem, {
+            mode: 'graphql',
+            value: '{ getCounter }',
+            tabSize: 4,
+            // mode: 'text/plain',
+            theme: 'default',
+            lineNumbers: true,
+            styleActiveSelected: true,
+            styleActiveLine: true,
+            indentWithTabs: true,
+            matchBrackets: true,
+            highlightMatches: true,
+            lint: {
+              schema: buildSchema(schema),
+              validationRules: [],
+            },
+            hintOptions: {
+              schema: buildSchema(schema),
+            },
+          })
+        )
+      })
+      return () => clearTimeout(un)
+    }
+  }, [editor])
+  return (
+    <div style={{ position: 'relative' }}>
+      <textarea ref={ref} defaultValue={query}></textarea>
+    </div>
+  )
+}
+
 export default function TryCache({
   initialSchema,
   initialQuery,
@@ -39,16 +97,15 @@ export default function TryCache({
   const [result, setResult] = useState(null)
   const [operation, setOperation] = useState<CacheOp>(CacheOp.get)
   const [tab, setTab] = useState(initialTab)
-  const ref = useRef<HTMLTextAreaElement>(null)
+  const [variables, setVariables] = useState<any>({})
 
   const handleSubmit = useCallback(() => {
     const doc = parse(schema)
     const client = connect(doc)
     const cached = cacheql(client.cache, doc)
-    console.log({ operation })
     switch (operation) {
       case CacheOp.get:
-        setResult(cached.get(parse(query)))
+        setResult(cached.get(parse(query), variables))
         break
       case CacheOp.set:
         {
@@ -65,46 +122,13 @@ export default function TryCache({
         }
         break
     }
-  }, [schema, query, operation])
-
-  useEffect(() => {
-    const elem = ref.current
-    if (elem) {
-      const un = setTimeout(() => {
-        console.log('CODE MIRROR')
-        const editor = CodeMirror.fromTextArea(elem, {
-          // mode: 'graphql',
-          value: '{ getCounter }',
-          tabSize: 4,
-          mode: 'text/plain',
-          theme: 'default',
-          lineNumbers: true,
-          styleActiveSelected: true,
-          styleActiveLine: true,
-          indentWithTabs: true,
-          matchBrackets: true,
-          highlightMatches: true,
-          // lint: {
-          //   schema: parse(schema),
-          //   validationRules: [],
-          // },
-          // hintOptions: {
-          //   schema: parse(schema),
-          // },
-        })
-        console.log({ editor })
-      })
-      return () => clearTimeout(un)
-    }
-  }, [tab])
+  }, [schema, query, operation, variables])
 
   useEffect(handleSubmit, [])
 
   return (
     <div>
-      <link rel="stylesheet" href="//codemirror.net/doc/docs.css" />
-      <link rel="stylesheet" href="//codemirror.net/lib/codemirror.css" />
-      <link rel="stylesheet" href="//codemirror.net/theme/night.css" />
+      <Links />
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
         <Typography style={{ paddingRight: 8 }}>Cache operation:</Typography>
         <div style={{ flex: 1 }}>
@@ -137,10 +161,11 @@ export default function TryCache({
               variant="contained"
               color="primary"
               onClick={handleSubmit}
+              style={{ marginTop: 10 }}
             >
               Save
             </Button>
-            <Tabs variant="fullWidth">
+            <Tabs variant="fullWidth" value={0}>
               <Tab label="Schema" />
               <Tab label="Query" />
             </Tabs>
@@ -149,16 +174,26 @@ export default function TryCache({
                 <SchemaComposer schema={parse(schema)} onChange={setSchema} />
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ position: 'relative' }}>
-                  <textarea ref={ref} value={query}></textarea>
-                </div>
+                <GraphqlExecutableSchemaEditor query={query} schema={schema} />
+                <Tabs variant="fullWidth" value={0}>
+                  <Tab label="Variables" />
+                </Tabs>
+                <ReactJson
+                  src={variables}
+                  theme="monokai"
+                  onAdd={() => {}}
+                  onEdit={() => {}}
+                  onDelete={() => {}}
+                  style={{ padding: 16, fontSize: 16, borderRadius: 8 }}
+                  name="Candidate"
+                />
               </div>
             </div>
           </div>
         )}
         {tab === 1 && (
           <div>
-            <Tabs variant="fullWidth" disabled>
+            <Tabs variant="fullWidth" disabled value={0}>
               <Tab label="Code" />
               <Tab label="Result" />
             </Tabs>

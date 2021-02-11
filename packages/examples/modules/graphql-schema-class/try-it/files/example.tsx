@@ -140,7 +140,7 @@ type Bar {
           onEdit={handleEdit}
           onDelete={handleDelete}
           style={{ padding: 16, fontSize: 16, borderRadius: 8 }}
-          name="Candidate"
+          name="Variables"
         />
       </div>
       <Typography variant="h5">Model</Typography>
