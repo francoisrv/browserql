@@ -1,4 +1,5 @@
 import {
+  getDirective,
   getField,
   getFields,
   getKind,
@@ -18,8 +19,10 @@ import { isOutputType } from 'graphql'
 import { promisify } from 'util'
 import help from './help'
 import highlight from './highlight'
+import parseInput from './parseInput'
 import sync from './sync'
 import {
+  addDirectiveToType,
   addFieldToSchema,
   addTypeToSchema,
   removeSchemaField,
@@ -57,49 +60,65 @@ const commands = [
   {
     about: 'Access schema types',
     command: 'type',
-    async process(file: string, name: string, ...other: string[]) {
-      if (name) {
+    async process(file: string, ...args: string[]) {
+      const parsedInput = parseInput('type', ...args)
+      if (parsedInput.typeName) {
         const source = await view(file)
         let schema = source
           ? parse(source)
           : { definitions: [], kind: 'Document' as 'Document' }
-        const [typeName, fieldName, argName] = name.split(/\./)
-        const deleting = other.indexOf('--delete') !== -1
+        const deleting = args.indexOf('--delete') !== -1
 
-        if (typeName) {
-          if (/:/.test(typeName)) {
-            console.log('you')
-          } else {
-            let type = schema.definitions.find(
-              (def) => getName(def) === typeName
+        if (parsedInput.typeName) {
+          let type = schema.definitions.find(
+            (def) => getName(def) === parsedInput.typeName
+          )
+          if (!type) {
+            schema = addTypeToSchema(schema, parsedInput.typeName)
+            await sync(file, schema)
+            type = schema.definitions.find(
+              (def) => getName(def) === parsedInput.typeName
             )
-            if (!type) {
-              schema = addTypeToSchema(schema, typeName)
+          }
+          if (parsedInput.fieldName) {
+            let field = getField(parsedInput.fieldName)(
+              type as ObjectTypeDefinitionNode
+            )
+
+            if (!field) {
+              schema = addFieldToSchema(
+                schema,
+                parsedInput.typeName,
+                parsedInput.fieldName,
+                parsedInput.kind
+              )
               await sync(file, schema)
-              type = schema.definitions.find((def) => getName(def) === typeName)
+              type = schema.definitions.find(
+                (def) => getName(def) === parsedInput.typeName
+              )
+              field = getField(parsedInput.fieldName)(
+                type as ObjectTypeDefinitionNode
+              )
             }
-            if (fieldName) {
-              let field = getField(fieldName)(type as ObjectTypeDefinitionNode)
-              if (!field) {
-                schema = addFieldToSchema(schema, typeName, fieldName, other[0])
-                await sync(file, schema)
-                type = schema.definitions.find(
-                  (def) => getName(def) === typeName
-                )
-                field = getField(fieldName)(type as ObjectTypeDefinitionNode)
-              }
-              if (argName) {
-              } else if (deleting) {
-                schema = removeSchemaField(schema, typeName, fieldName)
-                await sync(file, schema)
-              } else if (other[0]) {
-                const fieldKind = getKind(field as FieldDefinitionNode)
-                // if
-              }
-            } else if (deleting) {
-              schema = removeTypeFromSchema(schema, typeName)
+
+            if (parsedInput.argName) {
+            } else if (parsedInput.deleting) {
+              schema = removeSchemaField(
+                schema,
+                parsedInput.typeName,
+                parsedInput.fieldName
+              )
               await sync(file, schema)
             }
+          } else if (parsedInput.deleting) {
+            schema = removeTypeFromSchema(schema, parsedInput.typeName)
+            await sync(file, schema)
+          }
+
+          if (/^@/.test(other[0])) {
+            const directive = getDirective(type)
+            schema = addDirectiveToType(schema, parsedInput.typeName, other[0])
+            await sync(file, schema)
           }
         }
       }

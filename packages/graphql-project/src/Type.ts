@@ -1,4 +1,11 @@
-import { getField, getFields, getName, getType } from '@browserql/fpql'
+import {
+  getDirective,
+  getDirectives,
+  getField,
+  getFields,
+  getName,
+  getType,
+} from '@browserql/fpql'
 import { parseType } from 'graphql'
 import { FieldDefinitionNode } from 'graphql'
 import { ObjectTypeDefinitionNode } from 'graphql'
@@ -99,4 +106,27 @@ export function removeSchemaField(
       return def
     }),
   }
+}
+
+export function addDirectiveToType(
+  schema: DocumentNode,
+  typeName: string,
+  directiveName: string
+) {
+  const extension = parse(`type Foo ${directiveName}`)
+  const Foo = getType('Foo')(extension) as ObjectTypeDefinitionNode
+  const directive = getDirective(directiveName.replace(/@/, ''))(Foo)
+  const nextSchema = {
+    ...schema,
+    definitions: schema.definitions.map((def) => {
+      if (getName(def) === typeName && def.kind === 'ObjectTypeDefinition') {
+        return {
+          ...def,
+          directives: [...getDirectives(def), directive],
+        }
+      }
+      return def
+    }),
+  }
+  return nextSchema
 }

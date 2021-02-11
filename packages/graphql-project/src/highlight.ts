@@ -21,6 +21,18 @@ function highlightCode(kind: string) {
 export default function highlight(code: string) {
   const schema = parse(code)
   let i = 1
+  const displayLineNumber = () => {
+    const lineNumber = i++
+    let repeat = 0
+    if (lineNumber < 10) {
+      repeat = 2
+    } else if (lineNumber < 100) {
+      repeat = 1
+    }
+    return colors.bgBlue
+      .white(' '.repeat(repeat).concat(lineNumber.toString()))
+      .concat(' '.repeat(2))
+  }
   schema.definitions.forEach((def) => {
     switch (def.kind) {
       case 'ObjectTypeDefinition':
@@ -29,9 +41,9 @@ export default function highlight(code: string) {
           const directives = getDirectives(def)
           const parsed = directives.map((directive) => `@${getName(directive)}`)
           logBlock(
-            colors.bgBlue.white((i++).toString()),
+            displayLineNumber(),
             colors.green('type'),
-            colors.yellow(getName(def)),
+            colors.yellow.bold(getName(def)),
             directives.length && parsed.join(' ').length < 80
               ? parsed.join(' ').concat(fields.length ? colors.bold(' {') : '')
               : '',
@@ -49,7 +61,7 @@ export default function highlight(code: string) {
             fields.forEach((field) => {
               const parsed = parseKind(getKind(field))
               console.log(
-                colors.bgBlue.white((i++).toString()),
+                displayLineNumber(),
                 '  ',
                 parsed.required
                   ? colors.bold(getName(field).concat(colors.bold(':')))
@@ -57,7 +69,7 @@ export default function highlight(code: string) {
                 colors.yellow(getKind(field))
               )
             })
-            console.log(colors.bgBlue.white((i++).toString()), colors.bold('}'))
+            console.log(displayLineNumber(), colors.bold('}'))
           }
         }
         break
@@ -65,7 +77,7 @@ export default function highlight(code: string) {
       case 'DirectiveDefinition':
         {
           logBlock(
-            colors.bgBlue.white((i++).toString()),
+            displayLineNumber(),
             colors.green('directive'),
             colors.yellow(`@${colors.bold(getName(def))}`),
             'on',
@@ -74,6 +86,6 @@ export default function highlight(code: string) {
         }
         break
     }
-    console.log(colors.bgBlue.white((i++).toString()))
+    console.log(displayLineNumber())
   })
 }
