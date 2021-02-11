@@ -26,14 +26,19 @@ enum CacheOp {
 interface Props {
   initialSchema: string
   initialQuery: string
+  initialTab?: number
 }
 
-export default function TryCache({ initialSchema, initialQuery }: Props) {
+export default function TryCache({
+  initialSchema,
+  initialQuery,
+  initialTab,
+}: Props) {
   const [schema, setSchema] = useState(initialSchema)
   const [query, setQuery] = useState(initialQuery)
   const [result, setResult] = useState(null)
   const [operation, setOperation] = useState<CacheOp>(CacheOp.get)
-  const [tab, setTab] = useState(3)
+  const [tab, setTab] = useState(initialTab)
   const ref = useRef<HTMLTextAreaElement>(null)
 
   const handleSubmit = useCallback(() => {
@@ -93,6 +98,8 @@ export default function TryCache({ initialSchema, initialQuery }: Props) {
     }
   }, [tab])
 
+  useEffect(handleSubmit, [])
+
   return (
     <div>
       <link rel="stylesheet" href="//codemirror.net/doc/docs.css" />
@@ -111,38 +118,60 @@ export default function TryCache({ initialSchema, initialQuery }: Props) {
             <MenuItem value={CacheOp.set}>{CacheOp.set}</MenuItem>
           </Select>
         </div>
-        <Button variant="contained" color="primary">
-          OK
-        </Button>
       </div>
       <Tabs
         value={tab}
         variant="fullWidth"
         indicatorColor="primary"
+        textColor="primary"
         onChange={(event, value) => setTab(value)}
       >
-        <Tab label="Schema" />
-        <Tab label="Query" />
-        <Tab label="Variables" />
-        <Tab label="Code" />
-        <Tab label="Result" />
+        <Tab label="Edit" />
+        <Tab label="Preview" />
       </Tabs>
       <div style={{ height: 799, overflow: 'auto' }}>
-        {tab === 0 && <SchemaComposer schema={parse(schema)} />}
-        {tab === 1 && (
-          <div style={{ position: 'relative' }}>
-            <textarea ref={ref} value={query}></textarea>
+        {tab === 0 && (
+          <div>
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+            >
+              Save
+            </Button>
+            <Tabs variant="fullWidth">
+              <Tab label="Schema" />
+              <Tab label="Query" />
+            </Tabs>
+            <div style={{ display: 'flex' }}>
+              <div style={{ flex: 1 }}>
+                <SchemaComposer schema={parse(schema)} onChange={setSchema} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ position: 'relative' }}>
+                  <textarea ref={ref} value={query}></textarea>
+                </div>
+              </div>
+            </div>
           </div>
         )}
-        {tab === 3 && (
-          <Code
-            language="javascript"
-            value={`import cacheql from '@browserql/cache'
+        {tab === 1 && (
+          <div>
+            <Tabs variant="fullWidth" disabled>
+              <Tab label="Code" />
+              <Tab label="Result" />
+            </Tabs>
+            <div style={{ display: 'flex' }}>
+              <div style={{ flex: 1 }}>
+                <Code
+                  language="javascript"
+                  value={`import cacheql from '@browserql/cache'
 import connect from '@browserql/connect'
 import gql from 'graphql-tag'
 
 const schema = gql\`
-${schema}
+${schema.trim()}
 \`
 
 const query = gql\`
@@ -151,14 +180,20 @@ ${query}
 
 const { cache } = connect(schema)
 
-export default cacheql(cache, schema).get(query)
-`}
-          />
-        )}
-        {tab === 4 && (
-          <Code language="json" value={JSON.stringify(result, null, 2)} />
+export default cacheql(cache, schema).get(query)`}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <Code language="json" value={JSON.stringify(result, null, 2)} />
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
   )
+}
+
+TryCache.defaultProps = {
+  initialTab: 1,
 }

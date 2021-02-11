@@ -3,8 +3,10 @@ import TryCache from '@browserql/components/tryit/Cache'
 
 export default function TryIt() {
   const schema = `type Query {
-  getScore: Int
-}`
+  getScore: Int @default(value: 10)
+}
+
+directive @default(value: Int!) on FIELD_DEFINITION`
 
   const query = `{
   getScore
@@ -13,4 +15,4 @@ export default function TryIt() {
   return <TryCache initialSchema={schema} initialQuery={query} initialTab={1} />
 }
 
-TryIt.height = 800
+TryIt.height = 700

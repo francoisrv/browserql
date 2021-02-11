@@ -68,6 +68,7 @@ const renderers = {
       variant = 'h4'
     } else if (level === 3) {
       marginX = 16
+      variant = 'h5'
     } else if (level === 4) {
       marginX = 12
     }

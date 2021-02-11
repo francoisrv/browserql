@@ -13,4 +13,4 @@ export default function TryIt() {
   return <TryCache initialSchema={schema} initialQuery={query} initialTab={1} />
 }
 
-TryIt.height = 800
+TryIt.height = 700

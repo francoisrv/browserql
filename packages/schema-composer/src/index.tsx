@@ -1,74 +1,105 @@
-import React from 'react'
-import { DefinitionNode, DocumentNode, print } from 'graphql'
-import gql from 'graphql-tag'
-import { getName } from '@browserql/fpql'
-import { BrowserqlProvider } from '@browserql/react'
-import Definitions from './components/Definitions'
-import Preview from './components/Preview'
-import DefinitionCard from './components/DefinitionCard'
-import config from './config'
+import { DocumentNode, parse, print } from 'graphql'
+import React, { useCallback, useEffect, useState } from 'react'
 
 interface Props {
-  schema: DocumentNode
+  schema: DocumentNode | string
+  onChange(source: string, schema: DocumentNode): void
 }
 
-function findDefinitionKind(definition: DefinitionNode) {
-  switch (definition.kind) {
-    case 'ObjectTypeDefinition':
-    case 'ObjectTypeExtension':
-      return 'type'
-  }
-}
+export default function SchemaComposer({ schema, onChange }: Props) {
+  const source = typeof schema === 'string' ? schema : print(schema)
+  const [value, setValue] = useState(source)
+  const [isValid, setIsValid] = useState(true)
+  const [validityError, setValidityError] = useState<{
+    message: string
+    locations: { column: number; line: number }[]
+  } | null>(null)
+  const [isDarkMode, setIsdarkMode] = useState(true)
 
-const makeBaseSchema = (definitions: readonly DefinitionNode[]) => gql`
-  scalar JSON
+  const toggleDarkMode = useCallback(() => setIsdarkMode(!isDarkMode), [
+    isDarkMode,
+  ])
 
-  directive @default(value: JSON) on FIELD_DEFINITION
+  useEffect(() => {
+    setValidityError(null)
+    try {
+      const nextSchema = parse(value)
+      onChange(value, nextSchema)
+      setIsValid(true)
+    } catch (error) {
+      setValidityError(error)
+      setIsValid(false)
+    }
+  }, [value])
 
-  enum DefinitionKind {
-    type
-  }
+  const lines = value.trim().split(/\n/)
 
-  type Definition {
-    id: ID!
-    name: String!
-    kind: String!
-  }
-
-  type Field {
-    id: ID!
-    name:String!
-  }
-
-  type Query {
-    getDefinitions: [Definition!]! @default(value: [
-      ${definitions
-        .map(
-          (def) => `{
-        name: "${getName(def)}"
-        kind: "${findDefinitionKind(def)}"
-        id: ${config.id++}
-      }`
-        )
-        .join('\n  ')}
-    ])
-
-    getFields: [Field!]!
-
-    printSchema: String!
-  }
-`
-
-export default function SchemaComposer({ schema }: Props) {
-  const baseSchema = makeBaseSchema(schema.definitions)
-  console.log(print(baseSchema))
   return (
-    <div style={{ padding: 16, backgroundColor: '#333' }}>
-      <BrowserqlProvider schema={baseSchema}>
-        <DefinitionCard />
-        <Definitions />
-        <Preview />
-      </BrowserqlProvider>
+    <div>
+      <div>
+        <button onClick={toggleDarkMode} disabled={!isDarkMode}>
+          Day
+        </button>
+        <button onClick={toggleDarkMode} disabled={isDarkMode}>
+          Night
+        </button>
+      </div>
+      <div style={{ display: 'flex' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            paddingTop: 6,
+            width: 30,
+            alignItems: 'center',
+            gap: 0,
+          }}
+        >
+          {lines.map((line, index) => (
+            <span
+              key={index}
+              style={{
+                fontSize: 14,
+                // height: 15,
+                paddingBottom: -4,
+                backgroundColor:
+                  validityError && validityError.locations[0].line === index + 1
+                    ? 'red'
+                    : 'inherit',
+              }}
+            >
+              {index + 1}
+            </span>
+          ))}
+        </div>
+        <textarea
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          rows={source.split(/\n/).length}
+          style={{
+            color: isDarkMode ? '#fff' : '#000',
+            backgroundColor: isDarkMode ? '#000' : '#eee',
+            width: '100%',
+            boxSizing: 'border-box',
+            padding: 8,
+            lineHeight: '1.5em',
+          }}
+        />
+      </div>
+      <div>
+        <input type="checkbox" checked={isValid} disabled />
+        {isValid && <label>DST is valid 🎉</label>}
+        {!isValid && <label>DST is invalid ⛔</label>}
+        {!isValid && validityError && (
+          <div style={{ color: 'red' }}>
+            <div>{validityError.message}</div>
+            <div style={{ color: 'orange' }}>
+              {validityError.locations[0].line}:
+              {validityError.locations[0].column}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

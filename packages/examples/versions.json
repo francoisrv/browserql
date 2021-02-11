@@ -35,14 +35,14 @@
     "description": "Pipe function"
   },
   {
-    "name": "fragments",
-    "version": "2.6.0",
-    "description": "Generate a GraphQL fragment from a type"
-  },
-  {
     "name": "fpql",
     "version": "1.34.1",
     "description": "Accessor util for GraphQL schemas"
+  },
+  {
+    "name": "fragments",
+    "version": "2.6.0",
+    "description": "Generate a GraphQL fragment from a type"
   },
   {
     "name": "graphiql",

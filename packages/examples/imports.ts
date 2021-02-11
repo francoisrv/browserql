@@ -1,11 +1,35 @@
 export default [
   {
     module: 'cache',
-    example: 'try-it',
-    file: 'tryit-render',
+    example: 'get',
+    file: 'default',
     async load() {
       const { default: loaded } = await import(
-        './modules/cache/try-it/files/tryit-render'
+        './modules/cache/get/files/default'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'cache',
+    example: 'get',
+    file: 'null',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/cache/get/files/null'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'cache',
+    example: 'get',
+    file: 'undefined',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/cache/get/files/undefined'
       )
       return loaded
     },
@@ -18,6 +42,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/cache/get/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'cache',
+    example: 'try-it',
+    file: 'tryit-render',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/cache/try-it/files/tryit-render'
       )
       return loaded
     },
@@ -114,18 +150,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/fp/example/files/promises-render'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'fragments',
-    example: 'usage',
-    file: 'index',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fragments/usage/files/index'
       )
       return loaded
     },
@@ -234,6 +258,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/fpql/getKind/files/view-get-query-kind'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fragments',
+    example: 'usage',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fragments/usage/files/index'
       )
       return loaded
     },
