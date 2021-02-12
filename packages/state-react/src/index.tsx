@@ -1,4 +1,10 @@
-import { ReactElement, useCallback, useEffect, useState } from 'react'
+import {
+  createContext,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import type { DocumentNode } from 'graphql'
 import cacheql from '@browserql/cache'
 
