@@ -1,30 +1,27 @@
-import {
-  createContext,
-  ReactElement,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react'
-import type { DocumentNode } from 'graphql'
+import { ReactElement, useCallback, useEffect, useState } from 'react'
+import type { DocumentNode, GraphQLScalarType } from 'graphql'
 import cacheql from '@browserql/cache'
 
-interface StateObject<Variables, Data> {
-  get(variables: Variables): Data
-  set(
-    variables: Variables | Data | ((input: Data) => Data),
-    next?: Data | ((input: Data) => Data)
-  ): void
+interface StateObject<Data extends Record<string, any>> {
+  get(): Data
+  set(setter?: Data | ((input: Data) => Data)): void
 }
 
-interface Props<Variables, Data> {
+interface Props<Variables, Data extends Record<string, any>> {
   query: DocumentNode
   variables?: any
-  children: (state: StateObject<Variables, Data>) => ReactElement
+  children: (
+    state: (
+      name: keyof Data,
+      variables?: Variables
+    ) => StateObject<Data[typeof name]>
+  ) => ReactElement
   cache: any
   schema: DocumentNode
+  scalars?: Record<string, GraphQLScalarType>
 }
 
-export default function State<Variables, Data>({
+export default function State<Variables, Data extends Record<string, any>>({
   cache,
   children,
   query,
@@ -42,12 +39,12 @@ export default function State<Variables, Data>({
       },
     })
   }, [query, op])
-  return children({
-    get(variables) {
-      return cached.get(query, variables)
+  return children((name: keyof Data, variables?: Variables) => ({
+    get() {
+      return cached.get(query, variables)[name]
     },
-    set(variables, setter) {
-      cached.set(query, variables, setter)
+    set(setter) {
+      cached.set(query, variables, { [name]: setter })
     },
-  })
+  }))
 }
