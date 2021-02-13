@@ -96,6 +96,18 @@ export default [
   },
 
   {
+    module: 'client',
+    example: 'schema',
+    file: 'try-client',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/schema/files/try-client'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'executable',
     example: 'usage',
     file: 'mutation-render',
@@ -126,30 +138,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/firestore/try-it/files/tryit'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'fp',
-    example: 'example',
-    file: 'index-render',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fp/example/files/index-render'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'fp',
-    example: 'example',
-    file: 'promises-render',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fp/example/files/promises-render'
       )
       return loaded
     },
@@ -264,6 +252,30 @@ export default [
   },
 
   {
+    module: 'fp',
+    example: 'example',
+    file: 'index-render',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fp/example/files/index-render'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fp',
+    example: 'example',
+    file: 'promises-render',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fp/example/files/promises-render'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'fragments',
     example: 'usage',
     file: 'index',
@@ -294,6 +306,30 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/graphiql/usage/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'http',
+    example: 'about',
+    file: 'app',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/http/about/files/app'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'http',
+    example: 'about',
+    file: 'response',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/http/about/files/response'
       )
       return loaded
     },
@@ -348,24 +384,12 @@ export default [
   },
 
   {
-    module: 'http',
-    example: 'about',
-    file: 'app',
+    module: 'schema-composer',
+    example: 'try-it',
+    file: 'view',
     async load() {
       const { default: loaded } = await import(
-        './modules/http/about/files/app'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'http',
-    example: 'about',
-    file: 'response',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/http/about/files/response'
+        './modules/schema-composer/try-it/files/view'
       )
       return loaded
     },
@@ -390,18 +414,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/react/use-query/files/index'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'schema-composer',
-    example: 'try-it',
-    file: 'view',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/schema-composer/try-it/files/view'
       )
       return loaded
     },
