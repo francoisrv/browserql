@@ -133,13 +133,13 @@ export default function Code({
         showLineNumbers={false}
         style={style}
         language={language}
-        children={value}
+        children={`\n${value}`}
       />
       <div
         style={{
           position: 'absolute',
-          top: 12,
-          right: 12,
+          top: 6,
+          right: 6,
         }}
       >
         <Chip color="default" label={language} />
