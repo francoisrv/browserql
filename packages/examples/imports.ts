@@ -1,47 +1,11 @@
 export default [
   {
-    module: 'client',
-    example: 'resolvers',
-    file: 'app',
+    module: 'cache',
+    example: 'get',
+    file: 'default',
     async load() {
       const { default: loaded } = await import(
-        './modules/client/resolvers/files/app'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'client',
-    example: 'resolvers',
-    file: 'view',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/client/resolvers/files/view'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'client',
-    example: 'schema',
-    file: 'try-client',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/client/schema/files/try-client'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'client',
-    example: 'subscriptions',
-    file: 'main-view',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/client/subscriptions/files/main-view'
+        './modules/cache/get/files/default'
       )
       return loaded
     },
@@ -54,18 +18,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/cache/get/files/null'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'cache',
-    example: 'get',
-    file: 'default',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/cache/get/files/default'
       )
       return loaded
     },
@@ -114,6 +66,54 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/cache/usage/files/example'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'client',
+    example: 'resolvers',
+    file: 'app',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/resolvers/files/app'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'client',
+    example: 'resolvers',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/resolvers/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'client',
+    example: 'schema',
+    file: 'try-client',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/schema/files/try-client'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'client',
+    example: 'subscriptions',
+    file: 'main-view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/subscriptions/files/main-view'
       )
       return loaded
     },
@@ -174,18 +174,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/fp/example/files/promises-render'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'fragments',
-    example: 'usage',
-    file: 'index',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fragments/usage/files/index'
       )
       return loaded
     },
@@ -300,6 +288,18 @@ export default [
   },
 
   {
+    module: 'fragments',
+    example: 'usage',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fragments/usage/files/index'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'graphiql',
     example: 'usage',
     file: 'example',
@@ -360,18 +360,6 @@ export default [
   },
 
   {
-    module: 'input',
-    example: 'example',
-    file: 'example',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/input/example/files/example'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'http',
     example: 'about',
     file: 'app',
@@ -390,6 +378,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/http/about/files/response'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'input',
+    example: 'example',
+    file: 'example',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/input/example/files/example'
       )
       return loaded
     },

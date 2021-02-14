@@ -15,7 +15,17 @@ interface ConnectHttpOptions {}
 export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
   return function ({ schema }) {
     const ourSchema = gql`
-      directive @http(url: String) on FIELD_DEFINITION
+      enum HttpMethod {
+        DELETE
+        GET
+        HEAD
+        OPTIONS
+        PATCH
+        POST
+        PUT
+      }
+
+      directive @http(url: String, method: HttpMethod) on FIELD_DEFINITION
     `
     const targetQueries = getQueries(schema as DocumentNode)
       .filter((query) => getDirective('http')(query))
@@ -27,11 +37,17 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
             ...queries,
             [getName(query)]: async (variables: any) => {
               let endpoint = ''
+              const options: Partial<RequestInit> = {}
 
               const url = getArgument('url')(http)
+              const method = getArgument('method')(http)
 
               if (url) {
                 endpoint = getValue(url)
+              }
+
+              if (method) {
+                options.method = method
               }
 
               for (const key in variables) {
@@ -43,7 +59,7 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
 
               console.log({ endpoint, variables })
 
-              const response = await fetch(endpoint)
+              const response = await fetch(endpoint, options)
               const json = await response.json()
               return json
             },
