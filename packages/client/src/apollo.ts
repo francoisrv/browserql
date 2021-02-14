@@ -1,9 +1,10 @@
-import type { Dictionary } from '@browserql/types'
+import type { Context } from '@browserql/types'
 import type { GraphQLSchema } from 'graphql'
 
 import ApolloClient from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-import { SchemaLink } from 'apollo-link-schema'
+import SchemaLink from './SchemaLink'
+// import { SchemaLink } from 'apollo-link-schema'
 
 /**
  * Create a new Apollo client
@@ -16,7 +17,7 @@ export default function makeApolloClient(
   rootValue: any,
   schema: GraphQLSchema,
   cache: InMemoryCache,
-  context: Dictionary<any>
+  context: Context
 ) {
   return new ApolloClient({
     link: new SchemaLink({

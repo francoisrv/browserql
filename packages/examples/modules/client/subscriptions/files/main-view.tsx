@@ -15,7 +15,7 @@ export default function View() {
     }
 
     type Subscription {
-      timeChecked: Boolean
+      timeChecked: Date!
     }
 
     scalar Date
@@ -29,6 +29,8 @@ export default function View() {
 
   const queries = {
     whatTimeIsIt() {
+      console.log('QUERY')
+      pubsub.publish('MY_EVENT', new Date())
       return new Date()
     },
   }
@@ -42,11 +44,9 @@ export default function View() {
   const scalarsFile = `export { DateResolver as Date } from 'graphql-scalars'`
 
   const subscriptions = {
-    timeChecked: {
-      subscribe() {
-        console.log('hello')
-        return pubsub.asyncIterator('MY_EVENT')
-      },
+    timeChecked() {
+      console.log('SUUUUUB')
+      return pubsub.asyncIterator('MY_EVENT')
     },
   }
 

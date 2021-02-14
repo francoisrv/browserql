@@ -78,9 +78,10 @@ export default function GraphiQL({ client, graphiqlProps, schema }: Props) {
           mutation: op,
           variables,
         })
+      } else if (operation.operation === 'subscription') {
       }
     }
-    throw new Error('Could no execute operation')
+    throw new Error('Could not execute operation')
   }
 
   if (!introspection) {

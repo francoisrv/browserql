@@ -7,7 +7,9 @@ export default function getExecutableOperations(
     (def) =>
       def.kind === 'OperationDefinition' &&
       def.operation &&
-      (def.operation === 'query' || def.operation === 'mutation')
+      (def.operation === 'query' ||
+        def.operation === 'mutation' ||
+        def.operation === 'subscription')
   ) as OperationDefinitionNode[]
   return operations
 }

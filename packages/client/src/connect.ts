@@ -31,6 +31,11 @@ export default function connect(
   const scalars: Scalars = {}
   const schemas: DocumentNode[] = []
   const subscriptions: Subscriptions = {}
+  const resolvers: any = {
+    Query: {},
+    Mutation: {},
+    Subscription: {},
+  }
 
   function applyArg(arg: Partial<BrowserqlClientProperty>) {
     if (arg.schema) {
@@ -99,25 +104,31 @@ export default function connect(
     if (!rootValue[name]) {
       rootValue[name] = queries[name]
     }
+    resolvers.Query[name] = queries[name]
   }
 
   for (const name in mutations) {
     if (!rootValue[name]) {
       rootValue[name] = mutations[name]
     }
+    resolvers.Mutation[name] = mutations[name]
   }
 
   for (const name in scalars) {
     if (!rootValue[name]) {
       rootValue[name] = scalars[name]
     }
+    resolvers[name] = scalars[name]
   }
 
   for (const name in subscriptions) {
     if (!rootValue[name]) {
       rootValue[name] = subscriptions[name]
     }
+    resolvers.Subscription[name] = subscriptions[name]
   }
+
+  console.log({ resolvers })
 
   const finalSchema = merge(...schemas)
 
