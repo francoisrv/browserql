@@ -1,38 +1,44 @@
 import type { InMemoryCache } from 'apollo-cache-inmemory'
 import type ApolloClient from 'apollo-client'
 import type { DocumentNode, GraphQLScalarType } from 'graphql'
-import { SchemaDirectiveVisitorClass } from '@graphql-tools/utils'
+import type { SchemaDirectiveVisitorClass } from '@graphql-tools/utils'
 
-export type Dictionary<A = any> = {
-  [name: string]: A
+export type Context = Record<string, any>
+export type Directives = Record<string, SchemaDirectiveVisitorClass>
+export type Operations = Record<
+  string,
+  (variables: any, ctx: BrowserqlClientContext) => any
+>
+export type Scalars = Record<string, GraphQLScalarType>
+export type Subscriptions = Record<
+  string,
+  {
+    subscribe(): any
+  }
+>
+
+/**
+ * Connectors for browserql client as an object
+ */
+export interface BrowserqlClientProperty {
+  context?: Context
+  directives?: Directives
+  mutations?: Operations
+  queries?: Operations
+  scalars?: Scalars
+  schema: DocumentNode
+  subscriptions?: Subscriptions
 }
 
-export interface Resolvers {
-  queries?: Dictionary<(...args: any[]) => any>
-  mutations?: Dictionary<(...args: any[]) => any>
-  scalars?: Dictionary<GraphQLScalarType>
-  directives?: Record<string, SchemaDirectiveVisitorClass>
-}
+export type BrowserqlClientPropertyFactory = (
+  partialClient: Partial<BrowserqlClientProperty>
+) => Partial<BrowserqlClientProperty>
 
-export interface Schemaql extends Resolvers {
-  schema?: DocumentNode
-  context?: Dictionary<any>
-}
-
-export type SchemaqlFactory = (obj: Schemaql) => Schemaql
-
-export type BrowserqlClientContext = Dictionary<any> & {
+export type BrowserqlClientContext = Context & {
   browserqlClient: BrowserqlClient
 }
 
-export interface BrowserqlClient {
-  client: ApolloClient<any>
+export interface BrowserqlClient extends BrowserqlClientProperty {
   apollo: ApolloClient<any>
   cache: InMemoryCache
-  schema: DocumentNode
-  queries: Dictionary<(...args: any[]) => any>
-  mutations: Dictionary<(...args: any[]) => any>
-  scalars: Dictionary<GraphQLScalarType>
-  directives?: Record<string, SchemaDirectiveVisitorClass>
-  context: BrowserqlClientContext
 }

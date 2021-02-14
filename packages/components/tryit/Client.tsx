@@ -6,19 +6,32 @@ import { AccordionDetails } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Code from '../Code'
 import GraphiQL from '@browserql/graphiql'
-import { parse } from 'graphql'
+import { GraphQLScalarType, parse } from 'graphql'
 import connect from '@browserql/client'
 import { compact } from 'lodash'
 
 interface Props {
   schema: string
   query?: string
-  scalars?: string
-  queries?: string
+  scalars?: Record<string, GraphQLScalarType>
+  queries?: Record<string, any>
+  subscriptions?: Record<string, any>
+  scalarsFile?: string
+  queriesFile?: string
+  subscriptionsFile?: string
 }
 
-export default function TryClient({ schema, query, scalars, queries }: Props) {
-  const client = connect(parse(schema))
+export default function TryClient({
+  queries,
+  queriesFile,
+  query,
+  scalars,
+  scalarsFile,
+  schema,
+  subscriptionsFile,
+  subscriptions,
+}: Props) {
+  const client = connect(parse(schema), { queries, scalars, subscriptions })
   return (
     <div>
       <Accordion defaultExpanded>
@@ -31,33 +44,45 @@ export default function TryClient({ schema, query, scalars, queries }: Props) {
           </div>
         </AccordionDetails>
       </Accordion>
-      {queries && (
-        <Accordion defaultExpanded>
+      {queriesFile && (
+        <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>queries.graphql</Typography>
+            <Typography>queries.js</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <div style={{ flex: 1 }}>
-              <Code language="javascript" value={queries} />
+              <Code language="javascript" value={queriesFile} />
             </div>
           </AccordionDetails>
         </Accordion>
       )}
-      {scalars && (
-        <Accordion defaultExpanded>
+      {scalarsFile && (
+        <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>scalars.graphql</Typography>
+            <Typography>scalars.js</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <div style={{ flex: 1 }}>
-              <Code language="javascript" value={scalars} />
+              <Code language="javascript" value={scalarsFile} />
+            </div>
+          </AccordionDetails>
+        </Accordion>
+      )}
+      {subscriptionsFile && (
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>subscriptions.js</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <div style={{ flex: 1 }}>
+              <Code language="javascript" value={subscriptionsFile} />
             </div>
           </AccordionDetails>
         </Accordion>
       )}
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>index.ts</Typography>
+          <Typography>index.js</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <div style={{ flex: 1 }}>
@@ -67,10 +92,13 @@ export default function TryClient({ schema, query, scalars, queries }: Props) {
 import schema from './schema.graphql'
 ${queries ? `import * as queries from './queries'` : ''}
 ${scalars ? `import * as scalars from './scalars'` : ''}
+${subscriptions ? `import * as subscriptions from './subscriptions'` : ''}
 
-connect(schema, { ${compact([queries && 'queries', scalars && 'scalars']).join(
-                ', '
-              )} })`}
+connect(schema, { ${compact([
+                queries && 'queries',
+                scalars && 'scalars',
+                subscriptions && 'subscriptions',
+              ]).join(', ')} })`}
             />
           </div>
         </AccordionDetails>

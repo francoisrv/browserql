@@ -2,8 +2,13 @@ import type { DocumentNode } from 'graphql'
 
 import type {
   BrowserqlClient,
-  Schemaql,
-  SchemaqlFactory,
+  BrowserqlClientProperty,
+  BrowserqlClientPropertyFactory,
+  Context,
+  Directives,
+  Operations,
+  Scalars,
+  Subscriptions,
 } from '@browserql/types'
 
 import { merge } from '@browserql/fpql'
@@ -13,19 +18,21 @@ import makeSchema from './schema'
 import makeApolloClient from './apollo'
 
 export default function connect(
-  ...args: Array<Schemaql | SchemaqlFactory | DocumentNode>
+  ...args: Array<
+    BrowserqlClientProperty | BrowserqlClientPropertyFactory | DocumentNode
+  >
 ): BrowserqlClient {
   const cache = makeCache()
+  const context: Context = {}
+  const directives: Directives = {}
+  const mutations: Operations = {}
+  const queries: Operations = {}
+  const rootValue: Record<string, any> = {}
+  const scalars: Scalars = {}
   const schemas: DocumentNode[] = []
+  const subscriptions: Subscriptions = {}
 
-  const rootValue: any = {}
-  const directives: any = {}
-  const queries: any = {}
-  const mutations: any = {}
-  const scalars: any = {}
-  const context: any = {}
-
-  function applyArg(arg: Schemaql) {
+  function applyArg(arg: Partial<BrowserqlClientProperty>) {
     if (arg.schema) {
       schemas.push(arg.schema as DocumentNode)
     }
@@ -39,6 +46,12 @@ export default function connect(
     if (arg.mutations) {
       for (const name in arg.mutations) {
         mutations[name] = arg.mutations[name]
+      }
+    }
+
+    if (arg.subscriptions) {
+      for (const name in arg.subscriptions) {
+        subscriptions[name] = arg.subscriptions[name]
       }
     }
 
@@ -67,16 +80,18 @@ export default function connect(
     } else if (typeof arg == 'object') {
       applyArg(arg)
     } else if (typeof arg === 'function') {
-      applyArg(
-        arg({
-          schema: schemas.length ? merge(...schemas) : undefined,
-          queries,
-          mutations,
-          scalars,
-          directives,
-          context,
-        })
-      )
+      const props: Partial<BrowserqlClientProperty> = {
+        queries,
+        mutations,
+        scalars,
+        directives,
+        context,
+        subscriptions,
+      }
+      if (schemas.length) {
+        props.schema = merge(...schemas)
+      }
+      applyArg(arg(props))
     }
   }
 
@@ -98,6 +113,12 @@ export default function connect(
     }
   }
 
+  for (const name in subscriptions) {
+    if (!rootValue[name]) {
+      rootValue[name] = subscriptions[name]
+    }
+  }
+
   const finalSchema = merge(...schemas)
 
   const schema = makeSchema([finalSchema], directives)
@@ -114,6 +135,7 @@ export default function connect(
     queries,
     scalars,
     context,
+    subscriptions,
   }
 
   browserqlClient.context.browserqlClient = browserqlClient

@@ -1002,10 +1002,15 @@
     "@browserql/operations" "^1.2.0"
     graphql "^15.3.0"
 
-"@browserql/types@^1.1.0", "@browserql/types@^1.2.0", "@browserql/types@^1.3.0", "@browserql/types@^1.5.0":
+"@browserql/types@^1.1.0", "@browserql/types@^1.2.0", "@browserql/types@^1.3.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@browserql/types/-/types-1.5.0.tgz#4f8cd49b4f8ac842909ffc1d334ed9de6f50c419"
   integrity sha512-U2wIQ2D82JW1lvM7gH1Z3UKJme+cHE3yDQkSsyQ5SyPX9ovU4kgUforfFz+HKnt2KnaEKWroQvMvLMsgmFjggg==
+
+"@browserql/types@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@browserql/types/-/types-2.0.0.tgz#ba1292298397e8b0071732099ee4e56da3401e63"
+  integrity sha512-7bcKS1bsSmSlMfdca2HEFGwIE0Hrsf/hN+o+FpXrLnQVTKVikumywXtVUlRl5VuEYTwKb5NCJZP7MYp5ffhWoA==
 
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
@@ -7771,6 +7776,13 @@ graphql-scalars@^1.4.1, graphql-scalars@^1.7.0:
   integrity sha512-CCL9aaZdK1VD2jYFCF0ONB1cT5brK9DXymSuu/E/JoYLmAaLwGgjdzY66mT2ZI5oOIrSrJqWTf4y20qdSaE4MQ==
   dependencies:
     tslib "~2.0.3"
+
+graphql-subscriptions@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/graphql-subscriptions/-/graphql-subscriptions-1.2.0.tgz#d82ff76e7504ac91acbbea15f36cd3904043937b"
+  integrity sha512-uXvp729fztqwa7HFUFaAqKwNMwwOfsvu4HwOu7/35Cd44bNrMPCn97mNGN0ybuuZE36CPXBTaW/4U/xyOS4D9w==
+  dependencies:
+    iterall "^1.3.0"
 
 graphql-tag@^2.11.0:
   version "2.11.0"

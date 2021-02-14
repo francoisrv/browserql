@@ -4,12 +4,20 @@ import { DateResolver } from 'graphql-scalars'
 import connect from '@browserql/client'
 import gql from 'graphql-tag'
 import { print } from 'graphql'
+import { PubSub } from 'graphql-subscriptions'
+
+const pubsub = new PubSub()
 
 export default function View() {
   const schema = gql`
     type Query {
       whatTimeIsIt: Date!
     }
+
+    type Subscription {
+      timeChecked: Boolean
+    }
+
     scalar Date
   `
 
@@ -33,6 +41,25 @@ export default function View() {
 
   const scalarsFile = `export { DateResolver as Date } from 'graphql-scalars'`
 
+  const subscriptions = {
+    timeChecked: {
+      subscribe() {
+        console.log('hello')
+        return pubsub.asyncIterator('MY_EVENT')
+      },
+    },
+  }
+
+  const subscriptionsFile = `import { PubSub } from 'graphql-subscriptions'
+
+const pubsub = new PubSub()
+
+export const timeChecheck = {
+  subscribe() {
+    return pubsub.asyncIterator('MY_EVENT')
+  },
+}`
+
   return (
     <TryClient
       schema={print(schema)}
@@ -41,6 +68,8 @@ export default function View() {
       queries={queries}
       scalarsFile={scalarsFile}
       queriesFile={queriesFile}
+      subscriptionsFile={subscriptionsFile}
+      subscriptions={subscriptions}
     />
   )
 }
