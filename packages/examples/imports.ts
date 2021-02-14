@@ -1,11 +1,47 @@
 export default [
   {
-    module: 'cache',
-    example: 'get',
-    file: 'default',
+    module: 'client',
+    example: 'resolvers',
+    file: 'app',
     async load() {
       const { default: loaded } = await import(
-        './modules/cache/get/files/default'
+        './modules/client/resolvers/files/app'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'client',
+    example: 'resolvers',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/resolvers/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'client',
+    example: 'schema',
+    file: 'try-client',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/schema/files/try-client'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'client',
+    example: 'subscriptions',
+    file: 'main-view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/client/subscriptions/files/main-view'
       )
       return loaded
     },
@@ -18,6 +54,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/cache/get/files/null'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'cache',
+    example: 'get',
+    file: 'default',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/cache/get/files/default'
       )
       return loaded
     },
@@ -60,24 +108,12 @@ export default [
   },
 
   {
-    module: 'client',
-    example: 'subscriptions',
-    file: 'main-view',
+    module: 'cache',
+    example: 'usage',
+    file: 'example',
     async load() {
       const { default: loaded } = await import(
-        './modules/client/subscriptions/files/main-view'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'client',
-    example: 'schema',
-    file: 'try-client',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/client/schema/files/try-client'
+        './modules/cache/usage/files/example'
       )
       return loaded
     },
@@ -102,42 +138,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/executable/usage/files/query-render'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'client',
-    example: 'resolvers',
-    file: 'app',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/client/resolvers/files/app'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'client',
-    example: 'resolvers',
-    file: 'view',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/client/resolvers/files/view'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'cache',
-    example: 'usage',
-    file: 'example',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/cache/usage/files/example'
       )
       return loaded
     },
@@ -174,6 +174,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/fp/example/files/promises-render'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fragments',
+    example: 'usage',
+    file: 'index',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fragments/usage/files/index'
       )
       return loaded
     },
@@ -276,18 +288,6 @@ export default [
   },
 
   {
-    module: 'fragments',
-    example: 'usage',
-    file: 'index',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fragments/usage/files/index'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'fpql',
     example: 'getKind',
     file: 'view-get-query-kind',
@@ -318,30 +318,6 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/graphiql/usage/files/view'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'http',
-    example: 'about',
-    file: 'app',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/http/about/files/app'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'http',
-    example: 'about',
-    file: 'response',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/http/about/files/response'
       )
       return loaded
     },
@@ -396,12 +372,24 @@ export default [
   },
 
   {
-    module: 'react',
-    example: 'use-query',
-    file: 'example',
+    module: 'http',
+    example: 'about',
+    file: 'app',
     async load() {
       const { default: loaded } = await import(
-        './modules/react/use-query/files/example'
+        './modules/http/about/files/app'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'http',
+    example: 'about',
+    file: 'response',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/http/about/files/response'
       )
       return loaded
     },
@@ -414,6 +402,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/react/use-query/files/index'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'react',
+    example: 'use-query',
+    file: 'example',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/react/use-query/files/example'
       )
       return loaded
     },
