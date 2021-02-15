@@ -121,6 +121,18 @@ export default [
 
   {
     module: 'executable',
+    example: 'tryit',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/executable/tryit/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'executable',
     example: 'usage',
     file: 'mutation-render',
     async load() {
@@ -336,6 +348,30 @@ export default [
   },
 
   {
+    module: 'http',
+    example: 'about',
+    file: 'app',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/http/about/files/app'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'http',
+    example: 'about',
+    file: 'response',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/http/about/files/response'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'graphql-schema-class',
     example: 'default-values',
     file: 'example',
@@ -372,30 +408,6 @@ export default [
   },
 
   {
-    module: 'http',
-    example: 'about',
-    file: 'app',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/http/about/files/app'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'http',
-    example: 'about',
-    file: 'response',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/http/about/files/response'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'input',
     example: 'example',
     file: 'example',
@@ -410,10 +422,10 @@ export default [
   {
     module: 'react',
     example: 'use-query',
-    file: 'index',
+    file: 'example',
     async load() {
       const { default: loaded } = await import(
-        './modules/react/use-query/files/index'
+        './modules/react/use-query/files/example'
       )
       return loaded
     },
@@ -422,10 +434,10 @@ export default [
   {
     module: 'react',
     example: 'use-query',
-    file: 'example',
+    file: 'index',
     async load() {
       const { default: loaded } = await import(
-        './modules/react/use-query/files/example'
+        './modules/react/use-query/files/index'
       )
       return loaded
     },
