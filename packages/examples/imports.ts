@@ -49,11 +49,11 @@ export default [
 
   {
     module: 'cache',
-    example: 'try-it',
-    file: 'tryit-render',
+    example: 'usage',
+    file: 'example',
     async load() {
       const { default: loaded } = await import(
-        './modules/cache/try-it/files/tryit-render'
+        './modules/cache/usage/files/example'
       )
       return loaded
     },
@@ -61,11 +61,11 @@ export default [
 
   {
     module: 'cache',
-    example: 'usage',
-    file: 'example',
+    example: 'try-it',
+    file: 'tryit-render',
     async load() {
       const { default: loaded } = await import(
-        './modules/cache/usage/files/example'
+        './modules/cache/try-it/files/tryit-render'
       )
       return loaded
     },
@@ -282,6 +282,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/fpql/getKind/files/view-get-query-kind'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fpql',
+    example: 'getValue',
+    file: 'field-argument-value',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fpql/getValue/files/field-argument-value'
       )
       return loaded
     },
