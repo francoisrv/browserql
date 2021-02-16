@@ -4,7 +4,6 @@ import Select from '@material-ui/core/Select'
 import { getName, getQueries } from '@browserql/fpql'
 import { parse } from 'graphql'
 import MenuItem from '@material-ui/core/MenuItem'
-import Button from '@material-ui/core/Button'
 import Code from '@browserql/components/Code'
 import { printExecutableQuery } from '@browserql/executable'
 
