@@ -2,12 +2,13 @@ import type { SchemaqlFactory } from '@browserql/types'
 import {
   getArgument,
   getDirective,
+  getMutations,
   getName,
   getQueries,
   getValue,
 } from '@browserql/fpql'
 import gql from 'graphql-tag'
-import { DocumentNode } from 'graphql'
+import { DirectiveNode, DocumentNode } from 'graphql'
 import { applyParameters } from 'paramizer'
 
 interface ConnectHttpOptions {}
@@ -15,8 +16,49 @@ interface ConnectHttpOptions {}
 export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
   return function ({ schema }) {
     const ourSchema = gql`
-      directive @http(url: String) on FIELD_DEFINITION
+      enum HttpMethod {
+        DELETE
+        GET
+        HEAD
+        OPTIONS
+        PATCH
+        POST
+        PUT
+      }
+
+      directive @http(url: String, method: HttpMethod) on FIELD_DEFINITION
     `
+    const makeResolver = (
+      type: 'query' | 'mutation',
+      http: DirectiveNode
+    ) => async (variables: any) => {
+      let endpoint = ''
+      const options: Partial<RequestInit> = {}
+
+      const url = getArgument('url')(http)
+      const method = getArgument('method')(http)
+
+      if (url) {
+        endpoint = getValue(url)
+      }
+
+      if (method) {
+        options.method = getValue(method)
+      }
+
+      for (const key in variables) {
+        endpoint = endpoint.replace(
+          new RegExp(`:${key}(\\W|$)`, 'g'),
+          `${variables[key]}$1`
+        )
+      }
+
+      console.log({ endpoint, variables })
+
+      const response = await fetch(endpoint, options)
+      const json = await response.json()
+      return json
+    }
     const targetQueries = getQueries(schema as DocumentNode)
       .filter((query) => getDirective('http')(query))
       .reduce((queries, query) => {
@@ -25,28 +67,21 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
         if (http) {
           return {
             ...queries,
-            [getName(query)]: async (variables: any) => {
-              let endpoint = ''
+            [getName(query)]: makeResolver('query', http),
+          }
+        }
 
-              const url = getArgument('url')(http)
+        return queries
+      }, {})
+    const targetMutations = getMutations(schema as DocumentNode)
+      .filter((query) => getDirective('http')(query))
+      .reduce((queries, query) => {
+        const http = getDirective('http')(query)
 
-              if (url) {
-                endpoint = getValue(url)
-              }
-
-              for (const key in variables) {
-                endpoint = endpoint.replace(
-                  new RegExp(`:${key}(\\W|$)`, 'g'),
-                  `${variables[key]}$1`
-                )
-              }
-
-              console.log({ endpoint, variables })
-
-              const response = await fetch(endpoint)
-              const json = await response.json()
-              return json
-            },
+        if (http) {
+          return {
+            ...queries,
+            [getName(query)]: makeResolver('mutation', http),
           }
         }
 
@@ -56,6 +91,7 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
     return {
       schema: ourSchema,
       queries: targetQueries,
+      mutations: targetMutations,
     }
   }
 }

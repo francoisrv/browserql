@@ -24,8 +24,6 @@ interface Props<Variables, Data extends Record<string, any>> {
   hydrate?: ApolloClient<any>
 }
 
-let i = 0
-
 export default function State<Variables, Data extends Record<string, any>>({
   cache,
   children,
@@ -60,9 +58,12 @@ export default function State<Variables, Data extends Record<string, any>>({
         const res = cached.get(query, variables)[name]
         if (hydrate) {
           try {
-            cache.readQuery({ query, variables })
+            const inCache = cache.readQuery({ query, variables })
+            if (inCache === null) {
+              throw new Error('Cache is null')
+            }
           } catch (error) {
-            hydrateAndRefresh()
+            hydrateAndRefresh(variables)
           }
         }
         return res

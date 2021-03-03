@@ -7,6 +7,7 @@ export default function printValue(value: ArgumentNode['value']): any {
     case 'FloatValue':
       return Number(value.value)
     case 'StringValue':
+    case 'EnumValue':
       return value.value.toString()
     case 'BooleanValue':
       return value.value

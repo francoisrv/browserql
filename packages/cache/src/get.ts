@@ -15,10 +15,14 @@ export default function get(query: DocumentNode, variables?: any) {
   return function (cache: BrowserqlClient['cache'], schema: DocumentNode) {
     const queries = getExecutableQueries(query)
     try {
-      return cache.readQuery<any>({
+      const inCache = cache.readQuery<any>({
         query,
         variables,
       })
+      if (inCache === null) {
+        throw new Error('Cache is null')
+      }
+      return inCache
     } catch (error) {
       return queries.reduce((acc, executableQuery) => {
         const queryName = getName(executableQuery)

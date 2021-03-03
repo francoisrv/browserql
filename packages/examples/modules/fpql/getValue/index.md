@@ -1,37 +1,24 @@
 Get a value node
 
 ```graphql
+enum Foo {
+  Bar
+}
+
+directive @variant(admin: Boolean!) on FIELD_DEFINITION
+
 type Query {
-  getUser: User! @variant(admin: true)
+  getUser: User @variant(admin: true foo: Foo = Bar)
 }
 ```
+
+## Get directive argument value
 
 ```javascript
-import { getValue, getDirective, getArgument, getQuery } from '@browserql/fpql'
+import { getValue, getField, getQuery } from '@browserql/fpql'
 import fp from '@browserql/fp'
 
-fp(schema)(
-  getQuery('getUser'),
-  getDirective('variant'),
-  getArgument('admin'),
-  getValue
-)
+fp(schema)(getQuery('getUser'), getField('foo'), getValue)
 ```
 
-```snapshot
-FPQL.GetValue
-```
-
-## Use cases
-
-### Objects
-
-```graphql
-type Query {
-  getUser: User! @variant(admin: { level: 2 })
-}
-```
-
-```snapshot
-FPQL.GetObjectValue
-```
+{{ render field-argument-value.tsx }}
