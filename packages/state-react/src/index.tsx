@@ -12,10 +12,12 @@ interface Props<Variables, Data extends Record<string, any>> {
   query: DocumentNode
   variables?: Variables
   children: (
-    state: (
-      name: keyof Data,
-      variables?: Variables
-    ) => StateObject<Data[typeof name]>,
+    // state: (
+    //   name: keyof Data,
+    //   variables?: Variables
+    // ) => StateObject<Data[typeof name]>,
+    data: Data,
+    setter: (next: Data) => void,
     cached: ReturnType<typeof cacheql>
   ) => ReactElement
   hydrate?: ApolloClient<any> | boolean
@@ -33,6 +35,7 @@ export default function makeState(
     children,
     query,
     hydrate,
+    variables,
   }: Props<Variables, Data>) {
     const cached = cacheql(cache, schema)
     const [op, setOp] = useState(0)
@@ -59,27 +62,25 @@ export default function makeState(
         },
       })
     }, [query, op])
-    return children(
-      (name: keyof Data, variables?: Variables) => ({
-        get() {
-          const res = cached.get(query, variables)[name]
-          if (hydrate) {
-            try {
-              const inCache = cache.readQuery({ query, variables })
-              if (inCache === null) {
-                throw new Error('Cache is null')
-              }
-            } catch (error) {
-              hydrateAndRefresh(variables)
+    const access = {
+      get() {
+        const res = cached.get(query, variables)
+        if (hydrate) {
+          try {
+            const inCache = cache.readQuery({ query, variables })
+            if (inCache === null) {
+              throw new Error('Cache is null')
             }
+          } catch (error) {
+            hydrateAndRefresh(variables)
           }
-          return res
-        },
-        set(setter) {
-          cached.set(query, variables, { [name]: setter })
-        },
-      }),
-      cached
-    )
+        }
+        return res
+      },
+      set(setter: Data) {
+        cached.set(query, variables, setter)
+      },
+    }
+    return children(access.get(), access.set, cached)
   }
 }
