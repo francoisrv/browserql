@@ -99,59 +99,91 @@ export default function TryCache({
   initialTab,
 }: Props) {
   const [schema, setSchema] = useState(initialSchema)
+  const [tmpSchema, setTmpSchema] = useState(initialSchema)
   const [query, setQuery] = useState(initialQuery)
+  const [tmpQuery, setTmpQuery] = useState(initialQuery)
   const [variables, setVariables] = useState<any>({})
-  const [result, setResult] = useState(
-    getCache(schema).get(parse(query), variables)
+  const [setter, setSetter] = useState(
+    JSON.stringify(
+      {
+        variables: {},
+        data: {
+          getPostMessage: {
+            message: 'foo',
+            data: { foo: 1, __typename: 'Data' },
+            __typename: 'Message',
+          },
+        },
+      },
+      null,
+      2
+    )
   )
+  const [cacheQL, setCacheQL] = useState<any>(getCache(schema))
+  const handleSave = useCallback(() => {
+    setSchema(tmpSchema)
+    setQuery(tmpQuery)
+  }, [tmpSchema, tmpQuery])
+  const handleSet = useCallback(() => {
+    try {
+      const parsed = JSON.parse(setter)
+      console.log('trying')
+      cacheQL.set(parse(query), parsed.variables, parsed.data)
+      setSetter(setter.concat('\n'))
+    } catch (error) {
+      console.log(error)
+    }
+  }, [setter, schema, query, cacheQL])
   useEffect(() => {
-    try {
-      // setResult(getCache(schema).get(parse(query), variables))
-    } catch (error) {
-      console.log(error.message)
-    }
-  }, [schema, query])
-  const getCacheValue = () => {
-    try {
-    } catch (error) {
-      console.log
-    }
-  }
+    setCacheQL(getCache(schema))
+  }, [schema])
   return (
     <div style={{ display: 'flex', gap: 12 }}>
       <div style={{ flex: 1 }}>
         <div style={{ height: 12 }} />
         <TextField
           multiline
-          value={schema}
-          onChange={(event) => setSchema(event.target.value)}
+          value={tmpSchema}
+          onChange={(event) => setTmpSchema(event.target.value)}
           fullWidth
           label="Schema"
-          rows={10}
+          rowsMax={30}
           variant="outlined"
-          disabled
         />
         <div style={{ height: 12 }} />
         <TextField
           multiline
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          value={tmpQuery}
+          onChange={(event) => setTmpQuery(event.target.value)}
           fullWidth
           label="Query"
-          rows={5}
+          rowsMax={20}
           variant="outlined"
-          disabled
         />
+        <div style={{ height: 12 }} />
+        <Button fullWidth onClick={handleSave}>
+          Save
+        </Button>
       </div>
       <div style={{ flex: 1 }}>
         <Code
           language="json"
-          value={JSON.stringify(
-            getCache(schema).get(parse(query), variables),
-            null,
-            2
-          )}
+          value={JSON.stringify(cacheQL.get(parse(query), variables), null, 2)}
         />
+        <div style={{ height: 12 }} />
+        <TextField
+          multiline
+          value={setter}
+          onChange={(event) => setSetter(event.target.value)}
+          fullWidth
+          label="Set"
+          rowsMax={25}
+          variant="outlined"
+        />
+        <div style={{ height: 12 }} />
+        <Button fullWidth onClick={handleSet}>
+          Set
+        </Button>
       </div>
     </div>
   )
