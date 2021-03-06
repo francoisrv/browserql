@@ -13,9 +13,9 @@ function View({ query }: Record<'query', DocumentNode>) {
   const State = makeState(ctx.cache, ctx.schema)
   return (
     <>
-      <Typography>Schema</Typography>
+      <Typography variant="h5">Schema</Typography>
       <Code language="graphql" value={print(ctx.schema)} />
-      <Typography>Query</Typography>
+      <Typography variant="h5">Query</Typography>
       <Code language="graphql" value={print(query)} />
       <State query={query}>
         {(result, q) => {
@@ -25,16 +25,10 @@ function View({ query }: Record<'query', DocumentNode>) {
           }, [set])
           return (
             <>
-              <Typography>Cached</Typography>
-              <Code
-                language="json"
-                value={
-                  typeof result === 'undefined'
-                    ? 'undefined'
-                    : JSON.stringify(result, null, 2)
-                }
-              />
-              <Typography>Set</Typography>
+              <Typography variant="h5">Cached</Typography>
+              {console.log({ result })}
+              <Code language="json" value={JSON.stringify(result, null, 2)} />
+              <Typography variant="h5">Set</Typography>
               <TextField
                 multiline
                 value={set}
@@ -49,17 +43,10 @@ function View({ query }: Record<'query', DocumentNode>) {
   )
 }
 
-export default function StateExample() {
-  const schema = gql`
-    type Query {
-      getCounter: Int
-    }
-  `
-  const query = gql`
-    {
-      getCounter
-    }
-  `
+export default function StateExample({
+  schema,
+  query,
+}: Record<'schema' | 'query', DocumentNode>) {
   return (
     <BrowserqlProvider schema={schema}>
       <View query={query} />
