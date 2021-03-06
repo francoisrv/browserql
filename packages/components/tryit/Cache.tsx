@@ -111,6 +111,12 @@ export default function TryCache({
       console.log(error.message)
     }
   }, [schema, query])
+  const getCacheValue = () => {
+    try {
+    } catch (error) {
+      console.log
+    }
+  }
   return (
     <div style={{ display: 'flex', gap: 12 }}>
       <div style={{ flex: 1 }}>
@@ -123,6 +129,7 @@ export default function TryCache({
           label="Schema"
           rows={10}
           variant="outlined"
+          disabled
         />
         <div style={{ height: 12 }} />
         <TextField
@@ -133,10 +140,18 @@ export default function TryCache({
           label="Query"
           rows={5}
           variant="outlined"
+          disabled
         />
       </div>
       <div style={{ flex: 1 }}>
-        <Code language="json" value={JSON.stringify(result, null, 2)} />
+        <Code
+          language="json"
+          value={JSON.stringify(
+            getCache(schema).get(parse(query), variables),
+            null,
+            2
+          )}
+        />
       </div>
     </div>
   )
