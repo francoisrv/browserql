@@ -2,18 +2,6 @@ export default [
   {
     module: 'cache',
     example: 'get',
-    file: 'null',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/cache/get/files/null'
-      )
-      return loaded
-    },
-  },
-
-  {
-    module: 'cache',
-    example: 'get',
     file: 'default',
     async load() {
       const { default: loaded } = await import(
@@ -26,10 +14,10 @@ export default [
   {
     module: 'cache',
     example: 'get',
-    file: 'view',
+    file: 'null',
     async load() {
       const { default: loaded } = await import(
-        './modules/cache/get/files/view'
+        './modules/cache/get/files/null'
       )
       return loaded
     },
@@ -49,11 +37,11 @@ export default [
 
   {
     module: 'cache',
-    example: 'usage',
-    file: 'example',
+    example: 'get',
+    file: 'view',
     async load() {
       const { default: loaded } = await import(
-        './modules/cache/usage/files/example'
+        './modules/cache/get/files/view'
       )
       return loaded
     },
@@ -66,6 +54,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/cache/try-it/files/tryit-render'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'cache',
+    example: 'usage',
+    file: 'example',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/cache/usage/files/example'
       )
       return loaded
     },
@@ -108,24 +108,24 @@ export default [
   },
 
   {
-    module: 'executable',
-    example: 'tryit',
-    file: 'view',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/executable/tryit/files/view'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'client',
     example: 'subscriptions',
     file: 'main-view',
     async load() {
       const { default: loaded } = await import(
         './modules/client/subscriptions/files/main-view'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'executable',
+    example: 'tryit',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/executable/tryit/files/view'
       )
       return loaded
     },
@@ -156,24 +156,24 @@ export default [
   },
 
   {
-    module: 'fp',
-    example: 'example',
-    file: 'index-render',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/fp/example/files/index-render'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'firestore',
     example: 'try-it',
     file: 'tryit',
     async load() {
       const { default: loaded } = await import(
         './modules/firestore/try-it/files/tryit'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'fp',
+    example: 'example',
+    file: 'index-render',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/fp/example/files/index-render'
       )
       return loaded
     },
@@ -336,6 +336,18 @@ export default [
   },
 
   {
+    module: 'graphiql',
+    example: 'usage',
+    file: 'view',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/graphiql/usage/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
     module: 'graphql-schema-class',
     example: 'default-values',
     file: 'example',
@@ -396,18 +408,6 @@ export default [
   },
 
   {
-    module: 'graphiql',
-    example: 'usage',
-    file: 'view',
-    async load() {
-      const { default: loaded } = await import(
-        './modules/graphiql/usage/files/view'
-      )
-      return loaded
-    },
-  },
-
-  {
     module: 'input',
     example: 'example',
     file: 'example',
@@ -450,6 +450,18 @@ export default [
     async load() {
       const { default: loaded } = await import(
         './modules/schema-composer/try-it/files/view'
+      )
+      return loaded
+    },
+  },
+
+  {
+    module: 'state-react',
+    example: 'about',
+    file: 'state',
+    async load() {
+      const { default: loaded } = await import(
+        './modules/state-react/about/files/state'
       )
       return loaded
     },
