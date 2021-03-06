@@ -5,14 +5,14 @@
     "description": "React integration for Firestore with GraphQL"
   },
   {
-    "name": "graphql-project",
-    "version": "1.0.0",
-    "description": "Manage a GraphQL file from terminal"
-  },
-  {
     "name": "cache",
     "version": "1.4.0",
     "description": "Util for updating apollo cache"
+  },
+  {
+    "name": "graphql-project",
+    "version": "1.0.0",
+    "description": "Manage a GraphQL file from terminal"
   },
   {
     "name": "client",
@@ -50,14 +50,14 @@
     "description": "GraphiQL in the browser"
   },
   {
-    "name": "http",
-    "version": "1.11.0",
-    "description": "Fire HTTP requests using a GraphQL schema"
-  },
-  {
     "name": "graphql-schema-class",
     "version": "3.14.0",
     "description": "Generate schema classes from GraphQL schema"
+  },
+  {
+    "name": "http",
+    "version": "1.11.0",
+    "description": "Fire HTTP requests using a GraphQL schema"
   },
   {
     "name": "input",

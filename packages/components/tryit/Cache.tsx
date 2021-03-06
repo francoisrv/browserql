@@ -87,11 +87,62 @@ function GraphqlExecutableSchemaEditor({
   )
 }
 
+function getCache(schema: string) {
+  const doc = parse(schema)
+  const client = connect(doc)
+  return cacheql(client.cache, doc)
+}
+
 export default function TryCache({
   initialSchema,
   initialQuery,
   initialTab,
 }: Props) {
+  const [schema, setSchema] = useState(initialSchema)
+  const [query, setQuery] = useState(initialQuery)
+  const [variables, setVariables] = useState<any>({})
+  const [result, setResult] = useState(
+    getCache(schema).get(parse(query), variables)
+  )
+  useEffect(() => {
+    try {
+      // setResult(getCache(schema).get(parse(query), variables))
+    } catch (error) {
+      console.log(error.message)
+    }
+  }, [schema, query])
+  return (
+    <div style={{ display: 'flex', gap: 12 }}>
+      <div style={{ flex: 1 }}>
+        <div style={{ height: 12 }} />
+        <TextField
+          multiline
+          value={schema}
+          onChange={(event) => setSchema(event.target.value)}
+          fullWidth
+          label="Schema"
+          rows={10}
+          variant="outlined"
+        />
+        <div style={{ height: 12 }} />
+        <TextField
+          multiline
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          fullWidth
+          label="Query"
+          rows={5}
+          variant="outlined"
+        />
+      </div>
+      <div style={{ flex: 1 }}>
+        <Code language="json" value={JSON.stringify(result, null, 2)} />
+      </div>
+    </div>
+  )
+}
+
+export function TryCache2({ initialSchema, initialQuery, initialTab }: Props) {
   const [schema, setSchema] = useState(initialSchema)
   const [query, setQuery] = useState(initialQuery)
   const [result, setResult] = useState(null)

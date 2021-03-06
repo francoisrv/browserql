@@ -1,3 +1,7 @@
 type Query {
   getCounter: Int @default(value: 100)
 }
+
+query {
+  getCounter
+}
