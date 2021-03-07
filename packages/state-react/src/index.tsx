@@ -57,6 +57,7 @@ export default function makeState(
       return cache.watch({
         optimistic: true,
         query,
+        variables,
         callback() {
           setTimeout(refresh)
         },
