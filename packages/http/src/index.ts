@@ -10,6 +10,7 @@ import {
 import gql from 'graphql-tag'
 import { DirectiveNode, DocumentNode } from 'graphql'
 import { applyParameters } from 'paramizer'
+import { HeadersJSONObject } from './JSON'
 
 interface ConnectHttpOptions {}
 
@@ -26,16 +27,13 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
         PUT
       }
 
-      input HttpHeader {
-        key: String!
-        value: String!
-      }
-
       directive @http(
         url: String
         method: HttpMethod
-        headers: [HttpHeader]
+        headers: HeadersJSONObject
       ) on FIELD_DEFINITION
+
+      scalar HeadersJSONObject
     `
     const makeResolver = (
       type: 'query' | 'mutation',
@@ -110,6 +108,9 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
       schema: ourSchema,
       queries: targetQueries,
       mutations: targetMutations,
+      scalars: {
+        HeadersJSONObject,
+      },
     }
   }
 }

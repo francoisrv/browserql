@@ -1,3 +1,5 @@
+// SOURCE: https://github.com/Urigo/graphql-scalars
+
 import { GraphQLScalarType, Kind, ObjectValueNode, ValueNode } from 'graphql'
 
 function parseLiteral(ast: ValueNode, variables: any): any {
@@ -41,10 +43,9 @@ function parseObject(ast: ObjectValueNode, variables: any): any {
   return value
 }
 
-export const GraphQLJSONObject = /*#__PURE__*/ new GraphQLScalarType({
-  name: 'JSONObject',
-  description:
-    'The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).',
+export const HeadersJSONObject = /*#__PURE__*/ new GraphQLScalarType({
+  name: 'HeadersJSONObject',
+  description: 'HTTP Headers JSON Object',
   serialize: ensureObject,
   parseValue: ensureObject,
   // @ts-ignore
