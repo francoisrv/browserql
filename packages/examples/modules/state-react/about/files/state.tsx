@@ -8,6 +8,7 @@ interface IExample {
   title: string
   schema: DocumentNode
   query: DocumentNode
+  variables?: Record<string, any>
 }
 
 const examples: IExample[] = [
@@ -37,13 +38,33 @@ const examples: IExample[] = [
       }
     `,
   },
+  {
+    title: 'With variables',
+    schema: gql`
+      type Query {
+        getCounter(ref: ID!): Int!
+      }
+    `,
+    query: gql`
+      query GetCounter($ref: ID) {
+        getCounter(ref: $ref)
+      }
+    `,
+    variables: {
+      ref: 1234,
+    },
+  },
 ]
 
 function Example(example: IExample) {
   return (
     <div style={{ margin: 22 }}>
       <Typography variant="h4">{example.title}</Typography>
-      <State schema={example.schema} query={example.query} />
+      <State
+        schema={example.schema}
+        query={example.query}
+        variables={example.variables}
+      />
     </div>
   )
 }

@@ -26,7 +26,16 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
         PUT
       }
 
-      directive @http(url: String, method: HttpMethod) on FIELD_DEFINITION
+      input HttpHeader {
+        key: String!
+        value: String!
+      }
+
+      directive @http(
+        url: String
+        method: HttpMethod
+        headers: [HttpHeader]
+      ) on FIELD_DEFINITION
     `
     const makeResolver = (
       type: 'query' | 'mutation',
@@ -37,6 +46,10 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
 
       const url = getArgument('url')(http)
       const method = getArgument('method')(http)
+      const headers = getArgument('headers')(http) as {
+        key: string
+        value: string
+      }[]
 
       if (url) {
         endpoint = getValue(url)
@@ -53,7 +66,12 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
         )
       }
 
-      console.log({ endpoint, variables })
+      if (headers) {
+        options.headers = headers.reduce(
+          (acc, { key, value }) => ({ ...acc, [key]: value }),
+          {}
+        )
+      }
 
       const response = await fetch(endpoint, options)
       const json = await response.json()

@@ -3,19 +3,10 @@ import type { DocumentNode, GraphQLScalarType } from 'graphql'
 import cacheql from '@browserql/cache'
 import type { ApolloClient } from '@apollo/client'
 
-interface StateObject<Data extends Record<string, any>> {
-  get(): Data
-  set(setter?: Data | ((input: Data) => Data)): void
-}
-
 interface Props<Variables, Data extends Record<string, any>> {
   query: DocumentNode
   variables?: Variables
   children: (
-    // state: (
-    //   name: keyof Data,
-    //   variables?: Variables
-    // ) => StateObject<Data[typeof name]>,
     data: Data,
     setter: (next: Data) => void,
     cached: ReturnType<typeof cacheql>

@@ -8,7 +8,12 @@ import { BrowserqlContext, BrowserqlProvider } from '@browserql/react'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 
-function View({ query }: Record<'query', DocumentNode>) {
+function View({
+  query,
+  variables,
+}: Record<'query', DocumentNode> & {
+  variables?: Record<string, string>
+}) {
   const ctx = useContext(BrowserqlContext)
   const State = makeState(ctx.cache, ctx.schema)
   return (
@@ -17,6 +22,12 @@ function View({ query }: Record<'query', DocumentNode>) {
       <Code language="graphql" value={print(ctx.schema)} />
       <Typography variant="h5">Query</Typography>
       <Code language="graphql" value={print(query)} />
+      {variables && (
+        <>
+          <Typography variant="h5">Variables</Typography>
+          <Code language="json" value={JSON.stringify(variables, null, 2)} />
+        </>
+      )}
       <State query={query}>
         {(result, q) => {
           const [set, setSet] = useState('')
@@ -46,10 +57,13 @@ function View({ query }: Record<'query', DocumentNode>) {
 export default function StateExample({
   schema,
   query,
-}: Record<'schema' | 'query', DocumentNode>) {
+  variables,
+}: Record<'schema' | 'query', DocumentNode> & {
+  variables?: Record<string, string>
+}) {
   return (
     <BrowserqlProvider schema={schema}>
-      <View query={query} />
+      <View query={query} variables={variables} />
     </BrowserqlProvider>
   )
 }
