@@ -44,10 +44,7 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
 
       const url = getArgument('url')(http)
       const method = getArgument('method')(http)
-      const headers = getArgument('headers')(http) as {
-        key: string
-        value: string
-      }[]
+      const headers = getArgument('headers')(http) as Record<string, string>
 
       if (url) {
         endpoint = getValue(url)
@@ -65,15 +62,24 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
       }
 
       if (headers) {
-        options.headers = headers.reduce(
-          (acc, { key, value }) => ({ ...acc, [key]: value }),
-          {}
+        options.headers = headers
+      }
+
+      let response: any
+
+      try {
+        response = await fetch(endpoint, options)
+      } catch (error) {
+        throw new Error(
+          `Failed to fetch ${endpoint} -- ${JSON.stringify(options)}`
         )
       }
 
-      const response = await fetch(endpoint, options)
-      const json = await response.json()
-      return json
+      try {
+        return response.json()
+      } catch (error) {
+        throw new Error(`NOT A JSON: ${endpoint} -- ${JSON.stringify(options)}`)
+      }
     }
     const targetQueries = getQueries(schema as DocumentNode)
       .filter((query) => getDirective('http')(query))
