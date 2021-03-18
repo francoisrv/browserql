@@ -8,7 +8,7 @@ import {
   getValue,
 } from '@browserql/fpql'
 import gql from 'graphql-tag'
-import { DirectiveNode, DocumentNode, ValueNode } from 'graphql'
+import { ArgumentNode, DirectiveNode, DocumentNode, ValueNode } from 'graphql'
 import { applyParameters } from 'paramizer'
 import { HeadersJSONObject, parseLiteral } from './JSON'
 
@@ -45,7 +45,7 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
 
       const url = getArgument('url')(http)
       const method = getArgument('method')(http)
-      const headers = getArgument('headers')(http) as ValueNode
+      const headers = getArgument('headers')(http) as ArgumentNode
       const debug = getArgument('debug')(http)
 
       if (url) {
@@ -64,7 +64,7 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
       }
 
       if (headers) {
-        options.headers = parseLiteral(headers, null)
+        options.headers = getValue(headers)
       }
 
       if (debug) {
@@ -87,6 +87,7 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
         throw new Error(`NOT A JSON: ${endpoint} -- ${JSON.stringify(options)}`)
       }
     }
+
     const targetQueries = getQueries(schema as DocumentNode)
       .filter((query) => getDirective('http')(query))
       .reduce((queries, query) => {
@@ -101,6 +102,7 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
 
         return queries
       }, {})
+
     const targetMutations = getMutations(schema as DocumentNode)
       .filter((query) => getDirective('http')(query))
       .reduce((queries, query) => {
