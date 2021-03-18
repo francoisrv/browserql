@@ -2,7 +2,7 @@
 
 import { GraphQLScalarType, Kind, ObjectValueNode, ValueNode } from 'graphql'
 
-function parseLiteral(ast: ValueNode, variables: any): any {
+export function parseLiteral(ast: ValueNode, variables: any): any {
   switch (ast.kind) {
     case Kind.STRING:
     case Kind.BOOLEAN:

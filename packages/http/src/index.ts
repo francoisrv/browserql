@@ -8,9 +8,9 @@ import {
   getValue,
 } from '@browserql/fpql'
 import gql from 'graphql-tag'
-import { DirectiveNode, DocumentNode } from 'graphql'
+import { DirectiveNode, DocumentNode, ValueNode } from 'graphql'
 import { applyParameters } from 'paramizer'
-import { HeadersJSONObject } from './JSON'
+import { HeadersJSONObject, parseLiteral } from './JSON'
 
 interface ConnectHttpOptions {}
 
@@ -31,6 +31,7 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
         url: String
         method: HttpMethod
         headers: HeadersJSONObject
+        debug: Boolean
       ) on FIELD_DEFINITION
 
       scalar HeadersJSONObject
@@ -44,7 +45,8 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
 
       const url = getArgument('url')(http)
       const method = getArgument('method')(http)
-      const headers = getArgument('headers')(http) as Record<string, string>
+      const headers = getArgument('headers')(http) as ValueNode
+      const debug = getArgument('debug')(http)
 
       if (url) {
         endpoint = getValue(url)
@@ -62,7 +64,11 @@ export function connectHttp(options: ConnectHttpOptions = {}): SchemaqlFactory {
       }
 
       if (headers) {
-        options.headers = headers
+        options.headers = parseLiteral(headers, null)
+      }
+
+      if (debug) {
+        console.log(endpoint, options)
       }
 
       let response: any
